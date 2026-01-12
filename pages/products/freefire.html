@@ -3,293 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Achat Diamants Free Fire | PayFusion</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Achat Diamants Free Fire | PayFusion Haiti</title>
+    
+    <!-- Polices & Icônes -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
     <style>
         :root {
             --primary: #0056b3;
             --secondary: #002d5e;
+            --accent: #f39c12;
             --bg: #f8fafc;
             --white: #ffffff;
-            --accent: #f39c12;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --text: #1e293b;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding-bottom: 50px; overflow-x: hidden; }
 
-        body { background-color: var(--bg); color: var(--secondary); padding-bottom: 40px; }
-
-        /* HEADER PRODUIT */
+        /* HEADER PREMIUM */
         header {
-            height: 65px;
-            background: var(--white);
-            display: flex;
-            align-items: center;
-            padding: 0 5%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: 70px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            display: flex; align-items: center; padding: 0 6%; position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
         }
-
-        header .back-btn {
-            color: var(--primary);
-            font-size: 1.2rem;
-            text-decoration: none;
-            margin-right: 20px;
-        }
-
-        header h1 { font-size: 1.1rem; font-weight: 700; }
+        header .back-btn { color: var(--primary); font-size: 1.4rem; text-decoration: none; margin-right: 15px; transition: 0.3s; }
+        header .back-btn:hover { transform: translateX(-5px); }
+        header h1 { font-size: 1.1rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; }
 
         /* HERO PRODUIT */
         .product-hero {
-            background: var(--white);
-            padding: 30px 5%;
-            text-align: center;
-            border-bottom: 1px solid #edf2f7;
+            background: var(--white); padding: 40px 6%; text-align: center; border-bottom: 1px solid #edf2f7;
         }
+        .product-hero img { height: 130px; width: auto; margin-bottom: 15px; border-radius: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .product-hero p { font-size: 0.95rem; color: #64748b; max-width: 500px; margin: 0 auto; line-height: 1.6; }
 
-        .product-hero img {
-            height: 140px; /* TAILLE AGRANDIE ICI */
-            width: auto;
-            margin-bottom: 15px;
-            border-radius: 15px;
-        }
-
-        .product-hero p {
-            font-size: 0.9rem;
-            color: #64748b;
-            max-width: 500px;
-            margin: 0 auto;
-            line-height: 1.5;
+        /* MAINTENANCE OVERLAY (CMS) */
+        #maintenance-msg {
+            display: none; background: #fff5f5; color: #e53e3e; padding: 15px; text-align: center;
+            font-weight: 700; font-size: 0.9rem; border-bottom: 2px solid #feb2b2;
         }
 
         /* GRILLE DES PACKS */
-        .section-title {
-            padding: 25px 5% 15px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #94a3b8;
-        }
-
-        .packs-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 15px;
-            padding: 0 5%;
-        }
+        .section-title { padding: 30px 6% 15px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; }
+        .packs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; padding: 0 6%; }
 
         .pack-card {
-            background: var(--white);
-            padding: 20px;
-            border-radius: 18px;
-            text-align: center;
-            border: 2px solid transparent;
-            transition: var(--transition);
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            background: var(--white); padding: 25px 15px; border-radius: 22px; text-align: center;
+            border: 2px solid transparent; transition: var(--transition); cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02); position: relative;
         }
-
-        .pack-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-3px);
-        }
-
-        .pack-card.selected {
-            border-color: var(--primary);
-            background: #f0f7ff;
-        }
-
-        .pack-card i {
-            color: var(--accent);
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-
-        .pack-card .diamonds {
-            display: block;
-            font-weight: 700;
-            font-size: 1rem;
-            margin-bottom: 5px;
-        }
-
-        .pack-card .price {
-            display: block;
-            color: var(--primary);
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
+        .pack-card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0, 86, 179, 0.08); border-color: var(--primary); }
+        .pack-card.selected { border-color: var(--primary); background: #f0f7ff; }
+        .pack-card i { color: var(--accent); font-size: 1.8rem; margin-bottom: 12px; display: block; }
+        .pack-card .diamonds { display: block; font-weight: 800; font-size: 1.05rem; color: var(--secondary); margin-bottom: 4px; }
+        .pack-card .price { display: block; color: var(--primary); font-weight: 700; font-size: 0.9rem; }
 
         /* FORMULAIRE DE COMMANDE */
         .order-form {
-            margin: 30px 5%;
-            background: var(--white);
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            display: none;
+            margin: 35px 6%; background: var(--white); padding: 30px; border-radius: 28px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.06); border: 1px solid #f1f5f9;
+            display: none; transform: translateY(20px); opacity: 0; transition: 0.5s;
         }
+        .order-form.active { display: block; transform: translateY(0); opacity: 1; }
 
-        .order-form.active { display: block; animation: fadeIn 0.5s ease; }
-
-        .form-group { margin-bottom: 15px; }
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #64748b;
-        }
-
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 800; margin-bottom: 8px; color: var(--text); text-transform: uppercase; }
         .form-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 10px;
-            outline: none;
-            transition: var(--transition);
+            width: 100%; padding: 14px 18px; border: 1.5px solid #e2e8f0; border-radius: 14px;
+            outline: none; transition: 0.3s; font-size: 1rem; background: #fcfcfd;
         }
-
-        .form-group input:focus { border-color: var(--primary); }
+        .form-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1); background: white; }
 
         .btn-order {
-            width: 100%;
-            padding: 15px;
-            background: var(--primary);
-            color: var(--white);
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: var(--transition);
+            width: 100%; padding: 18px; background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white); border: none; border-radius: 16px; font-size: 1.1rem;
+            font-weight: 800; cursor: pointer; transition: var(--transition); box-shadow: 0 10px 25px rgba(0, 86, 179, 0.2);
         }
+        .btn-order:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0, 86, 179, 0.3); }
 
-        .btn-order:hover { background: var(--secondary); }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (max-width: 400px) {
-            .packs-grid { grid-template-columns: 1fr 1fr; }
+        @media (max-width: 480px) {
+            .packs-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+            .pack-card { padding: 20px 10px; }
         }
     </style>
 </head>
 <body>
 
+    <div id="maintenance-msg">
+        <i class="fa-solid fa-triangle-exclamation"></i> Ce service est momentanément indisponible.
+    </div>
+
     <header>
-        <a href="../home.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
-        <h1>Free Fire - Recharges</h1>
+        <a href="../home.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+        <h1>Free Fire Recharges</h1>
     </header>
 
     <div class="product-hero">
-        <img src="../../assets/logos/freefire-logo.png" alt="Free Fire">
-        <p>Rechargez vos diamants instantanément. Livraison sécurisée via votre ID Player sous 15 minutes.</p>
+        <img src="../../assets/logos/freefire-logo.png" alt="Free Fire Logo">
+        <p>Recharges sécurisées via ID Joueur. Vos diamants sont livrés directement sur votre compte en moins de 15 minutes.</p>
     </div>
 
-    <h3 class="section-title">Abonnements & Pass</h3>
-    <div class="packs-grid">
-        <div class="pack-card" onclick="selectPack('Semaine (450💎)', 325)">
-            <i class="fa-solid fa-calendar-week"></i>
-            <span class="diamonds">Pass Semaine</span>
-            <span class="price">325 HTG</span>
+    <div id="product-content">
+        <h3 class="section-title">Abonnements & Pass</h3>
+        <div class="packs-grid">
+            <div class="pack-card" onclick="selectPack('Semaine (450💎)', 325, this)">
+                <i class="fa-solid fa-calendar-week"></i>
+                <span class="diamonds">Pass Semaine</span>
+                <span class="price">325 HTG</span>
+            </div>
+            <div class="pack-card" onclick="selectPack('Mois (2600💎)', 1600, this)">
+                <i class="fa-solid fa-calendar-check"></i>
+                <span class="diamonds">Pass Mois</span>
+                <span class="price">1,600 HTG</span>
+            </div>
+            <div class="pack-card" onclick="selectPack('Level Up Pass (800💎)', 950, this)">
+                <i class="fa-solid fa-angles-up"></i>
+                <span class="diamonds">Level Up Pass</span>
+                <span class="price">950 HTG</span>
+            </div>
         </div>
-        <div class="pack-card" onclick="selectPack('Mois (2600💎)', 1600)">
-            <i class="fa-solid fa-calendar-check"></i>
-            <span class="diamonds">Pass Mois</span>
-            <span class="price">1,600 HTG</span>
-        </div>
-        <div class="pack-card" onclick="selectPack('Level Up Pass (800💎)', 950)">
-            <i class="fa-solid fa-angles-up"></i>
-            <span class="diamonds">Level Up Pass</span>
-            <span class="price">950 HTG</span>
-        </div>
-    </div>
 
-    <h3 class="section-title">Packs Diamants</h3>
-    <div class="packs-grid" id="diamonds-grid"></div>
+        <h3 class="section-title">Packs Diamants</h3>
+        <div class="packs-grid" id="diamonds-grid"></div>
 
-    <div class="order-form" id="order-form">
-        <h3 style="margin-bottom: 20px; font-size: 1.1rem;">Détails de la commande</h3>
-        <p id="selected-summary" style="margin-bottom: 20px; font-weight: 600; color: var(--primary);"></p>
-        
-        <form id="ffOrderForm">
-            <div class="form-group">
-                <label>ID Player</label>
-                <input type="number" id="playerID" placeholder="Ex: 123456789" required>
-            </div>
-            <div class="form-group">
-                <label>Pseudo Joueur</label>
-                <input type="text" id="playerPseudo" placeholder="Votre nom dans le jeu" required>
-            </div>
-            <div class="form-group">
-                <label>Numéro Whatsapp</label>
-                <input type="tel" id="whatsapp" placeholder="+509..." required>
-            </div>
-            <button type="submit" class="btn-order">Valider la commande</button>
-        </form>
+        <!-- FORMULAIRE -->
+        <div class="order-form" id="order-form">
+            <h3 style="margin-bottom: 20px; font-size: 1.1rem; font-weight: 800; color: var(--primary);">Configuration de livraison</h3>
+            <div id="selected-summary" style="background: #f0f7ff; padding: 12px; border-radius: 12px; margin-bottom: 25px; font-weight: 700; font-size: 0.9rem; color: var(--secondary); border-left: 4px solid var(--primary);"></div>
+            
+            <form id="ffOrderForm">
+                <div class="form-group">
+                    <label>ID Player (ID Joueur)</label>
+                    <input type="number" id="playerID" placeholder="Ex: 123456789" required>
+                </div>
+                <div class="form-group">
+                    <label>Pseudo en jeu</label>
+                    <input type="text" id="playerPseudo" placeholder="Ex: CaptainHaiti" required>
+                </div>
+                <div class="form-group">
+                    <label>Numéro WhatsApp</label>
+                    <input type="tel" id="whatsapp" placeholder="Ex: +50936535649" required>
+                </div>
+                <button type="submit" class="btn-order">Ajouter au panier <i class="fa-solid fa-cart-plus"></i></button>
+            </form>
+        </div>
     </div>
 
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
+            authDomain: "pay-fusion-509.firebaseapp.com",
+            projectId: "pay-fusion-509",
+            storageBucket: "pay-fusion-509.firebasestorage.app",
+            messagingSenderId: "401434428368",
+            appId: "1:401434428368:web:c1f526254f63fa57402fd5",
+            measurementId: "G-JN41S8MKWH"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentSelection = null;
+
+        // 1. SECURITÉ : VERIFICATION AUTH & BAN
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                db.collection("users").doc(user.uid).onSnapshot(doc => {
+                    if (doc.exists && doc.data().status === "Banni") {
+                        auth.signOut().then(() => window.location.href = "../login.html");
+                    }
+                });
+                checkServiceStatus();
+            } else {
+                window.location.href = "../login.html";
+            }
+        });
+
+        // 2. CMS : VERIFICATION ÉTAT DU SERVICE
+        function checkServiceStatus() {
+            db.collection("services").doc("Free Fire").onSnapshot(doc => {
+                if (doc.exists && !doc.data().active) {
+                    document.getElementById('product-content').style.opacity = "0.3";
+                    document.getElementById('product-content').style.pointerEvents = "none";
+                    document.getElementById('maintenance-msg').style.display = "block";
+                    document.getElementById('maintenance-msg').textContent = doc.data().message || "Ce service est momentanément indisponible.";
+                }
+            });
+        }
+
+        // 3. GENERATION DES PACKS
         const diamondPacks = [
-            { d: "100 + 10", p: 165 },
-            { d: "210 + 21", p: 340 },
-            { d: "530 + 53", p: 850 },
-            { d: "750 + 75", p: 1190 },
-            { d: "1080 + 108", p: 1700 },
-            { d: "2200 + 220", p: 3350 },
-            { d: "3300 + 330", p: 5000 },
-            { d: "4400 + 440", p: 6500 },
-            { d: "5600 + 560", p: 8000 }
+            { d: "100 + 10", p: 165 }, { d: "210 + 21", p: 340 }, { d: "530 + 53", p: 850 },
+            { d: "750 + 75", p: 1190 }, { d: "1080 + 108", p: 1700 }, { d: "2200 + 220", p: 3350 },
+            { d: "3300 + 330", p: 5000 }, { d: "4400 + 440", p: 6500 }, { d: "5600 + 560", p: 8000 }
         ];
 
         const grid = document.getElementById('diamonds-grid');
-        let currentSelection = null;
-
         diamondPacks.forEach(pack => {
             const div = document.createElement('div');
             div.className = 'pack-card';
             div.innerHTML = `
                 <i class="fa-solid fa-gem"></i>
-                <span class="diamonds">${pack.d}</span>
+                <span class="diamonds">${pack.d} Diamants</span>
                 <span class="price">${pack.p.toLocaleString()} HTG</span>
             `;
-            div.onclick = (e) => selectPack(`${pack.d} Diamants`, pack.p, e);
+            div.onclick = (e) => selectPack(`${pack.d} Diamants`, pack.p, div);
             grid.appendChild(div);
         });
 
-        function selectPack(name, price, event) {
+        function selectPack(name, price, element) {
             currentSelection = { name, price };
             document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
-            
-            let target = event.currentTarget || event.target.closest('.pack-card');
-            target.classList.add('selected');
+            element.classList.add('selected');
 
             const formSection = document.getElementById('order-form');
             formSection.classList.add('active');
-            document.getElementById('selected-summary').textContent = `Pack sélectionné : ${name} - ${price} HTG`;
-            formSection.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('selected-summary').innerHTML = `<i class="fa-solid fa-check-circle"></i> Sélection : ${name} ● ${price} HTG`;
+            
+            formSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
+        // 4. GESTION DU PANIER
         document.getElementById('ffOrderForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            
             const orderData = {
                 product: "Free Fire",
                 pack: currentSelection.name,
                 price: currentSelection.price,
-                playerID: document.getElementById('playerID').value,
-                playerPseudo: document.getElementById('playerPseudo').value,
-                whatsapp: document.getElementById('whatsapp').value,
+                playerID: document.getElementById('playerID').value.trim(),
+                playerPseudo: document.getElementById('playerPseudo').value.trim(),
+                whatsapp: document.getElementById('whatsapp').value.trim(),
                 timestamp: new Date().getTime()
             };
+
             let cart = JSON.parse(localStorage.getItem('payfusion_cart')) || [];
             cart.push(orderData);
             localStorage.setItem('payfusion_cart', JSON.stringify(cart));
+
             window.location.href = "../checkout/cart.html";
         });
     </script>
