@@ -3,26 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paiement Échoué | PayFusion</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Transaction Échouée | PayFusion Haiti</title>
+    
+    <!-- Polices & Icônes -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        :root { --primary: #0056b3; --bg: #f8fafc; --white: #ffffff; --warning: #f39c12; }
+        :root {
+            --primary: #0056b3;
+            --secondary: #002d5e;
+            --error-red: #d63031;
+            --warning-orange: #f39c12;
+            --bg-fluid: #f8fafc;
+            --white: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: #2d3436; height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .card { background: var(--white); padding: 50px 30px; border-radius: 30px; text-align: center; max-width: 450px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.05); }
-        .icon-box { width: 80px; height: 80px; background: rgba(243, 156, 18, 0.1); color: var(--warning); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2.5rem; margin: 0 auto 25px; }
-        h2 { font-size: 1.6rem; margin-bottom: 15px; }
-        p { color: #64748b; font-size: 0.95rem; margin-bottom: 30px; }
-        .btn-retry { display: block; padding: 15px; background: #2d3436; color: white; border-radius: 12px; text-decoration: none; font-weight: 600; }
+
+        body {
+            background-color: var(--bg-fluid);
+            color: var(--text-dark);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Arrière-plan Dynamique (Blobs) */
+        .bg-blobs {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; filter: blur(80px); opacity: 0.5;
+        }
+        .blob {
+            position: absolute; width: 400px; height: 400px;
+            background: rgba(214, 48, 49, 0.08); border-radius: 50%;
+            animation: move 12s infinite alternate;
+        }
+        @keyframes move { from { transform: translate(-5%, -5%); } to { transform: translate(10%, 10%); } }
+
+        .failed-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 55px 40px;
+            border-radius: 40px;
+            text-align: center;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 25px 60px rgba(214, 48, 49, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            animation: cardSlide 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes cardSlide {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .icon-box {
+            width: 95px;
+            height: 95px;
+            background: rgba(214, 48, 49, 0.1);
+            color: var(--error-red);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.8rem;
+            margin: 0 auto 30px;
+            animation: shake 0.8s cubic-bezier(.36,.07,.19,.97) both;
+            animation-delay: 0.5s;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        h2 {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 35px;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-action {
+            padding: 18px;
+            border-radius: 18px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-retry {
+            background: var(--secondary);
+            color: white;
+            box-shadow: 0 10px 25px rgba(0, 45, 94, 0.2);
+        }
+
+        .btn-retry:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 86, 179, 0.3);
+        }
+
+        .btn-support {
+            background: transparent;
+            color: var(--secondary);
+            border: 2px solid #f1f5f9;
+        }
+
+        .btn-support:hover {
+            background: #fff5f5;
+            border-color: var(--error-red);
+            color: var(--error-red);
+        }
+
+        .notice-footer {
+            margin-top: 30px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        @media (max-width: 480px) {
+            .failed-card { padding: 45px 25px; border-radius: 32px; }
+            h2 { font-size: 1.4rem; }
+        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <div class="icon-box"><i class="fa-solid fa-circle-xmark"></i></div>
-        <h2>Transaction échouée</h2>
-        <p>Nous n'avons pas pu valider votre paiement. Veuillez vérifier vos informations MonCash/NatCash et réessayer.</p>
-        <a href="cart.html" class="btn-retry">Retourner au panier</a>
+
+    <div class="bg-blobs">
+        <div class="blob"></div>
     </div>
+
+    <div class="failed-card">
+        <div class="icon-box">
+            <i class="fa-solid fa-circle-xmark"></i>
+        </div>
+        
+        <h2>Transaction Non Validée</h2>
+        
+        <p>
+            Nous n'avons pas pu confirmer votre paiement. Cela arrive généralement si le screenshot est illisible ou si les informations MonCash/NatCash ne correspondent pas.
+        </p>
+
+        <div class="btn-group">
+            <a href="cart.html" class="btn-action btn-retry">
+                Réessayer le paiement <i class="fa-solid fa-rotate-right"></i>
+            </a>
+            <a href="../user/supports.html" class="btn-action btn-support">
+                Besoin d'aide ? <i class="fa-solid fa-headset"></i>
+            </a>
+        </div>
+
+        <p class="notice-footer">
+            <i class="fa-solid fa-shield-halved"></i> Vos fonds sont en sécurité.
+        </p>
+    </div>
+
 </body>
 </html>
