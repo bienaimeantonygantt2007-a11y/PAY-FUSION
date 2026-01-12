@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PayFusion Admin Mobile</title>
+    <title>PayFusion Admin Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -18,166 +18,127 @@
             --white: #ffffff;
             --danger: #e74c3c;
             --success: #27ae60;
-            --text: #2d3436;
+            --warning: #f39c12;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--text); overflow-x: hidden; }
+        body { background: var(--bg); color: #2d3436; overflow-x: hidden; }
 
-        /* MENU MOBILE (SIDEBAR) */
-        .sidebar-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); display: none; z-index: 1001;
-        }
+        /* OVERLAY & SIDEBAR */
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 1001; }
         .sidebar-overlay.active { display: block; }
-
-        .sidebar {
-            position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
-            background: var(--secondary); color: white; z-index: 1002;
-            transition: var(--transition); padding: 30px 20px;
-        }
+        .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--secondary); color: white; z-index: 1002; transition: var(--transition); padding: 30px 20px; }
         .sidebar.active { left: 0; }
         .sidebar h2 { font-size: 1.2rem; margin-bottom: 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+        .nav-link { padding: 15px; color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 15px; border-radius: 12px; margin-bottom: 8px; cursor: pointer; }
+        .nav-link.active { background: var(--primary); color: white; }
 
-        .nav-link {
-            padding: 15px; color: rgba(255,255,255,0.7); text-decoration: none;
-            display: flex; align-items: center; gap: 15px; border-radius: 12px;
-            margin-bottom: 8px; cursor: pointer; transition: 0.3s;
-        }
-        .nav-link.active, .nav-link:hover { background: var(--primary); color: white; }
-
-        /* MAIN CONTENT */
-        .main-content { width: 100%; min-height: 100vh; padding-bottom: 30px; }
-        header { 
-            background: white; padding: 15px 20px; display: flex; 
-            justify-content: space-between; align-items: center; 
-            position: sticky; top: 0; z-index: 900; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
+        /* HEADER */
+        header { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 900; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .menu-btn { font-size: 1.5rem; color: var(--primary); cursor: pointer; }
 
         /* SECTIONS */
-        .content-section { padding: 20px; display: none; animation: fadeIn 0.4s ease; }
+        .content-section { padding: 20px; display: none; }
         .content-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* STATS MOBILE */
+        /* STATS */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .stat-card { background: white; padding: 15px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .stat-card h4 { font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; }
+        .stat-card { background: white; padding: 15px; border-radius: 15px; text-align: center; }
         .stat-card p { font-size: 1rem; font-weight: 800; color: var(--primary); }
 
-        /* CARDS COMMANDES (REMPLACE LE TABLEAU) */
-        .order-card {
-            background: white; border-radius: 18px; padding: 15px; margin-bottom: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid #f1f5f9;
-        }
-        .order-card-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
-        .order-id { font-size: 0.7rem; color: #94a3b8; font-weight: 700; }
-        .order-status { font-size: 0.7rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; }
+        /* CARDS (COMMANDES & UTILISATEURS) */
+        .info-card { background: white; border-radius: 18px; padding: 15px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; }
+        .card-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.8rem; font-weight: 700; color: #94a3b8; }
+        .card-body { display: flex; justify-content: space-between; align-items: center; }
+        .btn-group { margin-top: 15px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .btn-sm { padding: 10px; border-radius: 10px; border: none; font-size: 0.8rem; cursor: pointer; color: white; font-weight: 600; text-align: center; }
+
+        /* LISTES SERVICES */
+        .service-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; border-radius: 12px; margin-bottom: 8px; }
         
-        .order-body { display: flex; justify-content: space-between; align-items: center; }
-        .order-info b { display: block; font-size: 0.95rem; color: var(--secondary); }
-        .order-info span { font-size: 0.8rem; color: #64748b; }
-        .order-price { font-weight: 800; color: var(--primary); }
-
-        .order-actions { margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-        .btn-action { padding: 10px; border-radius: 10px; border: none; font-size: 0.9rem; cursor: pointer; color: white; text-align: center; }
-
-        /* MODAL FULLSCREEN MOBILE */
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: white; z-index: 2000; flex-direction: column; overflow-y: auto;
-        }
+        /* FULLSCREEN MODAL */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 2000; flex-direction: column; overflow-y: auto; }
         .modal-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
         .modal-body { padding: 20px; }
-        .detail-item { margin-bottom: 15px; }
-        .detail-item label { display: block; font-size: 0.75rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; }
-        .detail-item p { font-size: 1rem; font-weight: 600; color: var(--secondary); word-break: break-all; }
-        .proof-preview { width: 100%; border-radius: 15px; margin-top: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
 
-        /* CHAT MOBILE */
-        .chat-area { display: flex; flex-direction: column; height: 80vh; background: white; border-radius: 20px; overflow: hidden; }
-        .chat-msg-list { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; background: #f8fafc; }
-        .msg { max-width: 85%; padding: 12px; border-radius: 15px; font-size: 0.85rem; }
-        .msg.admin { align-self: flex-end; background: var(--primary); color: white; }
-        .msg.user { align-self: flex-start; background: #e2e8f0; }
+        /* INPUTS */
+        .admin-input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 10px; outline: none; }
+        
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
     </style>
 </head>
 <body>
 
-    <!-- OVERLAY -->
     <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-    <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
         <h2>PAYFUSION ADMIN</h2>
-        <div class="nav-link active" onclick="showSec('orders')"><i class="fa-solid fa-receipt"></i> Commandes</div>
-        <div class="nav-link" onclick="showSec('chat')"><i class="fa-solid fa-comments"></i> Chat Clients</div>
-        <div class="nav-link" onclick="showSec('services')"><i class="fa-solid fa-gears"></i> Services</div>
-        <div class="nav-link" onclick="showSec('users')"><i class="fa-solid fa-users"></i> Utilisateurs</div>
+        <div class="nav-link active" onclick="showSec('orders', this)"><i class="fa-solid fa-receipt"></i> Commandes</div>
+        <div class="nav-link" onclick="showSec('users', this)"><i class="fa-solid fa-users"></i> Utilisateurs</div>
+        <div class="nav-link" onclick="showSec('services', this)"><i class="fa-solid fa-gears"></i> Services CMS</div>
+        <div class="nav-link" onclick="showSec('announcements', this)"><i class="fa-solid fa-bullhorn"></i> Annonces</div>
+        <div class="nav-link" onclick="showSec('chat', this)"><i class="fa-solid fa-comments"></i> Support Chat</div>
         <a href="logout.html" class="nav-link" style="margin-top: auto; color: #ff7675;"><i class="fa-solid fa-power-off"></i> Déconnexion</a>
     </div>
 
     <div class="main-content">
         <header>
             <div class="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars-staggered"></i></div>
-            <div style="font-weight: 800; font-size: 0.9rem; color: var(--primary);">ADMIN PORTAL</div>
-            <div id="status-dot" style="width:10px; height:10px; background:var(--success); border-radius:50%;"></div>
+            <div id="section-title" style="font-weight: 800; font-size: 0.9rem;">COMMANDES</div>
+            <div style="width:10px;"></div>
         </header>
 
-        <!-- SECTION COMMANDES -->
+        <!-- COMMANDES -->
         <section id="orders" class="content-section active">
             <div class="stats-grid">
                 <div class="stat-card"><h4>Ventes</h4><p id="stat-revenue">0 HTG</p></div>
-                <div class="stat-card"><h4>Profit</h4><p id="stat-profit" style="color:var(--success)">0 HTG</p></div>
+                <div class="stat-card"><h4>Bénéfice</h4><p id="stat-profit" style="color:var(--success)">0 HTG</p></div>
             </div>
-
-            <div id="orders-container">
-                <!-- Les cartes de commandes seront injectées ici -->
-                <p style="text-align:center; padding:20px; color:#94a3b8;">Chargement des commandes...</p>
-            </div>
+            <div id="orders-list"></div>
         </section>
 
-        <!-- SECTION CHAT -->
-        <section id="chat" class="content-section">
-            <div class="chat-area">
-                <select id="chat-user-select" style="width:100%; padding:12px; border:none; background:#eee; font-weight:700;" onchange="loadUserChat(this.value)">
-                    <option value="">Choisir un client...</option>
-                </select>
-                <div class="chat-msg-list" id="chat-messages"></div>
-                <div style="padding:10px; display:flex; gap:8px;">
-                    <input type="text" id="chat-input" placeholder="Message..." style="flex:1; padding:12px; border-radius:25px; border:1px solid #ddd; outline:none;">
-                    <button onclick="sendReply()" style="background:var(--primary); color:white; border:none; width:45px; border-radius:50%;"><i class="fa-solid fa-paper-plane"></i></button>
-                </div>
-            </div>
+        <!-- UTILISATEURS -->
+        <section id="users" class="content-section">
+            <input type="text" class="admin-input" placeholder="Rechercher un client..." onkeyup="searchUser(this.value)">
+            <div id="users-list"></div>
         </section>
 
-        <!-- SECTION SERVICES (CMS) -->
+        <!-- SERVICES CMS -->
         <section id="services" class="content-section">
-            <div style="background:white; padding:20px; border-radius:20px;">
-                <h3>Gestion Services</h3>
-                <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:15px;">Activez ou désactivez les services.</p>
-                <div id="services-list-container">
-                    <!-- Liste des services -->
-                </div>
-            </div>
+            <div id="services-list"></div>
         </section>
 
+        <!-- ANNONCES -->
+        <section id="announcements" class="content-section">
+            <div style="background:white; padding:20px; border-radius:20px;">
+                <h3>Nouvelle Annonce</h3>
+                <textarea id="ann-text" class="admin-input" rows="4" placeholder="Tapez votre message ici..."></textarea>
+                <button onclick="postAnn()" style="width:100%; background:var(--primary); color:white; padding:12px; border:none; border-radius:10px; font-weight:700;">Publier l'annonce</button>
+            </div>
+            <div id="ann-history" style="margin-top:20px;"></div>
+        </section>
+
+        <!-- CHAT -->
+        <section id="chat" class="content-section">
+            <select id="chat-user-select" class="admin-input" onchange="loadUserChat(this.value)">
+                <option value="">Sélectionner un client...</option>
+            </select>
+            <div id="chat-messages" style="height:50vh; overflow-y:auto; background:white; border-radius:15px; padding:15px; margin-bottom:10px; display:flex; flex-direction:column; gap:10px;"></div>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="chat-input" class="admin-input" placeholder="Répondre..." style="margin-bottom:0;">
+                <button onclick="sendReply()" style="background:var(--primary); color:white; border:none; padding:0 20px; border-radius:10px;"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </section>
     </div>
 
-    <!-- MODAL DE DETAILS (PLEIN ÉCRAN MOBILE) -->
+    <!-- MODAL DETAILS COMMANDE -->
     <div id="detailModal" class="modal">
-        <div class="modal-header">
-            <h3>Détails Commande</h3>
-            <i class="fa-solid fa-circle-xmark" onclick="closeModal()" style="font-size:1.8rem; color:var(--danger); cursor:pointer;"></i>
-        </div>
-        <div class="modal-body" id="modal-body-content">
-            <!-- Rempli par JS -->
-        </div>
+        <div class="modal-header"><h3>Détails Commande</h3><i class="fa-solid fa-circle-xmark" onclick="closeModal()" style="font-size:1.8rem; color:var(--danger)"></i></div>
+        <div class="modal-body" id="modal-content"></div>
         <div style="padding:20px; display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-            <button onclick="updateOrderFromModal('Validé')" style="background:var(--success); color:white; padding:15px; border:none; border-radius:12px; font-weight:700;">VALIDER</button>
-            <button onclick="updateOrderFromModal('Refusé')" style="background:var(--danger); color:white; padding:15px; border:none; border-radius:12px; font-weight:700;">REFUSER</button>
+            <button onclick="updateStatus('Validé')" style="background:var(--success); color:white; padding:15px; border:none; border-radius:12px; font-weight:700;">VALIDER</button>
+            <button onclick="updateStatus('Refusé')" style="background:var(--danger); color:white; padding:15px; border:none; border-radius:12px; font-weight:700;">REFUSER</button>
         </div>
     </div>
 
@@ -195,155 +156,180 @@
         const auth = firebase.auth();
 
         let currentOrderDocId = "";
-        let currentChatUID = "";
-        let allOrdersData = [];
+        let allOrders = [];
+        let allUsers = [];
 
+        // SECURITÉ & INITIALISATION
         auth.onAuthStateChanged(user => {
             if (!user || user.email !== "bmarcco4412@gmail.com") window.location.href = "login.html";
-            else { loadOrders(); loadChatList(); }
+            else { initAdmin(); }
         });
 
+        function initAdmin() {
+            loadOrders();
+            loadUsers();
+            loadServices();
+            loadAnnouncements();
+            loadChatList();
+        }
+
+        // NAVIGATION
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
         }
 
-        function showSec(id) {
+        function showSec(id, el) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             document.getElementById(id).classList.add('active');
-            event.currentTarget.classList.add('active');
+            el.classList.add('active');
+            document.getElementById('section-title').textContent = id.toUpperCase();
             if(window.innerWidth < 1024) toggleSidebar();
         }
 
-        // CHARGEMENT DES COMMANDES EN FORMAT CARTE
+        // 1. COMMANDES
         function loadOrders() {
             db.collection("orders").orderBy("createdAt", "desc").onSnapshot(snap => {
-                const container = document.getElementById('orders-container');
-                container.innerHTML = '';
-                let revenue = 0; let profit = 0;
-                allOrdersData = [];
-
+                const list = document.getElementById('orders-list');
+                list.innerHTML = '';
+                let rev = 0; let prof = 0;
+                allOrders = [];
                 snap.forEach(doc => {
                     const o = doc.data();
-                    const docId = doc.id;
-                    allOrdersData.push({id: docId, ...o});
+                    const id = doc.id;
+                    allOrders.push({id, ...o});
+                    if(o.status === "Validé") { rev += o.total; prof += (o.total - (o.purchaseCost || 0)); }
                     
-                    if(o.status === "Validé") {
-                        revenue += o.total;
-                        profit += (o.total - (o.purchaseCost || 0));
-                    }
-
-                    let statusCol = o.status === 'En attente' ? '#f39c12' : (o.status === 'Validé' ? '#27ae60' : '#e74c3c');
-
-                    container.innerHTML += `
-                        <div class="order-card">
-                            <div class="order-card-header">
-                                <span class="order-id">#${o.orderId}</span>
-                                <span class="order-status" style="background:rgba(0,0,0,0.05); color:${statusCol}">${o.status}</span>
+                    const statusCol = o.status === 'En attente' ? 'var(--warning)' : (o.status === 'Validé' ? 'var(--success)' : 'var(--danger)');
+                    list.innerHTML += `
+                        <div class="info-card">
+                            <div class="card-header"><span>#${o.orderId}</span><span style="color:${statusCol}">${o.status}</span></div>
+                            <div class="card-body">
+                                <div><b>${o.items[0].product}</b><span>${o.customerEmail}</span></div>
+                                <div style="font-weight:800; color:var(--primary)">${o.total} HTG</div>
                             </div>
-                            <div class="order-body">
-                                <div class="order-info">
-                                    <b>${o.items[0].product}</b>
-                                    <span>${o.customerEmail}</span>
-                                </div>
-                                <div class="order-price">${o.total} HTG</div>
+                            <div class="btn-group">
+                                <button class="btn-sm" style="background:var(--primary)" onclick="viewDetails('${id}')"><i class="fa-solid fa-eye"></i></button>
+                                <button class="btn-sm" style="background:var(--success)" onclick="fastUpdate('${id}', 'Validé')"><i class="fa-solid fa-check"></i></button>
+                                <button class="btn-sm" style="background:var(--danger)" onclick="fastUpdate('${id}', 'Refusé')"><i class="fa-solid fa-x"></i></button>
                             </div>
-                            <div class="order-actions">
-                                <button class="btn-action" onclick="viewDetails('${docId}')" style="background:var(--primary)"><i class="fa-solid fa-eye"></i> Voir</button>
-                                <button class="btn-action" onclick="fastUpdate('${docId}', 'Validé')" style="background:var(--success)"><i class="fa-solid fa-check"></i> OK</button>
-                                <button class="btn-action" onclick="fastUpdate('${docId}', 'Refusé')" style="background:var(--danger)"><i class="fa-solid fa-xmark"></i> NO</button>
-                            </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
-                document.getElementById('stat-revenue').textContent = revenue.toLocaleString() + " HTG";
-                document.getElementById('stat-profit').textContent = profit.toLocaleString() + " HTG";
+                document.getElementById('stat-revenue').textContent = rev + " HTG";
+                document.getElementById('stat-profit').textContent = prof + " HTG";
             });
         }
 
-        // VISUALISATION TOTALE DES INFORMATIONS
-        function viewDetails(docId) {
-            currentOrderDocId = docId;
-            const o = allOrdersData.find(x => x.id === docId);
-            const content = document.getElementById('modal-body-content');
-            content.innerHTML = '';
-
-            // Algorithme de détection automatique des champs
-            // On boucle sur l'item et sur la commande pour ne rien rater
+        function viewDetails(id) {
+            currentOrderDocId = id;
+            const o = allOrders.find(x => x.id === id);
+            const body = document.getElementById('modal-content');
+            body.innerHTML = '';
+            
             const allInfo = {...o, ...o.items[0]};
-            const keysToIgnore = ['items', 'proofBase64', 'createdAt', 'uid', 'id', 'purchaseCost'];
-            const labels = {
-                orderId: "ID COMMANDE",
-                customerEmail: "EMAIL CLIENT",
-                total: "MONTANT PAYÉ",
-                paymentMethod: "MODE DE PAIEMENT",
-                paymentSenderInfo: "NUMÉRO EXPÉDITEUR",
-                paymentSenderName: "NOM SUR LE COMPTE",
-                product: "PRODUIT",
-                pack: "OFFRE CHOISIE",
-                playerID: "ID FREE FIRE",
-                playerPseudo: "PSEUDO JEU",
-                whatsapp: "WHATSAPP",
-                paypalEmail: "DESTINATION PAYPAL",
-                wiseEmail: "DESTINATION WISE",
-                walletAddress: "WALLET USDT TRC20",
-                userName: "NOM DU DESTINATAIRE"
-            };
+            const labels = { orderId: "ID", customerEmail: "Email Client", total: "Total Payé", paymentMethod: "Moyen", paymentSenderInfo: "Compte Payeur", product: "Produit", pack: "Détails", playerID: "ID Free Fire", playerPseudo: "Pseudo", whatsapp: "WhatsApp", paypalEmail: "Email PayPal", walletAddress: "Wallet USDT" };
 
-            for (let key in allInfo) {
-                if (!keysToIgnore.includes(key) && allInfo[key]) {
-                    const label = labels[key] || key.toUpperCase();
-                    content.innerHTML += `
-                        <div class="detail-item">
-                            <label>${label}</label>
-                            <p>${allInfo[key]}</p>
-                        </div>
-                    `;
-                }
+            for(let key in labels) {
+                if(allInfo[key]) body.innerHTML += `<div style="margin-bottom:10px;"><label style="font-size:0.7rem; color:#94a3b8; font-weight:700;">${labels[key]}</label><p style="font-weight:600;">${allInfo[key]}</p></div>`;
             }
 
-            // Ajout de la preuve d'achat
-            content.innerHTML += `
-                <div class="detail-item">
-                    <label>Preuve de paiement (Screenshot)</label>
-                    <img src="${o.proofBase64}" class="proof-preview" onclick="window.open(this.src)">
+            body.innerHTML += `
+                <div style="margin-top:15px;">
+                    <label style="font-size:0.7rem; color:#94a3b8; font-weight:700;">PREUVE DE PAIEMENT</label>
+                    <img src="${o.proofBase64}" style="width:100%; border-radius:10px; margin-top:5px;" onclick="window.open(this.src)">
                 </div>
-                <div class="detail-item">
-                    <label>COÛT D'ACHAT POUR VOUS (HTG)</label>
-                    <input type="number" id="cost-input" value="${o.purchaseCost || ''}" style="width:100%; padding:12px; border-radius:10px; border:1.5px solid var(--primary); outline:none;">
-                </div>
-            `;
-
+                <div style="margin-top:15px;">
+                    <label style="font-size:0.7rem; color:var(--primary); font-weight:700;">COÛT D'ACHAT (HTG)</label>
+                    <input type="number" id="cost-in" class="admin-input" value="${o.purchaseCost || ''}" placeholder="0">
+                </div>`;
             document.getElementById('detailModal').style.display = 'flex';
         }
 
-        function closeModal() { document.getElementById('detailModal').style.display = 'none'; }
-
-        async function updateOrderFromModal(status) {
-            const cost = parseFloat(document.getElementById('cost-input').value) || 0;
-            await db.collection("orders").doc(currentOrderDocId).update({
-                status: status,
-                purchaseCost: cost
-            });
+        async function updateStatus(status) {
+            const cost = parseFloat(document.getElementById('cost-in').value) || 0;
+            await db.collection("orders").doc(currentOrderDocId).update({ status, purchaseCost: cost });
             closeModal();
         }
 
-        async function fastUpdate(id, status) {
-            if(confirm("Changer le statut en " + status + " ?")) {
-                await db.collection("orders").doc(id).update({ status: status });
-            }
+        function closeModal() { document.getElementById('detailModal').style.display = 'none'; }
+        async function fastUpdate(id, status) { if(confirm("Passer en "+status+" ?")) await db.collection("orders").doc(id).update({ status }); }
+
+        // 2. UTILISATEURS
+        function loadUsers() {
+            db.collection("users").onSnapshot(snap => {
+                allUsers = [];
+                snap.forEach(doc => allUsers.push({id: doc.id, ...doc.data()}));
+                renderUsers(allUsers);
+            });
         }
 
-        // CHAT & SUPPORT
+        function renderUsers(users) {
+            const list = document.getElementById('users-list');
+            list.innerHTML = '';
+            users.forEach(u => {
+                const isBanned = u.status === 'Banni';
+                list.innerHTML += `
+                    <div class="info-card">
+                        <div class="card-body">
+                            <div><b>${u.fullName}</b><span>${u.email}</span></div>
+                            <button onclick="toggleBan('${u.id}', '${u.status}')" style="background:${isBanned?'var(--success)':'var(--danger)'}; color:white; border:none; padding:8px 12px; border-radius:8px; font-size:0.7rem;">
+                                ${isBanned?'DÉBLOQUER':'BANNIR'}
+                            </button>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function searchUser(val) {
+            const filtered = allUsers.filter(u => u.email.toLowerCase().includes(val.toLowerCase()) || u.fullName.toLowerCase().includes(val.toLowerCase()));
+            renderUsers(filtered);
+        }
+
+        async function toggleBan(id, status) {
+            const next = status === 'Banni' ? 'active' : 'Banni';
+            await db.collection("users").doc(id).update({ status: next });
+        }
+
+        // 3. SERVICES CMS
+        function loadServices() {
+            const services = ['Free Fire', 'Netflix', 'Disney+', 'PayPal', 'Wise', 'USDT'];
+            const list = document.getElementById('services-list');
+            list.innerHTML = '';
+            services.forEach(s => {
+                list.innerHTML += `
+                    <div class="service-item">
+                        <b>${s}</b>
+                        <button onclick="alert('Fonctionnalité CMS en cours de liaison avec les pages produits')" style="background:#eee; border:none; padding:8px; border-radius:8px;">CONFIGURER</button>
+                    </div>`;
+            });
+        }
+
+        // 4. ANNONCES
+        async function postAnn() {
+            const text = document.getElementById('ann-text').value;
+            if(!text) return;
+            await db.collection("announcements").add({ message: text, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+            document.getElementById('ann-text').value = '';
+            alert("Annonce publiée !");
+        }
+
+        function loadAnnouncements() {
+            db.collection("announcements").orderBy("createdAt", "desc").onSnapshot(snap => {
+                const hist = document.getElementById('ann-history');
+                hist.innerHTML = '<h4 style="margin-bottom:10px;">Historique</h4>';
+                snap.forEach(doc => {
+                    hist.innerHTML += `<div style="background:white; padding:10px; border-radius:10px; margin-bottom:5px; font-size:0.8rem;">${doc.data().message}</div>`;
+                });
+            });
+        }
+
+        // 5. CHAT
         function loadChatList() {
             db.collection("chats").orderBy("timestamp", "desc").onSnapshot(snap => {
                 const select = document.getElementById('chat-user-select');
                 const users = {};
-                snap.forEach(doc => {
-                    const c = doc.data();
-                    if(!users[c.userUID]) users[c.userUID] = c.userName || c.customerEmail || "Client";
-                });
+                snap.forEach(doc => { const c = doc.data(); if(!users[c.userUID]) users[c.userUID] = c.userName || "Client"; });
                 select.innerHTML = '<option value="">Choisir un client...</option>';
                 for(let id in users) select.innerHTML += `<option value="${id}">${users[id]}</option>`;
             });
@@ -356,7 +342,8 @@
                 box.innerHTML = '';
                 snap.forEach(doc => {
                     const m = doc.data();
-                    box.innerHTML += `<div class="msg ${m.sender === 'admin' ? 'admin' : 'user'}">${m.text}</div>`;
+                    const align = m.sender === 'admin' ? 'admin' : 'user';
+                    box.innerHTML += `<div class="msg ${align}">${m.text}</div>`;
                 });
                 box.scrollTop = box.scrollHeight;
             });
@@ -365,12 +352,7 @@
         async function sendReply() {
             const txt = document.getElementById('chat-input').value;
             if(!txt || !currentChatUID) return;
-            await db.collection("chats").add({
-                userUID: currentChatUID,
-                text: txt,
-                sender: "admin",
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
+            await db.collection("chats").add({ userUID: currentChatUID, text: txt, sender: "admin", timestamp: firebase.firestore.FieldValue.serverTimestamp() });
             document.getElementById('chat-input').value = '';
         }
 
