@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erreur Technique | PayFusion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #0056b3; --secondary: #002d5e; --bg: #f8fafc; --white: #ffffff; --error: #d63031; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--secondary); height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .card { background: var(--white); padding: 50px 30px; border-radius: 30px; text-align: center; max-width: 450px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.05); }
+        .icon-box { width: 80px; height: 80px; background: rgba(214, 48, 49, 0.1); color: var(--error); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2.5rem; margin: 0 auto 25px; }
+        h2 { font-size: 1.6rem; margin-bottom: 15px; }
+        p { color: #64748b; font-size: 0.95rem; margin-bottom: 30px; line-height: 1.6; }
+        .btn-back { display: block; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; text-decoration: none; font-weight: 600; transition: 0.3s; }
+        .btn-back:hover { background: var(--secondary); transform: translateY(-3px); }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon-box"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        <h2>Erreur de système</h2>
+        <p>Une erreur technique est survenue lors du traitement de votre demande. Nos serveurs sont peut-être surchargés.</p>
+        <a href="../home.html" class="btn-back">Réessayer plus tard</a>
+    </div>
+</body>
+</html>

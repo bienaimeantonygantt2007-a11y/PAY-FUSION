@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commande Réussie | PayFusion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0056b3;
+            --secondary: #002d5e;
+            --success-green: #27ae60;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--secondary);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .success-card {
+            background: var(--white);
+            padding: 50px 30px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0, 86, 179, 0.08);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .icon-box {
+            width: 80px;
+            height: 80px;
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success-green);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            margin: 0 auto 25px;
+            animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.3s both;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+
+        p {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .order-id {
+            background: #f1f5f9;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 30px;
+            display: inline-block;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-main {
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .btn-main:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 86, 179, 0.2);
+        }
+
+        .btn-outline {
+            padding: 15px;
+            background: transparent;
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .btn-outline:hover {
+            background: rgba(0, 86, 179, 0.05);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        /* Effet de confettis discret */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            border-radius: 2px;
+            animation: fall 3s linear infinite;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="success-card">
+        <div class="icon-box">
+            <i class="fa-solid fa-check-double"></i>
+        </div>
+        
+        <h2>Votre commande a été placée avec succès</h2>
+        
+        <p>
+            Nous avons bien reçu votre preuve de paiement. Un administrateur va valider votre transaction sous peu.
+        </p>
+
+        <div class="order-id" id="display-order-id">P-000000</div>
+
+        <div class="btn-group">
+            <a href="../home.html" class="btn-main">Retour au tableau de bord</a>
+            <a href="../orders.html" class="btn-outline">Suivre mes commandes</a>
+        </div>
+    </div>
+
+    <script>
+        // Récupérer l'ID de commande s'il a été passé (optionnel, sinon généré)
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ici on pourrait récupérer l'ID via l'URL ou le localStorage
+            // Pour l'instant on simule une récupération propre
+            const lastOrder = localStorage.getItem('last_order_id') || "PF-" + Math.floor(Math.random() * 900000 + 100000);
+            document.getElementById('display-order-id').textContent = lastOrder;
+            
+            // Création de quelques confettis bleus pour le style fluide
+            for (let i = 0; i < 15; i++) {
+                createConfetti();
+            }
+        });
+
+        function createConfetti() {
+            const c = document.createElement('div');
+            c.className = 'confetti';
+            c.style.left = Math.random() * 100 + 'vw';
+            c.style.top = '-10px';
+            c.style.backgroundColor = ['#0056b3', '#00d2ff', '#f8fafc'][Math.floor(Math.random() * 3)];
+            c.style.opacity = Math.random();
+            c.style.animationDuration = (Math.random() * 2 + 3) + 's';
+            document.body.appendChild(c);
+            setTimeout(() => c.remove(), 4000);
+        }
+    </script>
+</body>
+</html>
