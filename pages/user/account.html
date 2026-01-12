@@ -1,1 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Profil | PayFusion Haiti</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
+    <style>
+        :root {
+            --primary: #0056b3;
+            --secondary: #002d5e;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--secondary); padding-bottom: 40px; }
+
+        header {
+            height: 70px; background: var(--white); display: flex; align-items: center; 
+            padding: 0 5%; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        header .back-btn { color: var(--primary); font-size: 1.5rem; text-decoration: none; margin-right: 20px; }
+        header h1 { font-size: 1.2rem; font-weight: 700; }
+
+        .profile-hero {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 40px 5%; text-align: center; color: white;
+        }
+        .avatar-circle {
+            width: 80px; height: 80px; background: rgba(255,255,255,0.2);
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            font-size: 2rem; margin: 0 auto 15px; border: 3px solid white;
+        }
+
+        .container { padding: 30px 5%; max-width: 600px; margin: 0 auto; }
+
+        .info-card {
+            background: var(--white); border-radius: 20px; padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02); border: 1px solid #f1f5f9;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: #64748b; margin-bottom: 8px; }
+        .form-group input {
+            width: 100%; padding: 12px 15px; border: 1.5px solid #e2e8f0; border-radius: 12px;
+            font-size: 0.95rem; outline: none; transition: var(--transition);
+        }
+        .form-group input:focus { border-color: var(--primary); background: #fcfcfd; }
+        .form-group input:disabled { background: #f8fafc; color: #94a3b8; border-color: #f1f5f9; cursor: not-allowed; }
+
+        .btn-update {
+            width: 100%; padding: 16px; background: var(--primary); color: white;
+            border: none; border-radius: 12px; font-weight: 700; cursor: pointer;
+            transition: var(--transition); margin-top: 10px;
+        }
+        .btn-update:hover { background: var(--secondary); transform: translateY(-2px); }
+
+        #msg-status { text-align: center; margin-top: 15px; font-size: 0.85rem; display: none; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../home.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+        <h1>Mon Compte</h1>
+    </header>
+
+    <div class="profile-hero">
+        <div class="avatar-circle"><i class="fa-solid fa-user"></i></div>
+        <h2 id="display-name">Chargement...</h2>
+        <p id="display-email" style="opacity: 0.8; font-size: 0.9rem;">Email</p>
+    </div>
+
+    <div class="container">
+        <div class="info-card">
+            <form id="profileForm">
+                <div class="form-group">
+                    <label>Nom complet</label>
+                    <input type="text" id="fullName" required>
+                </div>
+                <div class="form-group">
+                    <label>Numéro de téléphone</label>
+                    <input type="tel" id="phone" required>
+                </div>
+                <div class="form-group">
+                    <label>Adresse Email</label>
+                    <input type="email" id="email" disabled>
+                </div>
+                <div class="form-group">
+                    <label>Date de naissance</label>
+                    <input type="date" id="dob" required>
+                </div>
+                <button type="submit" class="btn-update">Mettre à jour mon profil</button>
+            </form>
+            <p id="msg-status"></p>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWSmxal-nrATp0J536tHcS6e9EHhNP3jI",
+            authDomain: "pay-fusion-haiti.firebaseapp.com",
+            projectId: "pay-fusion-haiti",
+            storageBucket: "pay-fusion-haiti.firebasestorage.app",
+            messagingSenderId: "699710501026",
+            appId: "1:699710501026:web:edcf4ab70601b46c3867fb"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                loadUserData(user.uid);
+            } else {
+                window.location.href = "../login.html";
+            }
+        });
+
+        async function loadUserData(uid) {
+            const doc = await db.collection("users").doc(uid).get();
+            if (doc.exists) {
+                const data = doc.data();
+                document.getElementById('fullName').value = data.fullName;
+                document.getElementById('phone').value = data.phone;
+                document.getElementById('email').value = data.email;
+                document.getElementById('dob').value = data.dob;
+                
+                document.getElementById('display-name').textContent = data.fullName;
+                document.getElementById('display-email').textContent = data.email;
+            }
+        }
+
+        document.getElementById('profileForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+            const status = document.getElementById('msg-status');
+
+            try {
+                await db.collection("users").doc(user.uid).update({
+                    fullName: document.getElementById('fullName').value,
+                    phone: document.getElementById('phone').value,
+                    dob: document.getElementById('dob').value
+                });
+                status.style.display = "block";
+                status.style.color = "#27ae60";
+                status.textContent = "Profil mis à jour avec succès !";
+                document.getElementById('display-name').textContent = document.getElementById('fullName').value;
+            } catch (err) {
+                status.style.display = "block";
+                status.style.color = "#e74c3c";
+                status.textContent = "Erreur lors de la mise à jour.";
+            }
+        };
+    </script>
+</body>
+</html>

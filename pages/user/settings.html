@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramètres | PayFusion Haiti</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        :root {
+            /* Mode Clair (Par défaut) */
+            --primary: #0056b3;
+            --secondary: #002d5e;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --card-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            --transition: all 0.3s ease;
+        }
+
+        /* Variables pour le Mode Sombre */
+        body.dark-mode {
+            --bg: #0f172a;
+            --white: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --card-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); transition: var(--transition); min-height: 100vh; }
+
+        header {
+            height: 70px; background: var(--white); display: flex; align-items: center; 
+            padding: 0 5%; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: var(--transition);
+        }
+        header .back-btn { color: var(--primary); font-size: 1.5rem; text-decoration: none; margin-right: 20px; }
+        header h1 { font-size: 1.2rem; font-weight: 700; }
+
+        .container { padding: 30px 5%; max-width: 600px; margin: 0 auto; }
+
+        .settings-section { margin-bottom: 35px; }
+        .section-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary); font-weight: 700; margin-bottom: 15px; }
+
+        .settings-card {
+            background: var(--white); border-radius: 20px; box-shadow: var(--card-shadow); 
+            border: 1px solid var(--border); overflow: hidden; transition: var(--transition);
+        }
+
+        .setting-item {
+            padding: 18px 20px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .setting-item:last-child { border-bottom: none; }
+
+        .item-info { display: flex; align-items: center; gap: 15px; }
+        .item-icon { width: 40px; height: 40px; background: rgba(0, 86, 179, 0.1); color: var(--primary); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; }
+        
+        .item-label { display: flex; flex-direction: column; }
+        .item-label b { font-size: 0.95rem; }
+        .item-label span { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* SWITCH TOGGLE STYLE */
+        .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1; transition: .4s; border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+            background-color: white; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        /* SELECT LANGUAGE STYLE */
+        select {
+            background: var(--bg); color: var(--text-main); border: 1px solid var(--border);
+            padding: 8px 12px; border-radius: 10px; font-size: 0.9rem; outline: none; cursor: pointer;
+        }
+
+        .btn-logout {
+            margin-top: 20px; width: 100%; padding: 16px; background: rgba(231, 76, 60, 0.1); 
+            color: #e74c3c; border: none; border-radius: 15px; font-weight: 700; cursor: pointer;
+            transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-logout:hover { background: #e74c3c; color: white; }
+    </style>
+</head>
+<body id="main-body">
+
+    <header>
+        <a href="../home.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+        <h1 id="lang-title">Paramètres</h1>
+    </header>
+
+    <div class="container">
+        <!-- APPARENCE -->
+        <div class="settings-section">
+            <h3 class="section-title" id="lang-sec-appearance">Apparence</h3>
+            <div class="settings-card">
+                <div class="setting-item">
+                    <div class="item-info">
+                        <div class="item-icon"><i class="fa-solid fa-moon"></i></div>
+                        <div class="item-label">
+                            <b id="lang-darkmode">Mode Sombre</b>
+                            <span id="lang-darkmode-sub">Réduire la fatigue oculaire</span>
+                        </div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- PRÉFÉRENCES -->
+        <div class="settings-section">
+            <h3 class="section-title" id="lang-sec-prefs">Préférences</h3>
+            <div class="settings-card">
+                <!-- LANGUE -->
+                <div class="setting-item">
+                    <div class="item-info">
+                        <div class="item-icon"><i class="fa-solid fa-globe"></i></div>
+                        <div class="item-label">
+                            <b id="lang-language">Langue</b>
+                            <span id="lang-language-sub">Français / English / Kreyòl</span>
+                        </div>
+                    </div>
+                    <select id="language-select">
+                        <option value="fr">Français</option>
+                        <option value="en">English</option>
+                        <option value="kr">Kreyòl</option>
+                    </select>
+                </div>
+
+                <!-- NOTIFICATIONS -->
+                <div class="setting-item">
+                    <div class="item-info">
+                        <div class="item-icon"><i class="fa-solid fa-bell"></i></div>
+                        <div class="item-label">
+                            <b id="lang-notif">Notifications</b>
+                            <span id="lang-notif-sub">Alertes de commande</span>
+                        </div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="notif-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- SÉCURITÉ -->
+        <div class="settings-section">
+            <h3 class="section-title" id="lang-sec-security">Sécurité</h3>
+            <div class="settings-card">
+                <div class="setting-item" onclick="resetPassword()" style="cursor:pointer;">
+                    <div class="item-info">
+                        <div class="item-icon"><i class="fa-solid fa-lock"></i></div>
+                        <div class="item-label">
+                            <b id="lang-pass">Mot de passe</b>
+                            <span id="lang-pass-sub">Changer mon mot de passe</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right" style="font-size: 0.8rem; color: var(--text-muted);"></i>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-logout" onclick="logout()">
+            <i class="fa-solid fa-power-off"></i> <span id="lang-logout">Déconnexion</span>
+        </button>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWSmxal-nrATp0J536tHcS6e9EHhNP3jI",
+            authDomain: "pay-fusion-haiti.firebaseapp.com",
+            projectId: "pay-fusion-haiti",
+            storageBucket: "pay-fusion-haiti.firebasestorage.app",
+            messagingSenderId: "699710501026",
+            appId: "1:699710501026:web:edcf4ab70601b46c3867fb"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // 1. GESTION DU THÈME
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.getElementById('main-body');
+
+        themeToggle.addEventListener('change', () => {
+            if(themeToggle.checked) {
+                body.classList.add('dark-mode');
+                localStorage.setItem('payfusion-theme', 'dark');
+            } else {
+                body.classList.remove('dark-mode');
+                localStorage.setItem('payfusion-theme', 'light');
+            }
+        });
+
+        // 2. GESTION DES LANGUES
+        const translations = {
+            fr: {
+                title: "Paramètres", sec_app: "Apparence", dark: "Mode Sombre", dark_sub: "Réduire la fatigue oculaire",
+                sec_pref: "Préférences", lang: "Langue", lang_sub: "Choisir la langue", notif: "Notifications",
+                notif_sub: "Alertes de commande", sec_secu: "Sécurité", pass: "Mot de passe", pass_sub: "Changer mon mot de passe", logout: "Déconnexion"
+            },
+            en: {
+                title: "Settings", sec_app: "Appearance", dark: "Dark Mode", dark_sub: "Reduce eye strain",
+                sec_pref: "Preferences", lang: "Language", lang_sub: "Choose language", notif: "Notifications",
+                notif_sub: "Order alerts", sec_secu: "Security", pass: "Password", pass_sub: "Change my password", logout: "Logout"
+            },
+            kr: {
+                title: "Paramèt", sec_app: "Aparans", dark: "Mòd Nwa", dark_sub: "Pou je ou pa fatige",
+                sec_pref: "Preferans", lang: "Lang", lang_sub: "Chwazi lang ou", notif: "Notifikasyon",
+                notif_sub: "Avètisman kòmand", sec_secu: "Sekirite", pass: "Modpas", pass_sub: "Chanje modpas mwen", logout: "Dekonekte"
+            }
+        };
+
+        const langSelect = document.getElementById('language-select');
+        langSelect.addEventListener('change', (e) => {
+            const selectedLang = e.target.value;
+            applyLanguage(selectedLang);
+            saveLanguageToFirestore(selectedLang);
+        });
+
+        function applyLanguage(lang) {
+            const t = translations[lang];
+            document.getElementById('lang-title').textContent = t.title;
+            document.getElementById('lang-sec-appearance').textContent = t.sec_app;
+            document.getElementById('lang-darkmode').textContent = t.dark;
+            document.getElementById('lang-darkmode-sub').textContent = t.dark_sub;
+            document.getElementById('lang-sec-prefs').textContent = t.sec_pref;
+            document.getElementById('lang-language').textContent = t.lang;
+            document.getElementById('lang-language-sub').textContent = t.lang_sub;
+            document.getElementById('lang-notif').textContent = t.notif;
+            document.getElementById('lang-notif-sub').textContent = t.notif_sub;
+            document.getElementById('lang-sec-security').textContent = t.sec_secu;
+            document.getElementById('lang-pass').textContent = t.pass;
+            document.getElementById('lang-pass-sub').textContent = t.pass_sub;
+            document.getElementById('lang-logout').textContent = t.logout;
+            localStorage.setItem('payfusion-lang', lang);
+        }
+
+        // 3. INITIALISATION (Load saved prefs)
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load Theme
+            const savedTheme = localStorage.getItem('payfusion-theme');
+            if(savedTheme === 'dark') {
+                body.classList.add('dark-mode');
+                themeToggle.checked = true;
+            }
+
+            // Load Language
+            const savedLang = localStorage.getItem('payfusion-lang') || 'fr';
+            langSelect.value = savedLang;
+            applyLanguage(savedLang);
+        });
+
+        async function saveLanguageToFirestore(lang) {
+            const user = auth.currentUser;
+            if(user) {
+                await db.collection("users").doc(user.uid).update({ language: lang });
+            }
+        }
+
+        function resetPassword() {
+            const user = auth.currentUser;
+            if(user) {
+                auth.sendPasswordResetEmail(user.email).then(() => {
+                    alert("Email de réinitialisation envoyé à : " + user.email);
+                });
+            }
+        }
+
+        function logout() {
+            auth.signOut().then(() => window.location.href = "../login.html");
+        }
+    </script>
+</body>
+</html>
