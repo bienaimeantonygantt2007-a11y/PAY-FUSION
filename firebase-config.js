@@ -1,12 +1,11 @@
-// Configuration Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyAWSmxal-nrATp0J536tHcS6e9EHhNP3jI",
-  authDomain: "pay-fusion-haiti.firebaseapp.com",
-  projectId: "pay-fusion-haiti",
-  storageBucket: "pay-fusion-haiti.firebasestorage.app",
-  messagingSenderId: "699710501026",
-  appId: "1:699710501026:web:edcf4ab70601b46c3867fb",
-  measurementId: "G-4CJLNWV26B"
+  apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
+  authDomain: "pay-fusion-509.firebaseapp.com",
+  projectId: "pay-fusion-509",
+  storageBucket: "pay-fusion-509.firebasestorage.app",
+  messagingSenderId: "401434428368",
+  appId: "1:401434428368:web:c1f526254f63fa57402fd5",
+  measurementId: "G-JN41S8MKWH"
 };
 
 // Initialisation
