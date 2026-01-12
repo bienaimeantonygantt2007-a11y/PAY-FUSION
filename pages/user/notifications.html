@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notifications | PayFusion Haiti</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Annonces & Notifications | PayFusion Haiti</title>
+    
+    <!-- Polices & Icônes -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
@@ -13,96 +17,128 @@
     <style>
         :root {
             --primary: #0056b3;
+            --primary-glow: rgba(0, 86, 179, 0.1);
             --secondary: #002d5e;
             --bg: #f8fafc;
             --white: #ffffff;
             --text-main: #1e293b;
             --text-muted: #64748b;
             --border: #e2e8f0;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Support du Mode Sombre via LocalStorage */
         body.dark-mode {
             --bg: #0f172a;
             --white: #1e293b;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border: #334155;
+            --primary-glow: rgba(0, 185, 255, 0.1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg); color: var(--text-main); transition: var(--transition); min-height: 100vh; }
+        body { background-color: var(--bg); color: var(--text-main); transition: var(--transition); min-height: 100vh; overflow-x: hidden; }
 
-        header {
-            height: 70px; background: var(--white); display: flex; align-items: center; 
-            padding: 0 5%; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            transition: var(--transition);
+        /* Arrière-plan Dynamique */
+        .bg-blobs {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; filter: blur(80px); opacity: 0.5;
         }
-        header .back-btn { color: var(--primary); font-size: 1.5rem; text-decoration: none; margin-right: 20px; }
-        header h1 { font-size: 1.2rem; font-weight: 700; }
+        .blob {
+            position: absolute; width: 400px; height: 400px;
+            background: var(--primary-glow); border-radius: 50%;
+            animation: move 18s infinite alternate;
+        }
+        @keyframes move { from { transform: translate(-10%, -10%); } to { transform: translate(15%, 15%); } }
 
-        .container { padding: 30px 5%; max-width: 700px; margin: 0 auto; }
+        /* HEADER GLASSMORPHISM */
+        header {
+            height: 70px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px);
+            display: flex; align-items: center; padding: 0 6%; position: sticky; top: 0; z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+        header .back-btn { color: var(--primary); font-size: 1.4rem; text-decoration: none; margin-right: 15px; transition: 0.3s; }
+        header h1 { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.5px; }
 
-        /* NOTIFICATION CARD */
+        .container { padding: 25px 6%; max-width: 700px; margin: 0 auto; }
+
+        /* NOTIFICATION CARDS */
         .notif-card {
             background: var(--white);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 15px;
+            border-radius: 26px;
+            padding: 22px;
+            margin-bottom: 18px;
             display: flex;
-            gap: 15px;
+            gap: 18px;
             border: 1px solid var(--border);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
             transition: var(--transition);
-            animation: slideIn 0.5s ease forwards;
             opacity: 0;
+            transform: translateY(20px);
+            animation: cardFadeIn 0.6s ease forwards;
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes cardFadeIn { to { opacity: 1; transform: translateY(0); } }
 
         .notif-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 86, 179, 0.05);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 86, 179, 0.08);
             border-color: var(--primary);
         }
 
         .notif-icon {
-            width: 50px;
-            height: 50px;
-            background: rgba(0, 86, 179, 0.1);
+            width: 52px;
+            height: 52px;
+            background: var(--primary-glow);
             color: var(--primary);
-            border-radius: 15px;
+            border-radius: 16px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             flex-shrink: 0;
         }
 
-        .notif-content { flex: 1; }
-        .notif-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-        .notif-title { font-weight: 700; font-size: 1rem; color: var(--secondary); }
-        .notif-time { font-size: 0.75rem; color: var(--text-muted); }
-        .notif-message { font-size: 0.9rem; color: var(--text-main); line-height: 1.5; }
+        .notif-content { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+        
+        .notif-header { display: flex; justify-content: space-between; align-items: center; }
+        
+        .notif-tag {
+            font-size: 0.65rem; font-weight: 800; text-transform: uppercase; 
+            letter-spacing: 1px; color: var(--primary); background: var(--primary-glow);
+            padding: 4px 10px; border-radius: 8px;
+        }
 
-        /* EMPTY STATE */
+        .notif-time { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+        
+        .notif-message { 
+            font-size: 0.95rem; color: var(--text-main); line-height: 1.6; 
+            font-weight: 500;
+        }
+
+        /* ETAT VIDE / CHARGEMENT */
+        #loading-state { text-align: center; padding: 60px; color: var(--primary); }
+        
         .empty-state {
             text-align: center;
             padding: 100px 20px;
             display: none;
         }
-        .empty-state i { font-size: 4rem; color: var(--border); margin-bottom: 20px; }
-        .empty-state p { color: var(--text-muted); font-size: 1rem; }
+        .empty-state i { font-size: 4rem; color: var(--border); margin-bottom: 25px; display: block; }
+        .empty-state p { color: var(--text-muted); font-size: 1.1rem; font-weight: 600; }
 
-        /* LOADING SPINNER */
-        #loading { text-align: center; padding: 50px; color: var(--primary); }
+        @media (max-width: 480px) {
+            .container { padding: 20px 5%; }
+            .notif-card { padding: 18px; border-radius: 22px; gap: 14px; }
+            .notif-icon { width: 44px; height: 44px; font-size: 1.1rem; }
+        }
     </style>
 </head>
 <body id="main-body">
+
+    <div class="bg-blobs">
+        <div class="blob"></div>
+    </div>
 
     <header>
         <a href="../home.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
@@ -110,51 +146,64 @@
     </header>
 
     <div class="container">
-        <div id="loading">
+        <!-- État de chargement pro -->
+        <div id="loading-state">
             <i class="fa-solid fa-circle-notch fa-spin fa-2x"></i>
+            <p style="margin-top: 15px; font-weight: 600; font-size: 0.9rem;">Synchronisation des annonces...</p>
         </div>
 
         <div id="notif-list">
-            <!-- Les annonces seront injectées ici -->
+            <!-- Injecté dynamiquement par Firebase -->
         </div>
 
+        <!-- État si aucune annonce -->
         <div class="empty-state" id="empty-notif">
             <i class="fa-solid fa-bell-slash"></i>
-            <p>Aucune notification pour le moment.</p>
+            <p>Votre flux est à jour.</p>
         </div>
     </div>
 
     <script>
         const firebaseConfig = {
-  apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
-  authDomain: "pay-fusion-509.firebaseapp.com",
-  projectId: "pay-fusion-509",
-  storageBucket: "pay-fusion-509.firebasestorage.app",
-  messagingSenderId: "401434428368",
-  appId: "1:401434428368:web:c1f526254f63fa57402fd5"
+            apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
+            authDomain: "pay-fusion-509.firebaseapp.com",
+            projectId: "pay-fusion-509",
+            storageBucket: "pay-fusion-509.firebasestorage.app",
+            messagingSenderId: "401434428368",
+            appId: "1:401434428368:web:c1f526254f63fa57402fd5",
+            measurementId: "G-JN41S8MKWH"
         };
+
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
 
-        // 1. Initialisation Thème & Auth
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('payfusion-theme');
-            if(savedTheme === 'dark') document.body.classList.add('dark-mode');
-            
-            auth.onAuthStateChanged(user => {
-                if (!user) window.location.href = "../login.html";
-                else loadNotifications();
-            });
+        // 1. INITIALISATION & SECURITÉ ANTI-BAN
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // Vérifier si l'utilisateur est banni en temps réel
+                db.collection("users").doc(user.uid).onSnapshot(doc => {
+                    if (doc.exists && doc.data().status === "Banni") {
+                        alert("Accès révoqué.");
+                        auth.signOut().then(() => window.location.href = "../login.html");
+                    }
+                });
+                loadNotifications();
+            } else {
+                window.location.href = "../login.html";
+            }
         });
 
-        // 2. Charger les annonces depuis Firestore
+        // Appliquer le thème sauvegardé
+        if(localStorage.getItem('payfusion-theme') === 'dark') document.body.classList.add('dark-mode');
+
+        // 2. CHARGEMENT DES ANNONCES (onSnapshot pour le temps réel)
         function loadNotifications() {
             db.collection("announcements")
               .orderBy("createdAt", "desc")
-              .onSnapshot(snapshot => {
+              .onSnapshot((snapshot) => {
                   const list = document.getElementById('notif-list');
-                  const loading = document.getElementById('loading');
+                  const loading = document.getElementById('loading-state');
                   const empty = document.getElementById('empty-notif');
 
                   loading.style.display = 'none';
@@ -164,18 +213,21 @@
                       empty.style.display = 'block';
                   } else {
                       empty.style.display = 'none';
-                      snapshot.forEach(doc => {
+                      snapshot.forEach((doc, index) => {
                           const data = doc.data();
-                          const time = data.createdAt ? formatDate(data.createdAt.toDate()) : "À l'instant";
+                          const time = data.createdAt ? formatSmartDate(data.createdAt.toDate()) : "À l'instant";
                           
+                          // Animation en cascade
+                          const delay = index * 0.1;
+
                           list.innerHTML += `
-                            <div class="notif-card">
+                            <div class="notif-card" style="animation-delay: ${delay}s">
                                 <div class="notif-icon">
                                     <i class="fa-solid fa-bullhorn"></i>
                                 </div>
                                 <div class="notif-content">
                                     <div class="notif-header">
-                                        <span class="notif-title">Annonce PayFusion</span>
+                                        <span class="notif-tag">Officiel</span>
                                         <span class="notif-time">${time}</span>
                                     </div>
                                     <p class="notif-message">${data.message}</p>
@@ -184,17 +236,22 @@
                           `;
                       });
                   }
+              }, (error) => {
+                  console.error("Erreur de flux:", error);
+                  document.getElementById('loading-state').innerHTML = "<p style='color:red;'>Erreur de chargement.</p>";
               });
         }
 
-        // 3. Formatage de la date pro
-        function formatDate(date) {
+        // 3. FORMATEUR DE DATE INTELLIGENT
+        function formatSmartDate(date) {
             const now = new Date();
-            const diff = Math.floor((now - date) / 1000); // secondes
-
-            if (diff < 60) return "À l'instant";
-            if (diff < 3600) return "Il y a " + Math.floor(diff / 60) + " min";
-            if (diff < 86400) return "Il y a " + Math.floor(diff / 3600) + " h";
+            const diffInSeconds = Math.floor((now - date) / 1000);
+            
+            if (diffInSeconds < 60) return "À l'instant";
+            if (diffInSeconds < 3600) return "Il y a " + Math.floor(diffInSeconds / 60) + " min";
+            
+            const isToday = now.toDateString() === date.toDateString();
+            if (isToday) return "Aujourd'hui à " + date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
             
             return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
         }
