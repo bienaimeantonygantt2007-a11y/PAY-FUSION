@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin | PayFusion</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>PayFusion Ultimate Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
@@ -18,180 +18,180 @@
             --white: #ffffff;
             --danger: #e74c3c;
             --success: #27ae60;
+            --warning: #f39c12;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: var(--bg); color: #2d3436; height: 100vh; display: flex; overflow: hidden; }
 
-        /* OVERLAY */
-        .sidebar-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4); display: none; z-index: 1001;
-        }
-        .sidebar-overlay.active { display: block; }
-
         /* SIDEBAR */
         .sidebar {
-            width: 280px; background: var(--secondary); color: white;
+            width: 260px; background: var(--secondary); color: white;
             display: flex; flex-direction: column; padding: 20px;
-            position: fixed; top: 0; left: -280px; height: 100%;
-            z-index: 1002; transition: var(--transition);
+            transition: var(--transition); z-index: 1002;
         }
-        .sidebar.active { left: 0; }
-        .sidebar h2 { font-size: 1.2rem; margin-bottom: 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+        .sidebar h2 { font-size: 1.1rem; margin-bottom: 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; font-weight: 800; }
 
         .nav-link {
-            padding: 15px; color: rgba(255,255,255,0.7); text-decoration: none;
+            padding: 12px 15px; color: rgba(255,255,255,0.7); text-decoration: none;
             display: flex; align-items: center; gap: 12px; border-radius: 10px;
-            margin-bottom: 5px; cursor: pointer; transition: 0.3s;
+            margin-bottom: 5px; cursor: pointer; transition: 0.3s; font-size: 0.9rem;
         }
         .nav-link:hover, .nav-link.active { background: var(--primary); color: white; }
 
-        /* MAIN */
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; width: 100%; }
+        /* MAIN CONTENT */
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
         header { 
-            background: white; padding: 15px 25px; display: flex; 
+            background: white; padding: 15px 30px; display: flex; 
             justify-content: space-between; align-items: center; 
             box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 900;
         }
-        .menu-toggle { font-size: 1.5rem; color: var(--primary); cursor: pointer; }
 
         .content-section { padding: 25px; display: none; }
         .content-section.active { display: block; }
 
-        /* TABLES */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
-        .stat-card p { font-size: 1.3rem; font-weight: 800; color: var(--primary); margin-top: 5px; }
+        /* STATS CARDS */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
+        .stat-card h4 { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-card p { font-size: 1.4rem; font-weight: 800; color: var(--secondary); margin-top: 5px; }
+        .profit-text { color: var(--success) !important; }
 
-        .data-card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th { text-align: left; padding: 12px; border-bottom: 2px solid #f1f5f9; color: #64748b; font-size: 0.8rem; text-transform: uppercase; }
+        /* DATA TABLES */
+        .data-card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        th { text-align: left; padding: 12px; border-bottom: 2px solid #f1f5f9; color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; }
         td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; }
 
-        .badge { padding: 4px 10px; border-radius: 50px; font-size: 0.7rem; font-weight: 700; }
-        .badge-pending { background: #fff7ed; color: #f39c12; }
-        .badge-success { background: #f0fdf4; color: #27ae60; }
-        .badge-danger { background: #fef2f2; color: var(--danger); }
-
-        /* MODAL DETAILS */
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.8); z-index: 2000; justify-content: center; align-items: center;
-            padding: 20px;
-        }
-        .modal-content {
-            background: white; padding: 25px; border-radius: 20px; width: 100%; max-width: 500px;
-            max-height: 90vh; overflow-y: auto;
-        }
-        .detail-row { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #f1f5f9; }
-        .detail-row b { display: block; font-size: 0.8rem; color: #64748b; text-transform: uppercase; }
-        .detail-row span { font-size: 1rem; font-weight: 600; color: var(--secondary); word-break: break-all; }
-        .proof-img { width: 100%; border-radius: 12px; margin-top: 15px; border: 2px solid #eee; }
-
-        /* CHAT */
-        .chat-container { height: 70vh; display: flex; flex-direction: column; background: white; border-radius: 15px; padding: 15px; }
-        .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 10px; }
+        /* UTILS */
+        .badge { padding: 5px 12px; border-radius: 50px; font-size: 0.7rem; font-weight: 700; }
+        .btn-icon { background: none; border: none; cursor: pointer; font-size: 1.1rem; transition: 0.2s; }
+        .btn-icon:hover { transform: scale(1.2); }
+        .admin-input { width: 100%; padding: 10px 15px; border: 1.5px solid #e2e8f0; border-radius: 10px; outline: none; margin-bottom: 10px; }
+        
+        /* CHAT SYSTEM IMPROVED */
+        .chat-layout { display: grid; grid-template-columns: 250px 1fr; gap: 20px; height: 60vh; }
+        .chat-sidebar { background: #f8fafc; border-radius: 15px; overflow-y: auto; padding: 10px; border: 1px solid #eee; }
+        .chat-main { display: flex; flex-direction: column; background: white; border-radius: 15px; border: 1px solid #eee; padding: 15px; }
+        .messages-area { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; }
         .msg { max-width: 80%; padding: 10px 15px; border-radius: 15px; font-size: 0.85rem; }
         .msg.admin { align-self: flex-end; background: var(--primary); color: white; }
         .msg.user { align-self: flex-start; background: #f1f5f9; }
-        .admin-input { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; outline: none; }
+        
+        .quick-replies { display: flex; gap: 8px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 5px; }
+        .reply-btn { background: #eef5ff; border: 1px solid var(--primary); color: var(--primary); padding: 5px 12px; border-radius: 50px; font-size: 0.75rem; cursor: pointer; white-space: nowrap; }
 
-        @media (min-width: 1024px) {
-            .sidebar { left: 0; position: relative; }
-            .sidebar-overlay { display: none !important; }
-            .menu-toggle { display: none; }
-        }
+        /* MODAL */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+
+        @media (max-width: 768px) { .sidebar { width: 70px; } .sidebar h2, .nav-link span { display: none; } }
     </style>
 </head>
 <body>
 
-    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
-
-    <div class="sidebar" id="sidebar">
-        <h2>ADMIN PANEL</h2>
-        <div class="nav-link active" onclick="showSec('orders')"><i class="fa-solid fa-receipt"></i> Commandes</div>
-        <div class="nav-link" onclick="showSec('users')"><i class="fa-solid fa-users-gear"></i> Utilisateurs</div>
-        <div class="nav-link" onclick="showSec('announcements')"><i class="fa-solid fa-bullhorn"></i> Annonces</div>
-        <div class="nav-link" onclick="showSec('chat')"><i class="fa-solid fa-comments"></i> Chat Support</div>
-        <div class="nav-link" onclick="logout()" style="margin-top: auto; color: #ff7675;"><i class="fa-solid fa-power-off"></i> Déconnexion</div>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>PAYFUSION PRO</h2>
+        <div class="nav-link active" onclick="showSection('orders')"><i class="fa-solid fa-receipt"></i> <span>Commandes</span></div>
+        <div class="nav-link" onclick="showSection('services')"><i class="fa-solid fa-layer-group"></i> <span>Services CMS</span></div>
+        <div class="nav-link" onclick="showSection('coupons')"><i class="fa-solid fa-ticket"></i> <span>Codes Promo</span></div>
+        <div class="nav-link" onclick="showSection('chat')"><i class="fa-solid fa-comments"></i> <span>Support Chat</span></div>
+        <div class="nav-link" onclick="showSection('users')"><i class="fa-solid fa-users"></i> <span>Clients</span></div>
+        <div class="nav-link" onclick="logout()" style="margin-top: auto; color: #ff7675;"><i class="fa-solid fa-power-off"></i> <span>Déconnexion</span></div>
     </div>
 
     <div class="main-content">
         <header>
-            <div class="menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars-staggered"></i></div>
-            <h4 id="header-title">Commandes</h4>
-            <div style="font-size: 0.8rem; font-weight: 600;">Marco (Admin)</div>
+            <h4 id="page-title">Tableau de Bord</h4>
+            <button onclick="exportToCSV()" class="reply-btn"><i class="fa-solid fa-file-export"></i> Export Excel</button>
         </header>
 
+        <!-- SECTION COMMANDES -->
         <section id="orders" class="content-section active">
             <div class="stats-grid">
-                <div class="stat-card"><h4>Revenus</h4><p id="stat-sales">0 HTG</p></div>
-                <div class="stat-card"><h4>Volume</h4><p id="stat-count">0</p></div>
+                <div class="stat-card"><h4>Chiffre d'Affaires</h4><p id="stat-revenue">0 HTG</p></div>
+                <div class="stat-card"><h4>Bénéfice Net</h4><p id="stat-profit" class="profit-text">0 HTG</p></div>
+                <div class="stat-card"><h4>Commandes</h4><p id="stat-count">0</p></div>
             </div>
             <div class="data-card">
                 <table>
                     <thead>
-                        <tr><th>ID</th><th>Client</th><th>Service</th><th>Total</th><th>Statut</th><th>Actions</th></tr>
+                        <tr><th>ID</th><th>Service</th><th>Client</th><th>Total</th><th>Statut</th><th>Action</th></tr>
                     </thead>
                     <tbody id="orders-list"></tbody>
                 </table>
             </div>
         </section>
 
-        <!-- UTILISATEURS -->
-        <section id="users" class="content-section">
+        <!-- SECTION SERVICES CMS -->
+        <section id="services" class="content-section">
             <div class="data-card">
+                <h3 style="margin-bottom:20px;">Gestion des Tarifs & Disponibilité</h3>
                 <table>
                     <thead>
-                        <tr><th>Nom</th><th>Email</th><th>Statut</th><th>Actions</th></tr>
+                        <tr><th>Service</th><th>Statut</th><th>Dernier Prix</th><th>Action</th></tr>
                     </thead>
-                    <tbody id="users-list"></tbody>
+                    <tbody id="services-list">
+                        <!-- Exemple dynamique -->
+                        <tr>
+                            <td>Netflix Premium</td>
+                            <td><span class="badge" style="background:#f0fdf4; color:green;">Actif</span></td>
+                            <td>450 HTG</td>
+                            <td><button class="reply-btn">Modifier</button></td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </section>
 
-        <!-- ANNONCES -->
-        <section id="announcements" class="content-section">
-            <div class="data-card">
-                <textarea id="ann-msg" class="admin-input" rows="4" placeholder="Votre annonce aux utilisateurs..."></textarea>
-                <button onclick="sendAnn()" style="background:var(--primary); color:white; width:100%; margin-top:15px; border-radius:10px; padding:12px; border:none; font-weight:700; cursor:pointer;">Publier l'annonce</button>
+        <!-- SECTION COUPONS -->
+        <section id="coupons" class="content-section">
+            <div class="data-card" style="max-width: 400px;">
+                <h3>Créer un Code Promo</h3>
+                <input type="text" id="cp-code" class="admin-input" placeholder="CODE (ex: PROMO509)">
+                <input type="number" id="cp-value" class="admin-input" placeholder="Réduction en HTG">
+                <button onclick="createCoupon()" style="width:100%; background:var(--primary); color:white; border:none; padding:12px; border-radius:10px; font-weight:700;">Générer le code</button>
             </div>
         </section>
 
-        <!-- CHAT -->
+        <!-- SECTION CHAT -->
         <section id="chat" class="content-section">
-            <div class="chat-container">
-                <select id="chat-user-select" class="admin-input" onchange="loadUserChat(this.value)">
-                    <option value="">Sélectionner un client...</option>
-                </select>
-                <div class="chat-messages" id="chat-box"></div>
-                <div style="display:flex; gap:10px; margin-top:10px;">
-                    <input type="text" id="chat-input" class="admin-input" placeholder="Répondre...">
-                    <button onclick="sendReply()" style="background:var(--primary); border:none; color:white; padding:10px 20px; border-radius:10px; cursor:pointer;"><i class="fa-solid fa-paper-plane"></i></button>
+            <div class="chat-layout">
+                <div class="chat-sidebar" id="chat-list"></div>
+                <div class="chat-main">
+                    <div id="chat-active-user" style="font-weight:700; margin-bottom:10px; color:var(--primary);">Sélectionnez un client</div>
+                    <div class="messages-area" id="chat-messages"></div>
+                    <div class="quick-replies">
+                        <button class="reply-btn" onclick="setQuickMsg('Bonjour ! Votre commande est en cours.')">En cours</button>
+                        <button class="reply-btn" onclick="setQuickMsg('Livraison effectuée. Vérifiez vos messages.')">Livré</button>
+                        <button class="reply-btn" onclick="setQuickMsg('Reçu invalide. Merci d\'envoyer un nouveau screenshot.')">Reçu HS</button>
+                    </div>
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="chat-input" class="admin-input" style="margin-bottom:0;" placeholder="Message...">
+                        <button onclick="sendReply()" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:10px;"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
                 </div>
             </div>
         </section>
     </div>
 
-    <!-- MODAL DETAILS COMMANDE -->
+    <!-- MODAL DETAILS COMMANDE (Identique au précédent mais avec coût d'achat) -->
     <div id="detailModal" class="modal">
         <div class="modal-content">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h3 id="modal-title" style="color:var(--primary);">Détails Commande</h3>
-                <i class="fa-solid fa-xmark" onclick="closeModal()" style="cursor:pointer; font-size:1.5rem;"></i>
+            <h3 id="modal-title" style="margin-bottom:20px;">Détails & Livraison</h3>
+            <div id="order-details-content"></div>
+            <img id="detail-proof-img" style="width:100%; border-radius:10px; margin:15px 0;">
+            
+            <div class="form-group" style="margin-top:15px;">
+                <label style="font-size:0.8rem; font-weight:700;">COÛT D'ACHAT (HTG)</label>
+                <input type="number" id="purchase-cost" class="admin-input" placeholder="Combien vous avez payé ce service ?">
             </div>
-            <div id="order-details-content">
-                <!-- Rempli par JS -->
-            </div>
-            <div id="order-proof-content">
-                <b>Preuve de paiement :</b>
-                <img id="detail-proof-img" class="proof-img" src="" alt="Aucune preuve">
-            </div>
-            <div style="display:flex; gap:10px; margin-top:20px;">
-                <button onclick="updateFromModal('Validé')" style="flex:1; background:var(--success); color:white; padding:12px; border:none; border-radius:10px; font-weight:700; cursor:pointer;">Valider</button>
-                <button onclick="updateFromModal('Refusé')" style="flex:1; background:var(--danger); color:white; padding:12px; border:none; border-radius:10px; font-weight:700; cursor:pointer;">Refuser</button>
+
+            <div style="display:flex; gap:10px;">
+                <button onclick="processOrder('Validé')" style="flex:1; background:var(--success); color:white; border:none; padding:15px; border-radius:12px; font-weight:700;">Valider & Notifier</button>
+                <button onclick="processOrder('Refusé')" style="flex:1; background:var(--danger); color:white; border:none; padding:15px; border-radius:12px; font-weight:700;">Refuser</button>
             </div>
         </div>
     </div>
@@ -211,147 +211,116 @@
 
         let currentChatUID = "";
         let currentOrderDocId = "";
-        let currentOrdersData = [];
+        let allOrdersData = [];
 
+        // AUTH SECURITY
         auth.onAuthStateChanged(user => {
             if (!user || user.email !== "bmarcco4412@gmail.com") window.location.href = "login.html";
-            else { loadData(); loadChatList(); }
+            else { loadOrders(); loadChatList(); }
         });
 
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('overlay').classList.toggle('active');
-        }
-
-        function showSec(id) {
+        function showSection(id) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             event.currentTarget.classList.add('active');
-            document.getElementById('header-title').textContent = event.currentTarget.textContent;
-            if(window.innerWidth < 1024) toggleSidebar();
         }
 
-        function loadData() {
+        // 1. GESTION DES COMMANDES & PROFITS
+        function loadOrders() {
             db.collection("orders").orderBy("createdAt", "desc").onSnapshot(snap => {
-                let html = ''; let rev = 0;
-                currentOrdersData = [];
+                let html = ''; let revenue = 0; let profit = 0;
+                allOrdersData = [];
                 snap.forEach(doc => {
                     const o = doc.data();
-                    const docId = doc.id;
-                    currentOrdersData.push({id: docId, ...o});
-                    if(o.status === "Validé") rev += o.total;
-                    
-                    let badgeClass = o.status === 'En attente' ? 'badge-pending' : (o.status === 'Validé' ? 'badge-success' : 'badge-danger');
-
+                    allOrdersData.push({id: doc.id, ...o});
+                    if(o.status === "Validé") {
+                        revenue += o.total;
+                        profit += (o.total - (o.purchaseCost || 0));
+                    }
                     html += `<tr>
-                        <td style="font-size:0.7rem;">${o.orderId}</td>
-                        <td>${o.customerEmail}</td>
+                        <td>${o.orderId}</td>
                         <td>${o.items[0].product}</td>
+                        <td>${o.customerEmail}</td>
                         <td>${o.total} HTG</td>
-                        <td><span class="badge ${badgeClass}">${o.status}</span></td>
-                        <td>
-                            <button onclick="openOrderDetails('${docId}')" style="color:var(--primary); border:none; background:none; cursor:pointer; font-size:1.1rem; margin-right:10px;"><i class="fa-solid fa-eye"></i></button>
-                            <button onclick="updateOrder('${docId}', 'Validé')" style="color:green; border:none; background:none; cursor:pointer; font-size:1.1rem; margin-right:10px;"><i class="fa-solid fa-check-circle"></i></button>
-                            <button onclick="updateOrder('${docId}', 'Refusé')" style="color:red; border:none; background:none; cursor:pointer; font-size:1.1rem;"><i class="fa-solid fa-times-circle"></i></button>
-                        </td>
+                        <td><span class="badge" style="background:#eee;">${o.status}</span></td>
+                        <td><button class="btn-icon" onclick="openOrder('${doc.id}')"><i class="fa-solid fa-eye" style="color:var(--primary)"></i></button></td>
                     </tr>`;
                 });
                 document.getElementById('orders-list').innerHTML = html;
-                document.getElementById('stat-sales').textContent = rev + " HTG";
+                document.getElementById('stat-revenue').textContent = revenue.toLocaleString() + " HTG";
+                document.getElementById('stat-profit').textContent = profit.toLocaleString() + " HTG";
                 document.getElementById('stat-count').textContent = snap.size;
-            });
-
-            db.collection("users").onSnapshot(snap => {
-                let html = '';
-                snap.forEach(doc => {
-                    const u = doc.data();
-                    html += `<tr>
-                        <td>${u.fullName}</td>
-                        <td>${u.email}</td>
-                        <td>${u.status || 'Actif'}</td>
-                        <td><button onclick="banUser('${doc.id}', '${u.status}')" style="color:red; border:none; background:none; cursor:pointer;"><i class="fa-solid fa-ban"></i></button></td>
-                    </tr>`;
-                });
-                document.getElementById('users-list').innerHTML = html;
             });
         }
 
-        function openOrderDetails(docId) {
-            currentOrderDocId = docId;
-            const order = currentOrdersData.find(o => o.id === docId);
-            if(!order) return;
-
-            const content = document.getElementById('order-details-content');
-            content.innerHTML = '';
-            
-            // Infos de base
-            addDetail(content, "Produit", order.items[0].product);
-            addDetail(content, "Pack", order.items[0].pack || order.items[0].amountUSD + " USD");
-            addDetail(content, "Méthode Paiement", order.paymentMethod);
-            addDetail(content, "Info Expéditeur", order.paymentSenderInfo);
-            addDetail(content, "Nom Expéditeur", order.paymentSenderName);
-
-            // Infos spécifiques selon produit
-            const item = order.items[0];
-            if(item.playerID) addDetail(content, "ID PLAYER FREE FIRE", item.playerID);
-            if(item.playerPseudo) addDetail(content, "PSEUDO PLAYER", item.playerPseudo);
-            if(item.whatsapp) addDetail(content, "WHATSAPP CLIENT", item.whatsapp);
-            if(item.paypalEmail) addDetail(content, "EMAIL PAYPAL", item.paypalEmail);
-            if(item.wiseEmail) addDetail(content, "EMAIL WISE", item.wiseEmail);
-            if(item.walletAddress) addDetail(content, "ADRESSE USDT (TRC20)", item.walletAddress);
-            if(item.userName) addDetail(content, "NOM DU COMPTE", item.userName);
-
-            // Preuve
-            document.getElementById('detail-proof-img').src = order.proofBase64 || "";
+        function openOrder(id) {
+            currentOrderDocId = id;
+            const o = allOrdersData.find(x => x.id === id);
+            const container = document.getElementById('order-details-content');
+            container.innerHTML = `
+                <p><b>Produit:</b> ${o.items[0].product}</p>
+                <p><b>Détails:</b> ${o.items[0].playerID || o.items[0].paypalEmail || o.items[0].walletAddress || 'N/A'}</p>
+                <p><b>WhatsApp:</b> ${o.items[0].whatsapp || 'Non fourni'}</p>
+            `;
+            document.getElementById('detail-proof-img').src = o.proofBase64;
             document.getElementById('detailModal').style.display = 'flex';
         }
 
-        function addDetail(parent, label, value) {
-            if(!value) return;
-            parent.innerHTML += `<div class="detail-row"><b>${label}</b><span>${value}</span></div>`;
+        async function processOrder(status) {
+            const cost = parseFloat(document.getElementById('purchase-cost').value) || 0;
+            const o = allOrdersData.find(x => x.id === currentOrderDocId);
+
+            await db.collection("orders").doc(currentOrderDocId).update({
+                status: status,
+                purchaseCost: cost
+            });
+
+            // 5. NOTIFICATION AUTO PAR CHAT
+            if(status === 'Validé') {
+                await db.collection("chats").add({
+                    userUID: o.uid,
+                    text: `Félicitations ! Votre commande ${o.orderId} (${o.items[0].product}) vient d'être validée.`,
+                    sender: "admin",
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+
+            document.getElementById('detailModal').style.display = 'none';
         }
 
-        function closeModal() { document.getElementById('detailModal').style.display = 'none'; }
-
-        function updateFromModal(status) {
-            updateOrder(currentOrderDocId, status);
-            closeModal();
+        // 3. CODES PROMO
+        async function createCoupon() {
+            const code = document.getElementById('cp-code').value.toUpperCase();
+            const val = document.getElementById('cp-value').value;
+            if(!code || !val) return;
+            await db.collection("coupons").doc(code).set({ value: parseInt(val), active: true });
+            alert("Coupon créé !");
         }
 
-        function updateOrder(id, status) { db.collection("orders").doc(id).update({ status: status }); }
-        
-        function banUser(id, status) {
-            const next = status === 'Banni' ? 'Actif' : 'Banni';
-            if(confirm(`Changer le statut en : ${next} ?`)) db.collection("users").doc(id).update({ status: next });
-        }
+        // 4. CHAT ET RÉPONSES RAPIDES
+        function setQuickMsg(txt) { document.getElementById('chat-input').value = txt; }
 
-        function sendAnn() {
-            const m = document.getElementById('ann-msg').value;
-            if(!m) return;
-            db.collection("announcements").add({ message: m, createdAt: firebase.firestore.FieldValue.serverTimestamp() })
-              .then(() => { alert("Publiée !"); document.getElementById('ann-msg').value = ""; });
-        }
-
-        // CHAT FIXED
         function loadChatList() {
             db.collection("chats").orderBy("timestamp", "desc").onSnapshot(snap => {
-                const select = document.getElementById('chat-user-select');
+                const list = document.getElementById('chat-list');
                 const users = {};
                 snap.forEach(doc => {
                     const c = doc.data();
                     if(!users[c.userUID]) users[c.userUID] = c.userName || "Client";
                 });
-                select.innerHTML = '<option value="">Sélectionner un client...</option>';
-                for(let id in users) select.innerHTML += `<option value="${id}">${users[id]}</option>`;
+                list.innerHTML = '';
+                for(let id in users) {
+                    list.innerHTML += `<div class="nav-link" style="color:black; margin-bottom:5px; border:1px solid #ddd;" onclick="loadMessages('${id}', '${users[id]}')">${users[id]}</div>`;
+                }
             });
         }
 
-        function loadUserChat(uid) {
+        function loadMessages(uid, name) {
             currentChatUID = uid;
-            if(!uid) return;
+            document.getElementById('chat-active-user').textContent = "Chat avec " + name;
             db.collection("chats").where("userUID", "==", uid).orderBy("timestamp", "asc").onSnapshot(snap => {
-                const box = document.getElementById('chat-box');
+                const box = document.getElementById('chat-messages');
                 box.innerHTML = '';
                 snap.forEach(doc => {
                     const m = doc.data();
@@ -361,21 +330,30 @@
             });
         }
 
-        function sendReply() {
-            const t = document.getElementById('chat-input').value;
-            if(!t || !currentChatUID) return;
-            
-            // On récupère le nom de l'utilisateur sélectionné pour la cohérence
-            const select = document.getElementById('chat-user-select');
-            const userName = select.options[select.selectedIndex].text;
-
-            db.collection("chats").add({
+        async function sendReply() {
+            const txt = document.getElementById('chat-input').value;
+            if(!txt || !currentChatUID) return;
+            await db.collection("chats").add({
                 userUID: currentChatUID,
-                userName: userName,
-                text: t,
+                text: txt,
                 sender: "admin",
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            }).then(() => document.getElementById('chat-input').value = "");
+            });
+            document.getElementById('chat-input').value = '';
+        }
+
+        // 6. EXPORT CSV
+        function exportToCSV() {
+            let csv = "ID,Client,Produit,Total,Status\n";
+            allOrdersData.forEach(o => {
+                csv += `${o.orderId},${o.customerEmail},${o.items[0].product},${o.total},${o.status}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'ventes_payfusion.csv');
+            a.click();
         }
 
         function logout() { auth.signOut().then(() => window.location.href = "login.html"); }
