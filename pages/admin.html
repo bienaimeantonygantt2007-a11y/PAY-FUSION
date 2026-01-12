@@ -25,7 +25,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: var(--bg); color: #2d3436; overflow-x: hidden; }
 
-        /* OVERLAY & SIDEBAR */
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 1001; }
         .sidebar-overlay.active { display: block; }
         .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: var(--secondary); color: white; z-index: 1002; transition: var(--transition); padding: 30px 20px; }
@@ -34,38 +33,30 @@
         .nav-link { padding: 15px; color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center; gap: 15px; border-radius: 12px; margin-bottom: 8px; cursor: pointer; }
         .nav-link.active { background: var(--primary); color: white; }
 
-        /* HEADER */
         header { background: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 900; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .menu-btn { font-size: 1.5rem; color: var(--primary); cursor: pointer; }
 
-        /* SECTIONS */
         .content-section { padding: 20px; display: none; }
         .content-section.active { display: block; }
 
-        /* STATS */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .stat-card { background: white; padding: 15px; border-radius: 15px; text-align: center; }
         .stat-card p { font-size: 1rem; font-weight: 800; color: var(--primary); }
 
-        /* CARDS (COMMANDES & UTILISATEURS) */
         .info-card { background: white; border-radius: 18px; padding: 15px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; }
-        .card-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.8rem; font-weight: 700; color: #94a3b8; }
-        .card-body { display: flex; justify-content: space-between; align-items: center; }
         .btn-group { margin-top: 15px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .btn-sm { padding: 10px; border-radius: 10px; border: none; font-size: 0.8rem; cursor: pointer; color: white; font-weight: 600; text-align: center; }
 
-        /* LISTES SERVICES */
-        .service-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; border-radius: 12px; margin-bottom: 8px; }
-        
-        /* FULLSCREEN MODAL */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 2000; flex-direction: column; overflow-y: auto; }
-        .modal-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .modal-body { padding: 20px; }
+        /* SWITCH STYLE */
+        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--success); }
+        input:checked + .slider:before { transform: translateX(20px); }
 
-        /* INPUTS */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 2000; flex-direction: column; overflow-y: auto; }
         .admin-input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 10px; outline: none; }
-        
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
     </style>
 </head>
 <body>
@@ -78,7 +69,7 @@
         <div class="nav-link" onclick="showSec('users', this)"><i class="fa-solid fa-users"></i> Utilisateurs</div>
         <div class="nav-link" onclick="showSec('services', this)"><i class="fa-solid fa-gears"></i> Services CMS</div>
         <div class="nav-link" onclick="showSec('announcements', this)"><i class="fa-solid fa-bullhorn"></i> Annonces</div>
-        <div class="nav-link" onclick="showSec('chat', this)"><i class="fa-solid fa-comments"></i> Support Chat</div>
+        <div class="nav-link" onclick="showSec('chat', this)"><i class="fa-solid fa-comments"></i> Chat Support</div>
         <a href="logout.html" class="nav-link" style="margin-top: auto; color: #ff7675;"><i class="fa-solid fa-power-off"></i> Déconnexion</a>
     </div>
 
@@ -89,7 +80,7 @@
             <div style="width:10px;"></div>
         </header>
 
-        <!-- COMMANDES -->
+        <!-- SECTION COMMANDES -->
         <section id="orders" class="content-section active">
             <div class="stats-grid">
                 <div class="stat-card"><h4>Ventes</h4><p id="stat-revenue">0 HTG</p></div>
@@ -98,32 +89,32 @@
             <div id="orders-list"></div>
         </section>
 
-        <!-- UTILISATEURS -->
+        <!-- SECTION UTILISATEURS -->
         <section id="users" class="content-section">
-            <input type="text" class="admin-input" placeholder="Rechercher un client..." onkeyup="searchUser(this.value)">
+            <input type="text" class="admin-input" placeholder="Rechercher (Nom/Email)..." onkeyup="searchUser(this.value)">
             <div id="users-list"></div>
         </section>
 
-        <!-- SERVICES CMS -->
+        <!-- SECTION SERVICES CMS (FONCTIONNELLE) -->
         <section id="services" class="content-section">
-            <div id="services-list"></div>
+            <div id="services-list-container">
+                <p style="text-align:center; padding:20px;">Chargement des services...</p>
+            </div>
         </section>
 
-        <!-- ANNONCES -->
+        <!-- SECTION ANNONCES -->
         <section id="announcements" class="content-section">
             <div style="background:white; padding:20px; border-radius:20px;">
-                <h3>Nouvelle Annonce</h3>
-                <textarea id="ann-text" class="admin-input" rows="4" placeholder="Tapez votre message ici..."></textarea>
-                <button onclick="postAnn()" style="width:100%; background:var(--primary); color:white; padding:12px; border:none; border-radius:10px; font-weight:700;">Publier l'annonce</button>
+                <h3>Publier une annonce</h3>
+                <textarea id="ann-text" class="admin-input" rows="4" placeholder="Votre message..."></textarea>
+                <button onclick="postAnn()" style="width:100%; background:var(--primary); color:white; padding:12px; border:none; border-radius:10px; font-weight:700;">PUBLIER</button>
             </div>
             <div id="ann-history" style="margin-top:20px;"></div>
         </section>
 
-        <!-- CHAT -->
+        <!-- SECTION CHAT -->
         <section id="chat" class="content-section">
-            <select id="chat-user-select" class="admin-input" onchange="loadUserChat(this.value)">
-                <option value="">Sélectionner un client...</option>
-            </select>
+            <select id="chat-user-select" class="admin-input" onchange="loadUserChat(this.value)"></select>
             <div id="chat-messages" style="height:50vh; overflow-y:auto; background:white; border-radius:15px; padding:15px; margin-bottom:10px; display:flex; flex-direction:column; gap:10px;"></div>
             <div style="display:flex; gap:10px;">
                 <input type="text" id="chat-input" class="admin-input" placeholder="Répondre..." style="margin-bottom:0;">
@@ -134,11 +125,11 @@
 
     <!-- MODAL DETAILS COMMANDE -->
     <div id="detailModal" class="modal">
-        <div class="modal-header"><h3>Détails Commande</h3><i class="fa-solid fa-circle-xmark" onclick="closeModal()" style="font-size:1.8rem; color:var(--danger)"></i></div>
+        <div class="modal-header"><h3>Détails</h3><i class="fa-solid fa-circle-xmark" onclick="closeModal()" style="font-size:1.8rem; color:var(--danger)"></i></div>
         <div class="modal-body" id="modal-content"></div>
         <div style="padding:20px; display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-            <button onclick="updateStatus('Validé')" style="background:var(--success); color:white; padding:15px; border:none; border-radius:12px; font-weight:700;">VALIDER</button>
-            <button onclick="updateStatus('Refusé')" style="background:var(--danger); color:white; padding:15px; border:none; border-radius:12px; font-weight:700;">REFUSER</button>
+            <button onclick="updateStatus('Validé')" style="background:var(--success); color:white; padding:15px; border-radius:12px; border:none; font-weight:700;">VALIDER</button>
+            <button onclick="updateStatus('Refusé')" style="background:var(--danger); color:white; padding:15px; border-radius:12px; border:none; font-weight:700;">REFUSER</button>
         </div>
     </div>
 
@@ -159,7 +150,6 @@
         let allOrders = [];
         let allUsers = [];
 
-        // SECURITÉ & INITIALISATION
         auth.onAuthStateChanged(user => {
             if (!user || user.email !== "bmarcco4412@gmail.com") window.location.href = "login.html";
             else { initAdmin(); }
@@ -168,12 +158,11 @@
         function initAdmin() {
             loadOrders();
             loadUsers();
-            loadServices();
+            loadServicesCMS(); // La nouvelle fonction
             loadAnnouncements();
             loadChatList();
         }
 
-        // NAVIGATION
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
@@ -188,7 +177,7 @@
             if(window.innerWidth < 1024) toggleSidebar();
         }
 
-        // 1. COMMANDES
+        // --- 1. COMMANDES ---
         function loadOrders() {
             db.collection("orders").orderBy("createdAt", "desc").onSnapshot(snap => {
                 const list = document.getElementById('orders-list');
@@ -200,21 +189,8 @@
                     const id = doc.id;
                     allOrders.push({id, ...o});
                     if(o.status === "Validé") { rev += o.total; prof += (o.total - (o.purchaseCost || 0)); }
-                    
                     const statusCol = o.status === 'En attente' ? 'var(--warning)' : (o.status === 'Validé' ? 'var(--success)' : 'var(--danger)');
-                    list.innerHTML += `
-                        <div class="info-card">
-                            <div class="card-header"><span>#${o.orderId}</span><span style="color:${statusCol}">${o.status}</span></div>
-                            <div class="card-body">
-                                <div><b>${o.items[0].product}</b><span>${o.customerEmail}</span></div>
-                                <div style="font-weight:800; color:var(--primary)">${o.total} HTG</div>
-                            </div>
-                            <div class="btn-group">
-                                <button class="btn-sm" style="background:var(--primary)" onclick="viewDetails('${id}')"><i class="fa-solid fa-eye"></i></button>
-                                <button class="btn-sm" style="background:var(--success)" onclick="fastUpdate('${id}', 'Validé')"><i class="fa-solid fa-check"></i></button>
-                                <button class="btn-sm" style="background:var(--danger)" onclick="fastUpdate('${id}', 'Refusé')"><i class="fa-solid fa-x"></i></button>
-                            </div>
-                        </div>`;
+                    list.innerHTML += `<div class="info-card"><div class="card-header"><span>#${o.orderId}</span><span style="color:${statusCol}">${o.status}</span></div><div class="card-body"><div><b>${o.items[0].product}</b><span>${o.customerEmail}</span></div><div style="font-weight:800; color:var(--primary)">${o.total} HTG</div></div><div class="btn-group"><button class="btn-sm" style="background:var(--primary)" onclick="viewDetails('${id}')"><i class="fa-solid fa-eye"></i></button><button class="btn-sm" style="background:var(--success)" onclick="fastUpdate('${id}', 'Validé')"><i class="fa-solid fa-check"></i></button><button class="btn-sm" style="background:var(--danger)" onclick="fastUpdate('${id}', 'Refusé')"><i class="fa-solid fa-x"></i></button></div></div>`;
                 });
                 document.getElementById('stat-revenue').textContent = rev + " HTG";
                 document.getElementById('stat-profit').textContent = prof + " HTG";
@@ -226,23 +202,10 @@
             const o = allOrders.find(x => x.id === id);
             const body = document.getElementById('modal-content');
             body.innerHTML = '';
-            
             const allInfo = {...o, ...o.items[0]};
             const labels = { orderId: "ID", customerEmail: "Email Client", total: "Total Payé", paymentMethod: "Moyen", paymentSenderInfo: "Compte Payeur", product: "Produit", pack: "Détails", playerID: "ID Free Fire", playerPseudo: "Pseudo", whatsapp: "WhatsApp", paypalEmail: "Email PayPal", walletAddress: "Wallet USDT" };
-
-            for(let key in labels) {
-                if(allInfo[key]) body.innerHTML += `<div style="margin-bottom:10px;"><label style="font-size:0.7rem; color:#94a3b8; font-weight:700;">${labels[key]}</label><p style="font-weight:600;">${allInfo[key]}</p></div>`;
-            }
-
-            body.innerHTML += `
-                <div style="margin-top:15px;">
-                    <label style="font-size:0.7rem; color:#94a3b8; font-weight:700;">PREUVE DE PAIEMENT</label>
-                    <img src="${o.proofBase64}" style="width:100%; border-radius:10px; margin-top:5px;" onclick="window.open(this.src)">
-                </div>
-                <div style="margin-top:15px;">
-                    <label style="font-size:0.7rem; color:var(--primary); font-weight:700;">COÛT D'ACHAT (HTG)</label>
-                    <input type="number" id="cost-in" class="admin-input" value="${o.purchaseCost || ''}" placeholder="0">
-                </div>`;
+            for(let key in labels) { if(allInfo[key]) body.innerHTML += `<div style="margin-bottom:10px;"><label style="font-size:0.7rem; color:#94a3b8; font-weight:700;">${labels[key]}</label><p style="font-weight:600;">${allInfo[key]}</p></div>`; }
+            body.innerHTML += `<div style="margin-top:15px;"><label style="font-size:0.7rem; color:#94a3b8; font-weight:700;">PREUVE</label><img src="${o.proofBase64}" style="width:100%; border-radius:10px; margin-top:5px;" onclick="window.open(this.src)"></div><div style="margin-top:15px;"><label style="font-size:0.7rem; color:var(--primary); font-weight:700;">COÛT D'ACHAT (HTG)</label><input type="number" id="cost-in" class="admin-input" value="${o.purchaseCost || ''}"></div>`;
             document.getElementById('detailModal').style.display = 'flex';
         }
 
@@ -253,13 +216,12 @@
         }
 
         function closeModal() { document.getElementById('detailModal').style.display = 'none'; }
-        async function fastUpdate(id, status) { if(confirm("Passer en "+status+" ?")) await db.collection("orders").doc(id).update({ status }); }
+        async function fastUpdate(id, status) { if(confirm("Confirmer ?")) await db.collection("orders").doc(id).update({ status }); }
 
-        // 2. UTILISATEURS
+        // --- 2. UTILISATEURS ---
         function loadUsers() {
             db.collection("users").onSnapshot(snap => {
-                allUsers = [];
-                snap.forEach(doc => allUsers.push({id: doc.id, ...doc.data()}));
+                allUsers = []; snap.forEach(doc => allUsers.push({id: doc.id, ...doc.data()}));
                 renderUsers(allUsers);
             });
         }
@@ -269,15 +231,7 @@
             list.innerHTML = '';
             users.forEach(u => {
                 const isBanned = u.status === 'Banni';
-                list.innerHTML += `
-                    <div class="info-card">
-                        <div class="card-body">
-                            <div><b>${u.fullName}</b><span>${u.email}</span></div>
-                            <button onclick="toggleBan('${u.id}', '${u.status}')" style="background:${isBanned?'var(--success)':'var(--danger)'}; color:white; border:none; padding:8px 12px; border-radius:8px; font-size:0.7rem;">
-                                ${isBanned?'DÉBLOQUER':'BANNIR'}
-                            </button>
-                        </div>
-                    </div>`;
+                list.innerHTML += `<div class="info-card"><div class="card-body"><div><b>${u.fullName}</b><span>${u.email}</span></div><button onclick="toggleBan('${u.id}', '${u.status}')" style="background:${isBanned?'var(--success)':'var(--danger)'}; color:white; border:none; padding:8px 12px; border-radius:8px; font-size:0.7rem;">${isBanned?'DÉBLOQUER':'BANNIR'}</button></div></div>`;
             });
         }
 
@@ -291,21 +245,55 @@
             await db.collection("users").doc(id).update({ status: next });
         }
 
-        // 3. SERVICES CMS
-        function loadServices() {
-            const services = ['Free Fire', 'Netflix', 'Disney+', 'PayPal', 'Wise', 'USDT'];
-            const list = document.getElementById('services-list');
-            list.innerHTML = '';
-            services.forEach(s => {
-                list.innerHTML += `
-                    <div class="service-item">
-                        <b>${s}</b>
-                        <button onclick="alert('Fonctionnalité CMS en cours de liaison avec les pages produits')" style="background:#eee; border:none; padding:8px; border-radius:8px;">CONFIGURER</button>
-                    </div>`;
+        // --- 3. SERVICES CMS (MAINTENANT FONCTIONNEL) ---
+        async function loadServicesCMS() {
+            const list = document.getElementById('services-list-container');
+            
+            db.collection("services").onSnapshot(async snap => {
+                // Si la collection est vide, on l'initialise
+                if(snap.empty) {
+                    const defaults = ['Free Fire', 'Netflix', 'Disney+', 'PayPal', 'Wise', 'USDT'];
+                    for(let s of defaults) {
+                        await db.collection("services").doc(s).set({ active: true, message: "Disponible", priceBonus: 0 });
+                    }
+                    return;
+                }
+
+                list.innerHTML = '';
+                snap.forEach(doc => {
+                    const s = doc.data();
+                    const statusText = s.active ? 'ACTIF' : 'INDISPONIBLE';
+                    const statusColor = s.active ? 'var(--success)' : 'var(--danger)';
+
+                    list.innerHTML += `
+                        <div class="info-card">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                <div>
+                                    <b style="font-size:1.1rem;">${doc.id}</b>
+                                    <p style="font-size:0.8rem; color:${statusColor}; font-weight:700;">${statusText}</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" ${s.active ? 'checked' : ''} onchange="updateServiceStatus('${doc.id}', this.checked)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <label style="font-size:0.7rem; font-weight:700; color:#94a3b8;">MESSAGE D'ÉTAT</label>
+                            <input type="text" class="admin-input" value="${s.message || ''}" placeholder="Ex: En maintenance" onchange="updateServiceMsg('${doc.id}', this.value)">
+                        </div>
+                    `;
+                });
             });
         }
 
-        // 4. ANNONCES
+        async function updateServiceStatus(id, bool) {
+            await db.collection("services").doc(id).update({ active: bool });
+        }
+
+        async function updateServiceMsg(id, msg) {
+            await db.collection("services").doc(id).update({ message: msg });
+        }
+
+        // --- 4. ANNONCES ---
         async function postAnn() {
             const text = document.getElementById('ann-text').value;
             if(!text) return;
@@ -318,18 +306,16 @@
             db.collection("announcements").orderBy("createdAt", "desc").onSnapshot(snap => {
                 const hist = document.getElementById('ann-history');
                 hist.innerHTML = '<h4 style="margin-bottom:10px;">Historique</h4>';
-                snap.forEach(doc => {
-                    hist.innerHTML += `<div style="background:white; padding:10px; border-radius:10px; margin-bottom:5px; font-size:0.8rem;">${doc.data().message}</div>`;
-                });
+                snap.forEach(doc => { hist.innerHTML += `<div style="background:white; padding:10px; border-radius:10px; margin-bottom:5px; font-size:0.8rem;">${doc.data().message}</div>`; });
             });
         }
 
-        // 5. CHAT
+        // --- 5. CHAT ---
         function loadChatList() {
             db.collection("chats").orderBy("timestamp", "desc").onSnapshot(snap => {
                 const select = document.getElementById('chat-user-select');
                 const users = {};
-                snap.forEach(doc => { const c = doc.data(); if(!users[c.userUID]) users[c.userUID] = c.userName || "Client"; });
+                snap.forEach(doc => { const c = doc.data(); if(!users[c.userUID]) users[c.userUID] = c.userName || c.customerEmail || "Client"; });
                 select.innerHTML = '<option value="">Choisir un client...</option>';
                 for(let id in users) select.innerHTML += `<option value="${id}">${users[id]}</option>`;
             });
@@ -340,11 +326,7 @@
             db.collection("chats").where("userUID", "==", uid).orderBy("timestamp", "asc").onSnapshot(snap => {
                 const box = document.getElementById('chat-messages');
                 box.innerHTML = '';
-                snap.forEach(doc => {
-                    const m = doc.data();
-                    const align = m.sender === 'admin' ? 'admin' : 'user';
-                    box.innerHTML += `<div class="msg ${align}">${m.text}</div>`;
-                });
+                snap.forEach(doc => { const m = doc.data(); box.innerHTML += `<div class="msg ${m.sender === 'admin' ? 'admin' : 'user'}">${m.text}</div>`; });
                 box.scrollTop = box.scrollHeight;
             });
         }
