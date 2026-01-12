@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mon Profil | PayFusion Haiti</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Polices & Icônes -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
@@ -14,149 +18,248 @@
         :root {
             --primary: #0056b3;
             --secondary: #002d5e;
+            --accent: #00d2ff;
             --bg: #f8fafc;
             --white: #ffffff;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --success: #27ae60;
+            --danger: #ef4444;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg); color: var(--secondary); padding-bottom: 40px; }
+        body { background-color: var(--bg); color: var(--text-main); padding-bottom: 50px; overflow-x: hidden; }
 
+        /* HEADER PREMIUM */
         header {
-            height: 70px; background: var(--white); display: flex; align-items: center; 
-            padding: 0 5%; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: 70px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            display: flex; align-items: center; padding: 0 6%; position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
         }
-        header .back-btn { color: var(--primary); font-size: 1.5rem; text-decoration: none; margin-right: 20px; }
-        header h1 { font-size: 1.2rem; font-weight: 700; }
+        header .back-btn { color: var(--primary); font-size: 1.4rem; text-decoration: none; margin-right: 15px; transition: 0.3s; }
+        header h1 { font-size: 1.1rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; }
 
+        /* PROFILE HERO */
         .profile-hero {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            padding: 40px 5%; text-align: center; color: white;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            padding: 50px 6% 80px; text-align: center; color: white; position: relative;
         }
-        .avatar-circle {
-            width: 80px; height: 80px; background: rgba(255,255,255,0.2);
-            border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            font-size: 2rem; margin: 0 auto 15px; border: 3px solid white;
-        }
-
-        .container { padding: 30px 5%; max-width: 600px; margin: 0 auto; }
-
-        .info-card {
-            background: var(--white); border-radius: 20px; padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02); border: 1px solid #f1f5f9;
+        .avatar-wrapper {
+            width: 100px; height: 100px; background: rgba(255, 255, 255, 0.2);
+            border: 4px solid var(--white); border-radius: 35%; margin: 0 auto 15px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 2.2rem; font-weight: 800; text-transform: uppercase;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
 
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: #64748b; margin-bottom: 8px; }
-        .form-group input {
-            width: 100%; padding: 12px 15px; border: 1.5px solid #e2e8f0; border-radius: 12px;
-            font-size: 0.95rem; outline: none; transition: var(--transition);
+        /* WALLET CARD */
+        .wallet-card {
+            background: var(--white); width: 88%; max-width: 400px; 
+            margin: -40px auto 30px; padding: 22px; border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0, 86, 179, 0.08);
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid rgba(0, 86, 179, 0.05); position: relative; z-index: 10;
         }
-        .form-group input:focus { border-color: var(--primary); background: #fcfcfd; }
-        .form-group input:disabled { background: #f8fafc; color: #94a3b8; border-color: #f1f5f9; cursor: not-allowed; }
+        .wallet-info span { display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .wallet-info b { font-size: 1.4rem; color: var(--primary); font-weight: 900; }
+        .wallet-icon { width: 45px; height: 45px; background: #f0f7ff; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.2rem; }
+
+        .container { padding: 0 6%; max-width: 600px; margin: 0 auto; }
+
+        /* FORM STYLING */
+        .info-card { background: var(--white); border-radius: 28px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; }
+        
+        .form-group { margin-bottom: 22px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 800; color: var(--secondary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .input-wrapper { position: relative; }
+        .input-wrapper i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 1rem; }
+        .input-wrapper input {
+            width: 100%; padding: 15px 15px 15px 48px; border: 1.5px solid #e2e8f0; border-radius: 16px;
+            font-size: 0.95rem; outline: none; transition: var(--transition); background: #fcfcfd; color: var(--text-main);
+        }
+        .input-wrapper input:focus { border-color: var(--primary); background: var(--white); box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1); }
+        .input-wrapper input:disabled { background: #f1f5f9; color: #94a3b8; cursor: not-allowed; border-style: dashed; }
 
         .btn-update {
-            width: 100%; padding: 16px; background: var(--primary); color: white;
-            border: none; border-radius: 12px; font-weight: 700; cursor: pointer;
-            transition: var(--transition); margin-top: 10px;
+            width: 100%; padding: 18px; background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; border: none; border-radius: 18px; font-weight: 800; font-size: 1rem;
+            cursor: pointer; transition: var(--transition); margin-top: 10px;
+            box-shadow: 0 10px 25px rgba(0, 86, 179, 0.2); display: flex; justify-content: center; align-items: center; gap: 10px;
         }
-        .btn-update:hover { background: var(--secondary); transform: translateY(-2px); }
+        .btn-update:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0, 86, 179, 0.3); }
+        .btn-update:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
 
-        #msg-status { text-align: center; margin-top: 15px; font-size: 0.85rem; display: none; }
+        #msg-status { 
+            text-align: center; margin-top: 20px; padding: 12px; border-radius: 12px; 
+            font-size: 0.85rem; font-weight: 600; display: none; animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 480px) {
+            .profile-hero { padding: 40px 6% 70px; }
+            .wallet-card { padding: 18px; width: 92%; }
+            .info-card { padding: 25px 20px; border-radius: 24px; }
+        }
     </style>
 </head>
 <body>
 
     <header>
         <a href="../home.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
-        <h1>Mon Compte</h1>
+        <h1>Paramètres du Profil</h1>
     </header>
 
     <div class="profile-hero">
-        <div class="avatar-circle"><i class="fa-solid fa-user"></i></div>
-        <h2 id="display-name">Chargement...</h2>
-        <p id="display-email" style="opacity: 0.8; font-size: 0.9rem;">Email</p>
+        <div class="avatar-wrapper" id="avatar-initials">--</div>
+        <h2 id="display-name" style="font-weight: 800; letter-spacing: -0.5px;">Chargement...</h2>
+        <p id="display-email" style="opacity: 0.8; font-size: 0.85rem; font-weight: 500;">Email utilisateur</p>
+    </div>
+
+    <!-- Wallet Section -->
+    <div class="wallet-card">
+        <div class="wallet-info">
+            <span>Solde Portefeuille</span>
+            <b id="display-balance">0.00 HTG</b>
+        </div>
+        <div class="wallet-icon">
+            <i class="fa-solid fa-wallet"></i>
+        </div>
     </div>
 
     <div class="container">
         <div class="info-card">
             <form id="profileForm">
+                <div id="msg-status"></div>
+
                 <div class="form-group">
-                    <label>Nom complet</label>
-                    <input type="text" id="fullName" required>
+                    <label>Nom Complet</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user-tie"></i>
+                        <input type="text" id="fullName" placeholder="Votre nom" required>
+                    </div>
                 </div>
+
                 <div class="form-group">
-                    <label>Numéro de téléphone</label>
-                    <input type="tel" id="phone" required>
+                    <label>Téléphone WhatsApp</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-phone-flip"></i>
+                        <input type="tel" id="phone" placeholder="+509" required>
+                    </div>
                 </div>
+
                 <div class="form-group">
-                    <label>Adresse Email</label>
-                    <input type="email" id="email" disabled>
+                    <label>Identifiant Email (Fixe)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-envelope-shield"></i>
+                        <input type="email" id="email" disabled>
+                    </div>
                 </div>
+
                 <div class="form-group">
-                    <label>Date de naissance</label>
-                    <input type="date" id="dob" required>
+                    <label>Date de Naissance</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <input type="date" id="dob" required>
+                    </div>
                 </div>
-                <button type="submit" class="btn-update">Mettre à jour mon profil</button>
+
+                <button type="submit" class="btn-update" id="submitBtn">
+                    <span id="btnText">Sauvegarder les modifications</span>
+                    <i class="fa-solid fa-circle-check"></i>
+                </button>
             </form>
-            <p id="msg-status"></p>
         </div>
     </div>
 
     <script>
         const firebaseConfig = {
-  apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
-  authDomain: "pay-fusion-509.firebaseapp.com",
-  projectId: "pay-fusion-509",
-  storageBucket: "pay-fusion-509.firebasestorage.app",
-  messagingSenderId: "401434428368",
-  appId: "1:401434428368:web:c1f526254f63fa57402fd5"
+            apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
+            authDomain: "pay-fusion-509.firebaseapp.com",
+            projectId: "pay-fusion-509",
+            storageBucket: "pay-fusion-509.firebasestorage.app",
+            messagingSenderId: "401434428368",
+            appId: "1:401434428368:web:c1f526254f63fa57402fd5",
+            measurementId: "G-JN41S8MKWH"
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
+        // 1. CHARGEMENT & SÉCURITÉ ANTI-BAN
         auth.onAuthStateChanged(user => {
             if (user) {
-                loadUserData(user.uid);
+                // Utilisation de onSnapshot pour les initiales et le solde en temps réel
+                db.collection("users").doc(user.uid).onSnapshot(doc => {
+                    if (doc.exists) {
+                        const data = doc.data();
+
+                        // SÉCURITÉ BAN
+                        if (data.status === "Banni") {
+                            alert("Votre compte a été suspendu.");
+                            auth.signOut().then(() => window.location.href = "../login.html");
+                            return;
+                        }
+
+                        // Remplissage Formulaire
+                        document.getElementById('fullName').value = data.fullName;
+                        document.getElementById('phone').value = data.phone;
+                        document.getElementById('email').value = data.email;
+                        document.getElementById('dob').value = data.dob;
+                        
+                        // Mise à jour Hero & Wallet
+                        document.getElementById('display-name').textContent = data.fullName;
+                        document.getElementById('display-email').textContent = data.email;
+                        document.getElementById('display-balance').textContent = (data.wallet_balance || 0).toLocaleString() + " HTG";
+                        
+                        // Génération des initiales (ex: Claney Jean -> CJ)
+                        const names = data.fullName.split(" ");
+                        const initials = names.length > 1 ? names[0][0] + names[1][0] : names[0][0];
+                        document.getElementById('avatar-initials').textContent = initials;
+                    }
+                });
             } else {
                 window.location.href = "../login.html";
             }
         });
 
-        async function loadUserData(uid) {
-            const doc = await db.collection("users").doc(uid).get();
-            if (doc.exists) {
-                const data = doc.data();
-                document.getElementById('fullName').value = data.fullName;
-                document.getElementById('phone').value = data.phone;
-                document.getElementById('email').value = data.email;
-                document.getElementById('dob').value = data.dob;
-                
-                document.getElementById('display-name').textContent = data.fullName;
-                document.getElementById('display-email').textContent = data.email;
-            }
-        }
-
+        // 2. LOGIQUE DE MISE À JOUR
         document.getElementById('profileForm').onsubmit = async (e) => {
             e.preventDefault();
             const user = auth.currentUser;
-            const status = document.getElementById('msg-status');
+            const statusBox = document.getElementById('msg-status');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+
+            // État de chargement
+            submitBtn.disabled = true;
+            btnText.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Traitement...';
 
             try {
                 await db.collection("users").doc(user.uid).update({
-                    fullName: document.getElementById('fullName').value,
-                    phone: document.getElementById('phone').value,
+                    fullName: document.getElementById('fullName').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
                     dob: document.getElementById('dob').value
                 });
-                status.style.display = "block";
-                status.style.color = "#27ae60";
-                status.textContent = "Profil mis à jour avec succès !";
-                document.getElementById('display-name').textContent = document.getElementById('fullName').value;
+
+                statusBox.style.display = "block";
+                statusBox.style.background = "#f0fdf4";
+                statusBox.style.color = "var(--success)";
+                statusBox.style.border = "1px solid #bbf7d0";
+                statusBox.textContent = "Profil mis à jour avec succès !";
+                
+                setTimeout(() => { statusBox.style.display = "none"; }, 3000);
             } catch (err) {
-                status.style.display = "block";
-                status.style.color = "#e74c3c";
-                status.textContent = "Erreur lors de la mise à jour.";
+                console.error(err);
+                statusBox.style.display = "block";
+                statusBox.style.background = "#fff5f5";
+                statusBox.style.color = "var(--danger)";
+                statusBox.style.border = "1px solid #feb2b2";
+                statusBox.textContent = "Erreur lors de la mise à jour.";
+            } finally {
+                submitBtn.disabled = false;
+                btnText.textContent = "Sauvegarder les modifications";
             }
         };
     </script>
