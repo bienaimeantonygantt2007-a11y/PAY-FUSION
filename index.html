@@ -3,17 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PayFusion Haiti | Accueil</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <meta name="description" content="PayFusion Haiti - Rechargez Free Fire, abonnements Netflix, Disney+, PayPal, Wise et USDT en toute sécurité.">
+    <title>PayFusion Haiti | Leader des Paiements Digitaux</title>
+    
+    <!-- Polices & Icônes -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         :root {
-            --primary-blue: #0056b3;
-            --secondary-blue: #002d5e;
+            --primary: #0056b3;
+            --primary-light: #00d2ff;
+            --secondary: #002d5e;
             --white: #ffffff;
             --bg-fluid: #f8fafc;
-            --glass-white: rgba(255, 255, 255, 0.9);
-            --transition-fluid: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --glass: rgba(255, 255, 255, 0.85);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * {
@@ -24,18 +31,44 @@
         }
 
         body {
-            background: var(--bg-fluid);
-            color: var(--secondary-blue);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            background-color: var(--bg-fluid);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            line-height: 1.6;
         }
 
-        /* HEADER MINIMALISTE PRO */
+        /* ANIMATION DE FOND "LIQUIDE" */
+        .bg-blobs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            filter: blur(80px);
+            opacity: 0.4;
+        }
+
+        .blob {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            animation: move 20s infinite alternate;
+        }
+
+        @keyframes move {
+            from { transform: translate(-10%, -10%); }
+            to { transform: translate(20%, 20%); }
+        }
+
+        /* HEADER GLASSMORPHISM */
         header {
-            background: var(--glass-white);
-            backdrop-filter: blur(10px);
-            height: 75px;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            height: 80px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -43,11 +76,17 @@
             position: sticky;
             top: 0;
             z-index: 1000;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
         }
 
         .logo-container img {
-            height: 42px;
+            height: 48px;
+            transition: var(--transition);
+        }
+
+        .logo-container img:hover {
+            transform: scale(1.05);
         }
 
         .auth-icons {
@@ -56,165 +95,230 @@
         }
 
         .auth-icons a {
-            color: var(--primary-blue);
-            font-size: 1.2rem;
+            color: var(--primary);
+            font-size: 1.3rem;
             text-decoration: none;
-            width: 44px;
-            height: 44px;
+            width: 48px;
+            height: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 12px;
-            background: #f1f5f9;
-            transition: var(--transition-fluid);
+            border-radius: 16px;
+            background: var(--white);
+            box-shadow: 0 4px 15px rgba(0, 86, 179, 0.1);
+            transition: var(--transition);
         }
 
         .auth-icons a:hover {
-            background: var(--primary-blue);
+            background: var(--primary);
             color: var(--white);
-            transform: translateY(-2px);
+            transform: translateY(-3px) rotate(5deg);
+            box-shadow: 0 8px 25px rgba(0, 86, 179, 0.25);
         }
 
-        /* HERO */
+        /* HERO SECTION */
         .hero {
-            padding: 80px 8% 60px;
+            padding: 100px 8% 80px;
             text-align: center;
+            position: relative;
         }
 
         .hero h1 {
-            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-size: clamp(2.2rem, 6vw, 3.8rem);
             font-weight: 800;
-            color: var(--secondary-blue);
-            margin-bottom: 15px;
-            letter-spacing: -0.5px;
+            color: var(--secondary);
+            margin-bottom: 20px;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+        }
+
+        .hero h1 span {
+            color: var(--primary);
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .hero p {
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto;
-            color: #64748b;
+            font-size: 1.2rem;
+            max-width: 650px;
+            margin: 0 auto 40px;
+            color: var(--text-muted);
         }
 
-        /* CARTES DE SERVICE */
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 18px 35px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            box-shadow: 0 10px 30px rgba(0, 86, 179, 0.3);
+        }
+
+        .cta-button:hover {
+            background: var(--secondary);
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 45, 94, 0.4);
+        }
+
+        /* SERVICES GRID */
         .preview-services {
-            padding: 40px 8% 80px;
+            padding: 40px 8% 100px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            max-width: 1200px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            max-width: 1300px;
             margin: 0 auto;
         }
 
         .service-card {
             background: var(--white);
-            padding: 40px 30px;
-            border-radius: 20px;
+            padding: 45px 35px;
+            border-radius: 30px;
             text-align: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-            transition: var(--transition-fluid);
-            border: 1px solid #f1f5f9;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+            transition: var(--transition);
+            border: 1px solid rgba(255,255,255,0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 5px;
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            opacity: 0;
+            transition: var(--transition);
         }
 
         .service-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 30px rgba(0, 86, 179, 0.08);
-            border-color: var(--primary-blue);
+            transform: translateY(-12px);
+            box-shadow: 0 30px 60px rgba(0, 86, 179, 0.12);
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
         }
 
         .service-card i {
-            font-size: 2.2rem;
-            color: var(--primary-blue);
-            margin-bottom: 20px;
+            font-size: 3.2rem;
+            color: var(--primary);
+            margin-bottom: 25px;
+            display: block;
         }
 
         .service-card h3 {
-            font-size: 1.25rem;
-            margin-bottom: 12px;
-            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            font-weight: 800;
+            color: var(--secondary);
         }
 
         .service-card p {
-            font-size: 0.95rem;
-            color: #64748b;
-            line-height: 1.5;
+            font-size: 1rem;
+            color: var(--text-muted);
+            line-height: 1.6;
         }
 
-        /* FOOTER */
+        /* FOOTER PREMIUM */
         footer {
             background: var(--white);
-            padding: 60px 8% 30px;
+            padding: 80px 8% 40px;
             border-top: 1px solid #f1f5f9;
-            margin-top: auto;
         }
 
         .footer-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 50px;
+            margin-bottom: 60px;
         }
 
         .footer-section h4 {
-            font-size: 0.9rem;
-            margin-bottom: 20px;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            font-weight: 800;
+            color: var(--secondary);
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: #94a3b8;
         }
 
         .footer-links { list-style: none; }
-        .footer-links li { margin-bottom: 12px; }
+        .footer-links li { margin-bottom: 15px; }
         .footer-links a {
             text-decoration: none;
-            color: #64748b;
-            transition: var(--transition-fluid);
-            font-size: 0.9rem;
+            color: var(--text-muted);
+            transition: var(--transition);
+            font-weight: 500;
         }
 
-        .footer-links a:hover { color: var(--primary-blue); }
+        .footer-links a:hover { color: var(--primary); padding-left: 8px; }
 
-        .payment-box {
-            display: flex;
-            gap: 12px;
+        .payment-pill {
+            display: inline-flex;
+            gap: 15px;
+            background: #f8fafc;
+            padding: 15px 25px;
+            border-radius: 20px;
             align-items: center;
-            margin-top: 10px;
         }
 
-        .payment-box img {
-            height: 22px;
-            filter: grayscale(1);
-            opacity: 0.6;
+        .payment-pill img {
+            height: 25px;
+            filter: grayscale(1) opacity(0.6);
+            transition: var(--transition);
+        }
+
+        .payment-pill img:hover {
+            filter: grayscale(0) opacity(1);
+            transform: scale(1.1);
         }
 
         .footer-bottom {
-            padding-top: 25px;
+            padding-top: 30px;
             border-top: 1px solid #f1f5f9;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.85rem;
-            color: #94a3b8;
+            font-size: 0.9rem;
+            color: var(--text-muted);
         }
 
-        .secure-tag {
+        .secure-badge {
             color: #10b981;
-            font-weight: 600;
+            font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
+        /* MOBILE OPTIMIZATION */
         @media (max-width: 768px) {
-            .footer-bottom { flex-direction: column; gap: 15px; text-align: center; }
+            header { padding: 0 5%; }
+            .hero { padding: 80px 5% 60px; }
+            .hero h1 { font-size: 2.5rem; }
+            .preview-services { padding: 20px 5% 80px; }
+            .footer-bottom { flex-direction: column; gap: 20px; text-align: center; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Fond Animé -->
+    <div class="bg-blobs">
+        <div class="blob"></div>
+    </div>
+
     <header>
         <div class="logo-container">
-            <img src="assets/logos/payfusion-logo.png" alt="PayFusion">
+            <img src="assets/logos/payfusion-logo.png" alt="PayFusion Logo">
         </div>
         <div class="auth-icons">
             <a href="pages/register.html" title="S'inscrire">
@@ -228,27 +332,30 @@
 
     <main>
         <section class="hero">
-            <h1>Services Numériques & Solutions Financières</h1>
-            <p>La plateforme de confiance pour vos recharges Free Fire, abonnements Streaming et portefeuilles Wise ou PayPal en Haïti.</p>
+            <h1>Libérez vos <span>Transactions</span> Numériques</h1>
+            <p>La plateforme n°1 en Haïti pour vos recharges Free Fire, abonnements Streaming et portefeuilles internationaux PayPal & Wise.</p>
+            <a href="pages/register.html" class="cta-button">
+                Démarrer maintenant <i class="fa-solid fa-circle-chevron-right"></i>
+            </a>
         </section>
 
         <section class="preview-services">
             <div class="service-card">
                 <i class="fa-solid fa-gamepad"></i>
-                <h3>Gaming</h3>
-                <p>Recharges diamants et Pass de niveau pour Free Fire avec livraison via ID joueur.</p>
+                <h3>Gaming Pro</h3>
+                <p>Recharges diamants Free Fire instantanées via ID joueur. Livraison garantie en moins de 15 minutes.</p>
             </div>
 
             <div class="service-card">
                 <i class="fa-solid fa-clapperboard"></i>
-                <h3>Streaming</h3>
-                <p>Accès Premium à Netflix et Disney+ en haute définition pour tout vos écrans.</p>
+                <h3>Streaming 4K</h3>
+                <p>Accès Premium à Netflix et Disney+ avec comptes privés stables pour une expérience cinéma à la maison.</p>
             </div>
 
             <div class="service-card">
-                <i class="fa-solid fa-wallet"></i>
-                <h3>Finances</h3>
-                <p>Alimentez vos comptes PayPal, Wise et USDT en toute sécurité depuis Haïti.</p>
+                <i class="fa-solid fa-vault"></i>
+                <h3>Finance Digitale</h3>
+                <p>Rechargez vos comptes PayPal, Wise et achetez des USDT au meilleur taux du marché haïtien.</p>
             </div>
         </section>
     </main>
@@ -256,21 +363,22 @@
     <footer>
         <div class="footer-grid">
             <div class="footer-section">
-                <h4>Société</h4>
-                <p style="font-size: 0.9rem; color: #64748b;">PayFusion facilite l'accès aux services digitaux mondiaux pour la communauté haïtienne.</p>
+                <h4>À propos</h4>
+                <p style="color: var(--text-muted);">PayFusion est la solution de confiance pour briser les barrières financières et accéder aux services digitaux mondiaux depuis Haïti.</p>
             </div>
 
             <div class="footer-section">
-                <h4>Support</h4>
+                <h4>Navigation</h4>
                 <ul class="footer-links">
                     <li><a href="pages/user/supports.html">Centre d'aide</a></li>
-                    <li><a href="pages/user/settings.html">Conditions d'utilisation</a></li>
+                    <li><a href="pages/user/settings.html">Sécurité & Confidentialité</a></li>
+                    <li><a href="pages/login.html">Mon Compte</a></li>
                 </ul>
             </div>
 
             <div class="footer-section">
-                <h4>Paiements</h4>
-                <div class="payment-box">
+                <h4>Paiement Sécurisé</h4>
+                <div class="payment-pill">
                     <img src="assets/logos/moncash-logo.png" alt="MonCash">
                     <img src="assets/logos/natcash-logo.png" alt="NatCash">
                     <img src="assets/logos/usdt-logo.png" alt="USDT">
@@ -279,9 +387,9 @@
         </div>
 
         <div class="footer-bottom">
-            <p>&copy; 2026 PayFusion Haiti. Opérations sécurisées.</p>
-            <div class="secure-tag">
-                <i class="fa-solid fa-shield-halved"></i> PROTECTION SSL ACTIVÉE
+            <p>&copy; 2026 PayFusion Haiti. Plateforme d'Excellence Financière.</p>
+            <div class="secure-badge">
+                <i class="fa-solid fa-shield-halved"></i> PROTECTION SSL 256-BIT
             </div>
         </div>
     </footer>
