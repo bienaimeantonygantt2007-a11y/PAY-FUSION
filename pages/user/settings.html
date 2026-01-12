@@ -4,99 +4,136 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paramètres | PayFusion Haiti</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Polices & Icônes -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <style>
         :root {
-            /* Mode Clair (Par défaut) */
+            /* Mode Clair */
             --primary: #0056b3;
+            --primary-glow: rgba(0, 86, 179, 0.1);
             --secondary: #002d5e;
             --bg: #f8fafc;
             --white: #ffffff;
             --text-main: #1e293b;
             --text-muted: #64748b;
             --border: #e2e8f0;
-            --card-shadow: 0 4px 6px rgba(0,0,0,0.02);
-            --transition: all 0.3s ease;
+            --danger: #ef4444;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Variables pour le Mode Sombre */
         body.dark-mode {
+            /* Mode Sombre */
             --bg: #0f172a;
             --white: #1e293b;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border: #334155;
-            --card-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            --primary-glow: rgba(0, 185, 255, 0.1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg); color: var(--text-main); transition: var(--transition); min-height: 100vh; }
+        body { background-color: var(--bg); color: var(--text-main); transition: var(--transition); min-height: 100vh; overflow-x: hidden; }
+
+        /* Arrière-plan Dynamique */
+        .bg-blobs {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; filter: blur(80px); opacity: 0.5;
+        }
+        .blob {
+            position: absolute; width: 400px; height: 400px;
+            background: var(--primary-glow); border-radius: 50%;
+            animation: move 15s infinite alternate;
+        }
+        @keyframes move { from { transform: translate(-10%, -10%); } to { transform: translate(15%, 15%); } }
 
         header {
-            height: 70px; background: var(--white); display: flex; align-items: center; 
-            padding: 0 5%; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            transition: var(--transition);
+            height: 70px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px);
+            display: flex; align-items: center; padding: 0 6%; position: sticky; top: 0; z-index: 1000;
+            border-bottom: 1px solid var(--border); transition: var(--transition);
         }
-        header .back-btn { color: var(--primary); font-size: 1.5rem; text-decoration: none; margin-right: 20px; }
-        header h1 { font-size: 1.2rem; font-weight: 700; }
+        header .back-btn { color: var(--primary); font-size: 1.4rem; text-decoration: none; margin-right: 15px; }
+        header h1 { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.5px; }
 
-        .container { padding: 30px 5%; max-width: 600px; margin: 0 auto; }
+        .container { padding: 25px 6%; max-width: 650px; margin: 0 auto; }
 
         .settings-section { margin-bottom: 35px; }
-        .section-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary); font-weight: 700; margin-bottom: 15px; }
+        .section-title { 
+            font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; 
+            color: var(--primary); font-weight: 800; margin-bottom: 15px; margin-left: 5px;
+        }
 
         .settings-card {
-            background: var(--white); border-radius: 20px; box-shadow: var(--card-shadow); 
+            background: var(--white); border-radius: 26px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); 
             border: 1px solid var(--border); overflow: hidden; transition: var(--transition);
         }
 
         .setting-item {
-            padding: 18px 20px; display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid var(--border);
+            padding: 20px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border); transition: 0.2s;
         }
         .setting-item:last-child { border-bottom: none; }
 
-        .item-info { display: flex; align-items: center; gap: 15px; }
-        .item-icon { width: 40px; height: 40px; background: rgba(0, 86, 179, 0.1); color: var(--primary); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; }
+        .item-info { display: flex; align-items: center; gap: 18px; }
+        .item-icon { 
+            width: 44px; height: 44px; background: var(--primary-glow); color: var(--primary); 
+            border-radius: 14px; display: flex; justify-content: center; align-items: center; font-size: 1.2rem; 
+        }
         
-        .item-label { display: flex; flex-direction: column; }
-        .item-label b { font-size: 0.95rem; }
-        .item-label span { font-size: 0.8rem; color: var(--text-muted); }
+        .item-label { display: flex; flex-direction: column; gap: 2px; }
+        .item-label b { font-size: 0.95rem; font-weight: 700; color: var(--text-main); }
+        .item-label span { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
 
-        /* SWITCH TOGGLE STYLE */
-        .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
+        /* SWITCH TOGGLE FINTECH */
+        .switch { position: relative; display: inline-block; width: 48px; height: 26px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
             position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
             background-color: #cbd5e1; transition: .4s; border-radius: 34px;
         }
         .slider:before {
-            position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+            position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px;
             background-color: white; transition: .4s; border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         input:checked + .slider { background-color: var(--primary); }
         input:checked + .slider:before { transform: translateX(22px); }
 
-        /* SELECT LANGUAGE STYLE */
+        /* SELECT CUSTOM */
         select {
-            background: var(--bg); color: var(--text-main); border: 1px solid var(--border);
-            padding: 8px 12px; border-radius: 10px; font-size: 0.9rem; outline: none; cursor: pointer;
+            background: var(--bg); color: var(--text-main); border: 1.5px solid var(--border);
+            padding: 10px 15px; border-radius: 12px; font-size: 0.9rem; outline: none; 
+            cursor: pointer; font-weight: 600; transition: var(--transition);
         }
+        select:focus { border-color: var(--primary); }
 
         .btn-logout {
-            margin-top: 20px; width: 100%; padding: 16px; background: rgba(231, 76, 60, 0.1); 
-            color: #e74c3c; border: none; border-radius: 15px; font-weight: 700; cursor: pointer;
+            margin-top: 20px; width: 100%; padding: 18px; background: rgba(239, 68, 68, 0.1); 
+            color: var(--danger); border: none; border-radius: 20px; font-weight: 800; cursor: pointer;
             transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 10px;
+            font-size: 1rem;
         }
-        .btn-logout:hover { background: #e74c3c; color: white; }
+        .btn-logout:hover { background: var(--danger); color: white; transform: translateY(-2px); }
+
+        @media (max-width: 480px) {
+            .container { padding: 20px 5%; }
+            .settings-card { border-radius: 22px; }
+            .item-info { gap: 12px; }
+        }
     </style>
 </head>
 <body id="main-body">
+
+    <div class="bg-blobs">
+        <div class="blob"></div>
+    </div>
 
     <header>
         <a href="../home.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
@@ -147,10 +184,10 @@
                 <!-- NOTIFICATIONS -->
                 <div class="setting-item">
                     <div class="item-info">
-                        <div class="item-icon"><i class="fa-solid fa-bell"></i></div>
+                        <div class="item-icon"><i class="fa-solid fa-bell-ring"></i></div>
                         <div class="item-label">
-                            <b id="lang-notif">Notifications</b>
-                            <span id="lang-notif-sub">Alertes de commande</span>
+                            <b id="lang-notif">Notifications Push</b>
+                            <span id="lang-notif-sub">Alertes de validation de commande</span>
                         </div>
                     </div>
                     <label class="switch">
@@ -163,14 +200,14 @@
 
         <!-- SÉCURITÉ -->
         <div class="settings-section">
-            <h3 class="section-title" id="lang-sec-security">Sécurité</h3>
+            <h3 class="section-title" id="lang-sec-security">Sécurité & Compte</h3>
             <div class="settings-card">
                 <div class="setting-item" onclick="resetPassword()" style="cursor:pointer;">
                     <div class="item-info">
-                        <div class="item-icon"><i class="fa-solid fa-lock"></i></div>
+                        <div class="item-icon"><i class="fa-solid fa-shield-keyhole"></i></div>
                         <div class="item-label">
-                            <b id="lang-pass">Mot de passe</b>
-                            <span id="lang-pass-sub">Changer mon mot de passe</span>
+                            <b id="lang-pass">Authentification</b>
+                            <span id="lang-pass-sub">Réinitialiser le mot de passe</span>
                         </div>
                     </div>
                     <i class="fa-solid fa-chevron-right" style="font-size: 0.8rem; color: var(--text-muted);"></i>
@@ -179,18 +216,19 @@
         </div>
 
         <button class="btn-logout" onclick="logout()">
-            <i class="fa-solid fa-power-off"></i> <span id="lang-logout">Déconnexion</span>
+            <i class="fa-solid fa-power-off"></i> <span id="lang-logout">Déconnecter la session</span>
         </button>
     </div>
 
     <script>
         const firebaseConfig = {
-  apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
-  authDomain: "pay-fusion-509.firebaseapp.com",
-  projectId: "pay-fusion-509",
-  storageBucket: "pay-fusion-509.firebasestorage.app",
-  messagingSenderId: "401434428368",
-  appId: "1:401434428368:web:c1f526254f63fa57402fd5"
+            apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
+            authDomain: "pay-fusion-509.firebaseapp.com",
+            projectId: "pay-fusion-509",
+            storageBucket: "pay-fusion-509.firebasestorage.app",
+            messagingSenderId: "401434428368",
+            appId: "1:401434428368:web:c1f526254f63fa57402fd5",
+            measurementId: "G-JN41S8MKWH"
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
@@ -210,22 +248,25 @@
             }
         });
 
-        // 2. GESTION DES LANGUES
+        // 2. DICTIONNAIRE DE TRADUCTION
         const translations = {
             fr: {
                 title: "Paramètres", sec_app: "Apparence", dark: "Mode Sombre", dark_sub: "Réduire la fatigue oculaire",
-                sec_pref: "Préférences", lang: "Langue", lang_sub: "Choisir la langue", notif: "Notifications",
-                notif_sub: "Alertes de commande", sec_secu: "Sécurité", pass: "Mot de passe", pass_sub: "Changer mon mot de passe", logout: "Déconnexion"
+                sec_pref: "Préférences", lang: "Langue", lang_sub: "Choisir votre langue", notif: "Notifications Push",
+                notif_sub: "Alertes de validation de commande", sec_secu: "Sécurité & Compte", pass: "Authentification", 
+                pass_sub: "Réinitialiser le mot de passe", logout: "Déconnecter la session"
             },
             en: {
                 title: "Settings", sec_app: "Appearance", dark: "Dark Mode", dark_sub: "Reduce eye strain",
-                sec_pref: "Preferences", lang: "Language", lang_sub: "Choose language", notif: "Notifications",
-                notif_sub: "Order alerts", sec_secu: "Security", pass: "Password", pass_sub: "Change my password", logout: "Logout"
+                sec_pref: "Preferences", lang: "Language", lang_sub: "Choose your language", notif: "Push Notifications",
+                notif_sub: "Order validation alerts", sec_secu: "Security & Account", pass: "Authentication", 
+                pass_sub: "Reset your password", logout: "Sign out session"
             },
             kr: {
                 title: "Paramèt", sec_app: "Aparans", dark: "Mòd Nwa", dark_sub: "Pou je ou pa fatige",
-                sec_pref: "Preferans", lang: "Lang", lang_sub: "Chwazi lang ou", notif: "Notifikasyon",
-                notif_sub: "Avètisman kòmand", sec_secu: "Sekirite", pass: "Modpas", pass_sub: "Chanje modpas mwen", logout: "Dekonekte"
+                sec_pref: "Preferans", lang: "Lang", lang_sub: "Chwazi lang pa ou", notif: "Notifikasyon",
+                notif_sub: "Avètisman kòmand ou", sec_secu: "Sekirite ak Kont", pass: "Otantifikasyon", 
+                pass_sub: "Chanje modpas ou", logout: "Dekonekte sesyon an"
             }
         };
 
@@ -237,7 +278,7 @@
         });
 
         function applyLanguage(lang) {
-            const t = translations[lang];
+            const t = translations[lang] || translations.fr;
             document.getElementById('lang-title').textContent = t.title;
             document.getElementById('lang-sec-appearance').textContent = t.sec_app;
             document.getElementById('lang-darkmode').textContent = t.dark;
@@ -254,16 +295,29 @@
             localStorage.setItem('payfusion-lang', lang);
         }
 
-        // 3. INITIALISATION (Load saved prefs)
+        // 3. INITIALISATION & SECURITÉ
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // Vérification du Bannissement en temps réel
+                db.collection("users").doc(user.uid).onSnapshot(doc => {
+                    if (doc.exists && doc.data().status === "Banni") {
+                        alert("Session expirée.");
+                        auth.signOut().then(() => window.location.href = "../login.html");
+                    }
+                });
+            } else {
+                window.location.href = "../login.html";
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
-            // Load Theme
-            const savedTheme = localStorage.getItem('payfusion-theme');
-            if(savedTheme === 'dark') {
+            // Charger le Thème
+            if(localStorage.getItem('payfusion-theme') === 'dark') {
                 body.classList.add('dark-mode');
                 themeToggle.checked = true;
             }
 
-            // Load Language
+            // Charger la Langue
             const savedLang = localStorage.getItem('payfusion-lang') || 'fr';
             langSelect.value = savedLang;
             applyLanguage(savedLang);
@@ -280,13 +334,15 @@
             const user = auth.currentUser;
             if(user) {
                 auth.sendPasswordResetEmail(user.email).then(() => {
-                    alert("Email de réinitialisation envoyé à : " + user.email);
-                });
+                    alert("Un lien de réinitialisation a été envoyé à : " + user.email);
+                }).catch(err => alert("Erreur : " + err.message));
             }
         }
 
         function logout() {
-            auth.signOut().then(() => window.location.href = "../login.html");
+            if(confirm("Voulez-vous vraiment vous déconnecter ?")) {
+                auth.signOut().then(() => window.location.href = "../login.html");
+            }
         }
     </script>
 </body>
