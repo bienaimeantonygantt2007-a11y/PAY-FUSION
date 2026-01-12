@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PayFusion Ultimate Admin</title>
+    <title>PayFusion Admin Mobile</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -18,181 +18,166 @@
             --white: #ffffff;
             --danger: #e74c3c;
             --success: #27ae60;
-            --warning: #f39c12;
+            --text: #2d3436;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: #2d3436; height: 100vh; display: flex; overflow: hidden; }
+        body { background: var(--bg); color: var(--text); overflow-x: hidden; }
 
-        /* SIDEBAR */
-        .sidebar {
-            width: 260px; background: var(--secondary); color: white;
-            display: flex; flex-direction: column; padding: 20px;
-            transition: var(--transition); z-index: 1002;
+        /* MENU MOBILE (SIDEBAR) */
+        .sidebar-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: none; z-index: 1001;
         }
-        .sidebar h2 { font-size: 1.1rem; margin-bottom: 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; font-weight: 800; }
+        .sidebar-overlay.active { display: block; }
+
+        .sidebar {
+            position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
+            background: var(--secondary); color: white; z-index: 1002;
+            transition: var(--transition); padding: 30px 20px;
+        }
+        .sidebar.active { left: 0; }
+        .sidebar h2 { font-size: 1.2rem; margin-bottom: 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
 
         .nav-link {
-            padding: 12px 15px; color: rgba(255,255,255,0.7); text-decoration: none;
-            display: flex; align-items: center; gap: 12px; border-radius: 10px;
-            margin-bottom: 5px; cursor: pointer; transition: 0.3s; font-size: 0.9rem;
+            padding: 15px; color: rgba(255,255,255,0.7); text-decoration: none;
+            display: flex; align-items: center; gap: 15px; border-radius: 12px;
+            margin-bottom: 8px; cursor: pointer; transition: 0.3s;
         }
-        .nav-link:hover, .nav-link.active { background: var(--primary); color: white; }
+        .nav-link.active, .nav-link:hover { background: var(--primary); color: white; }
 
         /* MAIN CONTENT */
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+        .main-content { width: 100%; min-height: 100vh; padding-bottom: 30px; }
         header { 
-            background: white; padding: 15px 30px; display: flex; 
+            background: white; padding: 15px 20px; display: flex; 
             justify-content: space-between; align-items: center; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 900;
+            position: sticky; top: 0; z-index: 900; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
+        .menu-btn { font-size: 1.5rem; color: var(--primary); cursor: pointer; }
 
-        .content-section { padding: 25px; display: none; }
+        /* SECTIONS */
+        .content-section { padding: 20px; display: none; animation: fadeIn 0.4s ease; }
         .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* STATS CARDS */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
-        .stat-card h4 { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
-        .stat-card p { font-size: 1.4rem; font-weight: 800; color: var(--secondary); margin-top: 5px; }
-        .profit-text { color: var(--success) !important; }
+        /* STATS MOBILE */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 15px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .stat-card h4 { font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; }
+        .stat-card p { font-size: 1rem; font-weight: 800; color: var(--primary); }
 
-        /* DATA TABLES */
-        .data-card { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 700px; }
-        th { text-align: left; padding: 12px; border-bottom: 2px solid #f1f5f9; color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; }
-        td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; }
-
-        /* UTILS */
-        .badge { padding: 5px 12px; border-radius: 50px; font-size: 0.7rem; font-weight: 700; }
-        .btn-icon { background: none; border: none; cursor: pointer; font-size: 1.1rem; transition: 0.2s; }
-        .btn-icon:hover { transform: scale(1.2); }
-        .admin-input { width: 100%; padding: 10px 15px; border: 1.5px solid #e2e8f0; border-radius: 10px; outline: none; margin-bottom: 10px; }
+        /* CARDS COMMANDES (REMPLACE LE TABLEAU) */
+        .order-card {
+            background: white; border-radius: 18px; padding: 15px; margin-bottom: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid #f1f5f9;
+        }
+        .order-card-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .order-id { font-size: 0.7rem; color: #94a3b8; font-weight: 700; }
+        .order-status { font-size: 0.7rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; }
         
-        /* CHAT SYSTEM IMPROVED */
-        .chat-layout { display: grid; grid-template-columns: 250px 1fr; gap: 20px; height: 60vh; }
-        .chat-sidebar { background: #f8fafc; border-radius: 15px; overflow-y: auto; padding: 10px; border: 1px solid #eee; }
-        .chat-main { display: flex; flex-direction: column; background: white; border-radius: 15px; border: 1px solid #eee; padding: 15px; }
-        .messages-area { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; }
-        .msg { max-width: 80%; padding: 10px 15px; border-radius: 15px; font-size: 0.85rem; }
+        .order-body { display: flex; justify-content: space-between; align-items: center; }
+        .order-info b { display: block; font-size: 0.95rem; color: var(--secondary); }
+        .order-info span { font-size: 0.8rem; color: #64748b; }
+        .order-price { font-weight: 800; color: var(--primary); }
+
+        .order-actions { margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+        .btn-action { padding: 10px; border-radius: 10px; border: none; font-size: 0.9rem; cursor: pointer; color: white; text-align: center; }
+
+        /* MODAL FULLSCREEN MOBILE */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; z-index: 2000; flex-direction: column; overflow-y: auto;
+        }
+        .modal-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .modal-body { padding: 20px; }
+        .detail-item { margin-bottom: 15px; }
+        .detail-item label { display: block; font-size: 0.75rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; }
+        .detail-item p { font-size: 1rem; font-weight: 600; color: var(--secondary); word-break: break-all; }
+        .proof-preview { width: 100%; border-radius: 15px; margin-top: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+
+        /* CHAT MOBILE */
+        .chat-area { display: flex; flex-direction: column; height: 80vh; background: white; border-radius: 20px; overflow: hidden; }
+        .chat-msg-list { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 10px; background: #f8fafc; }
+        .msg { max-width: 85%; padding: 12px; border-radius: 15px; font-size: 0.85rem; }
         .msg.admin { align-self: flex-end; background: var(--primary); color: white; }
-        .msg.user { align-self: flex-start; background: #f1f5f9; }
-        
-        .quick-replies { display: flex; gap: 8px; margin-bottom: 10px; overflow-x: auto; padding-bottom: 5px; }
-        .reply-btn { background: #eef5ff; border: 1px solid var(--primary); color: var(--primary); padding: 5px 12px; border-radius: 50px; font-size: 0.75rem; cursor: pointer; white-space: nowrap; }
-
-        /* MODAL */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
-
-        @media (max-width: 768px) { .sidebar { width: 70px; } .sidebar h2, .nav-link span { display: none; } }
+        .msg.user { align-self: flex-start; background: #e2e8f0; }
     </style>
 </head>
 <body>
 
+    <!-- OVERLAY -->
+    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
     <!-- SIDEBAR -->
-    <div class="sidebar">
-        <h2>PAYFUSION PRO</h2>
-        <div class="nav-link active" onclick="showSection('orders')"><i class="fa-solid fa-receipt"></i> <span>Commandes</span></div>
-        <div class="nav-link" onclick="showSection('services')"><i class="fa-solid fa-layer-group"></i> <span>Services CMS</span></div>
-        <div class="nav-link" onclick="showSection('coupons')"><i class="fa-solid fa-ticket"></i> <span>Codes Promo</span></div>
-        <div class="nav-link" onclick="showSection('chat')"><i class="fa-solid fa-comments"></i> <span>Support Chat</span></div>
-        <div class="nav-link" onclick="showSection('users')"><i class="fa-solid fa-users"></i> <span>Clients</span></div>
-        <div class="nav-link" onclick="logout()" style="margin-top: auto; color: #ff7675;"><i class="fa-solid fa-power-off"></i> <span>Déconnexion</span></div>
+    <div class="sidebar" id="sidebar">
+        <h2>PAYFUSION ADMIN</h2>
+        <div class="nav-link active" onclick="showSec('orders')"><i class="fa-solid fa-receipt"></i> Commandes</div>
+        <div class="nav-link" onclick="showSec('chat')"><i class="fa-solid fa-comments"></i> Chat Clients</div>
+        <div class="nav-link" onclick="showSec('services')"><i class="fa-solid fa-gears"></i> Services</div>
+        <div class="nav-link" onclick="showSec('users')"><i class="fa-solid fa-users"></i> Utilisateurs</div>
+        <a href="logout.html" class="nav-link" style="margin-top: auto; color: #ff7675;"><i class="fa-solid fa-power-off"></i> Déconnexion</a>
     </div>
 
     <div class="main-content">
         <header>
-            <h4 id="page-title">Tableau de Bord</h4>
-            <button onclick="exportToCSV()" class="reply-btn"><i class="fa-solid fa-file-export"></i> Export Excel</button>
+            <div class="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars-staggered"></i></div>
+            <div style="font-weight: 800; font-size: 0.9rem; color: var(--primary);">ADMIN PORTAL</div>
+            <div id="status-dot" style="width:10px; height:10px; background:var(--success); border-radius:50%;"></div>
         </header>
 
         <!-- SECTION COMMANDES -->
         <section id="orders" class="content-section active">
             <div class="stats-grid">
-                <div class="stat-card"><h4>Chiffre d'Affaires</h4><p id="stat-revenue">0 HTG</p></div>
-                <div class="stat-card"><h4>Bénéfice Net</h4><p id="stat-profit" class="profit-text">0 HTG</p></div>
-                <div class="stat-card"><h4>Commandes</h4><p id="stat-count">0</p></div>
+                <div class="stat-card"><h4>Ventes</h4><p id="stat-revenue">0 HTG</p></div>
+                <div class="stat-card"><h4>Profit</h4><p id="stat-profit" style="color:var(--success)">0 HTG</p></div>
             </div>
-            <div class="data-card">
-                <table>
-                    <thead>
-                        <tr><th>ID</th><th>Service</th><th>Client</th><th>Total</th><th>Statut</th><th>Action</th></tr>
-                    </thead>
-                    <tbody id="orders-list"></tbody>
-                </table>
-            </div>
-        </section>
 
-        <!-- SECTION SERVICES CMS -->
-        <section id="services" class="content-section">
-            <div class="data-card">
-                <h3 style="margin-bottom:20px;">Gestion des Tarifs & Disponibilité</h3>
-                <table>
-                    <thead>
-                        <tr><th>Service</th><th>Statut</th><th>Dernier Prix</th><th>Action</th></tr>
-                    </thead>
-                    <tbody id="services-list">
-                        <!-- Exemple dynamique -->
-                        <tr>
-                            <td>Netflix Premium</td>
-                            <td><span class="badge" style="background:#f0fdf4; color:green;">Actif</span></td>
-                            <td>450 HTG</td>
-                            <td><button class="reply-btn">Modifier</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- SECTION COUPONS -->
-        <section id="coupons" class="content-section">
-            <div class="data-card" style="max-width: 400px;">
-                <h3>Créer un Code Promo</h3>
-                <input type="text" id="cp-code" class="admin-input" placeholder="CODE (ex: PROMO509)">
-                <input type="number" id="cp-value" class="admin-input" placeholder="Réduction en HTG">
-                <button onclick="createCoupon()" style="width:100%; background:var(--primary); color:white; border:none; padding:12px; border-radius:10px; font-weight:700;">Générer le code</button>
+            <div id="orders-container">
+                <!-- Les cartes de commandes seront injectées ici -->
+                <p style="text-align:center; padding:20px; color:#94a3b8;">Chargement des commandes...</p>
             </div>
         </section>
 
         <!-- SECTION CHAT -->
         <section id="chat" class="content-section">
-            <div class="chat-layout">
-                <div class="chat-sidebar" id="chat-list"></div>
-                <div class="chat-main">
-                    <div id="chat-active-user" style="font-weight:700; margin-bottom:10px; color:var(--primary);">Sélectionnez un client</div>
-                    <div class="messages-area" id="chat-messages"></div>
-                    <div class="quick-replies">
-                        <button class="reply-btn" onclick="setQuickMsg('Bonjour ! Votre commande est en cours.')">En cours</button>
-                        <button class="reply-btn" onclick="setQuickMsg('Livraison effectuée. Vérifiez vos messages.')">Livré</button>
-                        <button class="reply-btn" onclick="setQuickMsg('Reçu invalide. Merci d\'envoyer un nouveau screenshot.')">Reçu HS</button>
-                    </div>
-                    <div style="display:flex; gap:10px;">
-                        <input type="text" id="chat-input" class="admin-input" style="margin-bottom:0;" placeholder="Message...">
-                        <button onclick="sendReply()" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:10px;"><i class="fa-solid fa-paper-plane"></i></button>
-                    </div>
+            <div class="chat-area">
+                <select id="chat-user-select" style="width:100%; padding:12px; border:none; background:#eee; font-weight:700;" onchange="loadUserChat(this.value)">
+                    <option value="">Choisir un client...</option>
+                </select>
+                <div class="chat-msg-list" id="chat-messages"></div>
+                <div style="padding:10px; display:flex; gap:8px;">
+                    <input type="text" id="chat-input" placeholder="Message..." style="flex:1; padding:12px; border-radius:25px; border:1px solid #ddd; outline:none;">
+                    <button onclick="sendReply()" style="background:var(--primary); color:white; border:none; width:45px; border-radius:50%;"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
         </section>
+
+        <!-- SECTION SERVICES (CMS) -->
+        <section id="services" class="content-section">
+            <div style="background:white; padding:20px; border-radius:20px;">
+                <h3>Gestion Services</h3>
+                <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:15px;">Activez ou désactivez les services.</p>
+                <div id="services-list-container">
+                    <!-- Liste des services -->
+                </div>
+            </div>
+        </section>
+
     </div>
 
-    <!-- MODAL DETAILS COMMANDE (Identique au précédent mais avec coût d'achat) -->
+    <!-- MODAL DE DETAILS (PLEIN ÉCRAN MOBILE) -->
     <div id="detailModal" class="modal">
-        <div class="modal-content">
-            <h3 id="modal-title" style="margin-bottom:20px;">Détails & Livraison</h3>
-            <div id="order-details-content"></div>
-            <img id="detail-proof-img" style="width:100%; border-radius:10px; margin:15px 0;">
-            
-            <div class="form-group" style="margin-top:15px;">
-                <label style="font-size:0.8rem; font-weight:700;">COÛT D'ACHAT (HTG)</label>
-                <input type="number" id="purchase-cost" class="admin-input" placeholder="Combien vous avez payé ce service ?">
-            </div>
-
-            <div style="display:flex; gap:10px;">
-                <button onclick="processOrder('Validé')" style="flex:1; background:var(--success); color:white; border:none; padding:15px; border-radius:12px; font-weight:700;">Valider & Notifier</button>
-                <button onclick="processOrder('Refusé')" style="flex:1; background:var(--danger); color:white; border:none; padding:15px; border-radius:12px; font-weight:700;">Refuser</button>
-            </div>
+        <div class="modal-header">
+            <h3>Détails Commande</h3>
+            <i class="fa-solid fa-circle-xmark" onclick="closeModal()" style="font-size:1.8rem; color:var(--danger); cursor:pointer;"></i>
+        </div>
+        <div class="modal-body" id="modal-body-content">
+            <!-- Rempli par JS -->
+        </div>
+        <div style="padding:20px; display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <button onclick="updateOrderFromModal('Validé')" style="background:var(--success); color:white; padding:15px; border:none; border-radius:12px; font-weight:700;">VALIDER</button>
+            <button onclick="updateOrderFromModal('Refusé')" style="background:var(--danger); color:white; padding:15px; border:none; border-radius:12px; font-weight:700;">REFUSER</button>
         </div>
     </div>
 
@@ -209,116 +194,163 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
 
-        let currentChatUID = "";
         let currentOrderDocId = "";
+        let currentChatUID = "";
         let allOrdersData = [];
 
-        // AUTH SECURITY
         auth.onAuthStateChanged(user => {
             if (!user || user.email !== "bmarcco4412@gmail.com") window.location.href = "login.html";
             else { loadOrders(); loadChatList(); }
         });
 
-        function showSection(id) {
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function showSec(id) {
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             event.currentTarget.classList.add('active');
+            if(window.innerWidth < 1024) toggleSidebar();
         }
 
-        // 1. GESTION DES COMMANDES & PROFITS
+        // CHARGEMENT DES COMMANDES EN FORMAT CARTE
         function loadOrders() {
             db.collection("orders").orderBy("createdAt", "desc").onSnapshot(snap => {
-                let html = ''; let revenue = 0; let profit = 0;
+                const container = document.getElementById('orders-container');
+                container.innerHTML = '';
+                let revenue = 0; let profit = 0;
                 allOrdersData = [];
+
                 snap.forEach(doc => {
                     const o = doc.data();
-                    allOrdersData.push({id: doc.id, ...o});
+                    const docId = doc.id;
+                    allOrdersData.push({id: docId, ...o});
+                    
                     if(o.status === "Validé") {
                         revenue += o.total;
                         profit += (o.total - (o.purchaseCost || 0));
                     }
-                    html += `<tr>
-                        <td>${o.orderId}</td>
-                        <td>${o.items[0].product}</td>
-                        <td>${o.customerEmail}</td>
-                        <td>${o.total} HTG</td>
-                        <td><span class="badge" style="background:#eee;">${o.status}</span></td>
-                        <td><button class="btn-icon" onclick="openOrder('${doc.id}')"><i class="fa-solid fa-eye" style="color:var(--primary)"></i></button></td>
-                    </tr>`;
+
+                    let statusCol = o.status === 'En attente' ? '#f39c12' : (o.status === 'Validé' ? '#27ae60' : '#e74c3c');
+
+                    container.innerHTML += `
+                        <div class="order-card">
+                            <div class="order-card-header">
+                                <span class="order-id">#${o.orderId}</span>
+                                <span class="order-status" style="background:rgba(0,0,0,0.05); color:${statusCol}">${o.status}</span>
+                            </div>
+                            <div class="order-body">
+                                <div class="order-info">
+                                    <b>${o.items[0].product}</b>
+                                    <span>${o.customerEmail}</span>
+                                </div>
+                                <div class="order-price">${o.total} HTG</div>
+                            </div>
+                            <div class="order-actions">
+                                <button class="btn-action" onclick="viewDetails('${docId}')" style="background:var(--primary)"><i class="fa-solid fa-eye"></i> Voir</button>
+                                <button class="btn-action" onclick="fastUpdate('${docId}', 'Validé')" style="background:var(--success)"><i class="fa-solid fa-check"></i> OK</button>
+                                <button class="btn-action" onclick="fastUpdate('${docId}', 'Refusé')" style="background:var(--danger)"><i class="fa-solid fa-xmark"></i> NO</button>
+                            </div>
+                        </div>
+                    `;
                 });
-                document.getElementById('orders-list').innerHTML = html;
                 document.getElementById('stat-revenue').textContent = revenue.toLocaleString() + " HTG";
                 document.getElementById('stat-profit').textContent = profit.toLocaleString() + " HTG";
-                document.getElementById('stat-count').textContent = snap.size;
             });
         }
 
-        function openOrder(id) {
-            currentOrderDocId = id;
-            const o = allOrdersData.find(x => x.id === id);
-            const container = document.getElementById('order-details-content');
-            container.innerHTML = `
-                <p><b>Produit:</b> ${o.items[0].product}</p>
-                <p><b>Détails:</b> ${o.items[0].playerID || o.items[0].paypalEmail || o.items[0].walletAddress || 'N/A'}</p>
-                <p><b>WhatsApp:</b> ${o.items[0].whatsapp || 'Non fourni'}</p>
+        // VISUALISATION TOTALE DES INFORMATIONS
+        function viewDetails(docId) {
+            currentOrderDocId = docId;
+            const o = allOrdersData.find(x => x.id === docId);
+            const content = document.getElementById('modal-body-content');
+            content.innerHTML = '';
+
+            // Algorithme de détection automatique des champs
+            // On boucle sur l'item et sur la commande pour ne rien rater
+            const allInfo = {...o, ...o.items[0]};
+            const keysToIgnore = ['items', 'proofBase64', 'createdAt', 'uid', 'id', 'purchaseCost'];
+            const labels = {
+                orderId: "ID COMMANDE",
+                customerEmail: "EMAIL CLIENT",
+                total: "MONTANT PAYÉ",
+                paymentMethod: "MODE DE PAIEMENT",
+                paymentSenderInfo: "NUMÉRO EXPÉDITEUR",
+                paymentSenderName: "NOM SUR LE COMPTE",
+                product: "PRODUIT",
+                pack: "OFFRE CHOISIE",
+                playerID: "ID FREE FIRE",
+                playerPseudo: "PSEUDO JEU",
+                whatsapp: "WHATSAPP",
+                paypalEmail: "DESTINATION PAYPAL",
+                wiseEmail: "DESTINATION WISE",
+                walletAddress: "WALLET USDT TRC20",
+                userName: "NOM DU DESTINATAIRE"
+            };
+
+            for (let key in allInfo) {
+                if (!keysToIgnore.includes(key) && allInfo[key]) {
+                    const label = labels[key] || key.toUpperCase();
+                    content.innerHTML += `
+                        <div class="detail-item">
+                            <label>${label}</label>
+                            <p>${allInfo[key]}</p>
+                        </div>
+                    `;
+                }
+            }
+
+            // Ajout de la preuve d'achat
+            content.innerHTML += `
+                <div class="detail-item">
+                    <label>Preuve de paiement (Screenshot)</label>
+                    <img src="${o.proofBase64}" class="proof-preview" onclick="window.open(this.src)">
+                </div>
+                <div class="detail-item">
+                    <label>COÛT D'ACHAT POUR VOUS (HTG)</label>
+                    <input type="number" id="cost-input" value="${o.purchaseCost || ''}" style="width:100%; padding:12px; border-radius:10px; border:1.5px solid var(--primary); outline:none;">
+                </div>
             `;
-            document.getElementById('detail-proof-img').src = o.proofBase64;
+
             document.getElementById('detailModal').style.display = 'flex';
         }
 
-        async function processOrder(status) {
-            const cost = parseFloat(document.getElementById('purchase-cost').value) || 0;
-            const o = allOrdersData.find(x => x.id === currentOrderDocId);
+        function closeModal() { document.getElementById('detailModal').style.display = 'none'; }
 
+        async function updateOrderFromModal(status) {
+            const cost = parseFloat(document.getElementById('cost-input').value) || 0;
             await db.collection("orders").doc(currentOrderDocId).update({
                 status: status,
                 purchaseCost: cost
             });
+            closeModal();
+        }
 
-            // 5. NOTIFICATION AUTO PAR CHAT
-            if(status === 'Validé') {
-                await db.collection("chats").add({
-                    userUID: o.uid,
-                    text: `Félicitations ! Votre commande ${o.orderId} (${o.items[0].product}) vient d'être validée.`,
-                    sender: "admin",
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
+        async function fastUpdate(id, status) {
+            if(confirm("Changer le statut en " + status + " ?")) {
+                await db.collection("orders").doc(id).update({ status: status });
             }
-
-            document.getElementById('detailModal').style.display = 'none';
         }
 
-        // 3. CODES PROMO
-        async function createCoupon() {
-            const code = document.getElementById('cp-code').value.toUpperCase();
-            const val = document.getElementById('cp-value').value;
-            if(!code || !val) return;
-            await db.collection("coupons").doc(code).set({ value: parseInt(val), active: true });
-            alert("Coupon créé !");
-        }
-
-        // 4. CHAT ET RÉPONSES RAPIDES
-        function setQuickMsg(txt) { document.getElementById('chat-input').value = txt; }
-
+        // CHAT & SUPPORT
         function loadChatList() {
             db.collection("chats").orderBy("timestamp", "desc").onSnapshot(snap => {
-                const list = document.getElementById('chat-list');
+                const select = document.getElementById('chat-user-select');
                 const users = {};
                 snap.forEach(doc => {
                     const c = doc.data();
-                    if(!users[c.userUID]) users[c.userUID] = c.userName || "Client";
+                    if(!users[c.userUID]) users[c.userUID] = c.userName || c.customerEmail || "Client";
                 });
-                list.innerHTML = '';
-                for(let id in users) {
-                    list.innerHTML += `<div class="nav-link" style="color:black; margin-bottom:5px; border:1px solid #ddd;" onclick="loadMessages('${id}', '${users[id]}')">${users[id]}</div>`;
-                }
+                select.innerHTML = '<option value="">Choisir un client...</option>';
+                for(let id in users) select.innerHTML += `<option value="${id}">${users[id]}</option>`;
             });
         }
 
-        function loadMessages(uid, name) {
+        function loadUserChat(uid) {
             currentChatUID = uid;
-            document.getElementById('chat-active-user').textContent = "Chat avec " + name;
             db.collection("chats").where("userUID", "==", uid).orderBy("timestamp", "asc").onSnapshot(snap => {
                 const box = document.getElementById('chat-messages');
                 box.innerHTML = '';
@@ -340,20 +372,6 @@
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
             document.getElementById('chat-input').value = '';
-        }
-
-        // 6. EXPORT CSV
-        function exportToCSV() {
-            let csv = "ID,Client,Produit,Total,Status\n";
-            allOrdersData.forEach(o => {
-                csv += `${o.orderId},${o.customerEmail},${o.items[0].product},${o.total},${o.status}\n`;
-            });
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('href', url);
-            a.setAttribute('download', 'ventes_payfusion.csv');
-            a.click();
         }
 
         function logout() { auth.signOut().then(() => window.location.href = "login.html"); }
