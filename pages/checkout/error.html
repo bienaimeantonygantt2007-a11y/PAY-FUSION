@@ -3,27 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Erreur Technique | PayFusion</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Incident Technique | PayFusion Haiti</title>
+    
+    <!-- Polices & Icônes -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
     <style>
-        :root { --primary: #0056b3; --secondary: #002d5e; --bg: #f8fafc; --white: #ffffff; --error: #d63031; }
+        :root {
+            --primary: #0056b3;
+            --secondary: #002d5e;
+            --primary-glow: rgba(0, 86, 179, 0.1);
+            --error-red: #d63031;
+            --bg-fluid: #f8fafc;
+            --white: #ffffff;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--secondary); height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .card { background: var(--white); padding: 50px 30px; border-radius: 30px; text-align: center; max-width: 450px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.05); }
-        .icon-box { width: 80px; height: 80px; background: rgba(214, 48, 49, 0.1); color: var(--error); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2.5rem; margin: 0 auto 25px; }
-        h2 { font-size: 1.6rem; margin-bottom: 15px; }
-        p { color: #64748b; font-size: 0.95rem; margin-bottom: 30px; line-height: 1.6; }
-        .btn-back { display: block; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; text-decoration: none; font-weight: 600; transition: 0.3s; }
-        .btn-back:hover { background: var(--secondary); transform: translateY(-3px); }
+
+        body {
+            background-color: var(--bg-fluid);
+            color: var(--text-dark);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Arrière-plan Dynamique */
+        .bg-blobs {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; filter: blur(80px); opacity: 0.6;
+        }
+        .blob {
+            position: absolute; width: 450px; height: 450px;
+            background: var(--primary-glow); border-radius: 50%;
+            animation: move 15s infinite alternate;
+        }
+        @keyframes move { from { transform: translate(-10%, -10%); } to { transform: translate(15%, 15%); } }
+
+        .error-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 60px 40px;
+            border-radius: 40px;
+            text-align: center;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            animation: cardAppear 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes cardAppear {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .icon-box {
+            width: 90px;
+            height: 90px;
+            background: rgba(214, 48, 49, 0.1);
+            color: var(--error-red);
+            border-radius: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.8rem;
+            margin: 0 auto 30px;
+            transform: rotate(-5deg);
+            animation: iconPulse 2s infinite ease-in-out;
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { transform: rotate(-5deg) scale(1); }
+            50% { transform: rotate(5deg) scale(1.05); }
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--secondary);
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-action {
+            padding: 18px;
+            border-radius: 18px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 10px 25px rgba(0, 86, 179, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 86, 179, 0.3);
+        }
+
+        .btn-support {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid #f1f5f9;
+        }
+
+        .btn-support:hover {
+            border-color: var(--primary);
+            background: #f0f7ff;
+        }
+
+        .error-code {
+            margin-top: 30px;
+            font-size: 0.75rem;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 480px) {
+            .error-card { padding: 45px 25px; border-radius: 32px; }
+            h2 { font-size: 1.5rem; }
+        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <div class="icon-box"><i class="fa-solid fa-triangle-exclamation"></i></div>
-        <h2>Erreur de système</h2>
-        <p>Une erreur technique est survenue lors du traitement de votre demande. Nos serveurs sont peut-être surchargés.</p>
-        <a href="../home.html" class="btn-back">Réessayer plus tard</a>
+
+    <div class="bg-blobs">
+        <div class="blob"></div>
     </div>
+
+    <div class="error-card">
+        <div class="icon-box">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        
+        <h2>Incident Technique</h2>
+        
+        <p>
+            Nous rencontrons une difficulté pour traiter votre demande. Cela peut être dû à une saturation temporaire ou une instabilité réseau.
+        </p>
+
+        <div class="btn-group">
+            <button onclick="handleRedirect()" class="btn-action btn-primary">
+                Tenter de revenir <i class="fa-solid fa-rotate-right"></i>
+            </button>
+            <a href="user/supports.html" class="btn-action btn-support">
+                Contacter le support <i class="fa-solid fa-headset"></i>
+            </a>
+        </div>
+
+        <div class="error-code">Code d'erreur : SYSTEM_DISRUPTION_509</div>
+    </div>
+
+    <script>
+        // Initialisation Firebase pour redirection intelligente
+        const firebaseConfig = {
+            apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
+            authDomain: "pay-fusion-509.firebaseapp.com",
+            projectId: "pay-fusion-509",
+            storageBucket: "pay-fusion-509.firebasestorage.app",
+            messagingSenderId: "401434428368",
+            appId: "1:401434428368:web:c1f526254f63fa57402fd5",
+            measurementId: "G-JN41S8MKWH"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        function handleRedirect() {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    // Si connecté, on renvoie vers le dashboard
+                    window.location.href = "../home.html";
+                } else {
+                    // Si non connecté, on renvoie vers l'accueil public
+                    window.location.href = "../index.html";
+                }
+            });
+        }
+
+        // Sécurité : Redirection automatique après 30 secondes d'inactivité sur cette page
+        setTimeout(() => {
+            handleRedirect();
+        }, 30000);
+    </script>
 </body>
 </html>
