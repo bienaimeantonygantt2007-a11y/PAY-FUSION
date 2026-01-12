@@ -119,110 +119,120 @@
     </div>
 
     <script>
-        const firebaseConfig = {
-  apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
-  authDomain: "pay-fusion-509.firebaseapp.com",
-  projectId: "pay-fusion-509",
-  storageBucket: "pay-fusion-509.firebasestorage.app",
-  messagingSenderId: "401434428368",
-  appId: "1:401434428368:web:c1f526254f63fa57402fd5"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const auth = firebase.auth();
+    const firebaseConfig = {
+        apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
+        authDomain: "pay-fusion-509.firebaseapp.com",
+        projectId: "pay-fusion-509",
+        storageBucket: "pay-fusion-509.firebasestorage.app",
+        messagingSenderId: "401434428368",
+        appId: "1:401434428368:web:c1f526254f63fa57402fd5"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
 
-        let allOrders = [];
+    let allOrders = [];
 
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                fetchOrders(user.uid);
-            } else {
-                window.location.href = "login.html";
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            fetchOrders(user.uid);
+        } else {
+            window.location.href = "login.html";
+        }
+    });
+
+    async function fetchOrders(uid) {
+        try {
+            // ÉTAPE 1 : On retire le .orderBy pour supprimer l'erreur
+            const snapshot = await db.collection("orders")
+                                     .where("uid", "==", uid)
+                                     .get();
+            
+            document.getElementById('loading').style.display = 'none';
+
+            if (snapshot.empty) {
+                document.getElementById('empty-state').style.display = 'block';
+                return;
             }
-        });
 
-        async function fetchOrders(uid) {
-            try {
-                // On récupère les commandes de l'utilisateur triées par date
-                const snapshot = await db.collection("orders")
-                                         .where("uid", "==", uid)
-                                         .orderBy("createdAt", "desc")
-                                         .get();
-                
-                document.getElementById('loading').style.display = 'none';
+            let tempOrders = [];
+            snapshot.forEach(doc => {
+                tempOrders.push({ id: doc.id, ...doc.data() });
+            });
 
-                if (snapshot.empty) {
-                    document.getElementById('empty-state').style.display = 'block';
-                    return;
-                }
+            // ÉTAPE 2 : On trie manuellement par date (le plus récent en haut)
+            // Cela ne demande pas d'index Firebase
+            tempOrders.sort((a, b) => {
+                const dateA = a.createdAt ? a.createdAt.seconds : 0;
+                const dateB = b.createdAt ? b.createdAt.seconds : 0;
+                return dateB - dateA; // Décroissant
+            });
 
-                snapshot.forEach(doc => {
-                    allOrders.push({ id: doc.id, ...doc.data() });
-                });
+            allOrders = tempOrders;
+            renderOrders(allOrders);
 
-                renderOrders(allOrders);
-            } catch (error) {
-                console.error("Erreur lors de la récupération :", error);
-                document.getElementById('loading').innerHTML = "Erreur de chargement.";
-            }
+        } catch (error) {
+            console.error("Erreur détaillée :", error);
+            document.getElementById('loading').innerHTML = "Erreur de chargement. Veuillez rafraîchir.";
+        }
+    }
+
+    function renderOrders(ordersToDisplay) {
+        const listElement = document.getElementById('orders-list');
+        listElement.innerHTML = '';
+
+        if(ordersToDisplay.length === 0) {
+            document.getElementById('empty-state').style.display = 'block';
+        } else {
+            document.getElementById('empty-state').style.display = 'none';
         }
 
-        function renderOrders(ordersToDisplay) {
-            const listElement = document.getElementById('orders-list');
-            listElement.innerHTML = '';
+        ordersToDisplay.forEach(order => {
+            // Sécurité pour la date
+            const date = order.createdAt ? new Date(order.createdAt.seconds * 1000).toLocaleDateString('fr-FR') : "Récemment";
+            
+            const statusClass = order.status === 'En attente' ? 'status-pending' : (order.status === 'Validé' ? 'status-validated' : 'status-rejected');
+            
+            // Sécurité pour l'affichage du premier produit
+            const firstItem = (order.items && order.items.length > 0) ? order.items[0] : {product: "Service", pack: "Détails"};
+            
+            let icon = "fa-shopping-bag";
+            if(firstItem.product === "Free Fire") icon = "fa-gamepad";
+            if(firstItem.product === "Netflix") icon = "fa-play";
+            if(["PayPal", "Wise", "USDT"].includes(firstItem.product)) icon = "fa-wallet";
 
-            if(ordersToDisplay.length === 0) {
-                document.getElementById('empty-state').style.display = 'block';
-            } else {
-                document.getElementById('empty-state').style.display = 'none';
-            }
-
-            ordersToDisplay.forEach(order => {
-                const date = order.createdAt ? new Date(order.createdAt.seconds * 1000).toLocaleDateString('fr-FR') : "Récemment";
-                const statusClass = order.status === 'En attente' ? 'status-pending' : (order.status === 'Validé' ? 'status-validated' : 'status-rejected');
-                
-                // On prend le premier item pour l'icône et le titre
-                const firstItem = order.items[0];
-                let icon = "fa-shopping-bag";
-                if(firstItem.product === "Free Fire") icon = "fa-gamepad";
-                if(firstItem.product === "Netflix") icon = "fa-play";
-                if(["PayPal", "Wise", "USDT"].includes(firstItem.product)) icon = "fa-wallet";
-
-                const card = `
-                    <div class="order-card">
-                        <div class="order-header">
-                            <span class="order-id">ID: ${order.orderId}</span>
-                            <span class="status-badge ${statusClass}">${order.status}</span>
-                        </div>
-                        <div class="order-body">
-                            <div class="order-icon"><i class="fa-solid ${icon}"></i></div>
-                            <div class="order-info">
-                                <h3>${firstItem.product} ${order.items.length > 1 ? '+ ' + (order.items.length - 1) + ' autre(s)' : ''}</h3>
-                                <p>${firstItem.pack || firstItem.amountUSD + ' USD'}</p>
-                            </div>
-                        </div>
-                        <div class="order-footer">
-                            <span class="order-date">${date}</span>
-                            <span class="order-total">${order.total} HTG</span>
+            const card = `
+                <div class="order-card">
+                    <div class="order-header">
+                        <span class="order-id">ID: ${order.orderId || 'N/A'}</span>
+                        <span class="status-badge ${statusClass}">${order.status || 'En attente'}</span>
+                    </div>
+                    <div class="order-body">
+                        <div class="order-icon"><i class="fa-solid ${icon}"></i></div>
+                        <div class="order-info">
+                            <h3>${firstItem.product} ${order.items && order.items.length > 1 ? '+ ' + (order.items.length - 1) : ''}</h3>
+                            <p>${firstItem.pack || firstItem.amountUSD + ' USD' || ''}</p>
                         </div>
                     </div>
-                `;
-                listElement.innerHTML += card;
-            });
-        }
+                    <div class="order-footer">
+                        <span class="order-date">${date}</span>
+                        <span class="order-total">${order.total || 0} HTG</span>
+                    </div>
+                </div>
+            `;
+            listElement.innerHTML += card;
+        });
+    }
 
-        function filterOrders(status) {
-            // UI Update
-            document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
-            event.target.classList.add('active');
+    function filterOrders(status) {
+        document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
+        if (event) event.target.classList.add('active');
 
-            if (status === 'all') {
-                renderOrders(allOrders);
-            } else {
-                const filtered = allOrders.filter(o => o.status === status);
-                renderOrders(filtered);
-            }
+        if (status === 'all') {
+            renderOrders(allOrders);
+        } else {
+            const filtered = allOrders.filter(o => o.status === status);
+            renderOrders(filtered);
         }
-    </script>
-</body>
-</html>
+    }
+</script>
