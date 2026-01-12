@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finaliser la commande | PayFusion</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Finaliser la commande | PayFusion Haiti</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
@@ -15,140 +16,185 @@
         :root {
             --primary: #0056b3;
             --secondary: #002d5e;
+            --accent: #00d2ff;
             --bg: #f8fafc;
             --white: #ffffff;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --text: #1e293b;
+            --success: #27ae60;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg); color: var(--secondary); padding-bottom: 50px; }
+        body { background-color: var(--bg); color: var(--text); padding-bottom: 50px; }
 
         header {
-            height: 65px; background: var(--white); display: flex; align-items: center; 
-            padding: 0 5%; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: 70px; background: var(--white); display: flex; align-items: center; 
+            padding: 0 6%; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 15px rgba(0,0,0,0.05);
         }
-        header .back-btn { color: var(--primary); font-size: 1.2rem; text-decoration: none; margin-right: 20px; }
-        header h1 { font-size: 1.1rem; font-weight: 700; }
+        header .back-btn { color: var(--primary); font-size: 1.4rem; text-decoration: none; margin-right: 15px; }
+        header h1 { font-size: 1.1rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; }
 
-        .container { padding: 20px 5%; max-width: 600px; margin: 0 auto; }
+        .container { padding: 25px 6%; max-width: 650px; margin: 0 auto; }
 
-        /* ÉTAPE 1 : RÉSUMÉ DU PANIER */
-        .cart-section { background: var(--white); padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 20px; }
-        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f1f5f9; }
-        .cart-item:last-child { border-bottom: none; }
-        .item-info h4 { font-size: 0.95rem; margin-bottom: 4px; }
-        .item-info p { font-size: 0.8rem; color: #64748b; }
-        .item-price { font-weight: 700; color: var(--primary); }
+        /* RÉSUMÉ DU PANIER */
+        .section-card { 
+            background: var(--white); padding: 25px; border-radius: 28px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03); margin-bottom: 25px;
+            border: 1px solid #f1f5f9;
+        }
+        .cart-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 15px 0; border-bottom: 1px solid #f1f5f9; 
+        }
+        .item-info h4 { font-size: 1rem; font-weight: 700; color: var(--secondary); margin-bottom: 3px; }
+        .item-info p { font-size: 0.85rem; color: #64748b; }
+        .item-price { font-weight: 800; color: var(--primary); font-size: 1rem; }
 
-        .summary { margin-top: 15px; padding-top: 15px; border-top: 2px dashed #e2e8f0; }
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; }
-        .total-row { font-size: 1.1rem; font-weight: 800; color: var(--secondary); margin-top: 10px; }
+        .summary { margin-top: 20px; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.95rem; color: #64748b; }
+        .total-row { 
+            font-size: 1.2rem; font-weight: 900; color: var(--secondary); 
+            margin-top: 15px; padding-top: 15px; border-top: 2px dashed #e2e8f0;
+        }
 
-        /* ÉTAPE 2 : CHOIX DU PAIEMENT */
-        .payment-methods { display: none; margin-top: 20px; }
-        .payment-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        /* CHOIX DU PAIEMENT */
+        .payment-methods { display: none; animation: slideUp 0.5s ease; }
+        .payment-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 20px; }
         .method-card { 
-            background: var(--white); border: 2px solid transparent; border-radius: 15px; 
+            background: var(--white); border: 2.5px solid transparent; border-radius: 20px; 
             padding: 15px; text-align: center; cursor: pointer; transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
         }
-        .method-card img { height: 35px; margin-bottom: 8px; }
+        .method-card img { height: 35px; width: auto; margin-bottom: 8px; filter: grayscale(0.5); transition: 0.3s; }
         .method-card.selected { border-color: var(--primary); background: #f0f7ff; }
+        .method-card.selected img { filter: grayscale(0); transform: scale(1.1); }
 
-        /* ÉTAPE 3 : FORMULAIRE DE PAIEMENT */
-        .payment-form { display: none; background: var(--white); padding: 20px; border-radius: 20px; margin-top: 20px; animation: fadeIn 0.5s ease; }
-        .info-payment { background: #f0f7ff; padding: 15px; border-radius: 12px; margin-bottom: 20px; font-size: 0.85rem; }
-        .info-payment b { color: var(--primary); }
-
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 6px; color: #64748b; }
-        .form-group input { width: 100%; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 10px; outline: none; }
-        
-        .file-input-wrapper { position: relative; border: 2px dashed #cbd5e1; padding: 20px; border-radius: 12px; text-align: center; }
-        .file-input-wrapper input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-
-        .btn-main { 
-            width: 100%; padding: 16px; background: var(--primary); color: white; 
-            border: none; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 20px; 
+        /* FORMULAIRE DE PREUVE */
+        .payment-form { display: none; animation: fadeIn 0.5s ease; }
+        .instruction-box { 
+            background: #eef5ff; padding: 20px; border-radius: 20px; margin-bottom: 25px; 
+            font-size: 0.9rem; border-left: 5px solid var(--primary); line-height: 1.6;
         }
+        .instruction-box b { color: var(--primary); font-size: 1.05rem; }
 
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 800; margin-bottom: 10px; color: var(--secondary); text-transform: uppercase; }
+        .form-group input { 
+            width: 100%; padding: 15px; border: 1.5px solid #e2e8f0; border-radius: 16px; 
+            outline: none; transition: 0.3s; font-size: 1rem;
+        }
+        
+        .upload-area { 
+            position: relative; border: 2px dashed #cbd5e1; padding: 30px; 
+            border-radius: 20px; text-align: center; transition: 0.3s; background: #fcfcfd;
+        }
+        .upload-area:hover { border-color: var(--primary); background: #f0f7ff; }
+        .upload-area i { font-size: 2rem; color: var(--primary); margin-bottom: 10px; }
+
+        .btn-pay { 
+            width: 100%; padding: 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+            color: white; border: none; border-radius: 18px; font-weight: 800; font-size: 1.1rem;
+            cursor: pointer; margin-top: 10px; box-shadow: 0 10px 25px rgba(0, 86, 179, 0.25);
+            transition: var(--transition); display: flex; justify-content: center; align-items: center; gap: 12px;
+        }
+        .btn-pay:hover { transform: translateY(-4px); box-shadow: 0 15px 35px rgba(0, 86, 179, 0.35); }
+        .btn-pay:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* LOADING OVERLAY */
         #loading-overlay {
-            position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8);
+            position: fixed; top:0; left:0; width:100%; height:100%; 
+            background: rgba(255,255,255,0.9); backdrop-filter: blur(8px);
             display:none; flex-direction:column; justify-content:center; align-items:center; z-index:2000;
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        @media (max-width: 480px) {
+            .container { padding: 20px 5%; }
+            .method-card { padding: 12px 8px; }
+            .method-card img { height: 28px; }
+        }
     </style>
 </head>
 <body>
 
     <div id="loading-overlay">
-        <i class="fas fa-circle-notch fa-spin fa-2x" style="color: var(--primary);"></i>
-        <p style="margin-top:15px; font-weight:600;">Traitement de la commande...</p>
+        <i class="fas fa-circle-notch fa-spin fa-3x" style="color: var(--primary);"></i>
+        <p style="margin-top:20px; font-weight:800; color: var(--secondary);">Sécurisation de la commande...</p>
+        <small id="compression-status" style="color: var(--primary); margin-top: 10px;"></small>
     </div>
 
     <header>
-        <a href="../home.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
-        <h1>Mon Panier</h1>
+        <a href="../home.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+        <h1>Vérification</h1>
     </header>
 
     <div class="container">
-        <!-- Section Résumé -->
-        <div class="cart-section">
-            <div id="cart-items-list">
-                <!-- Rempli par JS -->
-            </div>
+        <!-- ÉTAPE 1 : RÉSUMÉ -->
+        <div class="section-card" id="cart-summary">
+            <h3 style="font-size: 0.9rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 15px;">Détails des articles</h3>
+            <div id="cart-items-list"></div>
+            
             <div class="summary">
-                <div class="summary-row"><span>Sous-total</span> <span id="subtotal">0 HTG</span></div>
-                <div class="summary-row"><span>Frais de service</span> <span id="fees">0 HTG</span></div>
-                <div class="summary-row total-row"><span>Total à payer</span> <span id="total">0 HTG</span></div>
+                <div class="summary-row"><span>Sous-total</span> <b id="subtotal">0 HTG</b></div>
+                <div class="summary-row"><span>Frais de plateforme</span> <b id="fees">0 HTG</b></div>
+                <div class="summary-row total-row"><span>Total à payer</span> <b id="total">0 HTG</b></div>
             </div>
         </div>
 
-        <button class="btn-main" id="btn-proceed" onclick="showPaymentMethods()">Procéder avec ma commande</button>
+        <button class="btn-pay" id="btn-show-methods" onclick="showPaymentMethods()">
+            Procéder au paiement <i class="fa-solid fa-lock"></i>
+        </button>
 
-        <!-- Section Choix du Paiement -->
+        <!-- ÉTAPE 2 : MODES DE PAIEMENT -->
         <div class="payment-methods" id="payment-methods-sec">
-            <h3 style="font-size: 1rem;">Choisissez votre mode de paiement</h3>
+            <h3 style="font-size: 0.9rem; text-transform: uppercase; color: #94a3b8; margin-top: 10px;">Choisir un moyen de paiement</h3>
             <div class="payment-grid">
-                <div class="method-card" onclick="selectMethod('moncash')">
+                <div class="method-card" onclick="selectMethod('moncash', this)">
                     <img src="../../assets/logos/moncash-logo.png" alt="MonCash">
                 </div>
-                <div class="method-card" onclick="selectMethod('natcash')">
+                <div class="method-card" onclick="selectMethod('natcash', this)">
                     <img src="../../assets/logos/natcash-logo.png" alt="NatCash">
                 </div>
-                <div class="method-card" onclick="selectMethod('usdt')">
+                <div class="method-card" onclick="selectMethod('usdt', this)">
                     <img src="../../assets/logos/usdt-logo.png" alt="USDT">
                 </div>
             </div>
         </div>
 
-        <!-- Formulaires Dynamiques -->
-        <div class="payment-form" id="form-container">
-            <div id="payment-instructions" class="info-payment"></div>
+        <!-- ÉTAPE 3 : FORMULAIRE FINAL -->
+        <div class="payment-form" id="final-form-sec">
+            <div class="instruction-box" id="payment-instructions"></div>
             
             <form id="finalOrderForm">
                 <div id="dynamic-fields"></div>
+                
                 <div class="form-group">
-                    <label>Preuve de paiement (Screenshot)</label>
-                    <div class="file-input-wrapper">
+                    <label>Preuve de transfert (Screenshot)</label>
+                    <div class="upload-area" id="drop-area">
                         <i class="fa-solid fa-cloud-arrow-up"></i>
-                        <p id="file-name" style="font-size: 0.8rem; margin-top:5px;">Cliquez pour uploader l'image</p>
-                        <input type="file" id="proof-img" accept="image/*" required onchange="handleFile(this)">
+                        <p id="file-info" style="font-weight: 600; font-size: 0.85rem;">Cliquez pour ajouter l'image</p>
+                        <input type="file" id="proof-img" accept="image/*" required style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
                     </div>
                 </div>
-                <button type="submit" class="btn-main">Valider mon paiement</button>
+
+                <button type="submit" class="btn-pay" id="submit-order-btn">
+                    Confirmer mon paiement <i class="fa-solid fa-circle-check"></i>
+                </button>
             </form>
         </div>
     </div>
 
     <script>
         const firebaseConfig = {
-  apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
-  authDomain: "pay-fusion-509.firebaseapp.com",
-  projectId: "pay-fusion-509",
-  storageBucket: "pay-fusion-509.firebasestorage.app",
-  messagingSenderId: "401434428368",
-  appId: "1:401434428368:web:c1f526254f63fa57402fd5"
+            apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
+            authDomain: "pay-fusion-509.firebaseapp.com",
+            projectId: "pay-fusion-509",
+            storageBucket: "pay-fusion-509.firebasestorage.app",
+            messagingSenderId: "401434428368",
+            appId: "1:401434428368:web:c1f526254f63fa57402fd5",
+            measurementId: "G-JN41S8MKWH"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
@@ -156,17 +202,29 @@
 
         let cart = JSON.parse(localStorage.getItem('payfusion_cart')) || [];
         let selectedMethod = '';
-        let base64Proof = '';
+        let compressedBase64 = '';
         let finalTotal = 0;
 
-        // Afficher les items
+        // AUTH CHECK
+        auth.onAuthStateChanged(user => {
+            if (!user) window.location.href = "../login.html";
+        });
+
+        // CALCULS ET AFFICHAGE
         function renderCart() {
             const list = document.getElementById('cart-items-list');
             let subtotal = 0;
             let fees = 0;
 
-            list.innerHTML = cart.map((item, index) => {
+            if(cart.length === 0) {
+                list.innerHTML = "<p style='text-align:center; padding:20px; color:#94a3b8;'>Votre panier est vide.</p>";
+                document.getElementById('btn-show-methods').disabled = true;
+                return;
+            }
+
+            list.innerHTML = cart.map(item => {
                 subtotal += item.price;
+                // On applique 150 HTG de frais seulement sur les services financiers
                 if(["PayPal", "Wise", "USDT"].includes(item.product)) fees += 150;
                 return `
                     <div class="cart-item">
@@ -174,94 +232,124 @@
                             <h4>${item.product}</h4>
                             <p>${item.pack || item.amountUSD + ' USD'}</p>
                         </div>
-                        <div class="item-price">${item.price} HTG</div>
+                        <div class="item-price">${item.price.toLocaleString()} HTG</div>
                     </div>
                 `;
             }).join('');
 
             finalTotal = subtotal + fees;
-            document.getElementById('subtotal').textContent = subtotal + " HTG";
-            document.getElementById('fees').textContent = fees + " HTG";
-            document.getElementById('total').textContent = finalTotal + " HTG";
+            document.getElementById('subtotal').textContent = subtotal.toLocaleString() + " HTG";
+            document.getElementById('fees').textContent = fees.toLocaleString() + " HTG";
+            document.getElementById('total').textContent = finalTotal.toLocaleString() + " HTG";
         }
 
         renderCart();
 
         function showPaymentMethods() {
-            if(cart.length === 0) return alert("Votre panier est vide");
-            document.getElementById('btn-proceed').style.display = 'none';
+            document.getElementById('btn-show-methods').style.display = 'none';
             document.getElementById('payment-methods-sec').style.display = 'block';
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
 
-        function selectMethod(method) {
+        function selectMethod(method, el) {
             selectedMethod = method;
             document.querySelectorAll('.method-card').forEach(c => c.classList.remove('selected'));
-            event.currentTarget.classList.add('selected');
+            el.classList.add('selected');
             
-            const formContainer = document.getElementById('form-container');
+            const formSec = document.getElementById('final-form-sec');
             const instr = document.getElementById('payment-instructions');
             const fields = document.getElementById('dynamic-fields');
             
-            formContainer.style.display = 'block';
+            formSec.style.display = 'block';
             fields.innerHTML = '';
 
             if(method === 'moncash') {
-                instr.innerHTML = `Envoyez <b>${finalTotal} HTG</b> sur le numéro : <br><b>+509 3944 2808</b> (Marco Bien-Aimé)`;
+                instr.innerHTML = `Envoyez exactement <b>${finalTotal.toLocaleString()} HTG</b> sur :<br>Numéro : <b>+509 3944 2808</b><br>Nom : <b>Marco Bien-Aimé</b>`;
                 fields.innerHTML = `
-                    <div class="form-group"><label>Numéro MonCash utilisé</label><input type="tel" id="sender-info" required></div>
-                    <div class="form-group"><label>Nom du compte MonCash</label><input type="text" id="sender-name" required></div>
+                    <div class="form-group"><label>Numéro MonCash utilisé</label><input type="tel" id="sender-info" placeholder="0000-0000" required></div>
+                    <div class="form-group"><label>Nom du compte MonCash</label><input type="text" id="sender-name" placeholder="Votre nom complet" required></div>
                 `;
             } else if(method === 'natcash') {
-                instr.innerHTML = `Envoyez <b>${finalTotal} HTG</b> sur le numéro : <br><b>+509 3574 1778</b> (Marco Bien-Aimé)`;
+                instr.innerHTML = `Envoyez exactement <b>${finalTotal.toLocaleString()} HTG</b> sur :<br>Numéro : <b>+509 3574 1778</b><br>Nom : <b>Marco Bien-Aimé</b>`;
                 fields.innerHTML = `
-                    <div class="form-group"><label>Numéro NatCash utilisé</label><input type="tel" id="sender-info" required></div>
-                    <div class="form-group"><label>Nom du compte NatCash</label><input type="text" id="sender-name" required></div>
+                    <div class="form-group"><label>Numéro NatCash utilisé</label><input type="tel" id="sender-info" placeholder="0000-0000" required></div>
+                    <div class="form-group"><label>Nom du compte NatCash</label><input type="text" id="sender-name" placeholder="Votre nom complet" required></div>
                 `;
             } else {
-                instr.innerHTML = `Envoyez l'équivalent en USDT TRC20 sur : <br><b style="font-size:0.7rem;">TJHVCbXMBQdtzurHngB1aXSFkR9TWYvZ94</b> (Binance)`;
+                instr.innerHTML = `Envoyez l'équivalent en <b>USDT (Réseau TRC20)</b> sur :<br><span style="font-size:0.75rem; word-break:break-all;"><b>TJHVCbXMBQdtzurHngB1aXSFkR9TWYvZ94</b></span>`;
                 fields.innerHTML = `
-                    <div class="form-group"><label>Adresse Wallet TRC20 (Expéditeur)</label><input type="text" id="sender-info" required></div>
-                    <div class="form-group"><label>Application utilisée</label><input type="text" id="sender-name" placeholder="Binance, TrustWallet, etc." required></div>
+                    <div class="form-group"><label>Votre adresse Wallet TRC20</label><input type="text" id="sender-info" placeholder="T..." required></div>
+                    <div class="form-group"><label>Application utilisée</label><input type="text" id="sender-name" placeholder="Binance, TrustWallet..." required></div>
                 `;
             }
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
 
-        function handleFile(input) {
-            const file = input.files[0];
-            document.getElementById('file-name').textContent = file.name;
+        // --- COMPRESSION D'IMAGE (LE SECRET POUR FIRESTORE) ---
+        document.getElementById('proof-img').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+
+            document.getElementById('file-info').textContent = "Compression de l'image...";
             const reader = new FileReader();
-            reader.onload = (e) => { base64Proof = e.target.result; };
             reader.readAsDataURL(file);
-        }
+            reader.onload = function(event) {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 800; // On réduit la largeur à 800px pour gagner de la place
+                    const scaleSize = MAX_WIDTH / img.width;
+                    canvas.width = MAX_WIDTH;
+                    canvas.height = img.height * scaleSize;
 
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    // On convertit en JPEG avec une qualité de 0.7 (Parfait pour les preuves)
+                    compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    document.getElementById('file-info').innerHTML = `<i class="fa-solid fa-check-circle" style="color:var(--success)"></i> Image prête (${file.name})`;
+                };
+            };
+        });
+
+        // SOUMISSION FINALE
         document.getElementById('finalOrderForm').onsubmit = async (e) => {
             e.preventDefault();
+            
+            if(!compressedBase64) {
+                alert("Veuillez attendre que l'image soit compressée.");
+                return;
+            }
+
             document.getElementById('loading-overlay').style.display = 'flex';
 
             const user = auth.currentUser;
-            const orderId = "PF-" + Math.floor(Math.random() * 1000000);
+            const orderId = "PF-" + Math.floor(100000 + Math.random() * 900000);
 
-            const orderPayload = {
+            const orderData = {
                 orderId: orderId,
                 uid: user.uid,
                 customerEmail: user.email,
                 items: cart,
                 total: finalTotal,
                 paymentMethod: selectedMethod,
-                paymentSenderInfo: document.getElementById('sender-info').value,
-                paymentSenderName: document.getElementById('sender-name').value,
-                proofBase64: base64Proof,
+                paymentSenderInfo: document.getElementById('sender-info').value.trim(),
+                paymentSenderName: document.getElementById('sender-name').value.trim(),
+                proofBase64: compressedBase64,
                 status: "En attente",
+                purchaseCost: 0, // Pour ton Admin
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
             try {
-                await db.collection("orders").doc(orderId).set(orderPayload);
+                await db.collection("orders").doc(orderId).set(orderData);
                 localStorage.removeItem('payfusion_cart');
                 window.location.href = "success.html";
             } catch (err) {
-                console.error(err);
-                window.location.href = "error.html";
+                console.error("Erreur de commande:", err);
+                document.getElementById('loading-overlay').style.display = 'none';
+                alert("Erreur lors de l'envoi. L'image est peut-être trop lourde ou votre connexion est instable.");
             }
         };
     </script>
