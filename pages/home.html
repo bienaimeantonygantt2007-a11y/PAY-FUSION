@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord | PayFusion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        :root {
+            --primary: #0056b3;
+            --secondary: #002d5e;
+            --accent: #00d2ff;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --text-main: #1e293b;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+
+        /* HEADER FIXE GLASSMORPHISM */
+        header {
+            height: 75px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(15px);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 6%; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        header .logo img { height: 40px; }
+        .menu-trigger { font-size: 1.6rem; color: var(--primary); cursor: pointer; transition: var(--transition); }
+        .menu-trigger:hover { transform: scale(1.1); }
+
+        /* OVERLAY ET SIDEBAR */
+        .sidebar-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4); display: none; z-index: 1100; opacity: 0; transition: 0.4s;
+        }
+        .sidebar-overlay.active { display: block; opacity: 1; }
+
+        .sidebar {
+            position: fixed; top: 0; right: -300px; width: 300px; height: 100%;
+            background: var(--white); z-index: 1200; transition: var(--transition);
+            padding: 40px 30px; display: flex; flex-direction: column;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.05);
+        }
+        .sidebar.active { right: 0; }
+        .sidebar .user-profile { margin-bottom: 40px; border-bottom: 1px solid #f1f5f9; padding-bottom: 20px; }
+        .sidebar .user-profile h4 { font-weight: 800; color: var(--secondary); font-size: 1.1rem; }
+        .sidebar .user-profile p { font-size: 0.8rem; color: #64748b; }
+
+        .nav-links a {
+            display: flex; align-items: center; gap: 15px; padding: 15px 0;
+            text-decoration: none; color: var(--text-main); font-weight: 600;
+            font-size: 0.95rem; transition: 0.3s;
+        }
+        .nav-links a:hover { color: var(--primary); transform: translateX(5px); }
+        .nav-links a i { width: 25px; color: var(--primary); }
+
+        /* HERO SECTION DYNAMIQUE */
+        .hero-banner {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            margin: 20px 6%; padding: 40px 30px; border-radius: 30px; color: white;
+            position: relative; overflow: hidden; box-shadow: 0 15px 35px rgba(0, 86, 179, 0.2);
+        }
+        .hero-banner h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; }
+        .hero-banner p { font-size: 0.9rem; opacity: 0.9; }
+        .hero-banner .bg-icon { position: absolute; right: -20px; bottom: -20px; font-size: 8rem; opacity: 0.1; transform: rotate(-15deg); }
+
+        /* GRILLE DE SERVICES */
+        .section-container { padding: 30px 6%; }
+        .section-title { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; margin-bottom: 20px; }
+
+        .service-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px; }
+        
+        .service-card {
+            background: var(--white); padding: 25px 20px; border-radius: 25px; text-decoration: none;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            border: 1px solid rgba(0,0,0,0.03); transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+        .service-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0, 86, 179, 0.1); border-color: var(--primary); }
+        .service-card img { height: 50px; width: auto; margin-bottom: 15px; }
+        .service-card span { font-weight: 700; font-size: 0.9rem; color: var(--secondary); }
+
+        /* PANIER FLOTTANT */
+        .cart-float {
+            position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px;
+            background: var(--primary); color: white; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.5rem; box-shadow: 0 10px 30px rgba(0, 86, 179, 0.4);
+            cursor: pointer; z-index: 1000; text-decoration: none; transition: var(--transition);
+        }
+        .cart-float:hover { transform: scale(1.1) rotate(-10deg); background: var(--secondary); }
+        .cart-badge {
+            position: absolute; top: 0; right: 0; background: #ff4757; color: white;
+            font-size: 0.75rem; font-weight: 800; width: 22px; height: 22px;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            border: 2px solid var(--primary);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 500px) {
+            .hero-banner { padding: 30px 20px; }
+            .service-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .service-card { padding: 20px 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Overlay pour fermeture au clic extérieur -->
+    <div class="sidebar-overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <!-- Menu Latéral Pro -->
+    <div class="sidebar" id="sidebar">
+        <div class="user-profile">
+            <h4 id="user-name">Chargement...</h4>
+            <p id="user-email">Email utilisateur</p>
+        </div>
+        <nav class="nav-links">
+            <a href="home.html"><i class="fa-solid fa-house"></i> Accueil</a>
+            <a href="orders.html"><i class="fa-solid fa-receipt"></i> Mes Commandes</a>
+            <a href="user/account.html"><i class="fa-solid fa-user-gear"></i> Profil Personnel</a>
+            <a href="user/notifications.html"><i class="fa-solid fa-bell"></i> Annonces Admin</a>
+            <a href="user/supports.html"><i class="fa-solid fa-headset"></i> Centre d'Aide</a>
+            <a href="user/settings.html"><i class="fa-solid fa-sliders"></i> Paramètres</a>
+            <div id="admin-link-container"></div> <!-- Lien Admin dynamique -->
+            <a href="logout.html" style="margin-top: auto; color: #ff4757;"><i class="fa-solid fa-power-off"></i> Déconnexion</a>
+        </nav>
+    </div>
+
+    <header>
+        <div class="logo"><img src="../assets/logos/payfusion-logo.png" alt="PayFusion"></div>
+        <div class="menu-trigger" onclick="toggleMenu()"><i class="fa-solid fa-bars-staggered"></i></div>
+    </header>
+
+    <main>
+        <!-- Banner de Bienvenue -->
+        <section class="hero-banner">
+            <p>Heureux de vous revoir,</p>
+            <h2 id="greet-name">Utilisateur</h2>
+            <p style="margin-top:10px; font-size:0.8rem; background:rgba(255,255,255,0.1); display:inline-block; padding:5px 15px; border-radius:50px;">
+                <i class="fa-solid fa-shield-check"></i> Compte Sécurisé
+            </p>
+            <i class="fa-solid fa-bolt-lightning bg-icon"></i>
+        </section>
+
+        <!-- Section GAMING -->
+        <div class="section-container">
+            <h3 class="section-title">Gaming Premium</h3>
+            <div class="service-grid">
+                <a href="products/freefire.html" class="service-card">
+                    <img src="../assets/logos/freefire-logo.png" alt="Free Fire">
+                    <span>Free Fire</span>
+                </a>
+            </div>
+
+            <h3 class="section-title">Streaming 4K</h3>
+            <div class="service-grid">
+                <a href="products/netflix.html" class="service-card">
+                    <img src="../assets/logos/netflix-logo.png" alt="Netflix">
+                    <span>Netflix</span>
+                </a>
+                <a href="products/disneyplus.html" class="service-card">
+                    <img src="../assets/logos/disneyplus-logo.png" alt="Disney+">
+                    <span>Disney+</span>
+                </a>
+            </div>
+
+            <h3 class="section-title">Finances Digitales</h3>
+            <div class="service-grid">
+                <a href="products/paypal.html" class="service-card">
+                    <img src="../assets/logos/paypal-logo.png" alt="PayPal">
+                    <span>PayPal</span>
+                </a>
+                <a href="products/wise.html" class="service-card">
+                    <img src="../assets/logos/wise-logo.png" alt="Wise">
+                    <span>Wise</span>
+                </a>
+                <a href="products/usdt.html" class="service-card">
+                    <img src="../assets/logos/usdt-logo.png" alt="USDT TRC20">
+                    <span>USDT</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bouton Panier Flottant -->
+    <a href="checkout/cart.html" class="cart-float">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <div class="cart-badge" id="cart-count">0</div>
+    </a>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWSmxal-nrATp0J536tHcS6e9EHhNP3jI",
+            authDomain: "pay-fusion-haiti.firebaseapp.com",
+            projectId: "pay-fusion-haiti",
+            storageBucket: "pay-fusion-haiti.firebasestorage.app",
+            messagingSenderId: "699710501026",
+            appId: "1:699710501026:web:edcf4ab70601b46c3867fb"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // GESTION DU MENU ET OVERLAY
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        // CHARGEMENT DES DONNÉES UTILISATEUR
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                db.collection("users").doc(user.uid).get().then(doc => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        document.getElementById('user-name').textContent = data.fullName;
+                        document.getElementById('greet-name').textContent = data.fullName.split(' ')[0];
+                        document.getElementById('user-email').textContent = data.email;
+
+                        // Vérification Admin pour afficher le lien secret
+                        if(data.email === "bmarcco4412@gmail.com") {
+                            document.getElementById('admin-link-container').innerHTML = `
+                                <a href="admin.html" style="color:var(--primary);"><i class="fa-solid fa-user-shield"></i> Panneau Admin</a>
+                            `;
+                        }
+                    }
+                });
+                updateCartBadge();
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+
+        // MISE À JOUR DU BADGE PANIER
+        function updateCartBadge() {
+            const cart = JSON.parse(localStorage.getItem('payfusion_cart')) || [];
+            document.getElementById('cart-count').textContent = cart.length;
+        }
+    </script>
+</body>
+</html>

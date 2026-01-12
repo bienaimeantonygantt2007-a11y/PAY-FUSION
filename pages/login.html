@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion | PayFusion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <style>
+        :root {
+            --primary: #0056b3;
+            --secondary: #002d5e;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --error: #d63031;
+            --success: #27ae60;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: transparent;
+        }
+
+        header img { height: 45px; }
+
+        .login-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--white);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 86, 179, 0.05);
+            border: 1px solid #f1f5f9;
+        }
+
+        .login-card h2 {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            margin-bottom: 10px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .login-card p {
+            color: #64748b;
+            text-align: center;
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+        }
+
+        .form-group { margin-bottom: 20px; position: relative; }
+
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: var(--transition);
+            outline: none;
+            background: #fcfcfd;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 86, 179, 0.2);
+        }
+
+        .forgot-pass {
+            display: block;
+            text-align: right;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .register-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        #message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            display: none;
+            text-align: center;
+        }
+
+        .msg-error { background: #fff5f5; color: var(--error); border: 1px solid #feb2b2; }
+        .msg-success { background: #f0fff4; color: var(--success); border: 1px solid #9ae6b4; }
+
+        @media (max-width: 480px) {
+            .login-card { padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../index.html">
+            <img src="../assets/logos/payfusion-logo.png" alt="PayFusion">
+        </a>
+    </header>
+
+    <div class="login-container">
+        <div class="login-card">
+            <h2>Bon retour</h2>
+            <p>Connectez-vous à votre espace PayFusion.</p>
+
+            <div id="message"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="email" placeholder="Adresse Email" required>
+                </div>
+                <div class="form-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="password" placeholder="Mot de passe" required>
+                </div>
+
+                <button type="submit" class="btn-login" id="btn-submit">Se connecter</button>
+                
+                <a href="#" class="forgot-pass" id="reset-password">Mot de passe oublié ?</a>
+            </form>
+
+            <div class="register-link">
+                Nouveau ici ? <a href="register.html">Créer un compte</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWSmxal-nrATp0J536tHcS6e9EHhNP3jI",
+            authDomain: "pay-fusion-haiti.firebaseapp.com",
+            projectId: "pay-fusion-haiti",
+            storageBucket: "pay-fusion-haiti.firebasestorage.app",
+            messagingSenderId: "699710501026",
+            appId: "1:699710501026:web:edcf4ab70601b46c3867fb",
+            measurementId: "G-4CJLNWV26B"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        const form = document.getElementById('loginForm');
+        const messageDiv = document.getElementById('message');
+
+        function showMsg(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.style.display = 'block';
+            messageDiv.className = type === 'error' ? 'msg-error' : 'msg-success';
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                showMsg("Connexion réussie ! Préparation de votre espace...", "success");
+
+                // Redirection selon le rôle (Admin ou User)
+                setTimeout(() => {
+                    if (email === "bmarcco4412@gmail.com") {
+                        window.location.href = "admin.html";
+                    } else {
+                        window.location.href = "home.html";
+                    }
+                }, 1500);
+
+            } catch (error) {
+                let errorMsg = "Identifiants incorrects.";
+                if (error.code === 'auth/user-not-found') errorMsg = "Utilisateur non trouvé.";
+                if (error.code === 'auth/wrong-password') errorMsg = "Mot de passe incorrect.";
+                showMsg(errorMsg, "error");
+            }
+        });
+
+        // Mot de passe oublié simplifié
+        document.getElementById('reset-password').addEventListener('click', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            if(!email) {
+                showMsg("Veuillez entrer votre email pour réinitialiser.", "error");
+                return;
+            }
+            auth.sendPasswordResetEmail(email).then(() => {
+                showMsg("Email de réinitialisation envoyé !", "success");
+            }).catch(err => {
+                showMsg("Erreur : " + err.message, "error");
+            });
+        });
+    </script>
+</body>
+</html>

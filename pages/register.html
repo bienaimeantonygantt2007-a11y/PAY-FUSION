@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer un compte | PayFusion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <style>
+        :root {
+            --primary: #0056b3;
+            --secondary: #002d5e;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --error: #d63031;
+            --success: #27ae60;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header Minimaliste */
+        header {
+            height: 70px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: transparent;
+        }
+
+        header img { height: 40px; }
+
+        /* Conteneur Formulaire */
+        .register-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .register-card {
+            background: var(--white);
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 86, 179, 0.05);
+            border: 1px solid #f1f5f9;
+        }
+
+        .register-card h2 {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            margin-bottom: 10px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .register-card p {
+            color: #64748b;
+            text-align: center;
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+        }
+
+        .form-group { margin-bottom: 18px; position: relative; }
+
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: var(--transition);
+            outline: none;
+            background: #fcfcfd;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1);
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+
+        .btn-register:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 86, 179, 0.2);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .login-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Alertes */
+        #message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            display: none;
+            text-align: center;
+        }
+
+        .msg-error { background: #fff5f5; color: var(--error); border: 1px solid #feb2b2; }
+        .msg-success { background: #f0fff4; color: var(--success); border: 1px solid #9ae6b4; }
+
+        @media (max-width: 480px) {
+            .register-card { padding: 30px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../index.html">
+            <img src="../assets/logos/payfusion-logo.png" alt="PayFusion">
+        </a>
+    </header>
+
+    <div class="register-container">
+        <div class="register-card">
+            <h2 id="text-title">Créer un profil</h2>
+            <p id="text-subtitle">Rejoignez PayFusion aujourd'hui.</p>
+
+            <div id="message"></div>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="fullName" placeholder="Nom complet" required>
+                </div>
+                <div class="form-group">
+                    <i class="fa-solid fa-phone"></i>
+                    <input type="tel" id="phone" placeholder="Téléphone (+509...)" required>
+                </div>
+                <div class="form-group">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input type="email" id="email" placeholder="Adresse Email" required>
+                </div>
+                <div class="form-group">
+                    <i class="fa-solid fa-calendar"></i>
+                    <input type="date" id="dob" required>
+                </div>
+                <div class="form-group">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="password" placeholder="Mot de passe" required>
+                </div>
+                <div class="form-group">
+                    <i class="fa-solid fa-shield-check"></i>
+                    <input type="password" id="confirmPassword" placeholder="Confirmer le mot de passe" required>
+                </div>
+
+                <button type="submit" class="btn-register" id="btn-submit">S'inscrire</button>
+            </form>
+
+            <div class="login-link">
+                Déjà membre ? <a href="login.html">Se connecter</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration Firebase (Utilisation de tes identifiants réels)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWSmxal-nrATp0J536tHcS6e9EHhNP3jI",
+            authDomain: "pay-fusion-haiti.firebaseapp.com",
+            projectId: "pay-fusion-haiti",
+            storageBucket: "pay-fusion-haiti.firebasestorage.app",
+            messagingSenderId: "699710501026",
+            appId: "1:699710501026:web:edcf4ab70601b46c3867fb",
+            measurementId: "G-4CJLNWV26B"
+        };
+
+        // Initialisation
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        const form = document.getElementById('registerForm');
+        const messageDiv = document.getElementById('message');
+
+        function showMsg(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.style.display = 'block';
+            messageDiv.className = type === 'error' ? 'msg-error' : 'msg-success';
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fullName = document.getElementById('fullName').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const dob = document.getElementById('dob').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Vérification mot de passe
+            if (password !== confirmPassword) {
+                showMsg("Les mots de passe ne correspondent pas.", "error");
+                return;
+            }
+
+            if (password.length < 6) {
+                showMsg("Le mot de passe doit contenir au moins 6 caractères.", "error");
+                return;
+            }
+
+            try {
+                // Création du compte Auth
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                // Enregistrement des données dans Firestore
+                await db.collection("users").doc(user.uid).set({
+                    uid: user.uid,
+                    fullName: fullName,
+                    phone: phone,
+                    email: email,
+                    dob: dob,
+                    role: email === "bmarcco4412@gmail.com" ? "admin" : "user",
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    status: "active",
+                    language: "fr" // Par défaut
+                });
+
+                showMsg("Compte créé avec succès ! Redirection...", "success");
+
+                // Redirection vers home.html après 2 secondes
+                setTimeout(() => {
+                    window.location.href = "home.html";
+                }, 2000);
+
+            } catch (error) {
+                let errorMsg = "Une erreur est survenue.";
+                if (error.code === 'auth/email-already-in-use') errorMsg = "Cet email est déjà utilisé.";
+                showMsg(errorMsg, "error");
+            }
+        });
+
+        // Gestion de la langue (Infrastructure prête pour settings.html)
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('payfusion_lang') || 'fr';
+            // Ici, on pourrait ajouter une fonction de traduction si nécessaire
+        });
+    </script>
+</body>
+</html>

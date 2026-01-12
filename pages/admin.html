@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin | PayFusion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        :root {
+            --primary: #0056b3;
+            --secondary: #002d5e;
+            --bg: #f4f7fa;
+            --white: #ffffff;
+            --danger: #e74c3c;
+            --success: #27ae60;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: #2d3436; height: 100vh; display: flex; overflow: hidden; }
+
+        /* OVERLAY (Pour fermer le menu) */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            z-index: 1001;
+        }
+        .sidebar-overlay.active { display: block; }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 280px;
+            background: var(--secondary);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            left: -280px; /* Caché par défaut */
+            height: 100%;
+            z-index: 1002;
+            transition: var(--transition);
+        }
+        .sidebar.active { left: 0; }
+
+        .sidebar h2 { font-size: 1.2rem; margin-bottom: 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+
+        .nav-link {
+            padding: 15px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .nav-link:hover, .nav-link.active { background: var(--primary); color: white; }
+
+        /* MAIN CONTENT */
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; width: 100%; }
+        
+        header { 
+            background: white; 
+            padding: 15px 25px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .menu-toggle { font-size: 1.5rem; color: var(--primary); cursor: pointer; }
+
+        .content-section { padding: 25px; display: none; }
+        .content-section.active { display: block; }
+
+        /* STATS & DATA */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+        .stat-card p { font-size: 1.3rem; font-weight: 800; color: var(--primary); margin-top: 5px; }
+
+        .data-card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { text-align: left; padding: 12px; border-bottom: 2px solid #f1f5f9; color: #64748b; font-size: 0.8rem; text-transform: uppercase; }
+        td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+
+        .badge { padding: 4px 10px; border-radius: 50px; font-size: 0.7rem; font-weight: 700; }
+        .badge-pending { background: #fff7ed; color: #f39c12; }
+        .badge-success { background: #f0fdf4; color: #27ae60; }
+
+        /* CHAT */
+        .chat-container { height: 70vh; display: flex; flex-direction: column; background: white; border-radius: 15px; padding: 15px; }
+        .chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 10px; }
+        .msg { max-width: 80%; padding: 10px 15px; border-radius: 15px; font-size: 0.85rem; }
+        .msg.admin { align-self: flex-end; background: var(--primary); color: white; }
+        .msg.user { align-self: flex-start; background: #f1f5f9; }
+
+        .admin-input { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; outline: none; }
+        .btn-action { padding: 8px; border: none; background: none; cursor: pointer; font-size: 1.1rem; }
+
+        @media (min-width: 1024px) {
+            .sidebar { left: 0; position: relative; }
+            .sidebar-overlay { display: none !important; }
+            .menu-toggle { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <div class="sidebar" id="sidebar">
+        <h2>ADMIN PANEL</h2>
+        <div class="nav-link active" onclick="showSec('orders')"><i class="fa-solid fa-receipt"></i> Commandes</div>
+        <div class="nav-link" onclick="showSec('users')"><i class="fa-solid fa-users-gear"></i> Utilisateurs</div>
+        <div class="nav-link" onclick="showSec('announcements')"><i class="fa-solid fa-bullhorn"></i> Annonces</div>
+        <div class="nav-link" onclick="showSec('chat')"><i class="fa-solid fa-comments"></i> Chat Support</div>
+        <div class="nav-link" onclick="logout()" style="margin-top: auto; color: #ff7675;"><i class="fa-solid fa-power-off"></i> Déconnexion</div>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <div class="menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars-staggered"></i></div>
+            <h4 id="header-title">Commandes</h4>
+            <div style="font-size: 0.8rem; font-weight: 600;">Marco (Admin)</div>
+        </header>
+
+        <!-- COMMANDES -->
+        <section id="orders" class="content-section active">
+            <div class="stats-grid">
+                <div class="stat-card"><h4>Revenus</h4><p id="stat-sales">0 HTG</p></div>
+                <div class="stat-card"><h4>Volume</h4><p id="stat-count">0</p></div>
+            </div>
+            <div class="data-card">
+                <table>
+                    <thead>
+                        <tr><th>ID</th><th>Client</th><th>Service</th><th>Total</th><th>Statut</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody id="orders-list"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- UTILISATEURS -->
+        <section id="users" class="content-section">
+            <div class="data-card">
+                <table>
+                    <thead>
+                        <tr><th>Nom</th><th>Email</th><th>Statut</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody id="users-list"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ANNONCES -->
+        <section id="announcements" class="content-section">
+            <div class="data-card">
+                <textarea id="ann-msg" class="admin-input" rows="4" placeholder="Votre annonce aux utilisateurs..."></textarea>
+                <button onclick="sendAnn()" class="btn-action" style="background:var(--primary); color:white; width:100%; margin-top:15px; border-radius:10px; font-weight:700;">Publier l'annonce</button>
+            </div>
+        </section>
+
+        <!-- CHAT -->
+        <section id="chat" class="content-section">
+            <div class="chat-container">
+                <select id="chat-user-select" class="admin-input" onchange="loadUserChat(this.value)">
+                    <option value="">Sélectionner un client...</option>
+                </select>
+                <div class="chat-messages" id="chat-box"></div>
+                <div style="display:flex; gap:10px; margin-top:10px;">
+                    <input type="text" id="chat-input" class="admin-input" placeholder="Répondre...">
+                    <button onclick="sendReply()" class="btn-action" style="color:var(--primary)"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWSmxal-nrATp0J536tHcS6e9EHhNP3jI",
+            authDomain: "pay-fusion-haiti.firebaseapp.com",
+            projectId: "pay-fusion-haiti",
+            storageBucket: "pay-fusion-haiti.firebasestorage.app",
+            messagingSenderId: "699710501026",
+            appId: "1:699710501026:web:edcf4ab70601b46c3867fb"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        let currentChatUID = "";
+
+        // AUTH CHECK
+        auth.onAuthStateChanged(user => {
+            if (!user || user.email !== "bmarcco4412@gmail.com") window.location.href = "login.html";
+            else { loadData(); loadChatList(); }
+        });
+
+        // MENU TOGGLE
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function showSec(id) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.currentTarget.classList.add('active');
+            document.getElementById('header-title').textContent = event.currentTarget.textContent;
+            if(window.innerWidth < 1024) toggleSidebar();
+        }
+
+        // LOAD ORDERS & USERS
+        function loadData() {
+            db.collection("orders").orderBy("createdAt", "desc").onSnapshot(snap => {
+                let html = ''; let rev = 0;
+                snap.forEach(doc => {
+                    const o = doc.data();
+                    if(o.status === "Validé") rev += o.total;
+                    html += `<tr>
+                        <td style="font-size:0.7rem;">${o.orderId}</td>
+                        <td>${o.customerEmail}</td>
+                        <td>${o.items[0].product}</td>
+                        <td>${o.total} HTG</td>
+                        <td><span class="badge ${o.status === 'En attente' ? 'badge-pending' : 'badge-success'}">${o.status}</span></td>
+                        <td>
+                            <button onclick="updateOrder('${doc.id}', 'Validé')" style="color:green"><i class="fa-solid fa-check-circle"></i></button>
+                            <button onclick="updateOrder('${doc.id}', 'Refusé')" style="color:red"><i class="fa-solid fa-times-circle"></i></button>
+                        </td>
+                    </tr>`;
+                });
+                document.getElementById('orders-list').innerHTML = html;
+                document.getElementById('stat-sales').textContent = rev + " HTG";
+                document.getElementById('stat-count').textContent = snap.size;
+            });
+
+            db.collection("users").onSnapshot(snap => {
+                let html = '';
+                snap.forEach(doc => {
+                    const u = doc.data();
+                    html += `<tr>
+                        <td>${u.fullName}</td>
+                        <td>${u.email}</td>
+                        <td>${u.status || 'Actif'}</td>
+                        <td><button onclick="banUser('${doc.id}', '${u.status}')" style="color:red"><i class="fa-solid fa-ban"></i></button></td>
+                    </tr>`;
+                });
+                document.getElementById('users-list').innerHTML = html;
+            });
+        }
+
+        function updateOrder(id, status) { db.collection("orders").doc(id).update({ status: status }); }
+        
+        function banUser(id, status) {
+            const next = status === 'Banni' ? 'Actif' : 'Banni';
+            if(confirm(`Changer le statut en : ${next} ?`)) db.collection("users").doc(id).update({ status: next });
+        }
+
+        // ANNONCES
+        function sendAnn() {
+            const m = document.getElementById('ann-msg').value;
+            if(!m) return;
+            db.collection("announcements").add({ message: m, createdAt: firebase.firestore.FieldValue.serverTimestamp() })
+              .then(() => { alert("Publiée !"); document.getElementById('ann-msg').value = ""; });
+        }
+
+        // CHAT
+        function loadChatList() {
+            db.collection("chats").orderBy("timestamp", "desc").onSnapshot(snap => {
+                const select = document.getElementById('chat-user-select');
+                const users = {};
+                snap.forEach(doc => {
+                    const c = doc.data();
+                    if(!users[c.userUID]) users[c.userUID] = c.userName || "Client";
+                });
+                select.innerHTML = '<option value="">Sélectionner un client...</option>';
+                for(let id in users) select.innerHTML += `<option value="${id}">${users[id]}</option>`;
+            });
+        }
+
+        function loadUserChat(uid) {
+            currentChatUID = uid;
+            db.collection("chats").where("userUID", "==", uid).orderBy("timestamp", "asc").onSnapshot(snap => {
+                const box = document.getElementById('chat-box');
+                box.innerHTML = '';
+                snap.forEach(doc => {
+                    const m = doc.data();
+                    box.innerHTML += `<div class="msg ${m.sender === 'admin' ? 'admin' : 'user'}">${m.text}</div>`;
+                });
+                box.scrollTop = box.scrollHeight;
+            });
+        }
+
+        function sendReply() {
+            const t = document.getElementById('chat-input').value;
+            if(!t || !currentChatUID) return;
+            db.collection("chats").add({
+                userUID: currentChatUID,
+                text: t,
+                sender: "admin",
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => document.getElementById('chat-input').value = "");
+        }
+
+        function logout() { auth.signOut().then(() => window.location.href = "login.html"); }
+    </script>
+</body>
+</html>

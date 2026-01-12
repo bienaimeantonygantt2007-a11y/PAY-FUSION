@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Commandes | PayFusion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        :root {
+            --primary: #0056b3;
+            --secondary: #002d5e;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --pending: #f39c12;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --transition: all 0.3s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--secondary); padding-bottom: 40px; }
+
+        header {
+            height: 65px; background: var(--white); display: flex; align-items: center; 
+            padding: 0 5%; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        header .back-btn { color: var(--primary); font-size: 1.2rem; text-decoration: none; margin-right: 20px; }
+        header h1 { font-size: 1.1rem; font-weight: 700; }
+
+        .container { padding: 20px 5%; max-width: 800px; margin: 0 auto; }
+
+        /* FILTRES DE STATUT */
+        .status-filters {
+            display: flex; gap: 10px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px;
+        }
+        .filter-chip {
+            padding: 8px 16px; background: #e2e8f0; border-radius: 50px; font-size: 0.85rem;
+            white-space: nowrap; cursor: pointer; transition: var(--transition); color: #64748b;
+        }
+        .filter-chip.active { background: var(--primary); color: white; }
+
+        /* LISTE DES COMMANDES */
+        .orders-list { display: flex; flex-direction: column; gap: 15px; }
+
+        .order-card {
+            background: var(--white); border-radius: 20px; padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02); border: 1px solid #f1f5f9;
+            display: flex; flex-direction: column; gap: 12px; transition: var(--transition);
+        }
+        .order-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.05); }
+
+        .order-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .order-id { font-size: 0.8rem; color: #94a3b8; font-family: monospace; }
+        
+        .status-badge {
+            padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+        }
+        .status-pending { background: rgba(243, 156, 18, 0.1); color: var(--pending); }
+        .status-validated { background: rgba(39, 174, 96, 0.1); color: var(--success); }
+        .status-rejected { background: rgba(231, 76, 60, 0.1); color: var(--danger); }
+
+        .order-body { display: flex; align-items: center; gap: 15px; }
+        .order-icon { 
+            width: 45px; height: 45px; background: #f0f7ff; border-radius: 12px; 
+            display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.2rem;
+        }
+        .order-info h3 { font-size: 1rem; margin-bottom: 2px; }
+        .order-info p { font-size: 0.85rem; color: #64748b; }
+
+        .order-footer { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding-top: 12px; border-top: 1px solid #f1f5f9; margin-top: 5px;
+        }
+        .order-date { font-size: 0.8rem; color: #94a3b8; }
+        .order-total { font-weight: 800; color: var(--secondary); }
+
+        /* État Vide */
+        .empty-orders { text-align: center; padding: 60px 20px; display: none; }
+        .empty-orders i { font-size: 4rem; color: #e2e8f0; margin-bottom: 20px; }
+        .empty-orders p { color: #94a3b8; margin-bottom: 25px; }
+
+        #loading { text-align: center; padding: 40px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="home.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+        <h1>Historique des commandes</h1>
+    </header>
+
+    <div class="container">
+        <!-- Filtres -->
+        <div class="status-filters">
+            <div class="filter-chip active" onclick="filterOrders('all')">Tout</div>
+            <div class="filter-chip" onclick="filterOrders('En attente')">En attente</div>
+            <div class="filter-chip" onclick="filterOrders('Validé')">Validés</div>
+            <div class="filter-chip" onclick="filterOrders('Refusé')">Refusés</div>
+        </div>
+
+        <div id="loading"><i class="fas fa-circle-notch fa-spin"></i></div>
+
+        <div class="orders-list" id="orders-list">
+            <!-- Injecté par JS -->
+        </div>
+
+        <!-- Message si vide -->
+        <div class="empty-orders" id="empty-state">
+            <i class="fa-solid fa-box-open"></i>
+            <p>Vous n'avez pas encore passé de commande.</p>
+            <a href="home.html" style="color: var(--primary); text-decoration: none; font-weight: 600;">Découvrir nos services</a>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWSmxal-nrATp0J536tHcS6e9EHhNP3jI",
+            authDomain: "pay-fusion-haiti.firebaseapp.com",
+            projectId: "pay-fusion-haiti",
+            storageBucket: "pay-fusion-haiti.firebasestorage.app",
+            messagingSenderId: "699710501026",
+            appId: "1:699710501026:web:edcf4ab70601b46c3867fb"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        let allOrders = [];
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                fetchOrders(user.uid);
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+
+        async function fetchOrders(uid) {
+            try {
+                // On récupère les commandes de l'utilisateur triées par date
+                const snapshot = await db.collection("orders")
+                                         .where("uid", "==", uid)
+                                         .orderBy("createdAt", "desc")
+                                         .get();
+                
+                document.getElementById('loading').style.display = 'none';
+
+                if (snapshot.empty) {
+                    document.getElementById('empty-state').style.display = 'block';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    allOrders.push({ id: doc.id, ...doc.data() });
+                });
+
+                renderOrders(allOrders);
+            } catch (error) {
+                console.error("Erreur lors de la récupération :", error);
+                document.getElementById('loading').innerHTML = "Erreur de chargement.";
+            }
+        }
+
+        function renderOrders(ordersToDisplay) {
+            const listElement = document.getElementById('orders-list');
+            listElement.innerHTML = '';
+
+            if(ordersToDisplay.length === 0) {
+                document.getElementById('empty-state').style.display = 'block';
+            } else {
+                document.getElementById('empty-state').style.display = 'none';
+            }
+
+            ordersToDisplay.forEach(order => {
+                const date = order.createdAt ? new Date(order.createdAt.seconds * 1000).toLocaleDateString('fr-FR') : "Récemment";
+                const statusClass = order.status === 'En attente' ? 'status-pending' : (order.status === 'Validé' ? 'status-validated' : 'status-rejected');
+                
+                // On prend le premier item pour l'icône et le titre
+                const firstItem = order.items[0];
+                let icon = "fa-shopping-bag";
+                if(firstItem.product === "Free Fire") icon = "fa-gamepad";
+                if(firstItem.product === "Netflix") icon = "fa-play";
+                if(["PayPal", "Wise", "USDT"].includes(firstItem.product)) icon = "fa-wallet";
+
+                const card = `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <span class="order-id">ID: ${order.orderId}</span>
+                            <span class="status-badge ${statusClass}">${order.status}</span>
+                        </div>
+                        <div class="order-body">
+                            <div class="order-icon"><i class="fa-solid ${icon}"></i></div>
+                            <div class="order-info">
+                                <h3>${firstItem.product} ${order.items.length > 1 ? '+ ' + (order.items.length - 1) + ' autre(s)' : ''}</h3>
+                                <p>${firstItem.pack || firstItem.amountUSD + ' USD'}</p>
+                            </div>
+                        </div>
+                        <div class="order-footer">
+                            <span class="order-date">${date}</span>
+                            <span class="order-total">${order.total} HTG</span>
+                        </div>
+                    </div>
+                `;
+                listElement.innerHTML += card;
+            });
+        }
+
+        function filterOrders(status) {
+            // UI Update
+            document.querySelectorAll('.filter-chip').forEach(chip => chip.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (status === 'all') {
+                renderOrders(allOrders);
+            } else {
+                const filtered = allOrders.filter(o => o.status === status);
+                renderOrders(filtered);
+            }
+        }
+    </script>
+</body>
+</html>
