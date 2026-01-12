@@ -3,60 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion | PayFusion</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Connexion | PayFusion Haiti</title>
+    
+    <!-- Polices & Icônes -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    
+
     <style>
         :root {
             --primary: #0056b3;
+            --primary-glow: rgba(0, 86, 179, 0.15);
             --secondary: #002d5e;
-            --bg: #f8fafc;
             --white: #ffffff;
+            --bg-fluid: #f8fafc;
             --error: #d63031;
             --success: #27ae60;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 
         body {
-            background-color: var(--bg);
+            background-color: var(--bg-fluid);
+            color: var(--text-dark);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
+        /* Arrière-plan dynamique */
+        .bg-blobs {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; filter: blur(80px); opacity: 0.5;
+        }
+        .blob {
+            position: absolute; width: 400px; height: 400px;
+            background: var(--primary-glow); border-radius: 50%;
+            animation: move 15s infinite alternate;
+        }
+        @keyframes move { from { transform: translate(-10%, -10%); } to { transform: translate(15%, 15%); } }
+
         header {
-            height: 80px;
+            height: 100px;
             display: flex;
             justify-content: center;
             align-items: center;
             background: transparent;
         }
-
-        header img { height: 45px; }
+        header img { height: 50px; transition: var(--transition); }
 
         .login-container {
             flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 0 5% 60px;
         }
 
         .login-card {
             background: var(--white);
             width: 100%;
-            max-width: 400px;
-            padding: 40px;
-            border-radius: 24px;
-            box-shadow: 0 10px 40px rgba(0, 86, 179, 0.05);
-            border: 1px solid #f1f5f9;
+            max-width: 420px;
+            padding: 45px 40px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 86, 179, 0.06);
+            border: 1px solid rgba(0, 86, 179, 0.05);
+            animation: cardSlideUp 0.6s ease;
+            position: relative;
+        }
+
+        @keyframes cardSlideUp { 
+            from { opacity: 0; transform: translateY(30px); } 
+            to { opacity: 1; transform: translateY(0); } 
         }
 
         .login-card h2 {
@@ -64,156 +90,195 @@
             color: var(--secondary);
             margin-bottom: 10px;
             text-align: center;
-            font-weight: 700;
+            font-weight: 800;
+            letter-spacing: -1px;
         }
 
         .login-card p {
-            color: #64748b;
+            color: var(--text-muted);
             text-align: center;
-            font-size: 0.95rem;
-            margin-bottom: 30px;
+            font-size: 1rem;
+            margin-bottom: 35px;
         }
 
-        .form-group { margin-bottom: 20px; position: relative; }
+        .form-group { margin-bottom: 22px; position: relative; }
 
-        .form-group i {
+        .form-group i.field-icon {
             position: absolute;
-            left: 15px;
+            left: 18px;
             top: 50%;
             transform: translateY(-50%);
-            color: #94a3b8;
-            font-size: 1rem;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            transition: var(--transition);
         }
 
-        input {
+        .form-group input {
             width: 100%;
-            padding: 14px 15px 14px 45px;
+            padding: 16px 20px 16px 52px;
             border: 1.5px solid #e2e8f0;
-            border-radius: 12px;
+            border-radius: 16px;
             font-size: 1rem;
             transition: var(--transition);
             outline: none;
             background: #fcfcfd;
+            color: var(--text-dark);
         }
 
-        input:focus {
+        .form-group input:focus {
             border-color: var(--primary);
             background: var(--white);
-            box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1);
+            box-shadow: 0 0 0 4px var(--primary-glow);
         }
+
+        .form-group input:focus + i.field-icon { color: var(--primary); }
+
+        .toggle-password {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+        .toggle-password:hover { color: var(--primary); }
 
         .btn-login {
             width: 100%;
-            padding: 15px;
-            background: var(--primary);
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: var(--white);
             border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
             cursor: pointer;
             transition: var(--transition);
             margin-top: 10px;
+            box-shadow: 0 10px 25px rgba(0, 86, 179, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
         }
 
         .btn-login:hover {
-            background: var(--secondary);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 86, 179, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 86, 179, 0.3);
         }
+
+        .btn-login:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
 
         .forgot-pass {
             display: block;
             text-align: right;
-            margin-top: 10px;
-            font-size: 0.85rem;
+            margin-top: 15px;
+            font-size: 0.9rem;
             color: var(--primary);
             text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
         }
+        .forgot-pass:hover { color: var(--secondary); text-decoration: underline; }
 
         .register-link {
             text-align: center;
-            margin-top: 30px;
-            font-size: 0.9rem;
-            color: #64748b;
+            margin-top: 35px;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            border-top: 1px solid #f1f5f9;
+            padding-top: 25px;
         }
 
         .register-link a {
             color: var(--primary);
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         #message {
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 0.85rem;
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
             display: none;
             text-align: center;
+            font-weight: 600;
+            animation: fadeIn 0.4s ease;
         }
 
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .msg-error { background: #fff5f5; color: var(--error); border: 1px solid #feb2b2; }
         .msg-success { background: #f0fff4; color: var(--success); border: 1px solid #9ae6b4; }
 
         @media (max-width: 480px) {
-            .login-card { padding: 30px 20px; }
+            .login-card { padding: 35px 25px; border-radius: 24px; }
         }
     </style>
 </head>
 <body>
 
+    <div class="bg-blobs">
+        <div class="blob"></div>
+    </div>
+
     <header>
         <a href="../index.html">
-            <img src="../assets/logos/payfusion-logo.png" alt="PayFusion">
+            <img src="../assets/logos/payfusion-logo.png" alt="PayFusion Haiti">
         </a>
     </header>
 
     <div class="login-container">
         <div class="login-card">
             <h2>Bon retour</h2>
-            <p>Connectez-vous à votre espace PayFusion.</p>
+            <p>Accédez à vos services digitaux</p>
 
             <div id="message"></div>
 
             <form id="loginForm">
                 <div class="form-group">
-                    <i class="fa-solid fa-envelope"></i>
+                    <i class="fa-solid fa-envelope field-icon"></i>
                     <input type="email" id="email" placeholder="Adresse Email" required>
                 </div>
                 <div class="form-group">
-                    <i class="fa-solid fa-lock"></i>
+                    <i class="fa-solid fa-lock field-icon"></i>
                     <input type="password" id="password" placeholder="Mot de passe" required>
+                    <i class="fa-solid fa-eye toggle-password" id="togglePass"></i>
                 </div>
 
-                <button type="submit" class="btn-login" id="btn-submit">Se connecter</button>
+                <button type="submit" class="btn-login" id="btn-submit">
+                    <span id="btn-text">Se connecter</span>
+                    <i class="fa-solid fa-circle-right"></i>
+                </button>
                 
                 <a href="#" class="forgot-pass" id="reset-password">Mot de passe oublié ?</a>
             </form>
 
             <div class="register-link">
-                Nouveau ici ? <a href="register.html">Créer un compte</a>
+                Nouveau sur PayFusion ? <a href="register.html">Créer un compte</a>
             </div>
         </div>
     </div>
 
     <script>
         const firebaseConfig = {
-  apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
-  authDomain: "pay-fusion-509.firebaseapp.com",
-  projectId: "pay-fusion-509",
-  storageBucket: "pay-fusion-509.firebasestorage.app",
-  messagingSenderId: "401434428368",
-  appId: "1:401434428368:web:c1f526254f63fa57402fd5",
-  measurementId: "G-JN41S8MKWH"
-};
-
+            apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
+            authDomain: "pay-fusion-509.firebaseapp.com",
+            projectId: "pay-fusion-509",
+            storageBucket: "pay-fusion-509.firebasestorage.app",
+            messagingSenderId: "401434428368",
+            appId: "1:401434428368:web:c1f526254f63fa57402fd5",
+            measurementId: "G-JN41S8MKWH"
+        };
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
 
         const form = document.getElementById('loginForm');
         const messageDiv = document.getElementById('message');
+        const btnSubmit = document.getElementById('btn-submit');
+        const btnText = document.getElementById('btn-text');
 
         function showMsg(text, type) {
             messageDiv.textContent = text;
@@ -221,47 +286,73 @@
             messageDiv.className = type === 'error' ? 'msg-error' : 'msg-success';
         }
 
+        // Toggle Visibilité Password
+        document.getElementById('togglePass').addEventListener('click', function() {
+            const passInput = document.getElementById('password');
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                this.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passInput.type = 'password';
+                this.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        });
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim().toLowerCase();
             const password = document.getElementById('password').value;
+
+            // État de chargement
+            btnSubmit.disabled = true;
+            btnText.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Vérification...';
+            messageDiv.style.display = 'none';
 
             try {
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 const user = userCredential.user;
 
-                showMsg("Connexion réussie ! Préparation de votre espace...", "success");
+                showMsg("Connexion réussie ! Redirection...", "success");
 
-                // Redirection selon le rôle (Admin ou User)
                 setTimeout(() => {
+                    // Logique Admin vs User
                     if (email === "bmarcco4412@gmail.com") {
                         window.location.href = "admin.html";
                     } else {
                         window.location.href = "home.html";
                     }
-                }, 1500);
+                }, 1200);
 
             } catch (error) {
-                let errorMsg = "Identifiants incorrects.";
-                if (error.code === 'auth/user-not-found') errorMsg = "Utilisateur non trouvé.";
+                btnSubmit.disabled = false;
+                btnText.textContent = "Se connecter";
+                
+                let errorMsg = "Email ou mot de passe incorrect.";
+                if (error.code === 'auth/user-not-found') errorMsg = "Ce compte n'existe pas.";
                 if (error.code === 'auth/wrong-password') errorMsg = "Mot de passe incorrect.";
+                if (error.code === 'auth/too-many-requests') errorMsg = "Trop de tentatives. Réessayez plus tard.";
+                
                 showMsg(errorMsg, "error");
             }
         });
 
-        // Mot de passe oublié simplifié
+        // Mot de passe oublié pro
         document.getElementById('reset-password').addEventListener('click', (e) => {
             e.preventDefault();
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim();
+            
             if(!email) {
-                showMsg("Veuillez entrer votre email pour réinitialiser.", "error");
+                showMsg("Entrez votre email ci-dessus pour la réinitialisation.", "error");
                 return;
             }
+
             auth.sendPasswordResetEmail(email).then(() => {
-                showMsg("Email de réinitialisation envoyé !", "success");
+                showMsg("Lien de réinitialisation envoyé par email !", "success");
             }).catch(err => {
-                showMsg("Erreur : " + err.message, "error");
+                let errorMsg = "Erreur lors de l'envoi de l'email.";
+                if (err.code === 'auth/user-not-found') errorMsg = "Aucun utilisateur trouvé avec cet email.";
+                showMsg(errorMsg, "error");
             });
         });
     </script>
