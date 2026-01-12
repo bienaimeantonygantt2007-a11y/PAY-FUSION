@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tableau de Bord | PayFusion</title>
+    <title>Tableau de Bord | PayFusion Haiti</title>
+    
+    <!-- Polices & Icônes -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
@@ -18,118 +22,128 @@
             --bg: #f8fafc;
             --white: #ffffff;
             --text-main: #1e293b;
+            --text-muted: #64748b;
+            --danger: #ef4444;
             --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: var(--bg); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
 
-        /* HEADER FIXE GLASSMORPHISM */
+        /* HEADER GLASSMORPHISM */
         header {
-            height: 75px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(15px);
+            height: 75px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 6%; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05);
         }
-        header .logo img { height: 40px; }
-        .menu-trigger { font-size: 1.6rem; color: var(--primary); cursor: pointer; transition: var(--transition); }
-        .menu-trigger:hover { transform: scale(1.1); }
+        header .logo img { height: 42px; transition: var(--transition); }
+        .menu-trigger { font-size: 1.6rem; color: var(--primary); cursor: pointer; transition: var(--transition); padding: 5px; }
 
-        /* OVERLAY ET SIDEBAR */
+        /* SIDEBAR & OVERLAY */
         .sidebar-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4); display: none; z-index: 1100; opacity: 0; transition: 0.4s;
+            background: rgba(0, 0, 0, 0.4); display: none; z-index: 1100; backdrop-filter: blur(4px);
         }
-        .sidebar-overlay.active { display: block; opacity: 1; }
+        .sidebar-overlay.active { display: block; }
 
         .sidebar {
             position: fixed; top: 0; right: -300px; width: 300px; height: 100%;
             background: var(--white); z-index: 1200; transition: var(--transition);
-            padding: 40px 30px; display: flex; flex-direction: column;
+            padding: 40px 25px; display: flex; flex-direction: column;
             box-shadow: -10px 0 30px rgba(0,0,0,0.05);
         }
         .sidebar.active { right: 0; }
-        .sidebar .user-profile { margin-bottom: 40px; border-bottom: 1px solid #f1f5f9; padding-bottom: 20px; }
-        .sidebar .user-profile h4 { font-weight: 800; color: var(--secondary); font-size: 1.1rem; }
-        .sidebar .user-profile p { font-size: 0.8rem; color: #64748b; }
+        
+        .user-profile { margin-bottom: 35px; border-bottom: 1px solid #f1f5f9; padding-bottom: 25px; }
+        .user-profile h4 { font-weight: 800; color: var(--secondary); font-size: 1.15rem; margin-bottom: 4px; }
+        .user-profile p { font-size: 0.85rem; color: var(--text-muted); word-break: break-all; }
 
         .nav-links a {
-            display: flex; align-items: center; gap: 15px; padding: 15px 0;
+            display: flex; align-items: center; gap: 15px; padding: 14px 12px;
             text-decoration: none; color: var(--text-main); font-weight: 600;
-            font-size: 0.95rem; transition: 0.3s;
+            font-size: 0.95rem; transition: 0.3s; border-radius: 12px; margin-bottom: 5px;
         }
-        .nav-links a:hover { color: var(--primary); transform: translateX(5px); }
-        .nav-links a i { width: 25px; color: var(--primary); }
+        .nav-links a:hover { background: #f0f7ff; color: var(--primary); transform: translateX(5px); }
+        .nav-links a i { width: 24px; color: var(--primary); font-size: 1.1rem; }
 
-        /* HERO SECTION DYNAMIQUE */
+        /* HERO BANNER FINTECH */
         .hero-banner {
-            background: linear-gradient(135deg, var(--secondary), var(--primary));
-            margin: 20px 6%; padding: 40px 30px; border-radius: 30px; color: white;
-            position: relative; overflow: hidden; box-shadow: 0 15px 35px rgba(0, 86, 179, 0.2);
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            margin: 20px 6%; padding: 35px 25px; border-radius: 28px; color: white;
+            position: relative; overflow: hidden; box-shadow: 0 15px 35px rgba(0, 86, 179, 0.15);
         }
-        .hero-banner h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 8px; }
-        .hero-banner p { font-size: 0.9rem; opacity: 0.9; }
-        .hero-banner .bg-icon { position: absolute; right: -20px; bottom: -20px; font-size: 8rem; opacity: 0.1; transform: rotate(-15deg); }
+        .hero-banner h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
+        .hero-banner p { font-size: 0.95rem; opacity: 0.95; }
+        .hero-banner .bg-icon { position: absolute; right: -15px; bottom: -15px; font-size: 7rem; opacity: 0.12; transform: rotate(-12deg); }
 
-        /* GRILLE DE SERVICES */
-        .section-container { padding: 30px 6%; }
-        .section-title { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; margin-bottom: 20px; }
+        /* SERVICE GRID */
+        .section-container { padding: 25px 6% 40px; }
+        .section-title { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.8px; color: var(--text-muted); font-weight: 800; margin-bottom: 18px; margin-left: 5px; }
 
         .service-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 30px; }
         
         .service-card {
-            background: var(--white); padding: 25px 20px; border-radius: 25px; text-decoration: none;
+            background: var(--white); padding: 25px 15px; border-radius: 24px; text-decoration: none;
             display: flex; flex-direction: column; align-items: center; text-align: center;
-            border: 1px solid rgba(0,0,0,0.03); transition: var(--transition);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.02); transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02); position: relative;
         }
-        .service-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0, 86, 179, 0.1); border-color: var(--primary); }
-        .service-card img { height: 50px; width: auto; margin-bottom: 15px; }
+        .service-card:active { transform: scale(0.95); }
+        .service-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0, 86, 179, 0.08); border-color: var(--primary); }
+        .service-card img { height: 52px; width: auto; margin-bottom: 14px; transition: 0.3s; }
         .service-card span { font-weight: 700; font-size: 0.9rem; color: var(--secondary); }
 
-        /* PANIER FLOTTANT */
-        .cart-float {
-            position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px;
-            background: var(--primary); color: white; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 1.5rem; box-shadow: 0 10px 30px rgba(0, 86, 179, 0.4);
-            cursor: pointer; z-index: 1000; text-decoration: none; transition: var(--transition);
+        /* ÉTAT DÉSACTIVÉ (CMS) */
+        .service-card.disabled {
+            opacity: 0.5; pointer-events: none; filter: grayscale(1);
         }
-        .cart-float:hover { transform: scale(1.1) rotate(-10deg); background: var(--secondary); }
-        .cart-badge {
-            position: absolute; top: 0; right: 0; background: #ff4757; color: white;
-            font-size: 0.75rem; font-weight: 800; width: 22px; height: 22px;
-            border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            border: 2px solid var(--primary);
+        .service-card.disabled::after {
+            content: "Indisponible"; position: absolute; bottom: 8px; font-size: 0.65rem;
+            color: var(--danger); font-weight: 800; text-transform: uppercase;
         }
 
-        /* RESPONSIVE */
-        @media (max-width: 500px) {
+        /* FLOATING CART */
+        .cart-float {
+            position: fixed; bottom: 25px; right: 25px; width: 64px; height: 64px;
+            background: var(--primary); color: white; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.5rem; box-shadow: 0 10px 30px rgba(0, 86, 179, 0.35);
+            cursor: pointer; z-index: 1000; text-decoration: none; transition: var(--transition);
+        }
+        .cart-float:hover { transform: scale(1.1) rotate(-8deg); background: var(--secondary); }
+        .cart-badge {
+            position: absolute; top: -2px; right: -2px; background: var(--danger); color: white;
+            font-size: 0.7rem; font-weight: 800; width: 22px; height: 22px;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            border: 2px solid var(--white);
+        }
+
+        @media (max-width: 480px) {
             .hero-banner { padding: 30px 20px; }
-            .service-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .service-card { padding: 20px 10px; }
+            .service-grid { gap: 12px; }
+            .service-card { padding: 22px 10px; border-radius: 20px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Overlay pour fermeture au clic extérieur -->
     <div class="sidebar-overlay" id="overlay" onclick="toggleMenu()"></div>
 
-    <!-- Menu Latéral Pro -->
     <div class="sidebar" id="sidebar">
         <div class="user-profile">
             <h4 id="user-name">Chargement...</h4>
-            <p id="user-email">Email utilisateur</p>
+            <p id="user-email">Vérification de session...</p>
         </div>
         <nav class="nav-links">
             <a href="home.html"><i class="fa-solid fa-house"></i> Accueil</a>
             <a href="orders.html"><i class="fa-solid fa-receipt"></i> Mes Commandes</a>
-            <a href="user/account.html"><i class="fa-solid fa-user-gear"></i> Profil Personnel</a>
-            <a href="user/notifications.html"><i class="fa-solid fa-bell"></i> Annonces Admin</a>
-            <a href="user/supports.html"><i class="fa-solid fa-headset"></i> Centre d'Aide</a>
+            <a href="user/account.html"><i class="fa-solid fa-user-gear"></i> Mon Profil</a>
+            <a href="user/notifications.html"><i class="fa-solid fa-bell"></i> Notifications</a>
+            <a href="user/supports.html"><i class="fa-solid fa-headset"></i> Support Client</a>
             <a href="user/settings.html"><i class="fa-solid fa-sliders"></i> Paramètres</a>
-            <div id="admin-link-container"></div> <!-- Lien Admin dynamique -->
-            <a href="logout.html" style="margin-top: auto; color: #ff4757;"><i class="fa-solid fa-power-off"></i> Déconnexion</a>
+            <div id="admin-link-container"></div>
+            <a href="logout.html" style="margin-top: auto; color: var(--danger);"><i class="fa-solid fa-power-off"></i> Déconnexion</a>
         </nav>
     </div>
 
@@ -139,57 +153,57 @@
     </header>
 
     <main>
-        <!-- Banner de Bienvenue -->
         <section class="hero-banner">
-            <p>Heureux de vous revoir,</p>
-            <h2 id="greet-name">Utilisateur</h2>
-            <p style="margin-top:10px; font-size:0.8rem; background:rgba(255,255,255,0.1); display:inline-block; padding:5px 15px; border-radius:50px;">
-                <i class="fa-solid fa-shield-check"></i> Compte Sécurisé
+            <p>Ravi de vous voir,</p>
+            <h2 id="greet-name">Chargement...</h2>
+            <p style="margin-top:10px; font-size:0.8rem; background:rgba(255,255,255,0.15); display:inline-block; padding:6px 16px; border-radius:50px;">
+                <i class="fa-solid fa-shield-halved"></i> Connexion sécurisée
             </p>
             <i class="fa-solid fa-bolt-lightning bg-icon"></i>
         </section>
 
-        <!-- Section GAMING -->
         <div class="section-container">
-            <h3 class="section-title">Gaming Premium</h3>
+            <!-- GAMING -->
+            <h3 class="section-title">Gaming</h3>
             <div class="service-grid">
-                <a href="products/freefire.html" class="service-card">
-                    <img src="../assets/logos/freefire-logo.png" alt="Free Fire">
+                <a href="products/freefire.html" class="service-card" data-service="Free Fire">
+                    <img src="../assets/logos/freefire-logo.png" alt="FF">
                     <span>Free Fire</span>
                 </a>
             </div>
 
-            <h3 class="section-title">Streaming 4K</h3>
+            <!-- STREAMING -->
+            <h3 class="section-title">Streaming Premium</h3>
             <div class="service-grid">
-                <a href="products/netflix.html" class="service-card">
+                <a href="products/netflix.html" class="service-card" data-service="Netflix">
                     <img src="../assets/logos/netflix-logo.png" alt="Netflix">
                     <span>Netflix</span>
                 </a>
-                <a href="products/disneyplus.html" class="service-card">
-                    <img src="../assets/logos/disneyplus-logo.png" alt="Disney+">
+                <a href="products/disneyplus.html" class="service-card" data-service="Disney+">
+                    <img src="../assets/logos/disneyplus-logo.png" alt="Disney">
                     <span>Disney+</span>
                 </a>
             </div>
 
-            <h3 class="section-title">Finances Digitales</h3>
+            <!-- FINANCE -->
+            <h3 class="section-title">Services Financiers</h3>
             <div class="service-grid">
-                <a href="products/paypal.html" class="service-card">
+                <a href="products/paypal.html" class="service-card" data-service="PayPal">
                     <img src="../assets/logos/paypal-logo.png" alt="PayPal">
                     <span>PayPal</span>
                 </a>
-                <a href="products/wise.html" class="service-card">
+                <a href="products/wise.html" class="service-card" data-service="Wise">
                     <img src="../assets/logos/wise-logo.png" alt="Wise">
                     <span>Wise</span>
                 </a>
-                <a href="products/usdt.html" class="service-card">
-                    <img src="../assets/logos/usdt-logo.png" alt="USDT TRC20">
-                    <span>USDT</span>
+                <a href="products/usdt.html" class="service-card" data-service="USDT">
+                    <img src="../assets/logos/usdt-logo.png" alt="USDT">
+                    <span>USDT TRC20</span>
                 </a>
             </div>
         </div>
     </main>
 
-    <!-- Bouton Panier Flottant -->
     <a href="checkout/cart.html" class="cart-float">
         <i class="fa-solid fa-cart-shopping"></i>
         <div class="cart-badge" id="cart-count">0</div>
@@ -197,48 +211,82 @@
 
     <script>
         const firebaseConfig = {
-  apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
-  authDomain: "pay-fusion-509.firebaseapp.com",
-  projectId: "pay-fusion-509",
-  storageBucket: "pay-fusion-509.firebasestorage.app",
-  messagingSenderId: "401434428368",
-  appId: "1:401434428368:web:c1f526254f63fa57402fd5"
+            apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
+            authDomain: "pay-fusion-509.firebaseapp.com",
+            projectId: "pay-fusion-509",
+            storageBucket: "pay-fusion-509.firebasestorage.app",
+            messagingSenderId: "401434428368",
+            appId: "1:401434428368:web:c1f526254f63fa57402fd5",
+            measurementId: "G-JN41S8MKWH"
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // GESTION DU MENU ET OVERLAY
         function toggleMenu() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
         }
 
-        // CHARGEMENT DES DONNÉES UTILISATEUR
+        // CHARGEMENT UTILISATEUR & SÉCURITÉ BAN
         auth.onAuthStateChanged(user => {
             if (user) {
-                db.collection("users").doc(user.uid).get().then(doc => {
+                // Écoute en temps réel (onSnapshot)
+                db.collection("users").doc(user.uid).onSnapshot(doc => {
                     if (doc.exists) {
                         const data = doc.data();
+
+                        // VÉRIFICATION DU BAN
+                        if (data.status === "Banni") {
+                            alert("Votre compte a été suspendu.");
+                            auth.signOut().then(() => window.location.href = "login.html");
+                            return;
+                        }
+
+                        // Mise à jour UI
                         document.getElementById('user-name').textContent = data.fullName;
                         document.getElementById('greet-name').textContent = data.fullName.split(' ')[0];
                         document.getElementById('user-email').textContent = data.email;
 
-                        // Vérification Admin pour afficher le lien secret
-                        if(data.email === "bmarcco4412@gmail.com") {
+                        if(data.role === "admin" || data.email === "bmarcco4412@gmail.com") {
                             document.getElementById('admin-link-container').innerHTML = `
-                                <a href="admin.html" style="color:var(--primary);"><i class="fa-solid fa-user-shield"></i> Panneau Admin</a>
+                                <a href="admin.html" style="color:var(--primary); background: #f0f7ff;"><i class="fa-solid fa-user-shield"></i> Panneau Admin</a>
                             `;
                         }
                     }
+                }, error => {
+                    console.error("Erreur de profil:", error);
                 });
                 updateCartBadge();
+                syncServicesWithCMS(); // Lancement du CMS
             } else {
                 window.location.href = "login.html";
             }
         });
 
-        // MISE À JOUR DU BADGE PANIER
+        // SYNCHRONISATION CMS SERVICES
+        function syncServicesWithCMS() {
+            db.collection("services").onSnapshot(snap => {
+                const serviceCards = document.querySelectorAll('.service-card');
+                
+                // On crée un dictionnaire des états des services
+                const states = {};
+                snap.forEach(doc => {
+                    states[doc.id] = doc.data().active;
+                });
+
+                serviceCards.forEach(card => {
+                    const serviceName = card.getAttribute('data-service');
+                    // Si le service est marqué comme inactif dans Firestore
+                    if (states[serviceName] === false) {
+                        card.classList.add('disabled');
+                    } else {
+                        card.classList.remove('disabled');
+                    }
+                });
+            });
+        }
+
         function updateCartBadge() {
             const cart = JSON.parse(localStorage.getItem('payfusion_cart')) || [];
             document.getElementById('cart-count').textContent = cart.length;
