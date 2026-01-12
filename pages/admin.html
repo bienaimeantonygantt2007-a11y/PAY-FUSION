@@ -24,73 +24,43 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background: var(--bg); color: #2d3436; height: 100vh; display: flex; overflow: hidden; }
 
-        /* OVERLAY (Pour fermer le menu) */
+        /* OVERLAY */
         .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            display: none;
-            z-index: 1001;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4); display: none; z-index: 1001;
         }
         .sidebar-overlay.active { display: block; }
 
         /* SIDEBAR */
         .sidebar {
-            width: 280px;
-            background: var(--secondary);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            position: fixed;
-            top: 0;
-            left: -280px; /* Caché par défaut */
-            height: 100%;
-            z-index: 1002;
-            transition: var(--transition);
+            width: 280px; background: var(--secondary); color: white;
+            display: flex; flex-direction: column; padding: 20px;
+            position: fixed; top: 0; left: -280px; height: 100%;
+            z-index: 1002; transition: var(--transition);
         }
         .sidebar.active { left: 0; }
-
         .sidebar h2 { font-size: 1.2rem; margin-bottom: 30px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
 
         .nav-link {
-            padding: 15px;
-            color: rgba(255,255,255,0.7);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-radius: 10px;
-            margin-bottom: 5px;
-            cursor: pointer;
-            transition: 0.3s;
+            padding: 15px; color: rgba(255,255,255,0.7); text-decoration: none;
+            display: flex; align-items: center; gap: 12px; border-radius: 10px;
+            margin-bottom: 5px; cursor: pointer; transition: 0.3s;
         }
         .nav-link:hover, .nav-link.active { background: var(--primary); color: white; }
 
-        /* MAIN CONTENT */
+        /* MAIN */
         .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; width: 100%; }
-        
         header { 
-            background: white; 
-            padding: 15px 25px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
-            position: sticky;
-            top: 0;
-            z-index: 900;
+            background: white; padding: 15px 25px; display: flex; 
+            justify-content: space-between; align-items: center; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 900;
         }
-
         .menu-toggle { font-size: 1.5rem; color: var(--primary); cursor: pointer; }
 
         .content-section { padding: 25px; display: none; }
         .content-section.active { display: block; }
 
-        /* STATS & DATA */
+        /* TABLES */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .stat-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
         .stat-card p { font-size: 1.3rem; font-weight: 800; color: var(--primary); margin-top: 5px; }
@@ -98,11 +68,27 @@
         .data-card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 600px; }
         th { text-align: left; padding: 12px; border-bottom: 2px solid #f1f5f9; color: #64748b; font-size: 0.8rem; text-transform: uppercase; }
-        td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+        td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; }
 
         .badge { padding: 4px 10px; border-radius: 50px; font-size: 0.7rem; font-weight: 700; }
         .badge-pending { background: #fff7ed; color: #f39c12; }
         .badge-success { background: #f0fdf4; color: #27ae60; }
+        .badge-danger { background: #fef2f2; color: var(--danger); }
+
+        /* MODAL DETAILS */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); z-index: 2000; justify-content: center; align-items: center;
+            padding: 20px;
+        }
+        .modal-content {
+            background: white; padding: 25px; border-radius: 20px; width: 100%; max-width: 500px;
+            max-height: 90vh; overflow-y: auto;
+        }
+        .detail-row { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #f1f5f9; }
+        .detail-row b { display: block; font-size: 0.8rem; color: #64748b; text-transform: uppercase; }
+        .detail-row span { font-size: 1rem; font-weight: 600; color: var(--secondary); word-break: break-all; }
+        .proof-img { width: 100%; border-radius: 12px; margin-top: 15px; border: 2px solid #eee; }
 
         /* CHAT */
         .chat-container { height: 70vh; display: flex; flex-direction: column; background: white; border-radius: 15px; padding: 15px; }
@@ -110,9 +96,7 @@
         .msg { max-width: 80%; padding: 10px 15px; border-radius: 15px; font-size: 0.85rem; }
         .msg.admin { align-self: flex-end; background: var(--primary); color: white; }
         .msg.user { align-self: flex-start; background: #f1f5f9; }
-
         .admin-input { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; outline: none; }
-        .btn-action { padding: 8px; border: none; background: none; cursor: pointer; font-size: 1.1rem; }
 
         @media (min-width: 1024px) {
             .sidebar { left: 0; position: relative; }
@@ -141,7 +125,6 @@
             <div style="font-size: 0.8rem; font-weight: 600;">Marco (Admin)</div>
         </header>
 
-        <!-- COMMANDES -->
         <section id="orders" class="content-section active">
             <div class="stats-grid">
                 <div class="stat-card"><h4>Revenus</h4><p id="stat-sales">0 HTG</p></div>
@@ -173,7 +156,7 @@
         <section id="announcements" class="content-section">
             <div class="data-card">
                 <textarea id="ann-msg" class="admin-input" rows="4" placeholder="Votre annonce aux utilisateurs..."></textarea>
-                <button onclick="sendAnn()" class="btn-action" style="background:var(--primary); color:white; width:100%; margin-top:15px; border-radius:10px; font-weight:700;">Publier l'annonce</button>
+                <button onclick="sendAnn()" style="background:var(--primary); color:white; width:100%; margin-top:15px; border-radius:10px; padding:12px; border:none; font-weight:700; cursor:pointer;">Publier l'annonce</button>
             </div>
         </section>
 
@@ -186,34 +169,55 @@
                 <div class="chat-messages" id="chat-box"></div>
                 <div style="display:flex; gap:10px; margin-top:10px;">
                     <input type="text" id="chat-input" class="admin-input" placeholder="Répondre...">
-                    <button onclick="sendReply()" class="btn-action" style="color:var(--primary)"><i class="fa-solid fa-paper-plane"></i></button>
+                    <button onclick="sendReply()" style="background:var(--primary); border:none; color:white; padding:10px 20px; border-radius:10px; cursor:pointer;"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
         </section>
     </div>
 
+    <!-- MODAL DETAILS COMMANDE -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h3 id="modal-title" style="color:var(--primary);">Détails Commande</h3>
+                <i class="fa-solid fa-xmark" onclick="closeModal()" style="cursor:pointer; font-size:1.5rem;"></i>
+            </div>
+            <div id="order-details-content">
+                <!-- Rempli par JS -->
+            </div>
+            <div id="order-proof-content">
+                <b>Preuve de paiement :</b>
+                <img id="detail-proof-img" class="proof-img" src="" alt="Aucune preuve">
+            </div>
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button onclick="updateFromModal('Validé')" style="flex:1; background:var(--success); color:white; padding:12px; border:none; border-radius:10px; font-weight:700; cursor:pointer;">Valider</button>
+                <button onclick="updateFromModal('Refusé')" style="flex:1; background:var(--danger); color:white; padding:12px; border:none; border-radius:10px; font-weight:700; cursor:pointer;">Refuser</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const firebaseConfig = {
-  apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
-  authDomain: "pay-fusion-509.firebaseapp.com",
-  projectId: "pay-fusion-509",
-  storageBucket: "pay-fusion-509.firebasestorage.app",
-  messagingSenderId: "401434428368",
-  appId: "1:401434428368:web:c1f526254f63fa57402fd5"
+            apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
+            authDomain: "pay-fusion-509.firebaseapp.com",
+            projectId: "pay-fusion-509",
+            storageBucket: "pay-fusion-509.firebasestorage.app",
+            messagingSenderId: "401434428368",
+            appId: "1:401434428368:web:c1f526254f63fa57402fd5"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
 
         let currentChatUID = "";
+        let currentOrderDocId = "";
+        let currentOrdersData = [];
 
-        // AUTH CHECK
         auth.onAuthStateChanged(user => {
             if (!user || user.email !== "bmarcco4412@gmail.com") window.location.href = "login.html";
             else { loadData(); loadChatList(); }
         });
 
-        // MENU TOGGLE
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('overlay').classList.toggle('active');
@@ -228,22 +232,28 @@
             if(window.innerWidth < 1024) toggleSidebar();
         }
 
-        // LOAD ORDERS & USERS
         function loadData() {
             db.collection("orders").orderBy("createdAt", "desc").onSnapshot(snap => {
                 let html = ''; let rev = 0;
+                currentOrdersData = [];
                 snap.forEach(doc => {
                     const o = doc.data();
+                    const docId = doc.id;
+                    currentOrdersData.push({id: docId, ...o});
                     if(o.status === "Validé") rev += o.total;
+                    
+                    let badgeClass = o.status === 'En attente' ? 'badge-pending' : (o.status === 'Validé' ? 'badge-success' : 'badge-danger');
+
                     html += `<tr>
                         <td style="font-size:0.7rem;">${o.orderId}</td>
                         <td>${o.customerEmail}</td>
                         <td>${o.items[0].product}</td>
                         <td>${o.total} HTG</td>
-                        <td><span class="badge ${o.status === 'En attente' ? 'badge-pending' : 'badge-success'}">${o.status}</span></td>
+                        <td><span class="badge ${badgeClass}">${o.status}</span></td>
                         <td>
-                            <button onclick="updateOrder('${doc.id}', 'Validé')" style="color:green"><i class="fa-solid fa-check-circle"></i></button>
-                            <button onclick="updateOrder('${doc.id}', 'Refusé')" style="color:red"><i class="fa-solid fa-times-circle"></i></button>
+                            <button onclick="openOrderDetails('${docId}')" style="color:var(--primary); border:none; background:none; cursor:pointer; font-size:1.1rem; margin-right:10px;"><i class="fa-solid fa-eye"></i></button>
+                            <button onclick="updateOrder('${docId}', 'Validé')" style="color:green; border:none; background:none; cursor:pointer; font-size:1.1rem; margin-right:10px;"><i class="fa-solid fa-check-circle"></i></button>
+                            <button onclick="updateOrder('${docId}', 'Refusé')" style="color:red; border:none; background:none; cursor:pointer; font-size:1.1rem;"><i class="fa-solid fa-times-circle"></i></button>
                         </td>
                     </tr>`;
                 });
@@ -260,11 +270,53 @@
                         <td>${u.fullName}</td>
                         <td>${u.email}</td>
                         <td>${u.status || 'Actif'}</td>
-                        <td><button onclick="banUser('${doc.id}', '${u.status}')" style="color:red"><i class="fa-solid fa-ban"></i></button></td>
+                        <td><button onclick="banUser('${doc.id}', '${u.status}')" style="color:red; border:none; background:none; cursor:pointer;"><i class="fa-solid fa-ban"></i></button></td>
                     </tr>`;
                 });
                 document.getElementById('users-list').innerHTML = html;
             });
+        }
+
+        function openOrderDetails(docId) {
+            currentOrderDocId = docId;
+            const order = currentOrdersData.find(o => o.id === docId);
+            if(!order) return;
+
+            const content = document.getElementById('order-details-content');
+            content.innerHTML = '';
+            
+            // Infos de base
+            addDetail(content, "Produit", order.items[0].product);
+            addDetail(content, "Pack", order.items[0].pack || order.items[0].amountUSD + " USD");
+            addDetail(content, "Méthode Paiement", order.paymentMethod);
+            addDetail(content, "Info Expéditeur", order.paymentSenderInfo);
+            addDetail(content, "Nom Expéditeur", order.paymentSenderName);
+
+            // Infos spécifiques selon produit
+            const item = order.items[0];
+            if(item.playerID) addDetail(content, "ID PLAYER FREE FIRE", item.playerID);
+            if(item.playerPseudo) addDetail(content, "PSEUDO PLAYER", item.playerPseudo);
+            if(item.whatsapp) addDetail(content, "WHATSAPP CLIENT", item.whatsapp);
+            if(item.paypalEmail) addDetail(content, "EMAIL PAYPAL", item.paypalEmail);
+            if(item.wiseEmail) addDetail(content, "EMAIL WISE", item.wiseEmail);
+            if(item.walletAddress) addDetail(content, "ADRESSE USDT (TRC20)", item.walletAddress);
+            if(item.userName) addDetail(content, "NOM DU COMPTE", item.userName);
+
+            // Preuve
+            document.getElementById('detail-proof-img').src = order.proofBase64 || "";
+            document.getElementById('detailModal').style.display = 'flex';
+        }
+
+        function addDetail(parent, label, value) {
+            if(!value) return;
+            parent.innerHTML += `<div class="detail-row"><b>${label}</b><span>${value}</span></div>`;
+        }
+
+        function closeModal() { document.getElementById('detailModal').style.display = 'none'; }
+
+        function updateFromModal(status) {
+            updateOrder(currentOrderDocId, status);
+            closeModal();
         }
 
         function updateOrder(id, status) { db.collection("orders").doc(id).update({ status: status }); }
@@ -274,7 +326,6 @@
             if(confirm(`Changer le statut en : ${next} ?`)) db.collection("users").doc(id).update({ status: next });
         }
 
-        // ANNONCES
         function sendAnn() {
             const m = document.getElementById('ann-msg').value;
             if(!m) return;
@@ -282,7 +333,7 @@
               .then(() => { alert("Publiée !"); document.getElementById('ann-msg').value = ""; });
         }
 
-        // CHAT
+        // CHAT FIXED
         function loadChatList() {
             db.collection("chats").orderBy("timestamp", "desc").onSnapshot(snap => {
                 const select = document.getElementById('chat-user-select');
@@ -298,6 +349,7 @@
 
         function loadUserChat(uid) {
             currentChatUID = uid;
+            if(!uid) return;
             db.collection("chats").where("userUID", "==", uid).orderBy("timestamp", "asc").onSnapshot(snap => {
                 const box = document.getElementById('chat-box');
                 box.innerHTML = '';
@@ -312,8 +364,14 @@
         function sendReply() {
             const t = document.getElementById('chat-input').value;
             if(!t || !currentChatUID) return;
+            
+            // On récupère le nom de l'utilisateur sélectionné pour la cohérence
+            const select = document.getElementById('chat-user-select');
+            const userName = select.options[select.selectedIndex].text;
+
             db.collection("chats").add({
                 userUID: currentChatUID,
+                userName: userName,
                 text: t,
                 sender: "admin",
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
