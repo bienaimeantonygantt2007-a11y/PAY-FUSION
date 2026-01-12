@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Achat Diamants Free Fire | PayFusion</title>
+    <title>Netflix Premium | PayFusion</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -12,7 +12,7 @@
             --secondary: #002d5e;
             --bg: #f8fafc;
             --white: #ffffff;
-            --accent: #f39c12;
+            --netflix-red: #e50914;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -20,7 +20,7 @@
 
         body { background-color: var(--bg); color: var(--secondary); padding-bottom: 40px; }
 
-        /* HEADER PRODUIT */
+        /* HEADER */
         header {
             height: 65px;
             background: var(--white);
@@ -51,10 +51,9 @@
         }
 
         .product-hero img {
-            height: 140px; /* TAILLE AGRANDIE ICI */
+            height: 140px; /* Taille agrandie comme demandé */
             width: auto;
             margin-bottom: 15px;
-            border-radius: 15px;
         }
 
         .product-hero p {
@@ -65,7 +64,19 @@
             line-height: 1.5;
         }
 
-        /* GRILLE DES PACKS */
+        .badge-4k {
+            display: inline-block;
+            background: #000;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* GRILLE DES OFFRES */
         .section-title {
             padding: 25px 5% 15px;
             font-size: 0.9rem;
@@ -76,25 +87,26 @@
 
         .packs-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
             padding: 0 5%;
         }
 
         .pack-card {
             background: var(--white);
-            padding: 20px;
-            border-radius: 18px;
-            text-align: center;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: left;
             border: 2px solid transparent;
             transition: var(--transition);
             cursor: pointer;
+            position: relative;
             box-shadow: 0 4px 6px rgba(0,0,0,0.02);
         }
 
         .pack-card:hover {
             border-color: var(--primary);
-            transform: translateY(-3px);
+            transform: translateY(-5px);
         }
 
         .pack-card.selected {
@@ -102,27 +114,40 @@
             background: #f0f7ff;
         }
 
-        .pack-card i {
-            color: var(--accent);
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-
-        .pack-card .diamonds {
+        .pack-card .duration {
             display: block;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 1.2rem;
             margin-bottom: 5px;
+        }
+
+        .pack-card .details {
+            display: block;
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
         }
 
         .pack-card .price {
             display: block;
             color: var(--primary);
-            font-weight: 600;
-            font-size: 0.9rem;
+            font-weight: 800;
+            font-size: 1.1rem;
         }
 
-        /* FORMULAIRE DE COMMANDE */
+        .best-value {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--primary);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        /* FORMULAIRE */
         .order-form {
             margin: 30px 5%;
             background: var(--white);
@@ -149,10 +174,7 @@
             border: 1.5px solid #e2e8f0;
             border-radius: 10px;
             outline: none;
-            transition: var(--transition);
         }
-
-        .form-group input:focus { border-color: var(--primary); }
 
         .btn-order {
             width: 100%;
@@ -165,18 +187,11 @@
             font-weight: 700;
             cursor: pointer;
             margin-top: 10px;
-            transition: var(--transition);
         }
-
-        .btn-order:hover { background: var(--secondary); }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (max-width: 400px) {
-            .packs-grid { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
@@ -184,112 +199,98 @@
 
     <header>
         <a href="../home.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
-        <h1>Free Fire - Recharges</h1>
+        <h1>Netflix Premium 4K</h1>
     </header>
 
     <div class="product-hero">
-        <img src="../../assets/logos/freefire-logo.png" alt="Free Fire">
-        <p>Rechargez vos diamants instantanément. Livraison sécurisée via votre ID Player sous 15 minutes.</p>
+        <img src="../../assets/logos/netflix-logo.png" alt="Netflix">
+        <p>Comptes Privés ● Qualité Ultra HD 4K ● Support 24/7</p>
+        <span class="badge-4k">ULTRA HD 4K</span>
     </div>
 
-    <h3 class="section-title">Abonnements & Pass</h3>
+    <h3 class="section-title">Choisissez votre abonnement</h3>
+    
     <div class="packs-grid">
-        <div class="pack-card" onclick="selectPack('Semaine (450💎)', 325)">
-            <i class="fa-solid fa-calendar-week"></i>
-            <span class="diamonds">Pass Semaine</span>
-            <span class="price">325 HTG</span>
+        <!-- 1 MOIS -->
+        <div class="pack-card" onclick="selectPack('Netflix 1 Mois', 450)">
+            <span class="duration">1 Mois</span>
+            <span class="details">Accès complet ● 1 Écran</span>
+            <span class="price">450 HTG</span>
         </div>
-        <div class="pack-card" onclick="selectPack('Mois (2600💎)', 1600)">
-            <i class="fa-solid fa-calendar-check"></i>
-            <span class="diamonds">Pass Mois</span>
-            <span class="price">1,600 HTG</span>
+
+        <!-- 2 MOIS -->
+        <div class="pack-card" onclick="selectPack('Netflix 2 Mois', 900)">
+            <div class="best-value">Meilleure Valeur</div>
+            <span class="duration">2 Mois</span>
+            <span class="details">Accès complet ● 1 Écran</span>
+            <span class="price">900 HTG</span>
         </div>
-        <div class="pack-card" onclick="selectPack('Level Up Pass (800💎)', 950)">
-            <i class="fa-solid fa-angles-up"></i>
-            <span class="diamonds">Level Up Pass</span>
-            <span class="price">950 HTG</span>
+
+        <!-- 3 MOIS -->
+        <div class="pack-card" onclick="selectPack('Netflix 3 Mois', 1400)">
+            <div class="best-value" style="background:#27ae60">Meilleur Prix</div>
+            <span class="duration">3 Mois</span>
+            <span class="details">Accès complet ● 1 Écran</span>
+            <span class="price">1,400 HTG</span>
         </div>
     </div>
 
-    <h3 class="section-title">Packs Diamants</h3>
-    <div class="packs-grid" id="diamonds-grid"></div>
-
+    <!-- FORMULAIRE -->
     <div class="order-form" id="order-form">
-        <h3 style="margin-bottom: 20px; font-size: 1.1rem;">Détails de la commande</h3>
+        <h3 style="margin-bottom: 20px; font-size: 1.1rem;">Livraison de votre compte</h3>
         <p id="selected-summary" style="margin-bottom: 20px; font-weight: 600; color: var(--primary);"></p>
         
-        <form id="ffOrderForm">
+        <form id="netflixOrderForm">
             <div class="form-group">
-                <label>ID Player</label>
-                <input type="number" id="playerID" placeholder="Ex: 123456789" required>
+                <label>Nom de l'utilisateur</label>
+                <input type="text" id="userName" placeholder="Votre nom complet" required>
             </div>
             <div class="form-group">
-                <label>Pseudo Joueur</label>
-                <input type="text" id="playerPseudo" placeholder="Votre nom dans le jeu" required>
+                <label>Numéro WhatsApp</label>
+                <input type="tel" id="whatsapp" placeholder="Ex: +50936535649" required>
             </div>
-            <div class="form-group">
-                <label>Numéro Whatsapp</label>
-                <input type="tel" id="whatsapp" placeholder="+509..." required>
-            </div>
+            <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 15px;">
+                * Les identifiants du compte seront envoyés sur ce numéro WhatsApp.
+            </p>
             <button type="submit" class="btn-order">Valider la commande</button>
         </form>
     </div>
 
     <script>
-        const diamondPacks = [
-            { d: "100 + 10", p: 165 },
-            { d: "210 + 21", p: 340 },
-            { d: "530 + 53", p: 850 },
-            { d: "750 + 75", p: 1190 },
-            { d: "1080 + 108", p: 1700 },
-            { d: "2200 + 220", p: 3350 },
-            { d: "3300 + 330", p: 5000 },
-            { d: "4400 + 440", p: 6500 },
-            { d: "5600 + 560", p: 8000 }
-        ];
-
-        const grid = document.getElementById('diamonds-grid');
         let currentSelection = null;
 
-        diamondPacks.forEach(pack => {
-            const div = document.createElement('div');
-            div.className = 'pack-card';
-            div.innerHTML = `
-                <i class="fa-solid fa-gem"></i>
-                <span class="diamonds">${pack.d}</span>
-                <span class="price">${pack.p.toLocaleString()} HTG</span>
-            `;
-            div.onclick = (e) => selectPack(`${pack.d} Diamants`, pack.p, e);
-            grid.appendChild(div);
-        });
-
-        function selectPack(name, price, event) {
+        function selectPack(name, price) {
             currentSelection = { name, price };
-            document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
             
-            let target = event.currentTarget || event.target.closest('.pack-card');
-            target.classList.add('selected');
+            // UI : Gestion de la sélection
+            document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
 
+            // Affichage du formulaire
             const formSection = document.getElementById('order-form');
             formSection.classList.add('active');
-            document.getElementById('selected-summary').textContent = `Pack sélectionné : ${name} - ${price} HTG`;
+            document.getElementById('selected-summary').textContent = `Offre choisie : ${name} - ${price} HTG`;
+            
             formSection.scrollIntoView({ behavior: 'smooth' });
         }
 
-        document.getElementById('ffOrderForm').addEventListener('submit', function(e) {
+        document.getElementById('netflixOrderForm').addEventListener('submit', function(e) {
             e.preventDefault();
+
             const orderData = {
-                product: "Free Fire",
+                product: "Netflix Premium",
                 pack: currentSelection.name,
                 price: currentSelection.price,
-                playerID: document.getElementById('playerID').value,
-                playerPseudo: document.getElementById('playerPseudo').value,
+                userName: document.getElementById('userName').value,
                 whatsapp: document.getElementById('whatsapp').value,
                 timestamp: new Date().getTime()
             };
+
+            // Stockage panier
             let cart = JSON.parse(localStorage.getItem('payfusion_cart')) || [];
             cart.push(orderData);
             localStorage.setItem('payfusion_cart', JSON.stringify(cart));
+
             window.location.href = "../checkout/cart.html";
         });
     </script>
