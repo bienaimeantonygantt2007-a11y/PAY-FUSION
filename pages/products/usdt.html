@@ -3,164 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Achat USDT (TRC20) | PayFusion</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Achat USDT TRC20 | PayFusion Haiti</title>
+    
+    <!-- Polices & Icônes -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
     <style>
         :root {
             --primary: #0056b3;
             --secondary: #002d5e;
+            --usdt-green: #26a17b;
             --bg: #f8fafc;
             --white: #ffffff;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --text: #1e293b;
+            --danger: #ef4444;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg); color: var(--secondary); padding-bottom: 40px; }
+        body { background-color: var(--bg); color: var(--text); padding-bottom: 50px; overflow-x: hidden; }
 
+        /* HEADER PREMIUM */
         header {
-            height: 65px;
-            background: var(--white);
-            display: flex;
-            align-items: center;
-            padding: 0 5%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: 70px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            display: flex; align-items: center; padding: 0 6%; position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
         }
+        header .back-btn { color: var(--primary); font-size: 1.4rem; text-decoration: none; margin-right: 15px; transition: 0.3s; }
+        header h1 { font-size: 1.1rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; }
 
-        header .back-btn { color: var(--primary); font-size: 1.2rem; text-decoration: none; margin-right: 20px; }
-        header h1 { font-size: 1.1rem; font-weight: 700; }
-
+        /* HERO PRODUIT */
         .product-hero {
-            background: var(--white);
-            padding: 30px 5%;
-            text-align: center;
-            border-bottom: 1px solid #edf2f7;
+            background: var(--white); padding: 40px 6%; text-align: center; border-bottom: 1px solid #edf2f7;
+        }
+        .product-hero img { height: 120px; width: auto; margin-bottom: 15px; filter: drop-shadow(0 8px 20px rgba(38, 161, 123, 0.2)); }
+        .product-hero p { font-size: 0.95rem; color: #64748b; max-width: 500px; margin: 0 auto; line-height: 1.6; }
+        
+        .network-badge {
+            display: inline-block; background: var(--usdt-green); color: #fff; padding: 5px 15px;
+            border-radius: 8px; font-size: 0.75rem; font-weight: 800; margin-top: 15px;
+            letter-spacing: 1.5px; text-transform: uppercase;
         }
 
-        .product-hero img {
-            height: 140px; /* Taille agrandie */
-            width: auto;
-            margin-bottom: 15px;
+        /* CMS STATUS MESSAGE */
+        #maintenance-msg {
+            display: none; background: #fff5f5; color: var(--danger); padding: 15px; text-align: center;
+            font-weight: 700; font-size: 0.9rem; border-bottom: 2px solid #feb2b2;
         }
 
-        .product-hero p {
-            font-size: 0.9rem;
-            color: #64748b;
-            max-width: 500px;
-            margin: 0 auto;
-        }
+        .section-title { padding: 30px 6% 15px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; }
 
-        .section-title {
-            padding: 25px 5% 15px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #94a3b8;
-        }
-
+        /* GRILLE DES MONTANTS */
         .amounts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            padding: 0 5%;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px; padding: 0 6%;
         }
 
         .amount-card {
-            background: var(--white);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            border: 2px solid transparent;
-            transition: var(--transition);
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            background: var(--white); padding: 25px 15px; border-radius: 22px; text-align: center;
+            border: 2.5px solid transparent; transition: var(--transition); cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
         }
+        .amount-card:hover { transform: translateY(-5px); border-color: var(--usdt-green); box-shadow: 0 12px 25px rgba(38, 161, 123, 0.1); }
+        .amount-card.selected { border-color: var(--usdt-green); background: #f0fdfa; }
 
-        .amount-card:hover { border-color: var(--primary); transform: translateY(-3px); }
-        .amount-card.selected { border-color: var(--primary); background: #f0f7ff; }
+        .amount-card .usd { display: block; font-weight: 800; font-size: 1.3rem; color: var(--secondary); }
+        .amount-card .htg { display: block; font-size: 0.85rem; color: var(--usdt-green); font-weight: 600; margin-top: 4px; }
 
-        .amount-card .usd { display: block; font-weight: 800; font-size: 1.2rem; color: var(--primary); }
-        .amount-card .htg { display: block; font-size: 0.85rem; color: #64748b; margin-top: 5px; }
-
+        /* FORMULAIRE DE COMMANDE */
         .order-form {
-            margin: 30px 5%;
-            background: var(--white);
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            display: none;
+            margin: 35px 6%; background: var(--white); padding: 30px; border-radius: 28px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.06); border: 1px solid #f1f5f9;
+            display: none; transform: translateY(20px); opacity: 0; transition: 0.5s;
         }
-
-        .order-form.active { display: block; animation: fadeIn 0.5s ease; }
-
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: #64748b; }
-        .form-group input { width: 100%; padding: 12px 15px; border: 1.5px solid #e2e8f0; border-radius: 10px; outline: none; }
+        .order-form.active { display: block; transform: translateY(0); opacity: 1; }
 
         .warning-box {
-            background: #fff5f5;
-            color: #c53030;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            margin-bottom: 20px;
-            border-left: 4px solid #fc8181;
+            background: #fff5f5; color: #c53030; padding: 18px; border-radius: 16px; 
+            font-size: 0.85rem; margin-bottom: 25px; border-left: 5px solid var(--danger);
+            line-height: 1.5;
         }
+
+        .summary-box {
+            background: #f8fafc; padding: 20px; border-radius: 18px; margin-bottom: 25px;
+            border: 1px solid #eee;
+        }
+        .summary-line { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 8px; }
+        .summary-total { display: flex; justify-content: space-between; font-weight: 800; font-size: 1.1rem; color: var(--usdt-green); margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ddd; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 800; margin-bottom: 8px; color: var(--secondary); text-transform: uppercase; }
+        .form-group .input-wrapper { position: relative; }
+        .form-group i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+        .form-group input {
+            width: 100%; padding: 14px 18px 14px 50px; border: 1.5px solid #e2e8f0; border-radius: 14px;
+            outline: none; transition: 0.3s; font-size: 1rem; background: #fcfcfd;
+        }
+        .form-group input:focus { border-color: var(--usdt-green); box-shadow: 0 0 0 4px rgba(38, 161, 123, 0.1); }
 
         .btn-order {
-            width: 100%;
-            padding: 15px;
-            background: var(--primary);
-            color: var(--white);
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
+            width: 100%; padding: 18px; background: linear-gradient(135deg, var(--usdt-green), var(--secondary));
+            color: var(--white); border: none; border-radius: 16px; font-size: 1.1rem;
+            font-weight: 800; cursor: pointer; transition: var(--transition);
+            box-shadow: 0 10px 25px rgba(38, 161, 123, 0.2); display: flex; justify-content: center; align-items: center; gap: 10px;
         }
+        .btn-order:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(38, 161, 123, 0.3); }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 480px) {
+            .amounts-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+            .order-form { padding: 25px 20px; }
+        }
     </style>
 </head>
 <body>
 
+    <div id="maintenance-msg">
+        <i class="fa-solid fa-triangle-exclamation"></i> Service USDT momentanément indisponible.
+    </div>
+
     <header>
-        <a href="../home.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
-        <h1>Achat USDT (TRC20)</h1>
+        <a href="../home.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+        <h1>Achat USDT TRC20</h1>
     </header>
 
     <div class="product-hero">
         <img src="../../assets/logos/usdt-logo.png" alt="USDT">
-        <p>Achetez des USDT sur le réseau TRC20. Livraison rapide sur votre wallet.</p>
+        <p>Achetez des USDT sécurisés sur le réseau TRC20. Taux fixe : 1$ = 150 HTG. Livraison ultra-rapide sur votre portefeuille crypto.</p>
+        <span class="network-badge">Réseau : TRC20 uniquement</span>
     </div>
 
-    <h3 class="section-title">Sélectionnez le montant</h3>
-    <div class="amounts-grid" id="amounts-grid"></div>
-
-    <div class="order-form" id="order-form">
-        <div class="warning-box">
-            <i class="fa-solid fa-triangle-exclamation"></i> Attention : Assurez-vous de fournir une adresse TRC20 valide. Aucun remboursement n'est possible en cas d'erreur d'adresse.
+    <div id="product-content">
+        <h3 class="section-title">Sélectionnez le montant</h3>
+        <div class="amounts-grid" id="amounts-grid">
+            <!-- Injecté par JS -->
         </div>
-        
-        <h3 id="selected-summary" style="margin-bottom: 20px; font-size: 1rem; color: var(--primary);"></h3>
 
-        <form id="usdtForm">
-            <div class="form-group">
-                <label>Adresse du wallet (TRC20)</label>
-                <input type="text" id="walletAddress" placeholder="Ex: TJHVCbXMBQdtzurHngB1aXSFkR..." required>
+        <div class="order-form" id="order-form">
+            <div class="warning-box">
+                <i class="fa-solid fa-circle-exclamation"></i> <b>IMPORTANT :</b> Vérifiez que votre adresse est bien sur le réseau <b>TRC20</b>. Un transfert vers une mauvaise adresse ou un mauvais réseau (ERC20, BEP2) entraînera la perte définitive de vos fonds.
             </div>
-            <div class="form-group">
-                <label>Numéro WhatsApp</label>
-                <input type="tel" id="whatsapp" placeholder="+509..." required>
+
+            <div class="summary-box">
+                <div class="summary-line"><span>Achat Cryptomonnaie :</span> <span id="sum-amount">0 HTG</span></div>
+                <div class="summary-line"><span>Frais de Gaz & Service :</span> <span>150 HTG</span></div>
+                <div class="summary-total"><span>Total à payer :</span> <span id="sum-total">0 HTG</span></div>
             </div>
-            <button type="submit" class="btn-order">Valider la commande</button>
-        </form>
+
+            <form id="usdtForm">
+                <div class="form-group">
+                    <label>Adresse du Wallet (TRC20)</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-key"></i>
+                        <input type="text" id="walletAddress" placeholder="Ex: TExyz123..." required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Votre Numéro WhatsApp</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-whatsapp"></i>
+                        <input type="tel" id="whatsapp" placeholder="Ex: +50936535649" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-order">
+                    Confirmer l'achat <i class="fa-solid fa-bolt"></i>
+                </button>
+            </form>
+        </div>
     </div>
 
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
+            authDomain: "pay-fusion-509.firebaseapp.com",
+            projectId: "pay-fusion-509",
+            storageBucket: "pay-fusion-509.firebasestorage.app",
+            messagingSenderId: "401434428368",
+            appId: "1:401434428368:web:c1f526254f63fa57402fd5",
+            measurementId: "G-JN41S8MKWH"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        let currentSelection = null;
+
+        // 1. AUTH & SÉCURITÉ & BAN CHECK
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                db.collection("users").doc(user.uid).onSnapshot(doc => {
+                    if (doc.exists && doc.data().status === "Banni") {
+                        auth.signOut().then(() => window.location.href = "../login.html");
+                    }
+                });
+                checkServiceStatus();
+            } else {
+                window.location.href = "../login.html";
+            }
+        });
+
+        // 2. CMS SYNC
+        function checkServiceStatus() {
+            db.collection("services").doc("USDT").onSnapshot(doc => {
+                if (doc.exists && !doc.data().active) {
+                    document.getElementById('product-content').style.opacity = "0.3";
+                    document.getElementById('product-content').style.pointerEvents = "none";
+                    document.getElementById('maintenance-msg').style.display = "block";
+                    document.getElementById('maintenance-msg').innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${doc.data().message || 'Indisponible.'}`;
+                }
+            });
+        }
+
+        // 3. GÉNÉRATION DES PRIX (Taux 150)
         const prices = [
             { usd: 10, htg: 1500 }, { usd: 20, htg: 3000 }, { usd: 30, htg: 4500 },
             { usd: 40, htg: 6000 }, { usd: 50, htg: 7500 }, { usd: 60, htg: 9000 },
@@ -169,38 +230,52 @@
         ];
 
         const grid = document.getElementById('amounts-grid');
-        let currentSelection = null;
-
         prices.forEach(item => {
             const div = document.createElement('div');
             div.className = 'amount-card';
-            div.innerHTML = `<span class="usd">${item.usd} USD</span><span class="htg">${item.htg.toLocaleString()} HTG</span>`;
-            div.onclick = (e) => selectAmount(item.usd, item.htg, e);
+            div.innerHTML = `<span class="usd">${item.usd}$ USDT</span><span class="htg">${item.htg.toLocaleString()} HTG</span>`;
+            div.onclick = (e) => selectAmount(item.usd, item.htg, div);
             grid.appendChild(div);
         });
 
-        function selectAmount(usd, htg, event) {
+        function selectAmount(usd, htg, element) {
             currentSelection = { usd, htg };
             document.querySelectorAll('.amount-card').forEach(c => c.classList.remove('selected'));
-            event.currentTarget.classList.add('selected');
+            element.classList.add('selected');
+
             document.getElementById('order-form').classList.add('active');
-            document.getElementById('selected-summary').textContent = `Achat : ${usd} USDT (${htg} HTG)`;
-            document.getElementById('order-form').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('sum-amount').textContent = htg.toLocaleString() + " HTG";
+            document.getElementById('sum-total').textContent = (htg + 150).toLocaleString() + " HTG";
+            
+            document.getElementById('order-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
+        // 4. GESTION DU PANIER
         document.getElementById('usdtForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            const wallet = document.getElementById('walletAddress').value.trim();
+            // Validation basique TRC20 (commence par T, environ 34 caractères)
+            if(!wallet.startsWith('T') || wallet.length < 30) {
+                alert("L'adresse TRC20 semble invalide. Elle doit commencer par 'T'.");
+                return;
+            }
+
             const orderData = {
                 product: "USDT",
                 amountUSD: currentSelection.usd,
                 price: currentSelection.htg,
-                walletAddress: document.getElementById('walletAddress').value,
-                whatsapp: document.getElementById('whatsapp').value,
+                serviceFee: 150,
+                totalPrice: currentSelection.htg + 150,
+                walletAddress: wallet,
+                whatsapp: document.getElementById('whatsapp').value.trim(),
                 timestamp: new Date().getTime()
             };
+
             let cart = JSON.parse(localStorage.getItem('payfusion_cart')) || [];
             cart.push(orderData);
             localStorage.setItem('payfusion_cart', JSON.stringify(cart));
+
             window.location.href = "../checkout/cart.html";
         });
     </script>
