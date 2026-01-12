@@ -3,290 +3,258 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netflix Premium | PayFusion</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Netflix Premium 4K | PayFusion Haiti</title>
+    
+    <!-- Polices & Icônes -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
     <style>
         :root {
             --primary: #0056b3;
             --secondary: #002d5e;
+            --netflix-red: #e50914;
             --bg: #f8fafc;
             --white: #ffffff;
-            --netflix-red: #e50914;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --text: #1e293b;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding-bottom: 50px; overflow-x: hidden; }
 
-        body { background-color: var(--bg); color: var(--secondary); padding-bottom: 40px; }
-
-        /* HEADER */
+        /* HEADER PREMIUM */
         header {
-            height: 65px;
-            background: var(--white);
-            display: flex;
-            align-items: center;
-            padding: 0 5%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: 70px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            display: flex; align-items: center; padding: 0 6%; position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
         }
-
-        header .back-btn {
-            color: var(--primary);
-            font-size: 1.2rem;
-            text-decoration: none;
-            margin-right: 20px;
-        }
-
-        header h1 { font-size: 1.1rem; font-weight: 700; }
+        header .back-btn { color: var(--primary); font-size: 1.4rem; text-decoration: none; margin-right: 15px; transition: 0.3s; }
+        header h1 { font-size: 1.1rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; }
 
         /* HERO PRODUIT */
         .product-hero {
-            background: var(--white);
-            padding: 30px 5%;
-            text-align: center;
-            border-bottom: 1px solid #edf2f7;
+            background: var(--white); padding: 40px 6%; text-align: center; border-bottom: 1px solid #edf2f7;
         }
-
-        .product-hero img {
-            height: 140px; /* Taille agrandie comme demandé */
-            width: auto;
-            margin-bottom: 15px;
-        }
-
-        .product-hero p {
-            font-size: 0.9rem;
-            color: #64748b;
-            max-width: 500px;
-            margin: 0 auto;
-            line-height: 1.5;
-        }
-
+        .product-hero img { height: 120px; width: auto; margin-bottom: 15px; }
+        .product-hero p { font-size: 0.95rem; color: #64748b; max-width: 500px; margin: 0 auto; line-height: 1.6; }
+        
         .badge-4k {
-            display: inline-block;
-            background: #000;
-            color: #fff;
-            padding: 4px 12px;
-            border-radius: 5px;
-            font-size: 0.75rem;
-            font-weight: 800;
-            margin-top: 10px;
-            letter-spacing: 1px;
+            display: inline-block; background: #000; color: #fff; padding: 5px 15px;
+            border-radius: 8px; font-size: 0.75rem; font-weight: 800; margin-top: 15px;
+            letter-spacing: 1.5px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* MAINTENANCE MESSAGE (CMS) */
+        #maintenance-msg {
+            display: none; background: #fff5f5; color: #e53e3e; padding: 15px; text-align: center;
+            font-weight: 700; font-size: 0.9rem; border-bottom: 2px solid #feb2b2;
         }
 
         /* GRILLE DES OFFRES */
-        .section-title {
-            padding: 25px 5% 15px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #94a3b8;
-        }
-
-        .packs-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            padding: 0 5%;
-        }
+        .section-title { padding: 30px 6% 15px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; font-weight: 800; }
+        .packs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 0 6%; }
 
         .pack-card {
-            background: var(--white);
-            padding: 25px;
-            border-radius: 20px;
-            text-align: left;
-            border: 2px solid transparent;
-            transition: var(--transition);
-            cursor: pointer;
-            position: relative;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            background: var(--white); padding: 30px 25px; border-radius: 28px; text-align: left;
+            border: 2.5px solid transparent; transition: var(--transition); cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.03); position: relative; overflow: hidden;
+        }
+        .pack-card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 20px 40px rgba(0, 86, 179, 0.1); }
+        .pack-card.selected { border-color: var(--primary); background: #f0f7ff; }
+
+        .pack-card .duration { display: block; font-weight: 800; font-size: 1.4rem; color: var(--secondary); margin-bottom: 5px; }
+        .pack-card .details { display: block; color: #64748b; font-size: 0.9rem; margin-bottom: 20px; }
+        .pack-card .price { display: block; color: var(--primary); font-weight: 800; font-size: 1.25rem; }
+
+        /* BADGES OFFRES */
+        .offer-badge {
+            position: absolute; top: 15px; right: -35px; background: var(--primary); color: white;
+            padding: 5px 40px; transform: rotate(45deg); font-size: 0.7rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .pack-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-5px);
-        }
-
-        .pack-card.selected {
-            border-color: var(--primary);
-            background: #f0f7ff;
-        }
-
-        .pack-card .duration {
-            display: block;
-            font-weight: 700;
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-        }
-
-        .pack-card .details {
-            display: block;
-            color: #64748b;
-            font-size: 0.85rem;
-            margin-bottom: 15px;
-        }
-
-        .pack-card .price {
-            display: block;
-            color: var(--primary);
-            font-weight: 800;
-            font-size: 1.1rem;
-        }
-
-        .best-value {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--primary);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 50px;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-
-        /* FORMULAIRE */
+        /* FORMULAIRE DE COMMANDE */
         .order-form {
-            margin: 30px 5%;
-            background: var(--white);
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            display: none;
+            margin: 40px 6%; background: var(--white); padding: 35px; border-radius: 30px;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.06); border: 1px solid #f1f5f9;
+            display: none; transform: translateY(20px); opacity: 0; transition: 0.5s;
         }
+        .order-form.active { display: block; transform: translateY(0); opacity: 1; }
 
-        .order-form.active { display: block; animation: fadeIn 0.5s ease; }
-
-        .form-group { margin-bottom: 15px; }
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #64748b;
-        }
-
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 800; margin-bottom: 10px; color: var(--secondary); text-transform: uppercase; }
+        .form-group .input-wrapper { position: relative; }
+        .form-group i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
         .form-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 10px;
-            outline: none;
+            width: 100%; padding: 16px 18px 16px 50px; border: 1.5px solid #e2e8f0; border-radius: 16px;
+            outline: none; transition: 0.3s; font-size: 1rem; background: #fcfcfd;
         }
+        .form-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1); background: white; }
 
         .btn-order {
-            width: 100%;
-            padding: 15px;
-            background: var(--primary);
-            color: var(--white);
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 10px;
+            width: 100%; padding: 20px; background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white); border: none; border-radius: 18px; font-size: 1.1rem;
+            font-weight: 800; cursor: pointer; transition: var(--transition);
+            box-shadow: 0 10px 25px rgba(0, 86, 179, 0.25); display: flex; justify-content: center; align-items: center; gap: 12px;
         }
+        .btn-order:hover { transform: translateY(-4px); box-shadow: 0 15px 35px rgba(0, 86, 179, 0.35); }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        @media (max-width: 480px) {
+            .packs-grid { grid-template-columns: 1fr; }
+            .order-form { padding: 25px 20px; }
         }
     </style>
 </head>
 <body>
 
+    <div id="maintenance-msg">
+        <i class="fa-solid fa-circle-exclamation"></i> Ce service est momentanément indisponible.
+    </div>
+
     <header>
-        <a href="../home.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
-        <h1>Netflix Premium 4K</h1>
+        <a href="../home.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+        <h1>Netflix Premium</h1>
     </header>
 
     <div class="product-hero">
         <img src="../../assets/logos/netflix-logo.png" alt="Netflix">
-        <p>Comptes Privés ● Qualité Ultra HD 4K ● Support 24/7</p>
+        <p>Accès exclusif à des comptes privés ● Qualité 4K HDR ● Écran Unique ● Support Prioritaire</p>
         <span class="badge-4k">ULTRA HD 4K</span>
     </div>
 
-    <h3 class="section-title">Choisissez votre abonnement</h3>
-    
-    <div class="packs-grid">
-        <!-- 1 MOIS -->
-        <div class="pack-card" onclick="selectPack('Netflix 1 Mois', 450)">
-            <span class="duration">1 Mois</span>
-            <span class="details">Accès complet ● 1 Écran</span>
-            <span class="price">450 HTG</span>
-        </div>
-
-        <!-- 2 MOIS -->
-        <div class="pack-card" onclick="selectPack('Netflix 2 Mois', 900)">
-            <div class="best-value">Meilleure Valeur</div>
-            <span class="duration">2 Mois</span>
-            <span class="details">Accès complet ● 1 Écran</span>
-            <span class="price">900 HTG</span>
-        </div>
-
-        <!-- 3 MOIS -->
-        <div class="pack-card" onclick="selectPack('Netflix 3 Mois', 1400)">
-            <div class="best-value" style="background:#27ae60">Meilleur Prix</div>
-            <span class="duration">3 Mois</span>
-            <span class="details">Accès complet ● 1 Écran</span>
-            <span class="price">1,400 HTG</span>
-        </div>
-    </div>
-
-    <!-- FORMULAIRE -->
-    <div class="order-form" id="order-form">
-        <h3 style="margin-bottom: 20px; font-size: 1.1rem;">Livraison de votre compte</h3>
-        <p id="selected-summary" style="margin-bottom: 20px; font-weight: 600; color: var(--primary);"></p>
+    <div id="product-content">
+        <h3 class="section-title">Choisissez votre abonnement</h3>
         
-        <form id="netflixOrderForm">
-            <div class="form-group">
-                <label>Nom de l'utilisateur</label>
-                <input type="text" id="userName" placeholder="Votre nom complet" required>
+        <div class="packs-grid">
+            <!-- 1 MOIS -->
+            <div class="pack-card" onclick="selectPack('Netflix 1 Mois', 450, this)">
+                <span class="duration">1 Mois</span>
+                <span class="details">Accès Complet ● 1 Écran ● 4K</span>
+                <span class="price">450 HTG</span>
             </div>
-            <div class="form-group">
-                <label>Numéro WhatsApp</label>
-                <input type="tel" id="whatsapp" placeholder="Ex: +50936535649" required>
+
+            <!-- 2 MOIS -->
+            <div class="pack-card" onclick="selectPack('Netflix 2 Mois', 900, this)">
+                <div class="offer-badge" style="background: var(--secondary);">Populaire</div>
+                <span class="duration">2 Mois</span>
+                <span class="details">Accès Complet ● 1 Écran ● 4K</span>
+                <span class="price">900 HTG</span>
             </div>
-            <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 15px;">
-                * Les identifiants du compte seront envoyés sur ce numéro WhatsApp.
-            </p>
-            <button type="submit" class="btn-order">Valider la commande</button>
-        </form>
+
+            <!-- 3 MOIS -->
+            <div class="pack-card" onclick="selectPack('Netflix 3 Mois', 1400, this)">
+                <div class="offer-badge" style="background: #27ae60;">Meilleur Prix</div>
+                <span class="duration">3 Mois</span>
+                <span class="details">Accès Complet ● 1 Écran ● 4K</span>
+                <span class="price">1,400 HTG</span>
+            </div>
+        </div>
+
+        <!-- FORMULAIRE -->
+        <div class="order-form" id="order-form">
+            <h3 style="margin-bottom: 10px; font-size: 1.2rem; font-weight: 800; color: var(--secondary);">Informations de livraison</h3>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 25px;">Vos identifiants de compte seront envoyés via WhatsApp.</p>
+            
+            <div id="selected-summary" style="background: #eef5ff; padding: 15px; border-radius: 15px; margin-bottom: 30px; font-weight: 700; color: var(--primary); border: 1px solid rgba(0, 86, 179, 0.1);"></div>
+            
+            <form id="netflixOrderForm">
+                <div class="form-group">
+                    <label>Nom complet du bénéficiaire</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="userName" placeholder="Ex: Jean Philippe" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Numéro WhatsApp de réception</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-whatsapp"></i>
+                        <input type="tel" id="whatsapp" placeholder="Ex: +50936535649" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-order">
+                    Valider la sélection <i class="fa-solid fa-cart-arrow-down"></i>
+                </button>
+            </form>
+        </div>
     </div>
 
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
+            authDomain: "pay-fusion-509.firebaseapp.com",
+            projectId: "pay-fusion-509",
+            storageBucket: "pay-fusion-509.firebasestorage.app",
+            messagingSenderId: "401434428368",
+            appId: "1:401434428368:web:c1f526254f63fa57402fd5",
+            measurementId: "G-JN41S8MKWH"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
         let currentSelection = null;
 
-        function selectPack(name, price) {
-            currentSelection = { name, price };
-            
-            // UI : Gestion de la sélection
-            document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
-            event.currentTarget.classList.add('selected');
+        // 1. SECURITÉ & AUTH
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                db.collection("users").doc(user.uid).onSnapshot(doc => {
+                    if (doc.exists && doc.data().status === "Banni") {
+                        auth.signOut().then(() => window.location.href = "../login.html");
+                    }
+                });
+                checkServiceStatus();
+            } else {
+                window.location.href = "../login.html";
+            }
+        });
 
-            // Affichage du formulaire
-            const formSection = document.getElementById('order-form');
-            formSection.classList.add('active');
-            document.getElementById('selected-summary').textContent = `Offre choisie : ${name} - ${price} HTG`;
-            
-            formSection.scrollIntoView({ behavior: 'smooth' });
+        // 2. CMS SYNC
+        function checkServiceStatus() {
+            db.collection("services").doc("Netflix").onSnapshot(doc => {
+                if (doc.exists && !doc.data().active) {
+                    document.getElementById('product-content').style.opacity = "0.3";
+                    document.getElementById('product-content').style.pointerEvents = "none";
+                    document.getElementById('maintenance-msg').style.display = "block";
+                    document.getElementById('maintenance-msg').innerHTML = `<i class="fa-solid fa-clock"></i> ${doc.data().message || "Ce service est temporairement épuisé."}`;
+                }
+            });
         }
 
+        // 3. SELECTION LOGIC
+        function selectPack(name, price, element) {
+            currentSelection = { name, price };
+            document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+
+            const formSection = document.getElementById('order-form');
+            formSection.classList.add('active');
+            document.getElementById('selected-summary').innerHTML = `<i class="fa-solid fa-circle-check"></i> ${name} ● ${price.toLocaleString()} HTG`;
+            
+            formSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // 4. PANIER LOGIC
         document.getElementById('netflixOrderForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
+            
             const orderData = {
                 product: "Netflix Premium",
                 pack: currentSelection.name,
                 price: currentSelection.price,
-                userName: document.getElementById('userName').value,
-                whatsapp: document.getElementById('whatsapp').value,
+                userName: document.getElementById('userName').value.trim(),
+                whatsapp: document.getElementById('whatsapp').value.trim(),
                 timestamp: new Date().getTime()
             };
 
-            // Stockage panier
             let cart = JSON.parse(localStorage.getItem('payfusion_cart')) || [];
             cart.push(orderData);
             localStorage.setItem('payfusion_cart', JSON.stringify(cart));
