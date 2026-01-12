@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayFusion Haiti | Accueil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #0056b3;
+            --secondary-blue: #002d5e;
+            --white: #ffffff;
+            --bg-fluid: #f8fafc;
+            --glass-white: rgba(255, 255, 255, 0.9);
+            --transition-fluid: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--bg-fluid);
+            color: var(--secondary-blue);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* HEADER MINIMALISTE PRO */
+        header {
+            background: var(--glass-white);
+            backdrop-filter: blur(10px);
+            height: 75px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 8%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .logo-container img {
+            height: 42px;
+        }
+
+        .auth-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .auth-icons a {
+            color: var(--primary-blue);
+            font-size: 1.2rem;
+            text-decoration: none;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: #f1f5f9;
+            transition: var(--transition-fluid);
+        }
+
+        .auth-icons a:hover {
+            background: var(--primary-blue);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        /* HERO */
+        .hero {
+            padding: 80px 8% 60px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 800;
+            color: var(--secondary-blue);
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            color: #64748b;
+        }
+
+        /* CARTES DE SERVICE */
+        .preview-services {
+            padding: 40px 8% 80px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            background: var(--white);
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            transition: var(--transition-fluid);
+            border: 1px solid #f1f5f9;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 86, 179, 0.08);
+            border-color: var(--primary-blue);
+        }
+
+        .service-card i {
+            font-size: 2.2rem;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+        }
+
+        .service-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .service-card p {
+            font-size: 0.95rem;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--white);
+            padding: 60px 8% 30px;
+            border-top: 1px solid #f1f5f9;
+            margin-top: auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h4 {
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+        }
+
+        .footer-links { list-style: none; }
+        .footer-links li { margin-bottom: 12px; }
+        .footer-links a {
+            text-decoration: none;
+            color: #64748b;
+            transition: var(--transition-fluid);
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover { color: var(--primary-blue); }
+
+        .payment-box {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .payment-box img {
+            height: 22px;
+            filter: grayscale(1);
+            opacity: 0.6;
+        }
+
+        .footer-bottom {
+            padding-top: 25px;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .secure-tag {
+            color: #10b981;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .footer-bottom { flex-direction: column; gap: 15px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <img src="assets/logos/payfusion-logo.png" alt="PayFusion">
+        </div>
+        <div class="auth-icons">
+            <a href="pages/register.html" title="S'inscrire">
+                <i class="fa-solid fa-user-plus"></i>
+            </a>
+            <a href="pages/login.html" title="Se connecter">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i>
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>Services Numériques & Solutions Financières</h1>
+            <p>La plateforme de confiance pour vos recharges Free Fire, abonnements Streaming et portefeuilles Wise ou PayPal en Haïti.</p>
+        </section>
+
+        <section class="preview-services">
+            <div class="service-card">
+                <i class="fa-solid fa-gamepad"></i>
+                <h3>Gaming</h3>
+                <p>Recharges diamants et Pass de niveau pour Free Fire avec livraison via ID joueur.</p>
+            </div>
+
+            <div class="service-card">
+                <i class="fa-solid fa-clapperboard"></i>
+                <h3>Streaming</h3>
+                <p>Accès Premium à Netflix et Disney+ en haute définition pour tout vos écrans.</p>
+            </div>
+
+            <div class="service-card">
+                <i class="fa-solid fa-wallet"></i>
+                <h3>Finances</h3>
+                <p>Alimentez vos comptes PayPal, Wise et USDT en toute sécurité depuis Haïti.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h4>Société</h4>
+                <p style="font-size: 0.9rem; color: #64748b;">PayFusion facilite l'accès aux services digitaux mondiaux pour la communauté haïtienne.</p>
+            </div>
+
+            <div class="footer-section">
+                <h4>Support</h4>
+                <ul class="footer-links">
+                    <li><a href="pages/user/supports.html">Centre d'aide</a></li>
+                    <li><a href="pages/user/settings.html">Conditions d'utilisation</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Paiements</h4>
+                <div class="payment-box">
+                    <img src="assets/logos/moncash-logo.png" alt="MonCash">
+                    <img src="assets/logos/natcash-logo.png" alt="NatCash">
+                    <img src="assets/logos/usdt-logo.png" alt="USDT">
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 PayFusion Haiti. Opérations sécurisées.</p>
+            <div class="secure-tag">
+                <i class="fa-solid fa-shield-halved"></i> PROTECTION SSL ACTIVÉE
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
