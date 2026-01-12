@@ -205,90 +205,86 @@
         </div>
     </div>
 
-    <script>
-        // Configuration Firebase (Utilisation de tes identifiants réels)
-        const firebaseConfig = {
-  apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
-  authDomain: "pay-fusion-509.firebaseapp.com",
-  projectId: "pay-fusion-509",
-  storageBucket: "pay-fusion-509.firebasestorage.app",
-  messagingSenderId: "401434428368",
-  appId: "1:401434428368:web:c1f526254f63fa57402fd5",
-  measurementId: "G-JN41S8MKWH"
-};
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyA0Aqy9keUMZb_FSqW7qdg0RYxlpO5gGmw",
+        authDomain: "pay-fusion-509.firebaseapp.com",
+        projectId: "pay-fusion-509",
+        storageBucket: "pay-fusion-509.firebasestorage.app",
+        messagingSenderId: "401434428368",
+        appId: "1:401434428368:web:c1f526254f63fa57402fd5",
+        measurementId: "G-JN41S8MKWH"
+    };
 
-        // Initialisation
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-        const form = document.getElementById('registerForm');
-        const messageDiv = document.getElementById('message');
+    const form = document.getElementById('registerForm');
+    const messageDiv = document.getElementById('message');
 
-        function showMsg(text, type) {
-            messageDiv.textContent = text;
-            messageDiv.style.display = 'block';
-            messageDiv.className = type === 'error' ? 'msg-error' : 'msg-success';
+    function showMsg(text, type) {
+        messageDiv.textContent = text;
+        messageDiv.style.display = 'block';
+        messageDiv.className = type === 'error' ? 'msg-error' : 'msg-success';
+        // Auto-scroll vers le haut pour voir le message
+        window.scrollTo(0,0);
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Utilisation de .trim() pour supprimer les espaces accidentels
+        const fullName = document.getElementById('fullName').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const dob = document.getElementById('dob').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (password !== confirmPassword) {
+            showMsg("Les mots de passe ne correspondent pas.", "error");
+            return;
         }
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const fullName = document.getElementById('fullName').value;
-            const phone = document.getElementById('phone').value;
-            const email = document.getElementById('email').value;
-            const dob = document.getElementById('dob').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+        if (password.length < 6) {
+            showMsg("Le mot de passe doit contenir au moins 6 caractères.", "error");
+            return;
+        }
 
-            // Vérification mot de passe
-            if (password !== confirmPassword) {
-                showMsg("Les mots de passe ne correspondent pas.", "error");
-                return;
-            }
+        const btn = document.getElementById('btn-submit');
+        btn.disabled = true;
+        btn.textContent = "Traitement...";
 
-            if (password.length < 6) {
-                showMsg("Le mot de passe doit contenir au moins 6 caractères.", "error");
-                return;
-            }
+        try {
+            // 1. Création du compte dans Authentication
+            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+            const user = userCredential.user;
 
-            try {
-                // Création du compte Auth
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                const user = userCredential.user;
+            // 2. Création immédiate du profil dans Firestore
+            await db.collection("users").doc(user.uid).set({
+                uid: user.uid,
+                fullName: fullName,
+                phone: phone,
+                email: email,
+                dob: dob,
+                role: email === "bmarcco4412@gmail.com" ? "admin" : "user",
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                status: "active",
+                language: "fr"
+            });
 
-                // Enregistrement des données dans Firestore
-                await db.collection("users").doc(user.uid).set({
-                    uid: user.uid,
-                    fullName: fullName,
-                    phone: phone,
-                    email: email,
-                    dob: dob,
-                    role: email === "bmarcco4412@gmail.com" ? "admin" : "user",
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    status: "active",
-                    language: "fr" // Par défaut
-                });
+            showMsg("Compte créé avec succès ! Redirection...", "success");
+            setTimeout(() => { window.location.href = "home.html"; }, 1500);
 
-                showMsg("Compte créé avec succès ! Redirection...", "success");
-
-                // Redirection vers home.html après 2 secondes
-                setTimeout(() => {
-                    window.location.href = "home.html";
-                }, 2000);
-
-            } catch (error) {
-                let errorMsg = "Une erreur est survenue.";
-                if (error.code === 'auth/email-already-in-use') errorMsg = "Cet email est déjà utilisé.";
-                showMsg(errorMsg, "error");
-            }
-        });
-
-        // Gestion de la langue (Infrastructure prête pour settings.html)
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedLang = localStorage.getItem('payfusion_lang') || 'fr';
-            // Ici, on pourrait ajouter une fonction de traduction si nécessaire
-        });
-    </script>
-</body>
-</html>
+        } catch (error) {
+            btn.disabled = false;
+            btn.textContent = "S'inscrire";
+            let errorMsg = "Erreur : " + error.message;
+            if (error.code === 'auth/email-already-in-use') errorMsg = "Cet email est déjà utilisé.";
+            if (error.code === 'auth/invalid-email') errorMsg = "Format d'email invalide.";
+            showMsg(errorMsg, "error");
+            console.error(error);
+        }
+    });
+</script>
