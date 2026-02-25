@@ -1,1 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fox Store - Centre d'Assistance</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 
+    <style>
+        :root {
+            --primary: #0056b3;
+            --secondary: #002d5e;
+            --accent: #00d1ff;
+            --white: #ffffff;
+            --bg: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: rgba(0, 86, 179, 0.08);
+            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text-main); padding-bottom: 40px; }
+
+        /* --- HEADER --- */
+        header {
+            height: 65px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            display: flex; align-items: center; padding: 0 5%; position: sticky; top: 0; z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-btn { 
+            color: var(--primary); font-size: 1.2rem; text-decoration: none; 
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+            border-radius: 12px; transition: var(--transition);
+        }
+        .back-btn:hover { background: #f0f7ff; }
+        header h1 { font-size: 0.95rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-left: 10px; }
+
+        /* --- HERO --- */
+        .support-hero {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            padding: 40px 5%; text-align: center; color: white;
+        }
+        .support-hero h2 { font-weight: 800; font-size: 1.5rem; margin-bottom: 10px; }
+        .support-hero p { font-size: 0.85rem; opacity: 0.8; max-width: 400px; margin: 0 auto; }
+
+        .container { padding: 25px 5%; max-width: 800px; margin: 0 auto; }
+
+        /* --- CONTACT CARDS --- */
+        .contact-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 30px; margin-top: -20px; }
+        .contact-card {
+            background: var(--white); padding: 20px 15px; border-radius: 20px; text-align: center;
+            border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            text-decoration: none; color: inherit; transition: var(--transition);
+        }
+        .contact-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .contact-card i { font-size: 1.5rem; color: var(--primary); margin-bottom: 10px; display: block; }
+        .contact-card span { font-weight: 800; font-size: 0.8rem; display: block; color: var(--secondary); }
+        .contact-card small { font-size: 0.7rem; color: var(--text-muted); }
+
+        /* --- FAQ SECTION --- */
+        .section-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        
+        .faq-item {
+            background: var(--white); border-radius: 15px; padding: 15px 20px; margin-bottom: 10px;
+            border: 1px solid var(--border); cursor: pointer; transition: var(--transition);
+        }
+        .faq-item:hover { border-color: var(--primary); }
+        .faq-question { font-weight: 700; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; color: var(--secondary); }
+        .faq-answer { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; margin-top: 10px; display: none; }
+        .faq-item.active .faq-answer { display: block; }
+        .faq-item.active i { transform: rotate(180deg); color: var(--primary); }
+
+        /* --- CHAT SECTION --- */
+        .chat-teaser {
+            background: var(--white); border-radius: 25px; padding: 25px;
+            border: 1px solid var(--border); margin-top: 30px; text-align: center;
+        }
+        .chat-teaser h3 { font-size: 1rem; font-weight: 800; margin-bottom: 8px; }
+        .chat-teaser p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 20px; }
+        
+        .btn-chat {
+            background: var(--primary); color: white; padding: 15px 30px; border-radius: 15px;
+            text-decoration: none; font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; gap: 10px;
+            transition: var(--transition);
+        }
+        .btn-chat:hover { background: var(--secondary); transform: scale(1.05); }
+
+        /* --- ACTUAL CHAT MODAL --- */
+        #chatInterface {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 2000; display: none; flex-direction: column;
+        }
+        #chatMessages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .msg { max-width: 80%; padding: 12px 16px; border-radius: 18px; font-size: 0.85rem; font-weight: 600; }
+        .msg.user { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
+        .msg.admin { align-self: flex-start; background: white; color: var(--text-main); border-bottom-left-radius: 4px; border: 1px solid var(--border); }
+        .chat-input { padding: 20px; background: white; border-top: 1px solid var(--border); display: flex; gap: 10px; }
+        .chat-input input { flex-grow: 1; padding: 14px; border-radius: 12px; border: 1.5px solid #e2e8f0; outline: none; }
+        .send-btn { width: 50px; height: 50px; background: var(--primary); color: white; border: none; border-radius: 12px; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="/home.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <h1>Centre d'Aide</h1>
+    </header>
+
+    <div class="support-hero">
+        <h2>Comment pouvons-nous aider ?</h2>
+        <p>Notre équipe d'experts est disponible 7j/7 pour vous accompagner dans vos achats.</p>
+    </div>
+
+    <div class="container">
+        <!-- Contact Rapide -->
+        <div class="contact-grid">
+            <a href="https://wa.me/50936535649" class="contact-card">
+                <i class="fab fa-whatsapp"></i>
+                <span>WhatsApp</span>
+                <small>Réponse rapide</small>
+            </a>
+            <a href="mailto:bmarcco4412@gmail.com" class="contact-card">
+                <i class="fas fa-envelope"></i>
+                <span>Email</span>
+                <small>Support technique</small>
+            </a>
+        </div>
+
+        <!-- FAQ -->
+        <div class="section-title"><i class="fas fa-question-circle"></i> Questions Fréquentes</div>
+        
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">Quels sont les délais de livraison ? <i class="fas fa-chevron-down"></i></div>
+            <div class="faq-answer">La majorité de nos services (Free Fire, Netflix, USDT) sont livrés en moins de 15 minutes après validation de votre preuve de paiement par un administrateur.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">Comment valider mon paiement ? <i class="fas fa-chevron-down"></i></div>
+            <div class="faq-answer">Après avoir effectué le transfert (Moncash, Natcash ou USDT), vous devez impérativement joindre une capture d'écran nette du reçu dans votre panier pour que votre commande soit traitée.</div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-question">Mon ID joueur est erroné, que faire ? <i class="fas fa-chevron-down"></i></div>
+            <div class="faq-answer">Veuillez nous contacter immédiatement via le chat direct ou WhatsApp avec votre numéro de commande. Si la commande n'a pas encore été livrée, nous pourrons corriger l'ID.</div>
+        </div>
+
+        <!-- Live Chat Teaser -->
+        <div class="chat-teaser">
+            <i class="fas fa-comment-dots" style="font-size: 2rem; color: var(--primary); margin-bottom: 15px; display: block;"></i>
+            <h3>Discuter avec un agent</h3>
+            <p>Une question spécifique ? Lancez une discussion en direct avec notre équipe de support.</p>
+            <a href="#" class="btn-chat" onclick="openChat()">
+                Démarrer le Chat <i class="fas fa-paper-plane"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Interface Chat (Masquée par défaut) -->
+    <div id="chatInterface">
+        <header>
+            <div class="back-btn" onclick="closeChat()"><i class="fas fa-times"></i></div>
+            <h1>Expert Fox Store</h1>
+        </header>
+        <div id="chatMessages"></div>
+        <form class="chat-input" id="chatForm">
+            <input type="text" id="userMsg" placeholder="Écrivez votre message..." required autocomplete="off">
+            <button type="submit" class="send-btn"><i class="fas fa-paper-plane"></i></button>
+        </form>
+    </div>
+
+    <script>
+        // Configuration Firebase Master Fox Store
+        const firebaseConfig = {
+            apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg",
+            authDomain: "pay-fusion-6dfaf.firebaseapp.com",
+            projectId: "pay-fusion-6dfaf",
+            storageBucket: "pay-fusion-6dfaf.firebasestorage.app",
+            messagingSenderId: "945593776812",
+            appId: "1:945593776812:web:4475e1085fdfa31690fd09",
+            measurementId: "G-8FEQG6B7ZY"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // FAQ Toggle
+        function toggleFaq(el) {
+            el.classList.toggle('active');
+        }
+
+        // Chat Logic
+        function openChat() {
+            document.getElementById('chatInterface').style.display = 'flex';
+            loadMessages();
+        }
+
+        function closeChat() {
+            document.getElementById('chatInterface').style.display = 'none';
+        }
+
+        function loadMessages() {
+            const user = auth.currentUser;
+            if(!user) return;
+
+            db.collection("chats")
+              .where("userUID", "==", user.uid)
+              .orderBy("timestamp", "asc")
+              .onSnapshot(snap => {
+                  const box = document.getElementById('chatMessages');
+                  box.innerHTML = '<div class="msg admin">Bonjour ! Comment puis-je vous aider aujourd\'hui ?</div>';
+                  snap.forEach(doc => {
+                      const m = doc.data();
+                      const type = m.sender === 'admin' ? 'admin' : 'user';
+                      box.innerHTML += `<div class="msg ${type}">${m.text}</div>`;
+                  });
+                  box.scrollTop = box.scrollHeight;
+              });
+        }
+
+        document.getElementById('chatForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('userMsg');
+            const txt = input.value.trim();
+            if(!txt) return;
+
+            const user = auth.currentUser;
+            await db.collection("chats").add({
+                userUID: user.uid,
+                userName: user.email,
+                text: txt,
+                sender: "user",
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            input.value = '';
+        };
+
+        // Protection session
+        auth.onAuthStateChanged(user => {
+            if (!user) window.location.href = "/login.html";
+        });
+    </script>
+</body>
+</html>

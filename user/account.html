@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fox Store - Mon Profil</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #0056b3;
+            --secondary: #002d5e;
+            --white: #ffffff;
+            --bg: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: rgba(0, 86, 179, 0.08);
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text-main); padding-bottom: 40px; }
+
+        /* --- HEADER --- */
+        header {
+            height: 65px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            display: flex; align-items: center; padding: 0 5%; position: sticky; top: 0; z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-btn { 
+            color: var(--primary); font-size: 1.2rem; text-decoration: none; 
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+            border-radius: 12px; transition: var(--transition);
+        }
+        .back-btn:hover { background: #f0f7ff; }
+        header h1 { font-size: 0.95rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-left: 10px; }
+
+        .container { padding: 25px 5%; max-width: 600px; margin: 0 auto; }
+
+        /* --- PROFILE HEADER --- */
+        .profile-card {
+            background: var(--white); border-radius: 25px; padding: 30px;
+            text-align: center; border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0, 86, 179, 0.03);
+            margin-bottom: 25px;
+        }
+
+        .avatar-circle {
+            width: 90px; height: 90px; background: #f0f7ff; color: var(--primary);
+            border-radius: 30px; display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; margin: 0 auto 15px; border: 2px solid var(--white);
+            box-shadow: 0 8px 20px rgba(0, 86, 179, 0.1);
+        }
+
+        .profile-card h2 { font-size: 1.4rem; font-weight: 800; color: var(--secondary); margin-bottom: 5px; }
+        .profile-card p { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+
+        /* --- STATS GRID --- */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .stat-item {
+            background: var(--white); padding: 20px; border-radius: 20px;
+            border: 1px solid var(--border); text-align: center;
+        }
+        .stat-item span { font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; }
+        .stat-item b { font-size: 1.2rem; font-weight: 800; color: var(--primary); }
+
+        /* --- INFO LIST --- */
+        .info-section {
+            background: var(--white); border-radius: 25px; border: 1px solid var(--border);
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+        }
+
+        .info-row {
+            padding: 20px 25px; display: flex; align-items: center; gap: 15px;
+            border-bottom: 1px solid #f8fafc;
+        }
+        .info-row:last-child { border-bottom: none; }
+
+        .info-icon {
+            width: 40px; height: 40px; background: #f8fafc; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .info-content label { display: block; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; }
+        .info-content span { font-size: 0.95rem; font-weight: 700; color: var(--secondary); }
+
+        /* --- ACTIONS --- */
+        .btn-logout {
+            margin-top: 30px; width: 100%; padding: 18px; border-radius: 15px;
+            border: 1px solid #ffebee; background: #fff5f5; color: #ff4444;
+            font-weight: 800; font-size: 0.9rem; cursor: pointer; transition: var(--transition);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            text-decoration: none;
+        }
+        .btn-logout:hover { background: #ff4444; color: white; transform: translateY(-3px); }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="/home.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <h1>Mon Profil</h1>
+    </header>
+
+    <div class="container">
+        <!-- Carte de base -->
+        <div class="profile-card">
+            <div class="avatar-circle">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <h2 id="userName">Chargement...</h2>
+            <p id="userEmail">...</p>
+        </div>
+
+        <!-- Statistiques (Structure 8.1) -->
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span>Commandes</span>
+                <b id="statOrders">0</b>
+            </div>
+            <div class="stat-item">
+                <span>Total Dépensé</span>
+                <b id="statSpent">0 HTG</b>
+            </div>
+        </div>
+
+        <!-- Détails personnels -->
+        <div class="info-section">
+            <div class="info-row">
+                <div class="info-icon"><i class="fas fa-envelope"></i></div>
+                <div class="info-content">
+                    <label>Adresse Email</label>
+                    <span id="detailEmail">...</span>
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-icon"><i class="fas fa-phone"></i></div>
+                <div class="info-content">
+                    <label>Téléphone</label>
+                    <span id="detailPhone">...</span>
+                </div>
+            </div>
+            <div class="info-row">
+                <div class="info-icon"><i class="fas fa-calendar-alt"></i></div>
+                <div class="info-content">
+                    <label>Membre depuis</label>
+                    <span id="detailDate">...</span>
+                </div>
+            </div>
+        </div>
+
+        <a href="/logout.html" class="btn-logout">
+            <i class="fas fa-power-off"></i> Déconnexion du compte
+        </a>
+    </div>
+
+    <script>
+        // Configuration Firebase Master
+        const firebaseConfig = {
+            apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg",
+            authDomain: "pay-fusion-6dfaf.firebaseapp.com",
+            projectId: "pay-fusion-6dfaf",
+            storageBucket: "pay-fusion-6dfaf.firebasestorage.app",
+            messagingSenderId: "945593776812",
+            appId: "1:945593776812:web:4475e1085fdfa31690fd09",
+            measurementId: "G-8FEQG6B7ZY"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // Récupération des données utilisateur en temps réel
+                db.collection("users").doc(user.uid).onSnapshot(doc => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        const info = data.personalInfo || {};
+                        const stats = data.stats || { ordersCount: 0, totalSpent: 0 };
+
+                        // Mise à jour de l'UI
+                        document.getElementById('userName').textContent = info.fullName || "Utilisateur Fox Store";
+                        document.getElementById('userEmail').textContent = info.email;
+                        document.getElementById('detailEmail').textContent = info.email;
+                        document.getElementById('detailPhone').textContent = info.phone || "Non renseigné";
+                        
+                        // Statistiques
+                        document.getElementById('statOrders').textContent = stats.ordersCount;
+                        document.getElementById('statSpent').textContent = (stats.totalSpent || 0).toLocaleString() + " HTG";
+
+                        // Date de création
+                        if(info.createdAt) {
+                            const date = new Date(info.createdAt.seconds * 1000);
+                            document.getElementById('detailDate').textContent = date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+                        }
+                    }
+                });
+            } else {
+                window.location.href = "/login.html";
+            }
+        });
+    </script>
+</body>
+</html>
