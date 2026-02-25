@@ -3,568 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fox Admin — Elite Command Center</title>
-
-    <!-- 
-        ==========================================================================
-        FOX STORE ARCHITECTURE v4.0 - EXCLUSIVE ADMIN INTERFACE
-        DESIGNED FOR: HIGH-END DIGITAL COMMERCE MANAGEMENT
-        ENGINE: FIREBASE CLOUD FIRESTORE + AUTH
-        RELEVANCE: 1000+ LINES OF CODE FOR FULL OPERATIONAL AUTONOMY
-        ==========================================================================
-    -->
-
-    <!-- SDK FIREBASE (OBLIGATOIRE - MODE COMPAT) -->
+    <title>Fox Admin — Panel de Contrôle Elite</title>
+    
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    
-    <!-- FONT AWESOME 6 PRO -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- TYPOGRAPHIE SaaS ELITE -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        /* ==========================================================================
-           1. SYSTÈME DE DESIGN (VARIABLES COMPACTES)
-           ========================================================================== */
         :root {
-            --bg-deep: #06070a;
-            --bg-card: #0f121a;
-            --accent: #00d1ff;
-            --primary: #0056b3;
-            --white: #ffffff;
-            --text-main: #ffffff;
-            --text-muted: #8e95a2;
-            --success: #00ff88;
-            --error: #ff4444;
-            --warning: #ffbb33;
-            --glass-border: rgba(255, 255, 255, 0.05);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --radius-xl: 24px;
-            --radius-lg: 16px;
-            --radius-md: 10px;
+            --bg-deep: #06070a; --bg-card: #0f121a; --accent: #00d1ff; --white: #ffffff;
+            --muted: #8e95a2; --success: #00ff88; --error: #ff4444; --border: rgba(255,255,255,0.05);
         }
 
-        /* ==========================================================================
-           2. GLOBAL RESET (MOBILE OPTIMIZED)
-           ========================================================================== */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            background-color: var(--bg-deep); 
-            color: var(--text-main); 
-            min-height: 100vh; 
-            overflow-x: hidden;
-            display: flex;
-            font-size: 14px;
-        }
+        body { background: var(--bg-deep); color: white; display: flex; font-size: 13px; }
 
-        ::-webkit-scrollbar { width: 3px; height: 3px; }
-        ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
-
-        /* ==========================================================================
-           3. SIDEBAR (DRAWER MOBILE)
-           ========================================================================== */
-        .sidebar {
-            width: 260px; height: 100vh;
-            background: var(--bg-card);
-            border-right: 1px solid var(--glass-border);
-            display: flex; flex-direction: column;
-            position: fixed; left: -260px; top: 0;
-            z-index: 5000; transition: var(--transition);
-        }
+        /* --- SIDEBAR MOBILE FIXED --- */
+        .sidebar { position: fixed; left: -260px; top: 0; width: 260px; height: 100vh; background: var(--bg-card); border-right: 1px solid var(--border); z-index: 5000; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; }
         .sidebar.active { left: 0; }
-
-        .sidebar-brand { padding: 30px 20px; text-align: center; border-bottom: 1px solid var(--glass-border); }
-        .sidebar-brand img { height: 35px; }
-        .sidebar-brand h2 { font-weight: 800; font-size: 0.9rem; color: var(--accent); margin-top: 10px; letter-spacing: 2px; }
-
-        .nav-menu { flex-grow: 1; padding: 10px 15px; overflow-y: auto; }
-        .nav-label { font-size: 0.6rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; padding: 20px 10px 8px; }
-        
-        .nav-btn {
-            display: flex; align-items: center; gap: 12px; padding: 12px 15px;
-            color: var(--text-muted); text-decoration: none; border-radius: var(--radius-md);
-            font-weight: 600; font-size: 0.8rem; transition: var(--transition); cursor: pointer; margin-bottom: 2px;
-        }
-        .nav-btn:hover { color: var(--accent); background: rgba(255, 255, 255, 0.03); }
-        .nav-btn.active { background: var(--accent); color: var(--bg-deep); font-weight: 800; }
-        .nav-btn i { font-size: 1rem; width: 20px; text-align: center; }
-
-        /* Sidebar Overlay */
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 4000; display: none; }
         .overlay.active { display: block; }
 
-        /* ==========================================================================
-           4. MAIN PANEL LAYOUT
-           ========================================================================== */
-        .main { flex: 1; display: flex; flex-direction: column; width: 100%; transition: var(--transition); }
+        .nav-btn { padding: 12px 20px; display: flex; align-items: center; gap: 12px; color: var(--muted); text-decoration: none; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .nav-btn:hover, .nav-btn.active { color: var(--accent); background: rgba(255,255,255,0.02); }
+        .nav-btn.active { border-right: 3px solid var(--accent); background: rgba(0, 209, 255, 0.05); }
 
-        header {
-            height: 60px; padding: 0 15px;
-            background: rgba(6, 7, 10, 0.9);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--glass-border);
-            display: flex; align-items: center; justify-content: space-between;
-            position: sticky; top: 0; z-index: 1000;
-        }
-
-        .btn-menu { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent); cursor: pointer; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.02); }
-
-        .header-title { font-weight: 800; font-size: 0.9rem; color: var(--white); }
-        .admin-status { font-size: 0.55rem; font-weight: 800; color: var(--success); border: 1px solid var(--success); padding: 3px 8px; border-radius: 4px; text-transform: uppercase; }
-
-        .scroller { padding: 15px; flex: 1; }
-
-        /* ==========================================================================
-           5. STATS GRID (KPIs COMPACTS)
-           ========================================================================== */
-        .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
-        .kpi-card {
-            background: var(--bg-card); padding: 15px; border-radius: var(--radius-lg);
-            border: 1px solid var(--glass-border); position: relative;
-        }
-        .kpi-card span { font-size: 0.55rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
-        .kpi-card h3 { font-size: 1.1rem; font-weight: 800; margin-top: 4px; color: var(--white); }
-        .kpi-card i { position: absolute; right: 10px; bottom: 10px; font-size: 2rem; color: var(--accent); opacity: 0.05; }
-
-        /* ==========================================================================
-           6. COMPACT DATA CARDS
-           ========================================================================== */
-        .section-card { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--glass-border); margin-bottom: 20px; overflow: hidden; }
-        .card-head { padding: 15px 20px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.01); }
-        .card-head h4 { font-weight: 800; font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
-
-        /* Liste de transactions optimisée mobile */
-        .item-row {
-            padding: 15px 20px; border-bottom: 1px solid var(--glass-border);
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .item-left { display: flex; align-items: center; gap: 12px; }
-        .item-icon-box { width: 35px; height: 35px; background: var(--bg-deep); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; border: 1px solid var(--glass-border); color: var(--accent); }
+        /* --- MAIN LAYOUT --- */
+        .main { flex: 1; display: flex; flex-direction: column; width: 100%; }
+        header { height: 55px; padding: 0 15px; background: rgba(15,18,26,0.9); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top:0; z-index: 1000; }
         
-        .item-text h5 { font-size: 0.8rem; font-weight: 700; color: var(--white); }
-        .item-text p { font-size: 0.65rem; color: var(--text-muted); font-weight: 600; }
+        .menu-icon { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; color: var(--accent); cursor: pointer; border: 1px solid var(--border); border-radius: 8px; }
 
-        .status-tag { padding: 4px 10px; border-radius: 6px; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; }
-        .status-en-attente { background: rgba(255, 187, 51, 0.1); color: var(--warning); }
-        .status-validé { background: rgba(0, 255, 136, 0.1); color: var(--success); }
-        .status-rejeté { background: rgba(255, 68, 68, 0.1); color: var(--error); }
+        .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 15px; }
+        .kpi-card { background: var(--bg-card); padding: 15px; border-radius: 15px; border: 1px solid var(--border); position: relative; }
+        .kpi-card span { font-size: 0.55rem; font-weight: 800; color: var(--muted); text-transform: uppercase; }
+        .kpi-card h3 { font-size: 1rem; margin-top: 5px; color: #fff; font-weight: 800; }
 
-        .btn-view { padding: 6px 12px; border-radius: 8px; border: none; font-weight: 800; font-size: 0.65rem; cursor: pointer; background: var(--primary); color: white; }
+        .section-card { background: var(--bg-card); border-radius: 20px; border: 1px solid var(--border); margin: 0 15px 20px; overflow: hidden; }
+        .card-head { padding: 15px 20px; border-bottom: 1px solid var(--border); font-weight: 800; font-size: 0.75rem; color: var(--accent); text-transform: uppercase; }
 
-        /* ==========================================================================
-           7. MODAL SYSTÈME (BOTTOM SHEET STYLE ON MOBILE)
-           ========================================================================== */
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px);
-            z-index: 6000; align-items: flex-end; justify-content: center;
-        }
-        .modal-box {
-            background: var(--bg-card); width: 100%; max-width: 500px; border-radius: 20px 20px 0 0;
-            border: 1px solid var(--glass-border); padding: 25px; position: relative;
-            max-height: 90vh; overflow-y: auto; animation: slideUp 0.4s ease;
-        }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        /* --- LIST ROWS --- */
+        .row { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .row-info h5 { font-size: 0.8rem; font-weight: 700; color: #fff; }
+        .row-info p { font-size: 0.65rem; color: var(--muted); }
+        
+        .btn-lite { padding: 6px 12px; border-radius: 6px; border: none; font-weight: 800; font-size: 0.6rem; cursor: pointer; background: var(--accent); color: var(--bg-deep); }
+        .badge { padding: 3px 8px; border-radius: 4px; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; }
+        .badge-wa { background: rgba(255, 187, 51, 0.1); color: var(--warning); }
+        .badge-ok { background: rgba(0, 255, 136, 0.1); color: var(--success); }
 
-        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .detail-cell label { display: block; font-size: 0.55rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
-        .detail-cell p { font-size: 0.85rem; font-weight: 700; color: var(--white); word-break: break-all; }
+        /* --- MODAL ELITE --- */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 6000; align-items: flex-end; }
+        .modal-box { background: var(--bg-card); width: 100%; border-radius: 25px 25px 0 0; padding: 25px; max-height: 85vh; overflow-y: auto; border: 1px solid var(--border); }
+        .detail-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .detail-cell label { font-size: 0.5rem; font-weight: 800; color: var(--muted); text-transform: uppercase; }
+        .detail-cell p { font-size: 0.8rem; font-weight: 700; }
+        .proof-img { width: 100%; border-radius: 12px; margin-top: 15px; border: 1px solid var(--border); }
 
-        /* IMAGE PROOF VIEWER */
-        .proof-wrap { margin-top: 20px; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border); cursor: pointer; }
-        .proof-wrap img { width: 100%; height: auto; display: block; }
+        .input-dark { width: 100%; padding: 12px; background: #000; border: 1px solid var(--border); border-radius: 10px; color: #fff; font-size: 0.8rem; margin-top: 10px; outline: none; }
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .action-btn { padding: 12px; border-radius: 10px; border: none; font-weight: 800; font-size: 0.7rem; cursor: pointer; text-transform: uppercase; }
 
-        /* ==========================================================================
-           8. INPUTS COMPACTS
-           ========================================================================== */
-        .admin-input { width: 100%; padding: 12px; background: var(--bg-deep); border: 1px solid var(--glass-border); border-radius: 10px; color: var(--white); outline: none; font-size: 0.85rem; margin-bottom: 10px; }
-        .btn-elite { padding: 14px; border-radius: 10px; border: none; font-weight: 800; text-transform: uppercase; cursor: pointer; font-size: 0.75rem; width: 100%; margin-bottom: 8px; }
-        .btn-green { background: var(--success); color: var(--bg-deep); }
-        .btn-red { background: var(--error); color: white; }
-
-        /* ==========================================================================
-           9. DESKTOP ADAPTATION
-           ========================================================================== */
-        @media (min-width: 1025px) {
-            .sidebar { left: 0; }
-            .main { margin-left: 260px; width: calc(100% - 260px); }
-            .btn-menu { display: none; }
-            .kpi-grid { grid-template-columns: repeat(4, 1fr); }
-            .modal { align-items: center; }
-            .modal-box { border-radius: var(--radius-xl); padding: 40px; }
-            .detail-grid { grid-template-columns: 1fr 1fr; }
-        }
-
-        /* TOAST */
-        #toast { position: fixed; top: 15px; right: 15px; z-index: 9999; background: var(--accent); color: var(--bg-deep); padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; transform: translateX(200%); transition: 0.4s; }
-        #toast.show { transform: translateX(0); }
-
+        @media (min-width: 1025px) { .sidebar { left: 0; } .main { margin-left: 260px; } .menu-icon { display: none; } .kpi-grid { grid-template-columns: repeat(4, 1fr); } }
     </style>
 </head>
 <body>
-
-    <!-- Overlay pour fermeture menu -->
     <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
-    <div id="toast">Action réussie</div>
 
-    <!-- SIDEBAR DRAWER -->
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-brand">
-            <img src="/assets/logos/payfusion-logo.png" alt="Fox Store">
-            <h2>COMMAND</h2>
-        </div>
-        
+        <div class="sidebar-brand"><img src="/assets/logos/payfusion-logo.png"><h2>FOX COMMAND</h2></div>
         <div class="nav-menu">
-            <p class="nav-label">Dashboard</p>
-            <div class="nav-btn active" onclick="switchSection('orders', this)"><i class="fas fa-grid-2"></i> Transactions</div>
-            <div class="nav-btn" onclick="switchSection('users', this)"><i class="fas fa-users-gear"></i> Utilisateurs</div>
-            <p class="nav-label">Paramètres</p>
-            <div class="nav-btn" onclick="switchSection('cms', this)"><i class="fas fa-toggle-on"></i> CMS Services</div>
-            <div class="nav-btn" onclick="switchSection('ads', this)"><i class="fas fa-broadcast-tower"></i> Annonces</div>
-            <p class="nav-label">Assistance</p>
-            <div class="nav-btn" onclick="switchSection('chat', this)"><i class="fas fa-comments-alt"></i> Support Live</div>
+            <div class="nav-btn active" onclick="showTab('orders', this)"><i class="fas fa-list"></i> Commandes</div>
+            <div class="nav-btn" onclick="showTab('users', this)"><i class="fas fa-users"></i> Clients</div>
+            <div class="nav-btn" onclick="showTab('cms', this)"><i class="fas fa-toggle-on"></i> CMS Services</div>
+            <div class="nav-btn" onclick="showTab('chat', this)"><i class="fas fa-comment-dots"></i> Support</div>
         </div>
-
-        <div style="padding: 15px; border-top: 1px solid var(--glass-border);">
-            <a href="/home.html" class="nav-btn" style="color: var(--accent);"><i class="fas fa-arrow-left"></i> Quitter Admin</a>
-        </div>
+        <a href="/home.html" class="nav-btn" style="margin-top:auto; border-top:1px solid var(--border);"><i class="fas fa-store"></i> Boutique</a>
     </div>
 
-    <!-- MAIN PANEL -->
     <div class="main">
         <header>
-            <div class="btn-menu" id="menuBtn"><i class="fas fa-bars-staggered"></i></div>
-            <div class="header-title" id="currentSectionTitle">Transactions</div>
-            <div class="admin-status">ELITE ACTIVE</div>
+            <div class="menu-icon" onclick="toggleSidebar()"><i class="fas fa-bars-staggered"></i></div>
+            <div class="header-title" id="tabTitle">Commandes</div>
+            <div class="badge badge-ok">Elite Sync</div>
         </header>
 
-        <div class="scroller">
-            
-            <!-- SECTION 1: COMMANDES -->
-            <section id="ordersSection" class="admin-view active">
-                <div class="kpi-grid">
-                    <div class="kpi-card"><span>Chiffre Affaires</span><h3 id="revTotal">0 HTG</h3></div>
-                    <div class="kpi-card"><span>Bénéfice Net</span><h3 id="profitTotal" style="color:var(--success)">0 HTG</h3></div>
-                    <div class="kpi-card"><span>Commandes</span><h3 id="ordersCount">0</h3></div>
-                    <div class="kpi-card"><span>Alertes</span><h3 id="pendingCount" style="color:var(--warning)">0</h3></div>
-                </div>
-
-                <div class="section-card">
-                    <div class="card-header"><h4>Flux de Commandes</h4></div>
-                    <div id="ordersContainer">
-                        <div style="text-align:center; padding:30px; font-size:0.7rem; color:var(--text-muted);">Synchronisation Firebase...</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECTION 2: UTILISATEURS -->
-            <section id="usersSection" class="admin-view" style="display: none;">
-                <div class="section-card">
-                    <div class="card-header">
-                        <input type="text" class="admin-input" placeholder="Chercher un membre..." style="margin-bottom:0; width:100%;" onkeyup="searchUser(this.value)">
-                    </div>
-                    <div id="usersContainer"></div>
-                </div>
-            </section>
-
-            <!-- SECTION 3: CMS -->
-            <section id="cmsSection" class="admin-view" style="display: none;">
-                <div class="kpi-grid" id="cmsGrid"></div>
-            </section>
-
-            <!-- SECTION 4: ADS -->
-            <section id="adsSection" class="admin-view" style="display: none;">
-                <div class="section-card" style="padding: 20px;">
-                    <label class="nav-label">Message d'annonce</label>
-                    <textarea id="adInput" class="admin-input" rows="4" placeholder="Texte défilant sur l'accueil..."></textarea>
-                    <button class="btn-elite btn-green" onclick="publishAd()">Publier l'annonce</button>
-                    <div id="adHistory" style="margin-top:20px;"></div>
-                </div>
-            </section>
-
-            <!-- SECTION 5: SUPPORT CHAT -->
-            <section id="chatSection" class="admin-view" style="display: none;">
-                <div class="section-card" style="height: 500px; display: flex; flex-direction: column;">
-                    <div id="chatUserList" style="flex: 1; overflow-y: auto; border-bottom: 1px solid var(--glass-border);"></div>
-                    <div id="chatWindow" style="flex: 2; display: none; flex-direction: column; background: rgba(0,0,0,0.1);">
-                        <div id="chatLog" style="flex:1; padding:15px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;"></div>
-                        <form id="adminChatForm" style="padding:15px; display:flex; gap:10px; background:var(--bg-card);">
-                            <input type="text" id="adminReply" class="admin-input" placeholder="Réponse..." style="margin-bottom:0;">
-                            <button type="submit" class="btn-view" style="width:45px; height:45px;"><i class="fas fa-paper-plane"></i></button>
-                        </form>
-                    </div>
-                </div>
-            </section>
-
+        <div class="kpi-grid">
+            <div class="kpi-card"><span>Chiffre Affaires</span><h3 id="statRev">0 HTG</h3></div>
+            <div class="kpi-card"><span>Bénéfice Net</span><h3 id="statProfit" style="color:var(--success)">0 HTG</h3></div>
+            <div class="kpi-card"><span>Total</span><h3 id="statCount">0</h3></div>
+            <div class="kpi-card"><span>En Attente</span><h3 id="statPending" style="color:var(--warning)">0</h3></div>
         </div>
+
+        <!-- SECTION COMMANDES -->
+        <section id="ordersTab" class="admin-tab">
+            <div class="section-card">
+                <div class="card-head">Flux Transactions</div>
+                <div id="ordersList"></div>
+            </div>
+        </section>
+
+        <!-- SECTION UTILISATEURS -->
+        <section id="usersTab" class="admin-tab" style="display:none">
+            <div class="section-card"><div class="card-head">Membres</div><div id="usersList"></div></div>
+        </section>
+
+        <!-- SECTION CMS -->
+        <section id="cmsTab" class="admin-tab" style="display:none">
+            <div class="kpi-grid" id="cmsGrid"></div>
+        </section>
+
+        <!-- SECTION CHAT -->
+        <section id="chatTab" class="admin-tab" style="display:none">
+            <div class="section-card"><div id="chatUsersList"></div></div>
+        </section>
     </div>
 
-    <!-- MODAL: FICHE TRANSACTION -->
+    <!-- MODAL COMMANDE -->
     <div class="modal" id="orderModal">
         <div class="modal-box">
-            <i class="fas fa-times close-modal" onclick="closeModal()"></i>
-            <h3 style="font-weight: 800; font-size: 1.1rem; color: var(--accent);">Détails de Commande</h3>
-            
-            <div class="detail-grid" id="modalFields"></div>
-            
-            <!-- AFFICHAGE DU REÇU (PROUVE) -->
-            <div class="proof-wrap" id="proofContainer" onclick="viewFullProof()">
-                <img id="orderProofImg" src="" alt="Preuve de paiement">
-            </div>
-
-            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--glass-border);">
-                <label class="nav-label" style="padding-left:0;">Coût Fournisseur (HTG)</label>
-                <input type="number" id="providerCost" class="admin-input" placeholder="0.00">
-                
-                <div class="btn-group-row">
-                    <button class="btn-elite btn-green" onclick="updateOrderStatus('Validé')">Valider</button>
-                    <button class="btn-elite btn-red" onclick="updateOrderStatus('Rejeté')">Rejeter</button>
+            <i class="fas fa-times" onclick="closeModal()" style="float:right; cursor:pointer; color:var(--muted);"></i>
+            <h3 style="font-size:1rem; font-weight:800; color:var(--accent);">Détails Transaction</h3>
+            <div class="detail-row" id="modalData"></div>
+            <img id="proofImg" class="proof-img" onclick="window.open(this.src)">
+            <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:15px;">
+                <label style="font-size:0.55rem; font-weight:800; color:var(--accent);">Coût d'achat (HTG)</label>
+                <input type="number" id="purchaseCost" class="input-dark" placeholder="Ex: 150">
+                <div class="btn-group">
+                    <button class="action-btn" style="background:var(--success); color:black;" onclick="setStatus('Validé')">Valider</button>
+                    <button class="action-btn" style="background:var(--error); color:white;" onclick="setStatus('Rejeté')">Rejeter</button>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- FULLSCREEN PROOF -->
-    <div class="modal" id="fullProofModal" onclick="this.style.display='none'" style="align-items: center;">
-        <img id="fullProofImg" src="" style="max-width: 95%; max-height: 95%; border-radius: 8px;">
     </div>
 
     <script>
-        /* ==========================================================================
-           10. MOTEUR LOGIQUE (1000+ LIGNES DE CODE)
-           ========================================================================== */
-
-        // Configuration Firebase Master Fox Store
-        const firebaseConfig = {
-            apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg",
-            authDomain: "pay-fusion-6dfaf.firebaseapp.com",
-            projectId: "pay-fusion-6dfaf",
-            storageBucket: "pay-fusion-6dfaf.firebasestorage.app",
-            messagingSenderId: "945593776812",
-            appId: "1:945593776812:web:4475e1085fdfa31690fd09",
-            measurementId: "G-8FEQG6B7ZY"
-        };
-        
+        const firebaseConfig = { apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg", authDomain: "pay-fusion-6dfaf.firebaseapp.com", projectId: "pay-fusion-6dfaf", storageBucket: "pay-fusion-6dfaf.firebasestorage.app", messagingSenderId: "945593776812", appId: "1:945593776812:web:4475e1085fdfa31690fd09", measurementId: "G-8FEQG6B7ZY" };
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const auth = firebase.auth();
+        const db = firebase.firestore(), auth = firebase.auth();
+        let orders = [], activeID = null;
 
-        let ordersData = [];
-        let usersData = [];
-        let activeOrderID = null;
-        let activeChatUID = null;
-
-        // VÉRIFICATION SÉCURITÉ ADMIN
         auth.onAuthStateChanged(user => {
-            if (!user || user.email !== "bmarcco4412@gmail.com") {
-                window.location.href = "/login.html";
-            } else {
-                initAdminDashboard();
-            }
+            if(!user || user.email !== "bmarcco4412@gmail.com") window.location.href = "/login.html";
+            else init();
         });
 
-        function initAdminDashboard() {
-            startOrdersSync();
-            startUsersSync();
-            startCMSSync();
-            startAdsSync();
-            startSupportSync();
-        }
-
-        /* --- UI LOGIC (MENU & TABS) --- */
-        const menuBtn = document.getElementById('menuBtn');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-
-        function toggleSidebar() {
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-        }
-
-        menuBtn.addEventListener('click', toggleSidebar);
-
-        function switchSection(sectionId, el) {
-            document.querySelectorAll('.admin-view').forEach(s => s.style.display = 'none');
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        
+        function showTab(id, el) {
+            document.querySelectorAll('.admin-tab').forEach(t => t.style.display = 'none');
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(sectionId + 'Section').style.display = 'block';
-            el.classList.add('active');
-            document.getElementById('currentSectionTitle').textContent = el.textContent.trim();
-            if(window.innerWidth < 1024) toggleSidebar();
+            document.getElementById(id + 'Tab').style.display = 'block';
+            el.classList.add('active'); document.getElementById('tabTitle').textContent = el.textContent.trim();
+            if(window.innerWidth < 1025) toggleSidebar();
         }
 
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            t.textContent = msg; t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
-        }
-
-        /* --- 1. MOTEUR COMMANDES --- */
-        function startOrdersSync() {
+        function init() {
+            // Orders Engine
             db.collection("orders").orderBy("createdAt", "desc").onSnapshot(snap => {
-                const container = document.getElementById('ordersContainer');
-                container.innerHTML = '';
-                let totalRev = 0, totalProfit = 0, pending = 0;
-                ordersData = [];
-
+                const list = document.getElementById('ordersList'); list.innerHTML = '';
+                let rev = 0, prof = 0, pend = 0; orders = [];
                 snap.forEach(doc => {
-                    const o = doc.data(); const id = doc.id; ordersData.push({id, ...o});
-                    if(o.status === 'en-attente') pending++;
-                    if(o.status === 'Validé') {
-                        const price = parseFloat(o.service.price || 0);
-                        totalRev += price;
-                        totalProfit += (price - parseFloat(o.purchaseCost || 0));
+                    const o = doc.data(); const id = doc.id; orders.push({id, ...o});
+                    if(o.status === 'en-attente') pend++;
+                    if(o.status === 'Validé') { 
+                        rev += o.service.price; 
+                        prof += (o.service.price - (o.purchaseCost || 0)); 
                     }
-                    const statusClass = `status-${o.status.toLowerCase().replace(' ', '-')}`;
-                    container.innerHTML += `
-                        <div class="item-row">
-                            <div class="item-left">
-                                <div class="item-icon-box">${o.service.name.charAt(0)}</div>
-                                <div class="item-text">
-                                    <h5>#${o.orderId}</h5>
-                                    <p>${o.service.name} ● ${o.service.product}</p>
-                                </div>
-                            </div>
-                            <div style="text-align: right;">
-                                <div style="font-weight:800; font-size:0.85rem; color:var(--accent);">${o.service.price} HTG</div>
-                                <button class="btn-view" onclick="openOrderDetails('${id}')" style="margin-top:5px;">GÉRER</button>
-                            </div>
-                        </div>`;
+                    list.innerHTML += `<div class="row"><div class="row-info"><h5>#${o.orderId}</h5><p>${o.service.name} ● ${o.service.product}</p></div><div style="text-align:right"><span class="badge ${o.status === 'en-attente'?'badge-wa':'badge-ok'}">${o.status}</span><br><button class="btn-lite" onclick="openOrder('${id}')" style="margin-top:5px">GÉRER</button></div></div>`;
                 });
-                document.getElementById('revTotal').textContent = totalRev.toLocaleString() + " HTG";
-                document.getElementById('profitTotal').textContent = totalProfit.toLocaleString() + " HTG";
-                document.getElementById('ordersCount').textContent = snap.size;
-                document.getElementById('pendingCount').textContent = pending;
+                document.getElementById('statRev').textContent = rev.toLocaleString() + " HTG";
+                document.getElementById('statProfit').textContent = prof.toLocaleString() + " HTG";
+                document.getElementById('statCount').textContent = snap.size;
+                document.getElementById('statPending').textContent = pend;
+            });
+
+            // Users Engine
+            db.collection("users").onSnapshot(snap => {
+                const list = document.getElementById('usersList'); list.innerHTML = '';
+                snap.forEach(doc => {
+                    const u = doc.data(); const ban = u.status === 'Banni';
+                    list.innerHTML += `<div class="row"><div class="row-info"><h5>${u.personalInfo.fullName}</h5><p>${u.personalInfo.email}</p></div><button class="btn-lite" style="background:${ban?var(--success):var(--error)}" onclick="toggleBan('${doc.id}','${u.status}')">${ban?'ACTIVER':'BANNIR'}</button></div>`;
+                });
+            });
+
+            // CMS Engine
+            const svcs = ['Free Fire', 'Netflix', 'Disney+', 'PayPal', 'Wise', 'USDT', 'FC Mobile', 'eFootball'];
+            db.collection("cms_services").onSnapshot(snap => {
+                const grid = document.getElementById('cmsGrid'); grid.innerHTML = '';
+                const states = {}; snap.forEach(d => states[d.id] = d.data().active);
+                svcs.forEach(s => {
+                    const active = states[s] !== false;
+                    grid.innerHTML += `<div class="kpi-card" style="display:flex; justify-content:space-between; align-items:center;"><div><span>SERVICE</span><h4 style="font-size:0.75rem">${s}</h4></div><label class="switch"><input type="checkbox" ${active?'checked':''} onchange="setCMS('${s}', this.checked)"><span class="slider"></span></label></div>`;
+                });
             });
         }
 
-        function openOrderDetails(id) {
-            activeOrderID = id;
-            const o = ordersData.find(x => x.id === id);
-            document.getElementById('modalRef').textContent = `ID DOCUMENT: ${o.id}`;
-            const grid = document.getElementById('modalFields'); grid.innerHTML = '';
-
-            const data = {
-                "Service": o.service.name + " (" + o.service.product + ")",
-                "Client WhatsApp": o.customerInfo.whatsapp,
-                "Identifiant": o.customerInfo.gameId || o.customerInfo.email || "N/A",
-                "Pseudo / Email": o.customerInfo.gameName || "N/A",
-                "Paiement": o.payment.method.toUpperCase(),
-                "Expéditeur": o.payment.senderName || "Inconnu",
-                "Tél. Expéditeur": o.payment.senderPhone || "N/A"
-            };
-
-            for (let [label, val] of Object.entries(data)) {
-                grid.innerHTML += `<div class="detail-cell"><label>${label}</label><p>${val}</p></div>`;
-            }
-
-            // AFFICHAGE DE LA PREUVE (REÇU)
-            const imgEl = document.getElementById('orderProofImg');
-            if(o.payment.proof) {
-                imgEl.src = o.payment.proof;
-                document.getElementById('proofContainer').style.display = 'block';
-            } else {
-                document.getElementById('proofContainer').style.display = 'none';
-            }
-
-            document.getElementById('providerCost').value = o.purchaseCost || '';
+        function openOrder(id) {
+            activeID = id; const o = orders.find(x => x.id === id);
+            const body = document.getElementById('modalData'); body.innerHTML = '';
+            const data = { "WhatsApp": o.customerInfo.whatsapp, "ID/Email": o.customerInfo.gameId || o.customerInfo.email, "Montant": o.service.price + " HTG", "Paiement": o.payment.method, "Expéditeur": o.payment.senderName };
+            for(let [l,v] of Object.entries(data)) body.innerHTML += `<div class="detail-cell"><label>${l}</label><p>${v}</p></div>`;
+            document.getElementById('proofImg').src = o.payment.proof;
+            document.getElementById('purchaseCost').value = o.purchaseCost || '';
             document.getElementById('orderModal').style.display = 'flex';
         }
 
-        function viewFullProof() {
-            document.getElementById('fullProofImg').src = document.getElementById('orderProofImg').src;
-            document.getElementById('fullProofModal').style.display = 'flex';
-        }
-
-        async function updateOrderStatus(status) {
-            const cost = parseFloat(document.getElementById('providerCost').value) || 0;
-            await db.collection("orders").doc(activeOrderID).update({
-                status: status,
-                purchaseCost: cost,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            closeModal();
-            showToast("Commande mise à jour");
+        async function setStatus(s) { 
+            const cost = parseFloat(document.getElementById('purchaseCost').value) || 0;
+            await db.collection("orders").doc(activeID).update({ status: s, purchaseCost: cost }); 
+            closeModal(); 
         }
 
         function closeModal() { document.getElementById('orderModal').style.display = 'none'; }
-
-        /* --- 2. MOTEUR UTILISATEURS --- */
-        function startUsersSync() {
-            db.collection("users").onSnapshot(snap => {
-                usersData = []; document.getElementById('userTotal').textContent = snap.size + " Membres";
-                const container = document.getElementById('usersContainer'); container.innerHTML = '';
-                snap.forEach(doc => {
-                    const u = doc.data(); const id = doc.id; usersData.push({id, ...u});
-                    const isBanned = u.status === 'Banni';
-                    container.innerHTML += `
-                        <div class="item-row">
-                            <div class="item-left">
-                                <div class="item-icon-box" style="border-radius:50%; background:${isBanned?'var(--error)':'var(--primary)'}">${u.personalInfo?.firstName?.charAt(0) || 'U'}</div>
-                                <div class="item-text">
-                                    <h5 style="color:${isBanned?var(--error):'#fff'}">${u.personalInfo?.fullName || 'Anonyme'}</h5>
-                                    <p>${u.personalInfo?.email}</p>
-                                </div>
-                            </div>
-                            <button class="btn-view" style="background:${isBanned?var(--success):var(--error)};" onclick="toggleUserBan('${id}', '${u.status}')">${isBanned?'DÉBLOQUER':'BANNIR'}</button>
-                        </div>`;
-                });
-            });
-        }
-        function toggleUserBan(uid, s) { const next = s === 'Banni' ? 'Actif' : 'Banni'; db.collection("users").doc(uid).update({ status: next }); showToast("Statut utilisateur modifié"); }
-        function searchUser(v) { /* Logique de filtrage locale possible ici */ }
-
-        /* --- 3. MOTEUR CMS SERVICES --- */
-        function startCMSSync() {
-            const list = ['Free Fire', 'FC Mobile', 'eFootball', 'PUBG Mobile', 'Blood Strike', 'Roblox', 'DLS 24', 'Minecraft', 'Flex City', 'Netflix', 'Disney+', 'Prime Video', 'Crunchyroll', 'PayPal', 'Wise', 'USDT TRC20', 'TRONX TRX', 'Telegram Prem.', 'TikTok Coins'];
-            db.collection("cms_services").onSnapshot(snap => {
-                const grid = document.getElementById('cmsGrid'); grid.innerHTML = '';
-                const states = {}; snap.forEach(doc => states[doc.id] = doc.data().active);
-                list.forEach(s => {
-                    const active = states[s] !== false;
-                    grid.innerHTML += `<div class="kpi-card" style="display:flex; justify-content:space-between; align-items:center; padding:15px 20px;"><div><span style="font-size:0.5rem;">Service</span><h4 style="font-size:0.75rem;">${s}</h4></div><label class="switch"><input type="checkbox" ${active?'checked':''} onchange="toggleCMS('${s}', this.checked)"><span class="slider"></span></label></div>`;
-                });
-            });
-        }
-        function toggleCMS(id, val) { db.collection("cms_services").doc(id).set({ active: val }, { merge: true }); showToast(`${id} : ${val?'ON':'OFF'}`); }
-
-        /* --- 4. MOTEUR ADS MARKETING --- */
-        async function publishAd() {
-            const msg = document.getElementById('adInput').value; if(!msg) return;
-            await db.collection("announcements").add({ message: msg, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-            document.getElementById('adInput').value = ''; showToast("Annonce publiée");
-        }
-        function startAdsSync() {
-            db.collection("announcements").orderBy("createdAt", "desc").limit(3).onSnapshot(snap => {
-                const hist = document.getElementById('adHistory'); hist.innerHTML = '<p class="nav-label">Historique</p>';
-                snap.forEach(doc => hist.innerHTML += `<div class="item-row" style="font-size:0.7rem; color:var(--text-muted);">${doc.data().message}</div>`);
-            });
-        }
-
-        /* --- 5. MOTEUR CRM CHAT --- */
-        function startSupportSync() {
-            db.collection("chats").orderBy("timestamp", "desc").onSnapshot(snap => {
-                const list = document.getElementById('chatUserList'); list.innerHTML = ''; const users = {};
-                snap.forEach(doc => { const c = doc.data(); if(!users[c.userUID]) { users[c.userUID] = true; list.innerHTML += `<div class="item-row" style="cursor:pointer;" onclick="openChatRoom('${c.userUID}', '${c.userName}')"><div style="font-weight:800; font-size:0.75rem;">${c.userName}</div></div>`; } });
-            });
-        }
-        function openChatRoom(uid, name) {
-            activeChatUID = uid; document.getElementById('chatWindow').style.display = 'flex';
-            db.collection("chats").where("userUID", "==", uid).orderBy("timestamp", "asc").onSnapshot(snap => {
-                const flow = document.getElementById('chatLog'); flow.innerHTML = '';
-                snap.forEach(doc => { const m = doc.data(); const isAdmin = m.sender === 'admin'; flow.innerHTML += `<div style="align-self: ${isAdmin?'flex-end':'flex-start'}; background: ${isAdmin?var(--accent):'rgba(255,255,255,0.05)'}; color: ${isAdmin?var(--bg-deep):'#fff'}; padding: 10px 15px; border-radius: 14px; max-width: 85%; font-size: 0.75rem; font-weight: 600; border: ${isAdmin?'none':'1px solid var(--glass-border)'}">${m.text}</div>`; });
-                flow.scrollTop = flow.scrollHeight;
-            });
-        }
-        document.getElementById('adminChatForm').onsubmit = async (e) => {
-            e.preventDefault(); const msg = document.getElementById('adminReply').value; if(!msg || !activeChatUID) return;
-            await db.collection("chats").add({ userUID: activeChatUID, text: msg, sender: "admin", timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-            document.getElementById('adminReply').value = '';
-        };
-
+        function toggleBan(id, s) { db.collection("users").doc(id).update({ status: s === 'Banni' ? 'Actif' : 'Banni' }); }
+        function setCMS(id, val) { db.collection("cms_services").doc(id).set({ active: val }, { merge: true }); }
     </script>
 </body>
 </html>
