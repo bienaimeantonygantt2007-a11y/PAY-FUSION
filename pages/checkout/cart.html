@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fox Store - Finaliser la commande</title>
+    <title>Fox Store - Finaliser ma commande</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     
-    <!-- Font Awesome -->
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <!-- Google Fonts -->
@@ -20,172 +20,157 @@
         :root {
             --primary: #0056b3;
             --secondary: #002d5e;
-            --accent: #00d2ff;
+            --accent: #00d1ff;
             --bg: #f8fafc;
             --white: #ffffff;
-            --text: #1e293b;
-            --muted: #64748b;
-            --success: #00c853;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
             --border: rgba(0, 86, 179, 0.08);
-            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --radius: 20px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text); padding-bottom: 40px; }
+        body { background-color: var(--bg); color: var(--text-main); padding-bottom: 50px; }
 
         /* --- HEADER --- */
         header {
-            height: 65px; background: var(--white); display: flex; align-items: center; 
+            height: 65px; background: #fff; display: flex; align-items: center; 
             padding: 0 5%; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--border);
         }
-        header .back-btn { color: var(--primary); font-size: 1.2rem; text-decoration: none; margin-right: 15px; }
-        header h1 { font-size: 0.95rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+        .back-btn { color: var(--primary); font-size: 1.2rem; text-decoration: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 12px; }
+        header h1 { font-size: 0.95rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-left: 10px; }
 
         .container { padding: 20px 5%; max-width: 600px; margin: 0 auto; }
 
-        /* --- RÉSUMÉ PANIER --- */
-        .section-card { 
-            background: var(--white); padding: 20px; border-radius: 20px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.02); margin-bottom: 20px;
-            border: 1px solid var(--border);
-        }
-        .cart-item { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 12px 0; border-bottom: 1px solid #f1f5f9; 
-        }
-        .item-info h4 { font-size: 0.9rem; font-weight: 700; color: var(--secondary); }
-        .item-info p { font-size: 0.75rem; color: var(--muted); }
-        .item-price { font-weight: 800; color: var(--primary); font-size: 0.9rem; }
+        /* --- ÉTAPES --- */
+        .step-container { display: none; animation: slideUp 0.5s ease forwards; }
+        .step-container.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .summary { margin-top: 15px; }
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; color: var(--muted); }
-        .total-row { 
-            font-size: 1.1rem; font-weight: 900; color: var(--secondary); 
-            margin-top: 12px; padding-top: 12px; border-top: 2px dashed #e2e8f0;
-        }
+        .section-title { font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 15px; margin-top: 25px; }
 
-        /* --- PAIEMENT --- */
-        .payment-methods { display: none; animation: slideUp 0.4s ease; }
-        .payment-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
-        .method-card { 
-            background: var(--white); border: 2px solid transparent; border-radius: 15px; 
-            padding: 12px; text-align: center; cursor: pointer; transition: var(--transition);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-        }
-        .method-card img { height: 30px; width: auto; margin-bottom: 5px; filter: grayscale(1); opacity: 0.5; }
-        .method-card.selected { border-color: var(--primary); background: #f0f7ff; }
-        .method-card.selected img { filter: grayscale(0); opacity: 1; }
+        /* --- ÉTAPE 1: ARTICLES --- */
+        .cart-card { background: #fff; border-radius: var(--radius); border: 1px solid var(--border); padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
+        .cart-item:last-child { border-bottom: none; }
+        .item-info h4 { font-size: 0.9rem; font-weight: 800; color: var(--secondary); }
+        .item-info p { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+        .item-price { font-weight: 800; color: var(--primary); font-size: 0.95rem; }
 
-        .payment-form { display: none; animation: fadeIn 0.5s ease; margin-top: 20px; }
-        .instruction-box { 
-            background: #f0f7ff; padding: 18px; border-radius: 15px; margin-bottom: 20px; 
-            font-size: 0.85rem; border-left: 4px solid var(--primary); line-height: 1.5;
-        }
-        .instruction-box b { color: var(--primary); }
+        .total-box { margin-top: 15px; padding-top: 15px; border-top: 2px dashed #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .total-box span { font-weight: 800; color: var(--secondary); }
+        .total-box b { font-size: 1.2rem; color: var(--primary); font-weight: 900; }
 
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 0.7rem; font-weight: 800; margin-bottom: 8px; color: var(--muted); text-transform: uppercase; }
-        .form-group input { 
-            width: 100%; padding: 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; 
-            outline: none; font-size: 0.9rem; background: #fcfcfd;
-        }
+        /* --- ÉTAPE 2: CATÉGORIES --- */
+        .category-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        .category-btn { background: #fff; padding: 20px; border-radius: var(--radius); border: 1.5px solid var(--border); display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.3s; }
+        .category-btn:hover { border-color: var(--primary); background: #f0f7ff; }
+        .category-btn i { width: 45px; height: 45px; background: #f0f7ff; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.2rem; }
+        .category-btn div h5 { font-size: 0.95rem; font-weight: 800; color: var(--secondary); }
+        .category-btn div p { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+
+        /* --- ÉTAPE 3: SERVICES DE PAIEMENT --- */
+        .payment-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .service-btn { background: #fff; padding: 20px; border-radius: var(--radius); border: 1.5px solid var(--border); text-align: center; cursor: pointer; transition: 0.3s; }
+        .service-btn:hover { border-color: var(--primary); transform: translateY(-3px); }
+        .service-btn img { height: 35px; margin-bottom: 10px; object-fit: contain; }
+        .service-btn span { display: block; font-size: 0.8rem; font-weight: 800; color: var(--secondary); }
+
+        /* --- ÉTAPE 4: FORMULAIRE FINAL --- */
+        .instruction-box { background: #f0f7ff; border-left: 4px solid var(--primary); padding: 20px; border-radius: 15px; margin-bottom: 25px; line-height: 1.6; }
+        .instruction-box h4 { font-size: 0.85rem; font-weight: 800; color: var(--secondary); margin-bottom: 10px; text-transform: uppercase; }
+        .instruction-box p { font-size: 0.9rem; color: var(--secondary); font-weight: 600; }
+        .instruction-box b { color: var(--primary); font-size: 1rem; }
+
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+        .form-group input { width: 100%; padding: 15px; border: 1.5px solid #e2e8f0; border-radius: 12px; outline: none; font-size: 0.95rem; font-weight: 600; background: #fcfcfd; }
         
-        .upload-area { 
-            position: relative; border: 2px dashed #cbd5e1; padding: 25px; 
-            border-radius: 15px; text-align: center; transition: 0.3s; background: #fcfcfd;
-        }
-        .upload-area i { font-size: 1.5rem; color: var(--primary); margin-bottom: 8px; display: block; }
-        .upload-area p { font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+        .upload-card { border: 2px dashed #cbd5e1; padding: 30px; border-radius: 15px; text-align: center; position: relative; cursor: pointer; background: #fcfcfd; }
+        .upload-card i { font-size: 1.5rem; color: var(--primary); margin-bottom: 8px; }
+        .upload-card p { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); }
 
-        .btn-pay { 
-            width: 100%; padding: 18px; background: linear-gradient(135deg, var(--primary), var(--secondary)); 
-            color: white; border: none; border-radius: 15px; font-weight: 800; font-size: 1rem;
-            cursor: pointer; margin-top: 10px; transition: var(--transition);
-            display: flex; justify-content: center; align-items: center; gap: 10px;
-        }
-        .btn-pay:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-pay { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.3s; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-pay:hover { background: var(--secondary); transform: translateY(-3px); }
 
-        /* --- LOADING OVERLAY --- */
-        #loadingOverlay {
-            position: fixed; top:0; left:0; width:100%; height:100%; 
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(5px);
-            display:none; flex-direction:column; justify-content:center; align-items:center; z-index:2000;
-        }
-
-        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 5000; align-items: center; justify-content: center; flex-direction: column; }
     </style>
 </head>
 <body>
 
-    <div id="loadingOverlay">
-        <i class="fas fa-spinner fa-spin fa-2x" style="color: var(--primary);"></i>
-        <p style="margin-top:15px; font-weight:800; color: var(--secondary);">Traitement de la commande...</p>
-    </div>
+    <div id="loader"><i class="fas fa-circle-notch fa-spin fa-2x" style="color:var(--primary)"></i><p style="margin-top:15px; font-weight:800;">Traitement de la commande...</p></div>
 
     <header>
         <a href="/home.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
-        <h1>Vérification de commande</h1>
+        <h1 id="headerTitle">Vérification Panier</h1>
     </header>
 
     <div class="container">
-        <!-- RÉSUMÉ -->
-        <div class="section-card">
-            <h3 style="font-size: 0.7rem; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; letter-spacing: 1px;">Résumé des articles</h3>
-            <div id="cartList"></div>
-            
-            <div class="summary">
-                <div class="summary-row"><span>Sous-total</span> <span id="subtotal">0 HTG</span></div>
-                <div class="summary-row"><span>Frais de service</span> <span id="fees">0 HTG</span></div>
-                <div class="summary-row total-row"><span>Total à payer</span> <span id="totalPrice">0 HTG</span></div>
+        
+        <!-- ÉTAPE 1 : RÉSUMÉ DU PANIER -->
+        <div id="step1" class="step-container active">
+            <p class="section-title">Contenu de votre panier</p>
+            <div class="cart-card">
+                <div id="itemsList"></div>
+                <div class="total-box">
+                    <span>Total à payer</span>
+                    <b id="finalTotal">0 HTG</b>
+                </div>
+            </div>
+            <button class="btn-pay" onclick="goToStep(2)">Procéder au paiement <i class="fas fa-lock"></i></button>
+        </div>
+
+        <!-- ÉTAPE 2 : CHOIX CATÉGORIE -->
+        <div id="step2" class="step-container">
+            <p class="section-title">Méthode de paiement</p>
+            <div class="category-grid">
+                <div class="category-btn" onclick="showServices('mobile')">
+                    <i class="fas fa-mobile-alt"></i>
+                    <div><h5>Paiement Mobile</h5><p>Moncash, Natcash</p></div>
+                </div>
+                <div class="category-btn" onclick="showServices('financiere')">
+                    <i class="fas fa-university"></i>
+                    <div><h5>Transfert Financier</h5><p>Wise, PayPal</p></div>
+                </div>
+                <div class="category-btn" onclick="showServices('crypto')">
+                    <i class="fas fa-coins"></i>
+                    <div><h5>Crypto-monnaies</h5><p>USDT, TRONX</p></div>
+                </div>
             </div>
         </div>
 
-        <button class="btn-pay" id="btnNext" onclick="showPaymentOptions()">
-            Continuer vers le paiement <i class="fas fa-chevron-right"></i>
-        </button>
-
-        <!-- MODES DE PAIEMENT -->
-        <div class="payment-methods" id="paymentMethodsSec">
-            <h3 style="font-size: 0.7rem; text-transform: uppercase; color: var(--muted); margin: 15px 0; letter-spacing: 1px;">Méthode de paiement</h3>
-            <div class="payment-grid">
-                <div class="method-card" onclick="selectMethod('moncash', this)">
-                    <img src="/assets/logos/moncash-logo.png" alt="MonCash">
-                </div>
-                <div class="method-card" onclick="selectMethod('natcash', this)">
-                    <img src="/assets/logos/natcash-logo.png" alt="NatCash">
-                </div>
-                <div class="method-card" onclick="selectMethod('usdt', this)">
-                    <img src="/assets/logos/usdt-logo.png" alt="USDT">
-                </div>
-            </div>
+        <!-- ÉTAPE 3 : CHOIX SERVICE -->
+        <div id="step3" class="step-container">
+            <p class="section-title">Sélectionnez un service</p>
+            <div class="payment-grid" id="servicesGrid"></div>
         </div>
 
-        <!-- FORMULAIRE PREUVE -->
-        <div class="payment-form" id="finalFormSec">
-            <div class="instruction-box" id="paymentInstructions"></div>
-            
-            <form id="orderForm">
+        <!-- ÉTAPE 4 : INSTRUCTIONS & PREUVE -->
+        <div id="step4" class="step-container">
+            <div class="instruction-card" style="text-align: center; margin-bottom: 25px;">
+                <img id="selectedServiceLogo" src="" style="height: 60px; margin-bottom: 15px;">
+                <div class="instruction-box" id="payInstructions"></div>
+            </div>
+
+            <form class="cart-card" id="finalForm">
                 <div id="dynamicInputs"></div>
-                
                 <div class="form-group">
-                    <label>Capture d'écran du reçu (Preuve)</label>
-                    <div class="upload-area">
-                        <i class="fas fa-camera"></i>
-                        <p id="fileLabel">Joindre le reçu de transfert</p>
+                    <label>Preuve de paiement (Screenshot)</label>
+                    <div class="upload-card">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p id="fileLabel">Cliquez pour joindre le reçu</p>
                         <input type="file" id="proofInput" accept="image/*" required style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
                     </div>
                 </div>
-
-                <button type="submit" class="btn-pay" id="submitBtn">
-                    Confirmer mon achat <i class="fas fa-check-circle"></i>
-                </button>
+                <button type="submit" class="btn-pay">Finaliser l'achat <i class="fas fa-check-circle"></i></button>
             </form>
         </div>
+
     </div>
 
     <script>
-        // Configuration Firebase Master Fox Store
+        // Configuration Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg",
             authDomain: "pay-fusion-6dfaf.firebaseapp.com",
@@ -201,147 +186,137 @@
         const auth = firebase.auth();
 
         let cart = JSON.parse(localStorage.getItem('foxstore_cart')) || [];
-        let methodSelected = '';
-        let proofBase64 = '';
-        let totalFinalHTG = 0;
+        let totalHTG = 0;
+        let selectedMethod = "";
+        let proofBase64 = "";
 
-        // Protection de session
-        auth.onAuthStateChanged(user => {
-            if (!user) window.location.href = "/login.html";
-        });
-
-        // Affichage du panier
-        function renderCart() {
-            const list = document.getElementById('cartList');
-            let subtotal = 0;
-            let fees = 0;
-
+        // Initialisation Panier
+        function initCart() {
+            const list = document.getElementById('itemsList');
             if(cart.length === 0) {
-                list.innerHTML = "<p style='font-size:0.8rem; color:var(--muted); text-align:center;'>Panier vide.</p>";
-                document.getElementById('btnNext').style.display = 'none';
+                list.innerHTML = `<p style="text-align:center; padding:20px; font-weight:700; color:var(--text-muted);">Votre panier est vide.</p>`;
                 return;
             }
-
             list.innerHTML = cart.map(item => {
-                subtotal += item.price;
-                // Frais de 100 HTG sur services financiers
-                if(["PayPal", "Wise", "USDT", "TRONX"].includes(item.name)) fees += 100;
-                return `
-                    <div class="cart-item">
-                        <div class="item-info">
-                            <h4>${item.name}</h4>
-                            <p>${item.product}</p>
-                        </div>
-                        <div class="item-price">${item.price.toLocaleString()} HTG</div>
-                    </div>
-                `;
+                totalHTG += item.price;
+                return `<div class="cart-item"><div class="item-info"><h4>${item.name}</h4><p>${item.product}</p></div><div class="item-price">${item.price.toLocaleString()} HTG</div></div>`;
             }).join('');
+            document.getElementById('finalTotal').textContent = totalHTG.toLocaleString() + " HTG";
+        }
+        initCart();
 
-            totalFinalHTG = subtotal + fees;
-            document.getElementById('subtotal').textContent = subtotal.toLocaleString() + " HTG";
-            document.getElementById('fees').textContent = fees.toLocaleString() + " HTG";
-            document.getElementById('totalPrice').textContent = totalFinalHTG.toLocaleString() + " HTG";
+        // Navigation entre étapes
+        function goToStep(step) {
+            document.querySelectorAll('.step-container').forEach(s => s.classList.remove('active'));
+            document.getElementById('step' + step).classList.add('active');
+            window.scrollTo(0,0);
+            if(step === 2) document.getElementById('headerTitle').textContent = "Méthode de paiement";
         }
 
-        renderCart();
+        // Affichage des services par catégorie
+        function showServices(cat) {
+            const grid = document.getElementById('servicesGrid');
+            grid.innerHTML = '';
+            let services = [];
 
-        function showPaymentOptions() {
-            document.getElementById('btnNext').style.display = 'none';
-            document.getElementById('paymentMethodsSec').style.display = 'block';
+            if(cat === 'mobile') {
+                services = [
+                    { id: 'moncash', name: 'Moncash', img: 'moncash-logo.png' },
+                    { id: 'natcash', name: 'Natcash', img: 'natcash-logo.png' }
+                ];
+            } else if(cat === 'financiere') {
+                services = [
+                    { id: 'wise', name: 'Wise', img: 'wise-logo.png' },
+                    { id: 'paypal', name: 'PayPal', img: 'paypal-logo.png' }
+                ];
+            } else {
+                services = [
+                    { id: 'usdt', name: 'USDT', img: 'usdt-logo.png' },
+                    { id: 'tronx', name: 'TRONX', img: 'tronx-logo.png' }
+                ];
+            }
+
+            services.forEach(s => {
+                grid.innerHTML += `
+                    <div class="service-btn" onclick="setupPayment('${s.id}', '${s.img}')">
+                        <img src="/assets/logos/${s.img}" alt="${s.name}">
+                        <span>${s.name}</span>
+                    </div>`;
+            });
+            goToStep(3);
         }
 
-        function selectMethod(method, el) {
-            methodSelected = method;
-            document.querySelectorAll('.method-card').forEach(c => c.classList.remove('selected'));
-            el.classList.add('selected');
-            
-            const formSec = document.getElementById('finalFormSec');
-            const instructions = document.getElementById('paymentInstructions');
+        // Configuration du formulaire de paiement final
+        function setupPayment(id, img) {
+            selectedMethod = id;
+            document.getElementById('selectedServiceLogo').src = `/assets/logos/${img}`;
+            const instr = document.getElementById('payInstructions');
             const inputs = document.getElementById('dynamicInputs');
             
-            formSec.style.display = 'block';
             inputs.innerHTML = '';
+            let details = "";
 
-            if(method === 'moncash') {
-                instructions.innerHTML = `Envoyez <b>${totalFinalHTG.toLocaleString()} HTG</b> sur :<br>Numéro : <b>+509 3653 5649</b><br>Nom : <b>Jinolyse Pierre Louis</b>`;
-                inputs.innerHTML = `
-                    <div class="form-group"><label>Numéro de téléphone MonCash</label><input type="tel" id="senderInfo" placeholder="Ex: 37000000" required></div>
-                    <div class="form-group"><label>Nom du compte MonCash</label><input type="text" id="senderName" placeholder="Ex: Jean Dupont" required></div>
-                `;
-            } else if(method === 'natcash') {
-                instructions.innerHTML = `Envoyez <b>${totalFinalHTG.toLocaleString()} HTG</b> sur :<br>Numéro : <b>+509 3566 9814</b><br>Nom : <b>Jinolyse Pierre Louis</b>`;
-                inputs.innerHTML = `
-                    <div class="form-group"><label>Numéro de téléphone NatCash</label><input type="tel" id="senderInfo" placeholder="Ex: 35000000" required></div>
-                    <div class="form-group"><label>Nom du compte NatCash</label><input type="text" id="senderName" placeholder="Ex: Jean Dupont" required></div>
-                `;
-            } else if(method === 'usdt') {
-                instructions.innerHTML = `Envoyez en <b>USDT (TRC20)</b> sur :<br><span style="font-size:0.6rem; word-break:break-all;"><b>TBcmhXsvnsyVCL3k5bmhxxwYWDYTTiLiwi</b></span>`;
-                inputs.innerHTML = `
-                    <div class="form-group"><label>Votre adresse Wallet USDT</label><input type="text" id="senderInfo" placeholder="T..." required></div>
-                    <div class="form-group"><label>Application utilisée</label><input type="text" id="senderName" placeholder="Ex: Binance" required></div>
-                `;
+            if(id === 'moncash') {
+                details = `<h4>Transfert Moncash</h4><p>Envoyez <b>${totalHTG.toLocaleString()} HTG</b> au :</p><p>Numéro : <b>+509 3653 5649</b></p><p>Nom : <b>Jinolyse Pierre Louis</b></p>`;
+                inputs.innerHTML = `<div class="form-group"><label>Nom sur le compte Moncash</label><input type="text" id="senderName" required></div><div class="form-group"><label>Numéro de téléphone</label><input type="tel" id="senderInfo" required></div>`;
+            } else if(id === 'natcash') {
+                details = `<h4>Transfert Natcash</h4><p>Envoyez <b>${totalHTG.toLocaleString()} HTG</b> au :</p><p>Numéro : <b>+509 3566 9814</b></p><p>Nom : <b>Jinolyse Pierre Louis</b></p>`;
+                inputs.innerHTML = `<div class="form-group"><label>Nom sur le compte Natcash</label><input type="text" id="senderName" required></div><div class="form-group"><label>Numéro de téléphone</label><input type="tel" id="senderInfo" required></div>`;
+            } else if(id === 'wise') {
+                details = `<h4>Transfert Wise</h4><p>Envoyez le montant en Dollars au :</p><p>Email : <b>bmarcco4412@gmail.com</b></p><p>Wisetag : <b>@bmarcco</b></p>`;
+                inputs.innerHTML = `<div class="form-group"><label>Votre Email ou Wisetag Wise</label><input type="text" id="senderName" required></div><div class="form-group"><label>Montant envoyé ($)</label><input type="number" id="senderInfo" required></div>`;
+            } else if(id === 'paypal') {
+                details = `<h4>Transfert PayPal</h4><p>Envoyez le montant au :</p><p>Email : <b>bmarcco4412@gmail.com</b></p>`;
+                inputs.innerHTML = `<div class="form-group"><label>Votre Email PayPal</label><input type="email" id="senderName" required></div><div class="form-group"><label>Montant envoyé ($)</label><input type="number" id="senderInfo" required></div>`;
+            } else {
+                const addr = "TBcmhXsvnsyVCL3k5bmhxxwYWDYTTiLiwi";
+                details = `<h4>Paiement Crypto (TRC20)</h4><p>Envoyez à l'adresse :</p><p style="font-size:0.7rem; word-break:break-all;"><b>${addr}</b></p>`;
+                inputs.innerHTML = `<div class="form-group"><label>Votre Adresse Wallet</label><input type="text" id="senderName" required></div><div class="form-group"><label>Montant envoyé</label><input type="text" id="senderInfo" required></div>`;
             }
+
+            instr.innerHTML = details;
+            goToStep(4);
+            document.getElementById('headerTitle').textContent = "Validation du paiement";
         }
 
-        // Compression d'image pro
-        document.getElementById('proofInput').addEventListener('change', function(e) {
+        // Compression image Base64
+        document.getElementById('proofInput').onchange = function(e) {
             const file = e.target.files[0];
-            if(!file) return;
-
-            document.getElementById('fileLabel').textContent = "Compression...";
             const reader = new FileReader();
-            reader.readAsDataURL(file);
             reader.onload = function(event) {
                 const img = new Image();
                 img.src = event.target.result;
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 800;
-                    const scale = MAX_WIDTH / img.width;
-                    canvas.width = MAX_WIDTH;
-                    canvas.height = img.height * scale;
+                    const scale = 800 / img.width;
+                    canvas.width = 800; canvas.height = img.height * scale;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     proofBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                    document.getElementById('fileLabel').innerHTML = `<i class="fas fa-check" style="color:var(--success)"></i> Reçu chargé`;
+                    document.getElementById('fileLabel').innerHTML = `<i class="fas fa-check-circle" style="color:var(--primary)"></i> Reçu chargé avec succès`;
                 };
             };
-        });
+            reader.readAsDataURL(file);
+        };
 
-        // Envoi vers Firestore
-        document.getElementById('orderForm').onsubmit = async (e) => {
+        // Envoi Final Firestore
+        document.getElementById('finalForm').onsubmit = async (e) => {
             e.preventDefault();
+            if(!proofBase64) return alert("Veuillez joindre la preuve de paiement.");
             
-            if(!proofBase64) {
-                alert("Veuillez joindre votre preuve de paiement.");
-                return;
-            }
-
-            document.getElementById('loadingOverlay').style.display = 'flex';
+            document.getElementById('loader').style.display = 'flex';
             const user = auth.currentUser;
-            const orderId = "CMD-" + Date.now().toString().slice(-6);
+            const orderId = "FOX-" + Date.now().toString().slice(-6);
 
-            // On crée un document par article pour respecter l'architecture Admin
             try {
+                // Création d'une commande par article pour la gestion admin granulaire
                 for (const item of cart) {
                     await db.collection("orders").add({
                         orderId: orderId,
                         userId: user.uid,
-                        service: {
-                            category: item.category,
-                            name: item.name,
-                            product: item.product,
-                            price: item.price
-                        },
-                        customerInfo: {
-                            whatsapp: item.whatsapp || "N/A",
-                            email: item.email || user.email,
-                            gameId: item.gameId || "N/A",
-                            gameName: item.gameName || "N/A"
-                        },
+                        service: item,
                         payment: {
-                            method: methodSelected,
-                            amount: totalFinalHTG,
+                            method: selectedMethod,
                             proof: proofBase64,
                             senderName: document.getElementById('senderName').value,
                             senderPhone: document.getElementById('senderInfo').value
@@ -350,15 +325,15 @@
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 }
-
                 localStorage.removeItem('foxstore_cart');
                 window.location.href = "/pages/checkout/success.html";
             } catch (err) {
-                console.error(err);
-                document.getElementById('loadingOverlay').style.display = 'none';
-                alert("Une erreur est survenue lors de l'envoi.");
+                alert("Erreur lors de la validation.");
+                document.getElementById('loader').style.display = 'none';
             }
         };
+
+        auth.onAuthStateChanged(user => { if(!user) window.location.href = "/login.html"; });
     </script>
 </body>
 </html>
