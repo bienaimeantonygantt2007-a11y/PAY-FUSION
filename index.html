@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fox Store — Excellence en Services Digitaux & Gaming</title>
+    
+    <!-- 
+        FOX STORE ARCHITECTURE v4.0 
+        INDEX ELITE - CONÇU POUR LA CONVERSION ET LE PROFESSIONNALISME
+        DESIGN: SAAS PREMIUM ROYAL BLUE
+    -->
+
+    <!-- Firebase SDK (Mode Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    
+    <!-- Font Awesome 6 Pro -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Premium Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==========================================================================
+           1. SYSTÈME DE DESIGN
+           ========================================================================== */
+        :root {
+            --primary: #0056b3;
+            --primary-light: #00d1ff;
+            --secondary: #001e62;
+            --accent: #00d1ff;
+            --white: #ffffff;
+            --bg-body: #fcfdfe;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --border: rgba(0, 86, 179, 0.08);
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --shadow-elite: 0 20px 50px rgba(0, 45, 94, 0.05);
+            --radius-xl: 35px;
+            --radius-lg: 20px;
+        }
+
+        /* ==========================================================================
+           2. GLOBAL RESET
+           ========================================================================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        html { scroll-behavior: smooth; }
+        body { background-color: var(--bg-body); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
+
+        section { padding: 80px 5%; }
+
+        /* ==========================================================================
+           3. NAVIGATION (HEADER)
+           ========================================================================== */
+        nav {
+            height: 75px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 5%; position: fixed; width: 100%; top: 0; z-index: 2000;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .logo img { height: 42px; }
+        .logo span { font-weight: 800; font-size: 1.2rem; color: var(--secondary); letter-spacing: -1px; }
+
+        .nav-actions { display: flex; align-items: center; gap: 15px; }
+
+        .btn-nav {
+            padding: 10px 20px; border-radius: 12px; font-weight: 700; font-size: 0.85rem;
+            text-decoration: none; transition: var(--transition); display: flex; align-items: center; gap: 8px;
+        }
+        .btn-login { color: var(--primary); background: transparent; }
+        .btn-register { color: var(--white); background: var(--primary); box-shadow: 0 8px 20px rgba(0, 86, 179, 0.2); }
+        .btn-register:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(0, 86, 179, 0.3); }
+
+        /* ==========================================================================
+           4. HERO SECTION
+           ========================================================================== */
+        .hero {
+            padding-top: 160px; padding-bottom: 100px; text-align: center;
+            background: radial-gradient(circle at top, rgba(0, 209, 255, 0.04) 0%, transparent 70%);
+        }
+
+        .badge-elite {
+            display: inline-flex; align-items: center; gap: 8px; background: #f0f7ff; color: var(--primary);
+            padding: 8px 20px; border-radius: 50px; font-size: 0.75rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 25px; border: 1px solid rgba(0, 86, 179, 0.1);
+        }
+
+        .hero h1 { font-size: 3.5rem; font-weight: 800; color: var(--secondary); line-height: 1.1; margin-bottom: 25px; letter-spacing: -2px; }
+        .hero h1 span { color: var(--primary); }
+
+        .hero p { font-size: 1.1rem; color: var(--text-muted); max-width: 650px; margin: 0 auto 40px; font-weight: 500; }
+
+        .hero-btns { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .btn-hero { padding: 20px 40px; border-radius: 18px; font-weight: 800; font-size: 1rem; text-decoration: none; transition: var(--transition); display: flex; align-items: center; gap: 12px; }
+        .btn-main { background: var(--primary); color: white; box-shadow: 0 15px 35px rgba(0, 86, 179, 0.25); }
+        .btn-main:hover { transform: translateY(-5px); box-shadow: 0 20px 45px rgba(0, 86, 179, 0.35); }
+        .btn-sec { background: var(--white); color: var(--secondary); border: 1px solid var(--border); }
+        .btn-sec:hover { background: var(--bg-body); border-color: var(--primary); }
+
+        /* ==========================================================================
+           5. TRUST FEATURES (PRO BAR)
+           ========================================================================== */
+        .trust-bar {
+            background: var(--white); border: 1px solid var(--border); margin: 0 5%;
+            border-radius: var(--radius-lg); display: grid; grid-template-columns: repeat(3, 1fr);
+            padding: 30px; gap: 20px; box-shadow: var(--shadow-elite); margin-top: -50px;
+        }
+
+        .trust-item { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .trust-item i { width: 50px; height: 50px; background: #f0f7ff; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.3rem; }
+        .trust-item h4 { font-weight: 800; font-size: 0.95rem; color: var(--secondary); }
+        .trust-item p { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+
+        /* ==========================================================================
+           6. SERVICES SECTION
+           ========================================================================== */
+        .section-head { text-align: center; margin-bottom: 60px; }
+        .section-head h2 { font-size: 2.2rem; font-weight: 800; color: var(--secondary); margin-bottom: 15px; letter-spacing: -1px; }
+        .section-head p { color: var(--text-muted); font-weight: 500; font-size: 1rem; }
+
+        .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        
+        .service-card {
+            background: var(--white); border-radius: var(--radius-lg); padding: 40px;
+            border: 1px solid var(--border); transition: var(--transition);
+            box-shadow: var(--shadow-elite); position: relative;
+        }
+        .service-card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: 0 30px 60px rgba(0, 45, 94, 0.08); }
+        
+        .service-card i { font-size: 2.5rem; color: var(--primary); margin-bottom: 25px; display: block; }
+        .service-card h3 { font-size: 1.5rem; font-weight: 800; color: var(--secondary); margin-bottom: 15px; }
+        .service-card p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 25px; line-height: 1.7; }
+        
+        .service-link { font-weight: 800; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
+        .service-link i { font-size: 0.8rem; margin: 0; }
+
+        /* ==========================================================================
+           7. PAIEMENT BARRE (MÉTHODES)
+           ========================================================================== */
+        .payment-methods { background: #f1f5f9; padding: 40px 5%; text-align: center; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
+        .payment-methods span { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 2px; display: block; margin-bottom: 30px; }
+        
+        .methods-flex { display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap; opacity: 0.6; filter: grayscale(1); transition: 0.3s; }
+        .methods-flex:hover { opacity: 1; filter: grayscale(0); }
+        .methods-flex img { height: 35px; }
+
+        /* ==========================================================================
+           8. FAQ SECTION
+           ========================================================================== */
+        .faq-container { max-width: 800px; margin: 0 auto; }
+        .faq-item { background: var(--white); border: 1px solid var(--border); border-radius: 18px; padding: 20px 25px; margin-bottom: 15px; cursor: pointer; transition: 0.3s; }
+        .faq-item:hover { border-color: var(--primary); }
+        .faq-question { display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: var(--secondary); font-size: 0.95rem; }
+        .faq-answer { font-size: 0.85rem; color: var(--text-muted); margin-top: 12px; display: none; line-height: 1.6; }
+        .faq-item.active .faq-answer { display: block; }
+        .faq-item.active i { transform: rotate(180deg); color: var(--primary); }
+
+        /* ==========================================================================
+           9. FOOTER
+           ========================================================================== */
+        footer { background: var(--white); border-top: 1px solid var(--border); padding: 80px 5% 40px; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 50px; margin-bottom: 60px; }
+
+        .footer-brand h2 { font-weight: 800; font-size: 1.5rem; color: var(--secondary); margin-bottom: 20px; }
+        .footer-brand p { color: var(--text-muted); font-size: 0.9rem; max-width: 300px; margin-bottom: 25px; }
+
+        .footer-links h4 { font-weight: 800; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 25px; }
+        .footer-links a { display: block; text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.9rem; margin-bottom: 15px; transition: 0.3s; }
+        .footer-links a:hover { color: var(--primary); padding-left: 5px; }
+
+        .footer-bottom { border-top: 1px solid #f1f5f9; padding-top: 40px; display: flex; justify-content: space-between; align-items: center; }
+        .footer-bottom p { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+        .secure-label { display: flex; align-items: center; gap: 8px; color: var(--success); font-weight: 800; font-size: 0.75rem; }
+
+        /* ==========================================================================
+           10. RESPONSIVE MOBILE FIXES
+           ========================================================================== */
+        @media (max-width: 1024px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+            .hero h1 { font-size: 2.5rem; }
+        }
+
+        @media (max-width: 768px) {
+            .trust-bar { grid-template-columns: 1fr; padding: 20px; margin-top: -30px; }
+            .hero { padding-top: 120px; padding-bottom: 80px; }
+            .hero h1 { font-size: 2.2rem; }
+            .btn-hero { width: 100%; justify-content: center; }
+            .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+            .footer-bottom { flex-direction: column; gap: 20px; text-align: center; }
+            .logo span { font-size: 1rem; }
+            .btn-nav span { display: none; } /* Hide text on mobile nav btns */
+            .btn-nav { padding: 10px; border-radius: 10px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <nav>
+        <a href="/index.html" class="logo">
+            <img src="/assets/logos/payfusion-logo.png" alt="Fox Store Logo">
+            <span>FOX STORE</span>
+        </a>
+        <div class="nav-actions">
+            <a href="/login.html" class="btn-nav btn-login">
+                <i class="fas fa-sign-in-alt"></i> <span>Connexion</span>
+            </a>
+            <a href="/register.html" class="btn-nav btn-register">
+                <i class="fas fa-user-plus"></i> <span>Rejoindre</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="badge-elite">
+            <i class="fas fa-award"></i> Leader Digital en Haïti
+        </div>
+        <h1>Dominez votre Univers <span>Numérique</span></h1>
+        <p>La plateforme d'excellence pour vos recharges gaming, abonnements de streaming premium et solutions financières internationales.</p>
+        <div class="hero-btns">
+            <a href="/register.html" class="btn-hero btn-main">Commencer l'Expérience <i class="fas fa-rocket"></i></a>
+            <a href="#services" class="btn-hero btn-sec">Découvrir nos offres</a>
+        </div>
+    </header>
+
+    <!-- Trust Features Bar -->
+    <div class="trust-bar">
+        <div class="trust-item">
+            <i class="fas fa-bolt"></i>
+            <h4>Rapidité Chirurgicale</h4>
+            <p>Livraison en moins de 15 min.</p>
+        </div>
+        <div class="trust-item">
+            <i class="fas fa-shield-check"></i>
+            <h4>Sécurité Totale</h4>
+            <p>Transactions cryptées SSL.</p>
+        </div>
+        <div class="trust-item">
+            <i class="fas fa-headset"></i>
+            <h4>Support Elite</h4>
+            <p>Assistance humaine 7j/7.</p>
+        </div>
+    </div>
+
+    <!-- Services Section -->
+    <section id="services">
+        <div class="section-head">
+            <h2>Nos Domaines d'Excellence</h2>
+            <p>Des services triés sur le volet pour les utilisateurs les plus exigeants.</p>
+        </div>
+
+        <div class="service-grid">
+            <!-- Gaming -->
+            <div class="service-card">
+                <i class="fas fa-gamepad-modern"></i>
+                <h3>Gaming Pro</h3>
+                <p>Recharges diamants Free Fire, UC PUBG, et points FC Mobile. Nous sommes le partenaire officiel de vos victoires.</p>
+                <a href="/register.html" class="service-link">Voir le catalogue <i class="fas fa-chevron-right"></i></a>
+            </div>
+
+            <!-- Streaming -->
+            <div class="service-card">
+                <i class="fas fa-play-circle"></i>
+                <h3>Streaming Premium</h3>
+                <p>Netflix 4K, Disney+, et Prime Video. Accédez à vos films et séries préférés sans aucune restriction géographique.</p>
+                <a href="/register.html" class="service-link">Explorer les abonnements <i class="fas fa-chevron-right"></i></a>
+            </div>
+
+            <!-- Finance -->
+            <div class="service-card">
+                <i class="fas fa-wallet"></i>
+                <h3>Finance Mondiale</h3>
+                <p>Recharges Wise, PayPal et USDT. Brisez les barrières bancaires et accédez aux marchés internationaux.</p>
+                <a href="/register.html" class="service-link">Recharger mon compte <i class="fas fa-chevron-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment Methods Bar -->
+    <div class="payment-methods">
+        <span>Nous acceptons les paiements via</span>
+        <div class="methods-flex">
+            <img src="/assets/logos/moncash-logo.png" alt="Moncash">
+            <img src="/assets/logos/natcash-logo.png" alt="Natcash">
+            <img src="/assets/logos/usdt-logo.png" alt="USDT">
+            <img src="/assets/logos/wise-logo.png" alt="Wise">
+            <img src="/assets/logos/paypal-logo.png" alt="PayPal">
+        </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <section>
+        <div class="section-head">
+            <h2>Questions Fréquentes</h2>
+            <p>Tout ce que vous devez savoir pour démarrer sereinement.</p>
+        </div>
+
+        <div class="faq-container">
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">Quels sont les délais de livraison ? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-answer">La majorité de nos services sont livrés entre 5 et 15 minutes après la validation de votre paiement par nos administrateurs.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">Comment puis-je payer ? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-answer">Nous acceptons Moncash, Natcash, Wise, PayPal, et les crypto-monnaies (USDT/TRX) pour une flexibilité maximale.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">Mes données sont-elles sécurisées ? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-answer">Absolument. Nous utilisons l'infrastructure Firebase de Google pour l'authentification et le stockage de vos données, garantissant un niveau de sécurité bancaire.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <h2>FOX STORE</h2>
+                <p>Votre pont technologique vers les services digitaux mondiaux depuis Haïti. Rapidité, Fiabilité, Sécurité.</p>
+                <div class="secure-label">
+                    <i class="fas fa-shield-check"></i> PROTECTION SSL SÉCURISÉE
+                </div>
+            </div>
+
+            <div class="footer-links">
+                <h4>Navigation</h4>
+                <a href="/login.html">Connexion</a>
+                <a href="/register.html">Inscription</a>
+                <a href="#services">Nos Services</a>
+            </div>
+
+            <div class="footer-links">
+                <h4>Assistance</h4>
+                <a href="/user/supports.html">Centre d'aide</a>
+                <a href="/user/supports.html">Contact WhatsApp</a>
+                <a href="/user/settings.html">Légal & CGU</a>
+            </div>
+
+            <div class="footer-links">
+                <h4>Réseaux</h4>
+                <a href="#"><i class="fab fa-facebook-f" style="width: 20px;"></i> Facebook</a>
+                <a href="#"><i class="fab fa-instagram" style="width: 20px;"></i> Instagram</a>
+                <a href="#"><i class="fab fa-tiktok" style="width: 20px;"></i> TikTok</a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Fox Store Elite. Développé pour l'excellence.</p>
+            <div class="secure-label" style="color: var(--text-muted);">
+                VERSION 4.0.2
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        /* --- FIREBASE CONFIG --- */
+        const firebaseConfig = {
+            apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg",
+            authDomain: "pay-fusion-6dfaf.firebaseapp.com",
+            projectId: "pay-fusion-6dfaf",
+            storageBucket: "pay-fusion-6dfaf.firebasestorage.app",
+            messagingSenderId: "945593776812",
+            appId: "1:945593776812:web:4475e1085fdfa31690fd09",
+            measurementId: "G-8FEQG6B7ZY"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Redirect if already logged in
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                window.location.href = "/home.html";
+            }
+        });
+
+        // FAQ Toggle Logic
+        function toggleFaq(el) {
+            document.querySelectorAll('.faq-item').forEach(item => {
+                if(item !== el) item.classList.remove('active');
+            });
+            el.classList.toggle('active');
+        }
+
+        // Smooth reveal on scroll (optional elite touch)
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.boxShadow = "0 10px 30px rgba(0,0,0,0.05)";
+            } else {
+                nav.style.boxShadow = "none";
+            }
+        });
+    </script>
+</body>
+</html>

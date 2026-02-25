@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Fox Store - Déconnexion</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700&display=swap" rel="stylesheet">
+</head>
+<body style="background:#f8fafc; font-family:'Plus Jakarta Sans', sans-serif; display:flex; align-items:center; justify-content:center; height:100vh; margin:0;">
+    <div style="text-align:center;">
+        <div style="color:#0056b3; font-size:2rem; margin-bottom:20px;"><i class="fas fa-circle-notch fa-spin"></i></div>
+        <p style="color:#1e293b; font-weight:700;">Déconnexion sécurisée en cours...</p>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg", authDomain: "pay-fusion-6dfaf.firebaseapp.com", projectId: "pay-fusion-6dfaf", storageBucket: "pay-fusion-6dfaf.firebasestorage.app", messagingSenderId: "945593776812", appId: "1:945593776812:web:4475e1085fdfa31690fd09", measurementId: "G-8FEQG6B7ZY" };
+        firebase.initializeApp(firebaseConfig);
+        firebase.auth().signOut().then(() => {
+            localStorage.clear(); // Nettoie le panier et les sessions locales
+            setTimeout(() => { window.location.href = "/index.html"; }, 1500);
+        });
+    </script>
+</body>
+</html>

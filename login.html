@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fox Store — Connexion Elite</title>
+    
+    <!-- 
+        ==========================================================================
+        FOX STORE ARCHITECTURE v4.5 - LOGIN ELITE
+        SYSTÈME D'AUTHENTIFICATION HAUTE SÉCURITÉ (ADMIN & USER)
+        ZÉRO SIMULATION - INTÉGRATION FIREBASE COMPLÈTE
+        ==========================================================================
+    -->
+
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Iconographie Font Awesome 6 Pro -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==========================================================================
+           1. SYSTÈME DE DESIGN (ROOT)
+           ========================================================================== */
+        :root {
+            --primary: #0056b3;
+            --primary-light: #00d2ff;
+            --secondary: #001e62;
+            --white: #ffffff;
+            --bg-body: #ffffff; /* Arrière-plan blanc pur demandé */
+            --input-bg: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --error: #ef4444;
+            --success: #10b981;
+            --border: #e2e8f0;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --radius-md: 16px;
+            --shadow-subtle: 0 10px 40px rgba(0, 45, 94, 0.03);
+        }
+
+        /* ==========================================================================
+           2. GLOBAL RESET & BASE
+           ========================================================================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
+            line-height: 1.6; 
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ==========================================================================
+           3. HEADER (LOGO)
+           ========================================================================== */
+        header {
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 20px;
+        }
+        header img { height: 50px; transition: var(--transition); }
+
+        /* ==========================================================================
+           4. AUTH WRAPPER
+           ========================================================================== */
+        .auth-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 5% 60px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--white);
+            padding: 20px;
+            animation: cardFadeIn 0.8s var(--transition);
+        }
+
+        @keyframes cardFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .auth-header { text-align: center; margin-bottom: 35px; }
+        .auth-header h2 { font-size: 1.8rem; font-weight: 800; color: var(--secondary); letter-spacing: -1.5px; }
+        .auth-header p { color: var(--text-muted); font-size: 0.95rem; margin-top: 8px; font-weight: 500; }
+
+        /* ==========================================================================
+           5. FORMULAIRE
+           ========================================================================== */
+        .form-group { margin-bottom: 22px; position: relative; }
+        .form-group label { 
+            display: block; 
+            font-size: 0.7rem; 
+            font-weight: 800; 
+            color: var(--text-muted); 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+            margin-left: 5px;
+        }
+
+        .input-wrapper { position: relative; }
+        .input-wrapper i.field-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 16px 20px 16px 52px;
+            background: var(--input-bg);
+            border: 1.5px solid var(--border);
+            border-radius: 18px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.05);
+        }
+
+        .form-group input:focus + i { color: var(--primary); }
+
+        .toggle-password {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: var(--transition);
+            font-size: 1rem;
+        }
+        .toggle-password:hover { color: var(--primary); }
+
+        /* ==========================================================================
+           6. BOUTONS
+           ========================================================================== */
+        .btn-login {
+            width: 100%;
+            padding: 18px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 18px;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 10px;
+            box-shadow: 0 10px 25px rgba(0, 86, 179, 0.15);
+        }
+
+        .btn-login:hover {
+            background: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 86, 179, 0.25);
+        }
+
+        .btn-login:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .forgot-link {
+            display: block;
+            text-align: right;
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+
+        /* --- SYSTÈME D'ALERTE --- */
+        #alert-box {
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.4s ease;
+        }
+        .alert-error { background: #fff5f5; color: var(--error); border: 1.5px solid rgba(239, 68, 68, 0.1); }
+        .alert-success { background: #f0fff4; color: var(--success); border: 1.5px solid rgba(16, 185, 129, 0.1); }
+
+        /* ==========================================================================
+           7. FOOTER REDIRECTION
+           ========================================================================== */
+        .auth-footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border);
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+        .auth-footer a { color: var(--primary); text-decoration: none; font-weight: 800; }
+
+        /* ==========================================================================
+           8. LOADER OVERLAY
+           ========================================================================== */
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column;
+        }
+        .spinner { width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @media (max-width: 480px) {
+            .login-card { padding: 10px; }
+            .auth-header h2 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="spinner"></div>
+        <p style="margin-top: 20px; font-weight: 800; color: var(--secondary);">Vérification Elite...</p>
+    </div>
+
+    <header>
+        <a href="/index.html"><img src="/assets/logos/payfusion-logo.png" alt="Fox Store"></a>
+    </header>
+
+    <div class="auth-container">
+        <div class="login-card">
+            <div class="auth-header">
+                <h2>Bon retour</h2>
+                <p>Identifiez-vous pour gérer vos services</p>
+            </div>
+
+            <div id="alert-box"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Adresse Email</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope field-icon"></i>
+                        <input type="email" id="email" placeholder="votre@email.com" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock-alt field-icon"></i>
+                        <input type="password" id="password" placeholder="••••••••" required>
+                        <i class="fas fa-eye toggle-password" id="togglePass"></i>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-login" id="btnSubmit">
+                    <span id="btnText">Accéder au compte</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+
+                <a href="#" class="forgot-link" id="resetPassword">Mot de passe oublié ?</a>
+            </form>
+
+            <div class="auth-footer">
+                Nouveau membre ? <a href="/register.html">Créer un compte</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ==========================================================================
+           MOTEUR LOGIQUE LOGIN (ZÉRO SIMULATION)
+           ========================================================================== */
+
+        // 1. CONFIGURATION FIREBASE MASTER
+        const firebaseConfig = {
+            apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg",
+            authDomain: "pay-fusion-6dfaf.firebaseapp.com",
+            projectId: "pay-fusion-6dfaf",
+            storageBucket: "pay-fusion-6dfaf.firebasestorage.app",
+            messagingSenderId: "945593776812",
+            appId: "1:945593776812:web:4475e1085fdfa31690fd09",
+            measurementId: "G-8FEQG6B7ZY"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        const form = document.getElementById('loginForm');
+        const alertBox = document.getElementById('alert-box');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const loader = document.getElementById('loader');
+
+        /* --- UI UTILS --- */
+        function showAlert(msg, type) {
+            alertBox.textContent = msg;
+            alertBox.style.display = 'block';
+            alertBox.className = type === 'error' ? 'alert-error' : 'alert-success';
+        }
+
+        // Toggle Visibilité Password
+        document.getElementById('togglePass').onclick = function() {
+            const passInput = document.getElementById('password');
+            if(passInput.type === 'password') {
+                passInput.type = 'text';
+                this.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                passInput.type = 'password';
+                this.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        };
+
+        /* --- LOGIN ENGINE --- */
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            btnSubmit.disabled = true;
+            loader.style.display = 'flex';
+            alertBox.style.display = 'none';
+
+            try {
+                // ÉTAPE 1 : Authentification Firebase
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                // ÉTAPE 2 : Vérification du Statut dans Firestore (Anti-Ban)
+                const userDoc = await db.collection("users").doc(user.uid).get();
+                
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    
+                    if (userData.status === "Banni") {
+                        showAlert("Ce compte a été suspendu pour violation des conditions d'utilisation.", "error");
+                        await auth.signOut();
+                        loader.style.display = 'none';
+                        btnSubmit.disabled = false;
+                        return;
+                    }
+                }
+
+                // ÉTAPE 3 : Redirection Spécifique Admin vs User
+                showAlert("Connexion réussie. Préparation de votre espace...", "success");
+
+                setTimeout(() => {
+                    // L'admin et l'user vont vers home.html
+                    // Home.html contient déjà la logique pour afficher le bouton Admin si l'email correspond
+                    window.location.href = "/home.html";
+                }, 1000);
+
+            } catch (error) {
+                loader.style.display = 'none';
+                btnSubmit.disabled = false;
+                
+                let errorMsg = "Email ou mot de passe incorrect.";
+                if (error.code === 'auth/user-not-found') errorMsg = "Aucun compte ne correspond à cet email.";
+                if (error.code === 'auth/wrong-password') errorMsg = "Le mot de passe est incorrect.";
+                if (error.code === 'auth/too-many-requests') errorMsg = "Trop de tentatives. Réessayez plus tard.";
+                
+                showAlert(errorMsg, "error");
+                console.error("Firebase Auth Error:", error);
+            }
+        };
+
+        /* --- PASSWORD RESET ENGINE --- */
+        document.getElementById('resetPassword').onclick = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+
+            if(!email) {
+                showAlert("Veuillez saisir votre adresse email pour la réinitialisation.", "error");
+                return;
+            }
+
+            try {
+                await auth.sendPasswordResetEmail(email);
+                showAlert("Un lien de réinitialisation a été envoyé à : " + email, "success");
+            } catch (error) {
+                showAlert("Erreur lors de l'envoi de l'email. Vérifiez l'adresse.", "error");
+            }
+        };
+
+        // Anti-navigation si déjà connecté
+        auth.onAuthStateChanged(user => {
+            if (user && loader.style.display === 'none') {
+                window.location.href = "/home.html";
+            }
+        });
+
+    </script>
+</body>
+</html>
