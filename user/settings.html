@@ -3,109 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fox Store — Paramètres du Compte</title>
+    <title>Fox Store — Paramètres</title>
     
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Font Awesome 6 Pro -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --primary: #0056b3;
-            --bg: #f8fafc;
-            --white: #ffffff;
-            --text: #1e293b;
-            --muted: #64748b;
-            --border: rgba(0, 86, 179, 0.08);
-            --transition: all 0.3s ease;
+            --secondary: #001e62;
+            --bg: #ffffff;
+            --card-bg: #f8fafc;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --danger: #ef4444;
+            --border: #e2e8f0;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding-bottom: 40px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text-main); padding-bottom: 40px; }
 
         header {
             height: 60px; background: #fff; display: flex; align-items: center; 
             padding: 0 5%; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--border);
         }
-        .back-btn { color: var(--primary); font-size: 1.2rem; text-decoration: none; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: #f0f7ff; }
+        .back-btn { color: var(--primary); font-size: 1.1rem; text-decoration: none; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: var(--card-bg); }
 
         .container { padding: 20px 5%; max-width: 500px; margin: 0 auto; }
 
-        .card { background: #fff; border-radius: 20px; padding: 25px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 20px; }
-        .section-title { font-size: 0.7rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 15px; }
+        .section-label { font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin: 25px 0 10px 5px; }
 
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 0.65rem; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
-        .form-group input { width: 100%; padding: 12px 15px; border: 1.5px solid #e2e8f0; border-radius: 12px; outline: none; font-size: 0.9rem; font-weight: 600; background: #fcfcfd; transition: 0.3s; }
-        .form-group input:focus { border-color: var(--primary); background: #fff; }
+        .settings-card { background: #fff; border-radius: 20px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
 
-        .btn-update { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 0.85rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-update:hover { background: #003d82; transform: translateY(-2px); }
+        .setting-row {
+            padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid var(--border); cursor: pointer; transition: var(--transition);
+        }
+        .setting-row:last-child { border-bottom: none; }
+        .setting-row:active { background: var(--card-bg); }
 
-        #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #10b981; color: white; padding: 12px 25px; border-radius: 50px; font-weight: 700; font-size: 0.8rem; display: none; z-index: 2000; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .row-left { display: flex; align-items: center; gap: 15px; }
+        .row-left i { width: 32px; height: 32px; background: var(--card-bg); color: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
+        .row-left span { font-size: 0.85rem; font-weight: 700; }
+
+        .row-right { color: var(--text-muted); font-size: 0.8rem; font-weight: 600; }
+
+        /* Switch Toggle */
+        .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background-color: #cbd5e1; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(18px); }
+
+        .danger-item i { color: var(--danger) !important; background: #fff5f5 !important; }
+        .danger-item span { color: var(--danger); }
     </style>
 </head>
 <body>
-    <div id="toast">Profil mis à jour <i class="fas fa-check-circle"></i></div>
-    <header><a href="/home.html" class="back-btn"><i class="fas fa-arrow-left"></i></a><h1 style="font-size:0.9rem; margin-left:15px; font-weight:800;">Paramètres</h1></header>
+
+    <header>
+        <a href="/home.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <h1 style="font-size:0.9rem; font-weight:800; margin-left:15px; text-transform: uppercase;">Préférences</h1>
+    </header>
 
     <div class="container">
-        <p class="section-title">Informations du Profil</p>
-        <div class="card">
-            <form id="profileForm">
-                <div class="form-group"><label>Prénom</label><input type="text" id="firstName" required></div>
-                <div class="form-group"><label>Nom</label><input type="text" id="lastName" required></div>
-                <div class="form-group"><label>Téléphone WhatsApp</label><input type="tel" id="phone" required></div>
-                <button type="submit" class="btn-update">Enregistrer les changements <i class="fas fa-save"></i></button>
-            </form>
-        </div>
-
-        <p class="section-title">Sécurité</p>
-        <div class="card">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div><h4 style="font-size:0.85rem; font-weight:800;">Mot de passe</h4><p style="font-size:0.7rem; color:var(--muted); font-weight:600;">Changer via email sécurisé</p></div>
-                <button onclick="resetPass()" class="back-btn" style="width:auto; padding:0 15px;"><i class="fas fa-paper-plane" style="font-size:0.8rem;"></i></button>
+        
+        <!-- PRÉFÉRENCES -->
+        <p class="section-label">Application</p>
+        <div class="settings-card">
+            <div class="setting-row">
+                <div class="row-left"><i class="fas fa-globe"></i><span>Langue</span></div>
+                <div class="row-right">Français <i class="fas fa-chevron-right" style="margin-left:5px; font-size:0.7rem;"></i></div>
+            </div>
+            <div class="setting-row">
+                <div class="row-left"><i class="fas fa-bell"></i><span>Notifications Push</span></div>
+                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
             </div>
         </div>
+
+        <!-- LÉGAL -->
+        <p class="section-label">Légal & Support</p>
+        <div class="settings-card">
+            <a href="/user/supports.html" style="text-decoration:none; color:inherit;">
+                <div class="setting-row">
+                    <div class="row-left"><i class="fas fa-question-circle"></i><span>Aide & FAQ</span></div>
+                    <div class="row-right"><i class="fas fa-external-link-alt"></i></div>
+                </div>
+            </a>
+            <div class="setting-row">
+                <div class="row-left"><i class="fas fa-file-shield"></i><span>Politique de confidentialité</span></div>
+                <div class="row-right"><i class="fas fa-chevron-right"></i></div>
+            </div>
+        </div>
+
+        <!-- COMPTE -->
+        <p class="section-label">Sécurité</p>
+        <div class="settings-card">
+            <div class="setting-row" onclick="handlePasswordReset()">
+                <div class="row-left"><i class="fas fa-fingerprint"></i><span>Double authentification</span></div>
+                <div class="row-right">Désactivé</div>
+            </div>
+            <div class="setting-row danger-item" onclick="confirmDelete()">
+                <div class="row-left"><i class="fas fa-user-slash"></i><span>Supprimer le compte</span></div>
+                <div class="row-right"><i class="fas fa-exclamation-triangle"></i></div>
+            </div>
+        </div>
+
+        <div style="text-align:center; margin-top:40px; opacity:0.4;">
+            <img src="/assets/logos/payfusion-logo.png" style="height:30px; filter:grayscale(1);">
+            <p style="font-size:0.6rem; font-weight:800; letter-spacing:1px; margin-top:10px;">VERSION 4.8.5 — BUILD 2026</p>
+        </div>
+
     </div>
 
     <script>
         const firebaseConfig = { apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg", authDomain: "pay-fusion-6dfaf.firebaseapp.com", projectId: "pay-fusion-6dfaf", storageBucket: "pay-fusion-6dfaf.firebasestorage.app", messagingSenderId: "945593776812", appId: "1:945593776812:web:4475e1085fdfa31690fd09", measurementId: "G-8FEQG6B7ZY" };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const db = firebase.firestore();
 
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                db.collection("users").doc(user.uid).get().then(doc => {
-                    const info = doc.data().personalInfo;
-                    document.getElementById('firstName').value = info.firstName;
-                    document.getElementById('lastName').value = info.lastName;
-                    document.getElementById('phone').value = info.phone;
-                });
-            } else { window.location.href = "/login.html"; }
-        });
+        function handlePasswordReset() {
+            auth.sendPasswordResetEmail(auth.currentUser.email).then(() => alert("Email de sécurité envoyé."));
+        }
 
-        document.getElementById('profileForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const user = auth.currentUser;
-            const fn = document.getElementById('firstName').value;
-            const ln = document.getElementById('lastName').value;
-            const ph = document.getElementById('phone').value;
-
-            await db.collection("users").doc(user.uid).update({
-                "personalInfo.firstName": fn,
-                "personalInfo.lastName": ln,
-                "personalInfo.fullName": fn + " " + ln,
-                "personalInfo.phone": ph
-            });
-            const t = document.getElementById('toast'); t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 3000);
-        };
-
-        function resetPass() { auth.sendPasswordResetEmail(auth.currentUser.email).then(() => alert("Email envoyé !")); }
+        function confirmDelete() {
+            if(confirm("Action irréversible. Supprimer définitivement votre compte Fox Store ?")) {
+                alert("Veuillez contacter l'administrateur pour finaliser la suppression.");
+            }
+        }
     </script>
 </body>
 </html>
