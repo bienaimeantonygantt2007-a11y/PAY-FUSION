@@ -3,59 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fox Store - Paiement PayPal</title>
+    <title>Fox Store - Paiement Wise</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #003087; --bg: #f8fafc; --white: #ffffff; --border: rgba(0, 48, 135, 0.08); --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        :root { --primary: #0056b3; --wise: #00b9ff; --bg: #f8fafc; --white: #ffffff; --border: rgba(0, 86, 179, 0.08); --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg); color: #1e293b; padding-bottom: 40px; }
-        header { height: 65px; background: #fff; display: flex; align-items: center; padding: 0 5%; position: sticky; top: 0; border-bottom: 1px solid var(--border); }
-        .back-btn { color: var(--primary); font-size: 1.2rem; text-decoration: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 12px; }
+        header { height: 65px; background: #fff; display: flex; align-items: center; padding: 0 5%; position: sticky; top: 0; border-bottom: 1px solid var(--border); z-index: 1000; }
+        .back-btn { color: var(--primary); font-size: 1.2rem; text-decoration: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 12px; transition: var(--transition); }
         header h1 { font-size: 0.95rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; margin-left: 10px; }
         .container { padding: 25px 5%; max-width: 550px; margin: 0 auto; }
-        .instruction-card { background: var(--white); padding: 30px; border-radius: 25px; border: 1px solid var(--border); text-align: center; }
-        .instruction-card img { height: 40px; margin-bottom: 20px; }
-        .info-box { background: #f0f4ff; border: 1px solid #dce4ff; padding: 20px; border-radius: 18px; margin-bottom: 20px; text-align: left; }
-        .info-row { display: flex; flex-direction: column; gap: 5px; }
-        .info-row span { color: #64748b; font-weight: 800; font-size: 0.7rem; text-transform: uppercase; }
-        .info-row b { color: var(--primary); font-weight: 800; font-size: 0.95rem; }
-        .payment-form { background: var(--white); padding: 30px; border-radius: 25px; border: 1px solid var(--border); margin-top: 25px; }
+        .instruction-card { background: var(--white); padding: 30px; border-radius: 25px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.02); margin-bottom: 25px; text-align: center; }
+        .instruction-card img { height: 45px; margin-bottom: 20px; }
+        .info-box { background: #f0faff; border: 1px solid #d9f2ff; padding: 20px; border-radius: 18px; margin-bottom: 20px; text-align: left; }
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; }
+        .info-row span { color: #64748b; font-weight: 600; }
+        .info-row b { color: var(--primary); font-weight: 800; }
+        .payment-form { background: var(--white); padding: 30px; border-radius: 25px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px; }
-        .form-group input { width: 100%; padding: 15px; border: 1.5px solid #e2e8f0; border-radius: 12px; outline: none; background: #fcfcfd; }
+        .form-group input { width: 100%; padding: 15px; border: 1.5px solid #e2e8f0; border-radius: 12px; outline: none; font-size: 0.95rem; background: #fcfcfd; }
         .upload-area { position: relative; border: 2px dashed #cbd5e1; padding: 25px; border-radius: 15px; text-align: center; cursor: pointer; }
-        .btn-confirm { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 800; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .upload-area i { font-size: 1.5rem; color: var(--primary); margin-bottom: 8px; display: block; }
+        .btn-confirm { width: 100%; padding: 20px; background: linear-gradient(135deg, var(--primary), var(--wise)); color: white; border: none; border-radius: 15px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 10px; }
         #loading { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; }
     </style>
 </head>
 <body>
-    <div id="loading"><i class="fas fa-spinner fa-spin fa-2x" style="color:var(--primary)"></i><p style="margin-top:15px; font-weight:800;">Vérification PayPal...</p></div>
-    <header><a href="/pages/checkout/cart.html" class="back-btn"><i class="fas fa-arrow-left"></i></a><h1>Paiement PayPal</h1></header>
+    <div id="loading"><i class="fas fa-circle-notch fa-spin fa-2x" style="color:var(--primary)"></i><p style="margin-top:15px; font-weight:800;">Transmission Wise...</p></div>
+    <header><a href="/pages/checkout/cart.html" class="back-btn"><i class="fas fa-arrow-left"></i></a><h1>Paiement Wise</h1></header>
     <div class="container">
         <div class="instruction-card">
-            <img src="/assets/logos/paypal-logo.png" alt="PayPal">
-            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 20px;">Envoyez votre paiement à l'adresse suivante :</p>
+            <img src="/assets/logos/wise-logo.png" alt="Wise">
+            <h2 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 10px;">Compte de réception</h2>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 20px;">Effectuez votre transfert Wise vers :</p>
             <div class="info-box">
-                <div class="info-row"><span>Compte PayPal</span><b>bmarcco4412@gmail.com</b></div>
+                <div class="info-row"><span>Email</span><b>bmarcco4412@gmail.com</b></div>
+                <div class="info-row"><span>Wisetag</span><b>@bmarcco</b></div>
             </div>
-            <p style="font-size: 0.75rem; font-weight: 700; color: #94a3b8;">Utilisez l'option "Envoi à un proche" si possible.</p>
+            <p style="font-size: 0.75rem; font-weight: 700; color: #94a3b8;">Joignez impérativement le reçu PDF ou Screenshot.</p>
         </div>
         <form class="payment-form" id="payForm">
-            <div class="form-group"><label>Votre adresse Email PayPal</label><input type="email" id="senderName" placeholder="Ex: mon-email@gmail.com" required></div>
-            <div class="form-group"><label>Montant envoyé ($)</label><input type="number" id="senderPhone" placeholder="Ex: 50" required></div>
+            <div class="form-group"><label>Votre Email ou Wisetag</label><input type="text" id="senderName" placeholder="Qui effectue l'envoi ?" required></div>
+            <div class="form-group"><label>Montant exact envoyé ($)</label><input type="number" id="senderPhone" placeholder="Ex: 100" required></div>
             <div class="form-group">
-                <label>Preuve de paiement</label>
+                <label>Preuve de transfert</label>
                 <div class="upload-area">
-                    <i class="fas fa-camera"></i>
-                    <p id="fileLabel" style="font-size:0.8rem; font-weight:700; color:#64748b;">Joindre le screenshot</p>
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <p id="fileLabel" style="font-size:0.8rem; font-weight:700; color:#64748b;">Charger le reçu</p>
                     <input type="file" id="proofImg" accept="image/*" required style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
                 </div>
             </div>
-            <button type="submit" class="btn-confirm">Valider PayPal <i class="fas fa-check-circle"></i></button>
+            <button type="submit" class="btn-confirm">Confirmer Wise <i class="fas fa-check-circle"></i></button>
         </form>
     </div>
     <script>
@@ -79,7 +82,7 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     proofBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                    document.getElementById('fileLabel').innerHTML = `<i class="fas fa-check" style="color:var(--primary)"></i> Reçu chargé`;
+                    document.getElementById('fileLabel').innerHTML = `<i class="fas fa-check" style="color:var(--primary)"></i> Reçu prêt`;
                 };
             };
             reader.readAsDataURL(file);
@@ -87,7 +90,7 @@
 
         document.getElementById('payForm').onsubmit = async (e) => {
             e.preventDefault();
-            if(!proofBase64) return alert("Screenshot manquant.");
+            if(!proofBase64) return alert("Veuillez charger votre preuve.");
             document.getElementById('loading').style.display = 'flex';
             const cart = JSON.parse(localStorage.getItem('foxstore_cart')) || [];
             const user = auth.currentUser;
@@ -99,13 +102,13 @@
                         orderId: orderId, userId: user.uid,
                         service: { category: item.category, name: item.name, product: item.product, price: item.price },
                         customerInfo: { whatsapp: item.whatsapp, gameId: item.gameId || "N/A", gameName: item.gameName || "N/A" },
-                        payment: { method: "paypal", proof: proofBase64, senderName: document.getElementById('senderName').value, senderPhone: document.getElementById('senderPhone').value },
+                        payment: { method: "wise", proof: proofBase64, senderName: document.getElementById('senderName').value, senderPhone: document.getElementById('senderPhone').value },
                         status: "en-attente", createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 }
                 localStorage.removeItem('foxstore_cart');
                 window.location.href = "/pages/checkout/success.html";
-            } catch (err) { alert("Erreur d'envoi"); document.getElementById('loading').style.display = 'none'; }
+            } catch (err) { alert("Erreur de connexion"); document.getElementById('loading').style.display = 'none'; }
         };
     </script>
 </body>
