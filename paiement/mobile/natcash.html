@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fox Store - Paiement Moncash</title>
+    <title>Fox Store - Paiement Natcash</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #0056b3; --moncash: #ff6600; --bg: #f8fafc; --white: #ffffff; --border: rgba(0, 86, 179, 0.08); --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        :root { --primary: #0056b3; --natcash: #e30613; --bg: #f8fafc; --white: #ffffff; --border: rgba(0, 86, 179, 0.08); --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg); color: #1e293b; padding-bottom: 40px; }
         header { height: 65px; background: #fff; display: flex; align-items: center; padding: 0 5%; position: sticky; top: 0; border-bottom: 1px solid var(--border); z-index: 1000; }
@@ -19,46 +19,46 @@
         .container { padding: 25px 5%; max-width: 550px; margin: 0 auto; }
         .instruction-card { background: var(--white); padding: 30px; border-radius: 25px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.02); margin-bottom: 25px; text-align: center; }
         .instruction-card img { height: 50px; margin-bottom: 20px; }
-        .info-box { background: #fff7f2; border: 1px solid #ffe8d9; padding: 20px; border-radius: 18px; margin-bottom: 20px; text-align: left; }
+        .info-box { background: #fff5f5; border: 1px solid #ffd9d9; padding: 20px; border-radius: 18px; margin-bottom: 20px; text-align: left; }
         .info-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; }
         .info-row span { color: #64748b; font-weight: 600; }
-        .info-row b { color: var(--moncash); font-weight: 800; }
+        .info-row b { color: var(--natcash); font-weight: 800; }
         .payment-form { background: var(--white); padding: 30px; border-radius: 25px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px; }
         .form-group input { width: 100%; padding: 15px; border: 1.5px solid #e2e8f0; border-radius: 12px; outline: none; font-size: 0.95rem; background: #fcfcfd; }
         .upload-area { position: relative; border: 2px dashed #cbd5e1; padding: 25px; border-radius: 15px; text-align: center; cursor: pointer; }
         .upload-area i { font-size: 1.5rem; color: var(--primary); margin-bottom: 8px; display: block; }
-        .btn-confirm { width: 100%; padding: 20px; background: var(--moncash); color: white; border: none; border-radius: 15px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-confirm { width: 100%; padding: 20px; background: var(--natcash); color: white; border: none; border-radius: 15px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 10px; }
         #loading { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; }
     </style>
 </head>
 <body>
-    <div id="loading"><i class="fas fa-circle-notch fa-spin fa-2x" style="color:var(--moncash)"></i><p style="margin-top:15px; font-weight:800;">Validation en cours...</p></div>
-    <header><a href="/pages/checkout/cart.html" class="back-btn"><i class="fas fa-arrow-left"></i></a><h1>Paiement Moncash</h1></header>
+    <div id="loading"><i class="fas fa-circle-notch fa-spin fa-2x" style="color:var(--natcash)"></i><p style="margin-top:15px; font-weight:800;">Validation en cours...</p></div>
+    <header><a href="/pages/checkout/cart.html" class="back-btn"><i class="fas fa-arrow-left"></i></a><h1>Paiement Natcash</h1></header>
     <div class="container">
         <div class="instruction-card">
-            <img src="/assets/logos/moncash-logo.png" alt="Moncash">
+            <img src="/assets/logos/natcash-logo.png" alt="Natcash">
             <h2 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 10px;">Instructions de transfert</h2>
             <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 20px;">Veuillez effectuer le transfert sur le compte ci-dessous :</p>
             <div class="info-box">
-                <div class="info-row"><span>Numéro</span><b>+509 3653 5649</b></div>
+                <div class="info-row"><span>Numéro</span><b>+509 3566 9814</b></div>
                 <div class="info-row"><span>Nom</span><b>Jinolyse Pierre Louis</b></div>
             </div>
-            <p style="font-size: 0.75rem; font-weight: 700; color: #94a3b8;">N'oubliez pas de faire une capture d'écran du reçu.</p>
+            <p style="font-size: 0.75rem; font-weight: 700; color: #94a3b8;">Prenez une capture du reçu de confirmation.</p>
         </div>
         <form class="payment-form" id="payForm">
-            <div class="form-group"><label>Nom du compte (Qui a envoyé)</label><input type="text" id="senderName" placeholder="Ex: Jean Dupont" required></div>
-            <div class="form-group"><label>Numéro de téléphone utilisé</label><input type="tel" id="senderPhone" placeholder="Ex: 37000000" required></div>
+            <div class="form-group"><label>Nom du compte Natcash</label><input type="text" id="senderName" placeholder="Ex: Marie Joseph" required></div>
+            <div class="form-group"><label>Numéro de téléphone expéditeur</label><input type="tel" id="senderPhone" placeholder="Ex: 35000000" required></div>
             <div class="form-group">
                 <label>Capture du reçu (Screenshot)</label>
                 <div class="upload-area">
-                    <i class="fas fa-camera"></i>
-                    <p id="fileLabel" style="font-size:0.8rem; font-weight:700; color:#64748b;">Ajouter la preuve</p>
+                    <i class="fas fa-image"></i>
+                    <p id="fileLabel" style="font-size:0.8rem; font-weight:700; color:#64748b;">Joindre le reçu</p>
                     <input type="file" id="proofImg" accept="image/*" required style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
                 </div>
             </div>
-            <button type="submit" class="btn-confirm">Confirmer le paiement <i class="fas fa-check-circle"></i></button>
+            <button type="submit" class="btn-confirm">Confirmer Natcash <i class="fas fa-check-circle"></i></button>
         </form>
     </div>
     <script>
@@ -90,7 +90,7 @@
 
         document.getElementById('payForm').onsubmit = async (e) => {
             e.preventDefault();
-            if(!proofBase64) return alert("Veuillez charger la preuve.");
+            if(!proofBase64) return alert("Preuve manquante");
             document.getElementById('loading').style.display = 'flex';
             const cart = JSON.parse(localStorage.getItem('foxstore_cart')) || [];
             const user = auth.currentUser;
@@ -102,13 +102,13 @@
                         orderId: orderId, userId: user.uid,
                         service: { category: item.category, name: item.name, product: item.product, price: item.price },
                         customerInfo: { whatsapp: item.whatsapp, gameId: item.gameId || "N/A", gameName: item.gameName || "N/A" },
-                        payment: { method: "moncash", proof: proofBase64, senderName: document.getElementById('senderName').value, senderPhone: document.getElementById('senderPhone').value },
+                        payment: { method: "natcash", proof: proofBase64, senderName: document.getElementById('senderName').value, senderPhone: document.getElementById('senderPhone').value },
                         status: "en-attente", createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 }
                 localStorage.removeItem('foxstore_cart');
                 window.location.href = "/pages/checkout/success.html";
-            } catch (err) { alert("Erreur d'envoi"); document.getElementById('loading').style.display = 'none'; }
+            } catch (err) { alert("Erreur"); document.getElementById('loading').style.display = 'none'; }
         };
     </script>
 </body>
