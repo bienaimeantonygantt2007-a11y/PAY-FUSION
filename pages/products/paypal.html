@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fox Store - Recharge PayPal</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #003087; --accent: #009cde; --bg: #f5f7fa; --white: #ffffff; --text: #1e293b; --muted: #64748b; --border: rgba(0, 48, 135, 0.1); --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text); padding-bottom: 40px; }
+        header { height: 65px; background: var(--white); display: flex; align-items: center; padding: 0 5%; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--border); }
+        .back-btn { color: var(--primary); font-size: 1.2rem; text-decoration: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 12px; transition: var(--transition); }
+        header h1 { font-size: 0.95rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; margin-left: 10px; }
+        .product-hero { background: var(--white); padding: 50px 5%; text-align: center; border-bottom: 1px solid var(--border); }
+        .product-hero img { height: 100px; width: auto; object-fit: contain; margin-bottom: 20px; }
+        .product-hero h2 { font-weight: 800; color: var(--primary); margin-bottom: 10px; }
+        .product-hero p { font-size: 0.85rem; color: var(--muted); max-width: 450px; margin: 0 auto; line-height: 1.5; }
+        .container { padding: 25px 5%; max-width: 500px; margin: 0 auto; }
+        .order-form { background: var(--white); padding: 30px; border-radius: 25px; box-shadow: 0 15px 40px rgba(0, 48, 135, 0.05); border: 1px solid var(--border); }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.75rem; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+        .form-group input { width: 100%; padding: 15px; border: 1.5px solid #e2e8f0; border-radius: 12px; outline: none; font-size: 0.95rem; background: #fcfcfd; transition: 0.3s; }
+        .form-group input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(0, 48, 135, 0.05); }
+        .calc-box { background: #f0f4ff; padding: 18px; border-radius: 15px; margin-bottom: 25px; border-left: 5px solid var(--primary); }
+        .calc-box div { font-size: 0.85rem; font-weight: 700; color: var(--primary); display: flex; justify-content: space-between; margin-bottom: 6px; }
+        .btn-add { width: 100%; padding: 20px; background: linear-gradient(135deg, var(--primary), var(--accent)); color: var(--white); border: none; border-radius: 15px; font-weight: 800; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .btn-add:hover { transform: translateY(-4px); box-shadow: 0 12px 25px rgba(0, 48, 135, 0.2); }
+    </style>
+</head>
+<body>
+    <header><a href="/home.html" class="back-btn"><i class="fas fa-arrow-left"></i></a><h1>PayPal Finance</h1></header>
+    <div class="product-hero"><img src="/assets/logos/paypal-logo.png" alt="PayPal"><h2>Recharge Dollars</h2><p>Recevez vos fonds PayPal instantanément. Taux de change fixe : 1$ = 150 HTG.</p></div>
+    <div class="container">
+        <form class="order-form" id="ppForm">
+            <div class="form-group"><label>Montant en Dollars ($)</label><input type="number" id="usd" placeholder="Min: 5$" min="5" required></div>
+            <div class="calc-box"><div><span>Taux de change</span><span>150 HTG</span></div><div><span>Total à payer</span><span id="total">0 HTG</span></div></div>
+            <div class="form-group"><label>Email de votre compte PayPal</label><input type="email" id="email" placeholder="votre-email@paypal.com" required></div>
+            <div class="form-group"><label>Votre Numéro WhatsApp</label><input type="tel" id="whatsapp" placeholder="Ex: +50937000000" required></div>
+            <button type="submit" class="btn-add">Ajouter au panier <i class="fas fa-wallet"></i></button>
+        </form>
+    </div>
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg", authDomain: "pay-fusion-6dfaf.firebaseapp.com", projectId: "pay-fusion-6dfaf", storageBucket: "pay-fusion-6dfaf.firebasestorage.app", messagingSenderId: "945593776812", appId: "1:945593776812:web:4475e1085fdfa31690fd09", measurementId: "G-8FEQG6B7ZY" };
+        firebase.initializeApp(firebaseConfig);
+        document.getElementById('usd').oninput = function() { document.getElementById('total').textContent = (this.value * 150).toLocaleString() + " HTG"; };
+        document.getElementById('ppForm').onsubmit = (e) => { e.preventDefault(); const val = document.getElementById('usd').value; const item = { category: "financière", name: "PayPal", product: val + " USD", price: val * 150, email: document.getElementById('email').value, whatsapp: document.getElementById('whatsapp').value, id: Date.now() }; let cart = JSON.parse(localStorage.getItem('foxstore_cart')) || []; cart.push(item); localStorage.setItem('foxstore_cart', JSON.stringify(cart)); window.location.href = "/pages/checkout/cart.html"; };
+    </script>
+</body>
+</html>

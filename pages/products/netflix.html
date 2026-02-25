@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fox Store - Netflix Premium</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #e50914; --secondary: #111; --bg: #0a0a0a; --white: #ffffff; --border: rgba(229, 9, 20, 0.2); --transition: all 0.4s ease; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: white; padding-bottom: 40px; }
+        header { height: 65px; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); display: flex; align-items: center; padding: 0 5%; position: sticky; top: 0; border-bottom: 1px solid var(--border); }
+        .back-btn { color: var(--primary); font-size: 1.2rem; text-decoration: none; }
+        header h1 { font-size: 0.95rem; font-weight: 800; color: white; text-transform: uppercase; margin-left: 15px; }
+        .product-hero { padding: 50px 5%; text-align: center; background: radial-gradient(circle at top, rgba(229, 9, 20, 0.1) 0%, transparent 70%); }
+        .product-hero img { height: 80px; object-fit: contain; margin-bottom: 20px; }
+        .packs-grid { display: grid; grid-template-columns: 1fr; gap: 12px; padding: 0 5%; }
+        .pack-card { background: #151515; padding: 25px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; border: 2px solid transparent; cursor: pointer; transition: var(--transition); }
+        .pack-card.selected { border-color: var(--primary); background: rgba(229, 9, 20, 0.05); }
+        .pack-info h4 { font-weight: 800; font-size: 1.1rem; }
+        .pack-price { color: var(--primary); font-weight: 800; font-size: 1.2rem; }
+        .order-form { margin: 30px 5%; background: #111; padding: 30px; border-radius: 20px; border: 1px solid var(--border); display: none; }
+        .form-group label { display: block; font-size: 0.7rem; font-weight: 800; color: #888; margin-bottom: 8px; }
+        .form-group input { width: 100%; padding: 15px; border: 1px solid #333; border-radius: 12px; background: #000; color: white; outline: none; }
+        .btn-add { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <header><a href="/home.html" class="back-btn"><i class="fas fa-arrow-left"></i></a><h1>Netflix Premium</h1></header>
+    <div class="product-hero"><img src="/assets/logos/netflix-logo.png" alt="Netflix"><h2>Cinéma en 4K HDR</h2><p>Comptes privés stables avec accès complet. Livraison par WhatsApp.</p></div>
+    <div class="packs-grid">
+        <div class="pack-card" onclick="selectPack('Netflix 1 Mois', 400, this)"><div class="pack-info"><h4>1 Mois</h4><p style="font-size:0.8rem; color:#888;">Ultra HD ● 1 Écran</p></div><div class="pack-price">400 HTG</div></div>
+        <div class="pack-card" onclick="selectPack('Netflix 2 Mois', 850, this)"><div class="pack-info"><h4>2 Mois</h4><p style="font-size:0.8rem; color:#888;">Ultra HD ● Économique</p></div><div class="pack-price">850 HTG</div></div>
+        <div class="pack-card" onclick="selectPack('Netflix 3 Mois', 1300, this)"><div class="pack-info"><h4>3 Mois</h4><p style="font-size:0.8rem; color:#888;">Ultra HD ● Meilleur Prix</p></div><div class="pack-price">1,300 HTG</div></div>
+    </div>
+    <div class="order-form" id="orderFormSec">
+        <form id="netflixForm">
+            <div class="form-group"><label>EMAIL DE RÉCEPTION</label><input type="email" id="email" required></div>
+            <div class="form-group"><label>WHATSAPP</label><input type="tel" id="whatsapp" required></div>
+            <button type="submit" class="btn-add">Ajouter au panier <i class="fas fa-play"></i></button>
+        </form>
+    </div>
+    <script>
+        let currentSelection = null;
+        function selectPack(n, p, el) { currentSelection = {n, p}; document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected')); el.classList.add('selected'); document.getElementById('orderFormSec').style.display = 'block'; }
+        document.getElementById('netflixForm').onsubmit = (e) => { e.preventDefault(); const item = { category: "streaming", name: "Netflix", product: currentSelection.n, price: currentSelection.p, email: document.getElementById('email').value, whatsapp: document.getElementById('whatsapp').value, id: Date.now() }; let cart = JSON.parse(localStorage.getItem('foxstore_cart')) || []; cart.push(item); localStorage.setItem('foxstore_cart', JSON.stringify(cart)); window.location.href = "/pages/checkout/cart.html"; };
+    </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fox Store - Minecraft Minecoins</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #3c8527; --secondary: #252525; --white: #ffffff; --bg: #f5f5f5; --muted: #666; --border: rgba(60, 133, 39, 0.2); --transition: all 0.3s ease; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); padding-bottom: 40px; }
+        header { height: 65px; background: var(--secondary); display: flex; align-items: center; padding: 0 5%; position: sticky; top: 0; z-index: 1000; }
+        .back-btn { color: var(--primary); font-size: 1.2rem; text-decoration: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; }
+        header h1 { font-size: 0.95rem; font-weight: 800; color: white; text-transform: uppercase; margin-left: 10px; }
+        .product-hero { background: var(--white); padding: 50px 5%; text-align: center; border-bottom: 1px solid #ddd; }
+        .product-hero img { width: 320px; height: auto; max-width: 85%; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15)); margin-bottom: 25px; }
+        .product-hero h2 { font-weight: 800; color: var(--secondary); margin-bottom: 10px; }
+        .section-label { padding: 30px 5% 15px; font-size: 0.75rem; text-transform: uppercase; color: var(--muted); font-weight: 800; }
+        .packs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 5%; }
+        .pack-card { background: white; padding: 25px 15px; border-radius: 15px; text-align: center; border: 3px solid #eee; transition: var(--transition); cursor: pointer; }
+        .pack-card:hover { border-color: var(--primary); }
+        .pack-card.selected { border-color: var(--primary); background: #f4fff0; }
+        .pack-card i { color: #f1c40f; font-size: 1.8rem; margin-bottom: 10px; display: block; }
+        .pack-card .name { display: block; font-weight: 800; color: var(--secondary); }
+        .pack-card .price { display: block; color: var(--primary); font-weight: 800; }
+        .order-form { margin: 35px 5%; background: white; padding: 30px; border-radius: 20px; border: 1px solid #ddd; display: none; }
+        .form-group label { display: block; font-size: 0.7rem; font-weight: 800; margin-bottom: 8px; color: var(--secondary); }
+        .form-group input { width: 100%; padding: 15px; border: 1.5px solid #eee; border-radius: 10px; outline: none; background: #fafafa; }
+        .btn-add { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; }
+    </style>
+</head>
+<body>
+    <header><a href="/home.html" class="back-btn"><i class="fas fa-arrow-left"></i></a><h1>Minecraft</h1></header>
+    <div class="product-hero"><img src="/assets/logos/minecraft-logo.png" alt="Minecraft"><h2>Minecoins Recharges</h2><p>Chargez vos Minecoins pour acheter des packs de textures, skins et mondes sur le Marketplace.</p></div>
+    <div id="main-content">
+        <p class="section-label">Sélectionnez vos Minecoins</p>
+        <div class="packs-grid" id="mineGrid"></div>
+        <div class="order-form" id="orderFormSec">
+            <div id="selectionSummary" style="margin-bottom:25px; padding:15px; background:#f4fff0; border-radius:15px; font-weight:700; color:var(--primary); font-size:0.9rem; border-left:5px solid var(--primary);"></div>
+            <form id="mcForm">
+                <div class="form-group"><label>Email Compte Microsoft</label><input type="email" id="email" required></div>
+                <div class="form-group"><label>Mot de passe</label><input type="password" id="pass" required></div>
+                <div class="form-group"><label>Numéro WhatsApp</label><input type="tel" id="whatsapp" placeholder="+509..." required></div>
+                <button type="submit" class="btn-add">Ajouter au panier <i class="fas fa-cube"></i></button>
+            </form>
+        </div>
+    </div>
+    <script>
+        const packs = [{n:"320 Minecoins", p:316}, {n:"1080 Minecoins", p:930}, {n:"1840 Minecoins", p:1550}, {n:"3800 Minecoins", p:3100}, {n:"9600 Minecoins", p:7700}];
+        const grid = document.getElementById('mineGrid');
+        let currentSelection = null;
+        packs.forEach(item => {
+            const card = document.createElement('div'); card.className = 'pack-card';
+            card.innerHTML = `<i class="fas fa-cubes"></i><span class="name">${item.n}</span><span class="price">${item.p} HTG</span>`;
+            card.onclick = () => { currentSelection = item; document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected')); card.classList.add('selected'); document.getElementById('orderFormSec').style.display = 'block'; document.getElementById('selectionSummary').innerHTML = `<i class="fas fa-check-circle"></i> Sélection : ${item.n}`; };
+            grid.appendChild(card);
+        });
+        document.getElementById('mcForm').onsubmit = (e) => { e.preventDefault(); const item = { category: "gaming", name: "Minecraft", product: currentSelection.n, price: currentSelection.p, gameId: document.getElementById('email').value, gameName: document.getElementById('pass').value, whatsapp: document.getElementById('whatsapp').value, id: Date.now() }; let cart = JSON.parse(localStorage.getItem('foxstore_cart')) || []; cart.push(item); localStorage.setItem('foxstore_cart', JSON.stringify(cart)); window.location.href = "/pages/checkout/cart.html"; };
+    </script>
+</body>
+</html>

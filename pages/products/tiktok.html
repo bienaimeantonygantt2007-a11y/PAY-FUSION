@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fox Store - TikTok Coins</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #fe2c55; --bg: #010101; --card: #121212; --white: #ffffff; --border: rgba(254, 44, 85, 0.2); --transition: all 0.3s ease; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--white); padding-bottom: 40px; }
+        header { height: 65px; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); display: flex; align-items: center; padding: 0 5%; position: sticky; top: 0; border-bottom: 1px solid var(--border); }
+        .back-btn { color: var(--primary); font-size: 1.2rem; text-decoration: none; }
+        header h1 { font-size: 0.95rem; font-weight: 800; color: var(--white); text-transform: uppercase; margin-left: 15px; }
+        .product-hero { padding: 50px 5%; text-align: center; background: radial-gradient(circle at top, #fe2c5533 0%, transparent 70%); }
+        .product-hero img { height: 80px; width: 80px; object-fit: contain; margin-bottom: 15px; }
+        .packs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 5%; }
+        .pack-card { background: var(--card); padding: 20px; border-radius: 18px; text-align: center; border: 2px solid transparent; transition: var(--transition); cursor: pointer; }
+        .pack-card:hover { border-color: #25f4ee; }
+        .pack-card.selected { border-color: var(--primary); background: rgba(254, 44, 85, 0.05); }
+        .pack-card i { color: #25f4ee; font-size: 1.5rem; margin-bottom: 10px; display: block; }
+        .pack-card .name { display: block; font-weight: 800; font-size: 0.9rem; margin-bottom: 5px; }
+        .pack-card .price { display: block; color: var(--primary); font-weight: 700; font-size: 0.8rem; }
+        .order-form { margin: 30px 5%; background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid var(--border); display: none; }
+        .form-group label { display: block; font-size: 0.7rem; font-weight: 800; margin-bottom: 8px; color: #aaa; text-transform: uppercase; }
+        .form-group input { width: 100%; padding: 14px; border: 1px solid #333; border-radius: 12px; outline: none; background: #1a1a1a; color: white; margin-bottom: 15px; }
+        .btn-add { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    </style>
+</head>
+<body>
+    <header><a href="/home.html" class="back-btn"><i class="fas fa-arrow-left"></i></a><h1>TikTok Coins</h1></header>
+    <div class="product-hero"><img src="/assets/logos/tiktok-logo.png" alt="TikTok"><h2>TikTok Recharge</h2><p>Soutenez vos créateurs préférés. Rechargez vos pièces instantanément par pseudo.</p></div>
+    <div class="packs-grid">
+        <div class="pack-card" onclick="selectPack('70 Coins', 225, this)"><i class="fas fa-coins"></i><span class="name">70 Coins</span><span class="price">225 HTG</span></div>
+        <div class="pack-card" onclick="selectPack('350 Coins', 1100, this)"><i class="fas fa-coins"></i><span class="name">350 Coins</span><span class="price">1,100 HTG</span></div>
+        <div class="pack-card" onclick="selectPack('700 Coins', 2150, this)"><i class="fas fa-coins"></i><span class="name">700 Coins</span><span class="price">2,150 HTG</span></div>
+        <div class="pack-card" onclick="selectPack('1400 Coins', 4200, this)"><i class="fas fa-coins"></i><span class="name">1400 Coins</span><span class="price">4,200 HTG</span></div>
+    </div>
+    <div class="order-form" id="orderFormSec">
+        <form id="tkForm">
+            <div class="form-group"><label>NOM D'UTILISATEUR (@USERNAME)</label><input type="text" id="username" placeholder="@pseudo" required></div>
+            <div class="form-group"><label>NUMÉRO WHATSAPP</label><input type="tel" id="whatsapp" placeholder="+509..." required></div>
+            <button type="submit" class="btn-add">Ajouter au panier <i class="fab fa-tiktok"></i></button>
+        </form>
+    </div>
+    <script>
+        let currentSelection = null;
+        function selectPack(n, p, el) { currentSelection = {n, p}; document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected')); el.classList.add('selected'); document.getElementById('orderFormSec').style.display = 'block'; }
+        document.getElementById('tkForm').onsubmit = (e) => { e.preventDefault(); const item = { category: "digitale", name: "TikTok", product: currentSelection.n, price: currentSelection.p, gameId: document.getElementById('username').value, whatsapp: document.getElementById('whatsapp').value, id: Date.now() }; let cart = JSON.parse(localStorage.getItem('foxstore_cart')) || []; cart.push(item); localStorage.setItem('foxstore_cart', JSON.stringify(cart)); window.location.href = "/pages/checkout/cart.html"; };
+    </script>
+</body>
+</html>

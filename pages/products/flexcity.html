@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fox Store - Flex City Diamonds & Gold</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-red: #ff0000;
+            --deep-black: #0a0a0a;
+            --card-black: #151515;
+            --white: #ffffff;
+            --text-muted: #888888;
+            --border-red: rgba(255, 0, 0, 0.2);
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--deep-black); color: var(--white); padding-bottom: 40px; }
+
+        /* --- HEADER --- */
+        header {
+            height: 65px; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px);
+            display: flex; align-items: center; padding: 0 5%; position: sticky; top: 0; z-index: 1000;
+            border-bottom: 1px solid var(--border-red);
+        }
+        .back-btn { 
+            color: var(--primary-red); font-size: 1.2rem; text-decoration: none; 
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+            border-radius: 12px; transition: var(--transition);
+        }
+        .back-btn:hover { background: rgba(255, 0, 0, 0.1); transform: translateX(-3px); }
+        header h1 { font-size: 0.95rem; font-weight: 800; color: var(--white); text-transform: uppercase; letter-spacing: 0.5px; margin-left: 10px; }
+
+        /* --- HERO XXL --- */
+        .product-hero {
+            padding: 60px 5% 40px; text-align: center; 
+            background: radial-gradient(circle at top, rgba(255, 0, 0, 0.15) 0%, transparent 70%);
+        }
+        .product-hero img { 
+            width: 320px; height: auto; max-width: 85%; 
+            filter: drop-shadow(0 10px 30px rgba(255, 0, 0, 0.3));
+            margin-bottom: 25px;
+        }
+        .product-hero h2 { font-weight: 800; color: var(--white); margin-bottom: 10px; font-size: 1.6rem; }
+        .product-hero p { font-size: 0.85rem; color: var(--text-muted); max-width: 450px; margin: 0 auto; line-height: 1.6; }
+
+        /* --- CMS STATUS --- */
+        #status-alert { display: none; background: #3d0000; color: #ff4d4d; padding: 12px; text-align: center; font-weight: 700; font-size: 0.8rem; border-bottom: 1px solid var(--primary-red); }
+
+        /* --- SELECTION CARDS --- */
+        .section-label { padding: 30px 5% 15px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); font-weight: 800; }
+        .packs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0 5%; }
+
+        .pack-card {
+            background: var(--card-black); padding: 25px 15px; border-radius: 20px; text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05); transition: var(--transition); cursor: pointer;
+        }
+        .pack-card:hover { border-color: var(--primary-red); transform: translateY(-5px); }
+        .pack-card.selected { border-color: var(--primary-red); background: rgba(255, 0, 0, 0.05); box-shadow: 0 0 20px rgba(255, 0, 0, 0.1); }
+
+        .pack-card i { color: var(--primary-red); font-size: 1.8rem; margin-bottom: 12px; display: block; }
+        .pack-card .name { display: block; font-weight: 800; font-size: 0.9rem; color: var(--white); margin-bottom: 4px; }
+        .pack-card .price { display: block; color: var(--primary-red); font-weight: 700; font-size: 0.85rem; }
+
+        /* --- FORMULAIRE --- */
+        .order-form {
+            margin: 35px 5%; background: var(--card-black); padding: 30px; border-radius: 25px;
+            border: 1px solid var(--border-red);
+            display: none; animation: slideUp 0.5s ease forwards;
+        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.75rem; font-weight: 800; margin-bottom: 8px; color: var(--text-muted); text-transform: uppercase; }
+        .form-group input {
+            width: 100%; padding: 15px; border: 1px solid #333; border-radius: 12px;
+            outline: none; font-size: 0.95rem; background: #000; color: white; transition: 0.3s;
+        }
+        .form-group input:focus { border-color: var(--primary-red); }
+
+        .btn-add {
+            width: 100%; padding: 20px; background: var(--primary-red);
+            color: var(--white); border: none; border-radius: 15px; font-size: 1.05rem;
+            font-weight: 800; cursor: pointer; transition: var(--transition);
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+        }
+        .btn-add:hover { transform: translateY(-4px); box-shadow: 0 12px 25px rgba(255, 0, 0, 0.4); }
+    </style>
+</head>
+<body>
+
+    <div id="status-alert"><i class="fas fa-exclamation-circle"></i> <span id="status-text">Maintenance en cours</span></div>
+
+    <header>
+        <a href="/home.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <h1>Flex City</h1>
+    </header>
+
+    <div class="product-hero">
+        <img src="/assets/logos/flexcity-logo.png" alt="Flex City Logo">
+        <h2>Diamonds & Gold</h2>
+        <p>Recharges instantanées pour Flex City. Dominez la ville avec un compte crédité en moins de 15 minutes.</p>
+    </div>
+
+    <div id="main-content">
+        <p class="section-label">Sélectionnez vos Diamants</p>
+        <div class="packs-grid" id="diamondsGrid"></div>
+
+        <p class="section-label">Sélectionnez votre Or</p>
+        <div class="packs-grid" id="goldGrid"></div>
+
+        <div class="order-form" id="orderFormSec">
+            <div id="selectionSummary" style="margin-bottom:25px; padding:15px; background:rgba(255, 0, 0, 0.1); border-radius:15px; font-weight:700; color:var(--primary-red); font-size:0.9rem; border-left:4px solid var(--primary-red);"></div>
+            
+            <form id="flexForm">
+                <div class="form-group">
+                    <label>ID du Joueur (Compte Flex City)</label>
+                    <input type="number" id="gameId" placeholder="Ex: 887234" required>
+                </div>
+                <div class="form-group">
+                    <label>Votre Numéro WhatsApp</label>
+                    <input type="tel" id="whatsapp" placeholder="Ex: +50937000000" required>
+                </div>
+                <button type="submit" class="btn-add">Ajouter au panier <i class="fas fa-shopping-basket"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Configuration Firebase Master Fox Store
+        const firebaseConfig = {
+            apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg",
+            authDomain: "pay-fusion-6dfaf.firebaseapp.com",
+            projectId: "pay-fusion-6dfaf",
+            storageBucket: "pay-fusion-6dfaf.firebasestorage.app",
+            messagingSenderId: "945593776812",
+            appId: "1:945593776812:web:4475e1085fdfa31690fd09",
+            measurementId: "G-8FEQG6B7ZY"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        let currentSelection = null;
+
+        // Check CMS status
+        function checkCMS() {
+            db.collection("cms_services").doc("Flex City").onSnapshot(doc => {
+                if (doc.exists && !doc.data().active) {
+                    document.getElementById('main-content').style.opacity = "0.3";
+                    document.getElementById('main-content').style.pointerEvents = "none";
+                    document.getElementById('status-alert').style.display = "block";
+                }
+            });
+        }
+        checkCMS();
+
+        // Data from Presentation
+        const diams = [
+            {n:"100 💎", p:215}, {n:"310 💎", p:628}, {n:"520 💎", p:1100}, 
+            {n:"1060 💎", p:2150}, {n:"4320 💎", p:4500}, {n:"11200 💎", p:10800}
+        ];
+        const golds = [
+            {n:"500 🪙", p:195}, {n:"2100 🪙", p:628}, {n:"6250 🪙", p:1800}, 
+            {n:"17000 🪙", p:4750}, {n:"40000 🪙", p:10000}, {n:"77500 🪙", p:18000}
+        ];
+
+        function renderPacks(data, containerId, iconClass) {
+            const container = document.getElementById(containerId);
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'pack-card';
+                card.innerHTML = `<i class="${iconClass}"></i><span class="name">${item.n}</span><span class="price">${item.p.toLocaleString()} HTG</span>`;
+                card.onclick = () => selectPack(item.n, item.p, card);
+                container.appendChild(card);
+            });
+        }
+
+        renderPacks(diams, 'diamondsGrid', 'fas fa-gem');
+        renderPacks(golds, 'goldGrid', 'fas fa-coins');
+
+        function selectPack(name, price, el) {
+            currentSelection = { name, price };
+            document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('orderFormSec').style.display = 'block';
+            document.getElementById('selectionSummary').innerHTML = `<i class="fas fa-check-circle"></i> Sélection : ${name} ● ${price} HTG`;
+            document.getElementById('orderFormSec').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        document.getElementById('flexForm').onsubmit = (e) => {
+            e.preventDefault();
+            const orderItem = {
+                category: "gaming",
+                name: "Flex City",
+                product: currentSelection.name,
+                price: currentSelection.price,
+                gameId: document.getElementById('gameId').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                id: Date.now()
+            };
+
+            let cart = JSON.parse(localStorage.getItem('foxstore_cart')) || [];
+            cart.push(orderItem);
+            localStorage.setItem('foxstore_cart', JSON.stringify(cart));
+            window.location.href = "/pages/checkout/cart.html";
+        };
+    </script>
+</body>
+</html>
