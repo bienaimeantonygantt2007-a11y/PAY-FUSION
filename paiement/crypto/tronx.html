@@ -1,1 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fox Store - Mon Panier</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 
+    <style>
+        :root {
+            --primary: #0056b3;
+            --secondary: #002d5e;
+            --white: #ffffff;
+            --bg: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --danger: #ff4444;
+            --border: rgba(0, 86, 179, 0.08);
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text-main); padding-bottom: 40px; }
+
+        /* --- HEADER --- */
+        header {
+            height: 65px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            display: flex; align-items: center; padding: 0 5%; position: sticky; top: 0; z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+        .back-btn { 
+            color: var(--primary); font-size: 1.2rem; text-decoration: none; 
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+            border-radius: 12px; transition: var(--transition);
+        }
+        .back-btn:hover { background: #f0f7ff; }
+        header h1 { font-size: 0.95rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-left: 10px; }
+
+        .container { padding: 25px 5%; max-width: 600px; margin: 0 auto; }
+
+        /* --- EMPTY STATE --- */
+        .empty-cart { text-align: center; padding: 60px 20px; display: none; }
+        .empty-cart i { font-size: 4rem; color: #e2e8f0; margin-bottom: 20px; display: block; }
+        .empty-cart p { color: var(--text-muted); margin-bottom: 25px; font-weight: 600; }
+        .btn-shop { display: inline-block; padding: 15px 30px; background: var(--primary); color: white; text-decoration: none; border-radius: 15px; font-weight: 800; font-size: 0.9rem; }
+
+        /* --- CART ITEMS --- */
+        .cart-list { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; }
+        .cart-item {
+            background: var(--white); padding: 20px; border-radius: 20px;
+            border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02); animation: slideIn 0.4s ease;
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+        .item-details h4 { font-size: 0.95rem; font-weight: 800; color: var(--secondary); margin-bottom: 4px; }
+        .item-details p { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+        
+        .item-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+        .item-price { font-weight: 800; color: var(--primary); font-size: 1rem; }
+        .btn-remove { color: var(--danger); background: #fff5f5; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .btn-remove:hover { background: var(--danger); color: white; }
+
+        /* --- SUMMARY --- */
+        .summary-card {
+            background: var(--white); border-radius: 25px; padding: 25px;
+            border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            margin-bottom: 30px;
+        }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.9rem; color: var(--text-muted); font-weight: 600; }
+        .total-row { border-top: 2px dashed #f1f5f9; margin-top: 15px; padding-top: 15px; color: var(--secondary); font-size: 1.1rem; font-weight: 900; }
+
+        /* --- PAYMENT SELECTION --- */
+        .payment-title { font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 15px; text-align: center; }
+        .payment-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+        .method-btn {
+            background: var(--white); border: 1.5px solid var(--border); padding: 15px;
+            border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; transition: var(--transition);
+        }
+        .method-btn:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 86, 179, 0.05); }
+        .method-btn img { height: 30px; width: auto; object-fit: contain; }
+
+        /* --- FOOTER INFO --- */
+        .secure-info { text-align: center; font-size: 0.7rem; color: var(--text-muted); font-weight: 700; margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="/home.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <h1>Mon Panier</h1>
+    </header>
+
+    <div class="container">
+        <!-- État Panier Vide -->
+        <div class="empty-cart" id="emptyCart">
+            <i class="fas fa-shopping-basket"></i>
+            <p>Votre panier est encore vide.</p>
+            <a href="/home.html" class="btn-shop">Continuer mes achats</a>
+        </div>
+
+        <!-- Liste des articles -->
+        <div id="cartContent">
+            <div class="cart-list" id="cartList">
+                <!-- Articles injectés ici -->
+            </div>
+
+            <!-- Résumé -->
+            <div class="summary-card">
+                <div class="summary-row">
+                    <span>Sous-total</span>
+                    <span id="subtotal">0 HTG</span>
+                </div>
+                <div class="summary-row">
+                    <span>Frais de service</span>
+                    <span id="fees">0 HTG</span>
+                </div>
+                <div class="summary-row total-row">
+                    <span>Total à payer</span>
+                    <span id="totalPrice">0 HTG</span>
+                </div>
+            </div>
+
+            <!-- Choix du Paiement -->
+            <p class="payment-title">Choisir une méthode de paiement</p>
+            <div class="payment-grid">
+                <div class="method-btn" onclick="goToPayment('/paiement/mobile/moncash.html')">
+                    <img src="/assets/logos/moncash-logo.png" alt="Moncash">
+                </div>
+                <div class="method-btn" onclick="goToPayment('/paiement/mobile/natcash.html')">
+                    <img src="/assets/logos/natcash-logo.png" alt="Natcash">
+                </div>
+                <div class="method-btn" onclick="goToPayment('/paiement/crypto/usdt.html')">
+                    <img src="/assets/logos/usdt-logo.png" alt="USDT">
+                </div>
+                <div class="method-btn" onclick="goToPayment('/paiement/financiere/wise-paiement.html')">
+                    <img src="/assets/logos/wise-logo.png" alt="Wise">
+                </div>
+                <div class="method-btn" onclick="goToPayment('/paiement/financiere/paypal-paiement.html')">
+                    <img src="/assets/logos/paypal-logo.png" alt="PayPal">
+                </div>
+                <div class="method-btn" onclick="goToPayment('/paiement/crypto/tronx.html')">
+                    <img src="/assets/logos/tronx-logo.png" alt="TRONX">
+                </div>
+            </div>
+
+            <div class="secure-info">
+                <i class="fas fa-shield-alt"></i> PAIEMENT SÉCURISÉ & CRYPTÉ SSL
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration Firebase Master
+        const firebaseConfig = {
+            apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg",
+            authDomain: "pay-fusion-6dfaf.firebaseapp.com",
+            projectId: "pay-fusion-6dfaf",
+            storageBucket: "pay-fusion-6dfaf.firebasestorage.app",
+            messagingSenderId: "945593776812",
+            appId: "1:945593776812:web:4475e1085fdfa31690fd09",
+            measurementId: "G-8FEQG6B7ZY"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        let cart = JSON.parse(localStorage.getItem('foxstore_cart')) || [];
+
+        function renderCart() {
+            const list = document.getElementById('cartList');
+            const subtotalEl = document.getElementById('subtotal');
+            const feesEl = document.getElementById('fees');
+            const totalEl = document.getElementById('totalPrice');
+            const content = document.getElementById('cartContent');
+            const empty = document.getElementById('emptyCart');
+
+            if (cart.length === 0) {
+                content.style.display = 'none';
+                empty.style.display = 'block';
+                return;
+            }
+
+            list.innerHTML = '';
+            let subtotal = 0;
+            let fees = 0;
+
+            cart.forEach((item, index) => {
+                subtotal += item.price;
+                // On applique 100 HTG de frais de service pour les produits financiers/crypto (optionnel)
+                if(item.category === 'financière' || item.category === 'crypto') {
+                    fees += 100;
+                }
+
+                list.innerHTML += `
+                    <div class="cart-item">
+                        <div class="item-details">
+                            <h4>${item.name}</h4>
+                            <p>${item.product}</p>
+                        </div>
+                        <div class="item-right">
+                            <span class="item-price">${item.price.toLocaleString()} HTG</span>
+                            <button class="btn-remove" onclick="removeItem(${index})">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            subtotalEl.textContent = subtotal.toLocaleString() + " HTG";
+            feesEl.textContent = fees.toLocaleString() + " HTG";
+            totalEl.textContent = (subtotal + fees).toLocaleString() + " HTG";
+        }
+
+        function removeItem(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('foxstore_cart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        function goToPayment(path) {
+            // Sauvegarde le total final avant de partir si besoin
+            window.location.href = path;
+        }
+
+        // Init
+        renderCart();
+
+        // Protection session
+        auth.onAuthStateChanged(user => {
+            if (!user) window.location.href = "/login.html";
+        });
+    </script>
+</body>
+</html>
