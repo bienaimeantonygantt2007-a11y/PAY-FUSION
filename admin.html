@@ -3,45 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fox Admin — Elite Command Center</title>
+    <title>Fox Store - Administration</title>
 
     <!-- 
         ==========================================================================
-        FOX STORE ARCHITECTURE v5.0 - COMMAND CENTER ELITE
-        MODULE DE GESTION INTÉGRAL : FINANCE | CMS | CRM | USERS
-        ZÉRO SIMULATION - PRODUCTION READY
+        FOX STORE v5.0 - COMMAND CENTER ELITE
+        ADMINISTRATION COMPLÈTE : FINANCE | CRM | CMS | UTILISATEURS
+        PRODUCTION READY - AUCUNE SIMULATION
         ==========================================================================
     -->
 
-    <!-- SDK FIREBASE (COMPAT) -->
+    <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     
-    <!-- FONT AWESOME 6 PRO -->
+    <!-- Font Awesome 6 (icônes uniquement) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- PLUS JAKARTA SANS TYPOGRAPHY -->
+    <!-- Typographie : Plus Jakarta Sans (autorisée) -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         /* ==========================================================================
-           1. SYSTÈME DE DESIGN (PALETTE ELITE)
+           SYSTÈME DE DESIGN FOX STORE (PALETTE UNIQUE)
            ========================================================================== */
         :root {
             --bg-deep: #06070a;
             --bg-card: #0f121a;
             --accent: #00d1ff;
-            --primary: #0056b3;
-            --secondary: #001e62;
             --white: #ffffff;
             --text-main: #ffffff;
             --text-muted: #8e95a2;
             --success: #00ff88;
             --error: #ff4444;
             --warning: #ffbb33;
+            --info: #0066ff;
             --glass-border: rgba(255, 255, 255, 0.05);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
             --radius-xl: 28px;
             --radius-lg: 18px;
             --radius-md: 10px;
@@ -49,198 +48,623 @@
         }
 
         /* ==========================================================================
-           2. GLOBAL RESET & BASE (COMPACT MODE)
+           RESET & BASE
            ========================================================================== */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
         
-        body { 
-            background-color: var(--bg-deep); 
-            color: var(--text-main); 
-            min-height: 100vh; 
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            min-height: 100vh;
             overflow: hidden;
             display: flex;
-            font-size: 13px; /* Taille diminuée pour plus de densité */
+            font-size: 13px; /* densité optimisée */
         }
 
-        ::-webkit-scrollbar { width: 3px; height: 3px; }
-        ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+        ::-webkit-scrollbar {
+            width: 3px;
+            height: 3px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--glass-border);
+            border-radius: 10px;
+        }
 
         /* ==========================================================================
-           3. SIDEBAR (NAVIGATION DRAWER)
+           SIDEBAR (NAVIGATION DRAWER)
            ========================================================================== */
         .sidebar {
-            width: 260px; height: 100vh;
+            width: 260px;
+            height: 100vh;
             background: var(--bg-card);
             border-right: 1px solid var(--glass-border);
-            display: flex; flex-direction: column;
-            position: fixed; left: -260px; top: 0;
-            z-index: 5000; transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: -260px;
+            top: 0;
+            z-index: 5000;
+            transition: var(--transition);
         }
         .sidebar.active { left: 0; }
 
-        .sidebar-brand { padding: 30px 20px; text-align: center; border-bottom: 1px solid var(--glass-border); }
-        .sidebar-brand img { height: 38px; }
-        .sidebar-brand h2 { font-weight: 800; font-size: 0.85rem; color: var(--accent); margin-top: 10px; letter-spacing: 2.5px; }
+        .sidebar-brand {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .sidebar-brand img {
+            height: 38px;
+        }
+        .sidebar-brand h2 {
+            font-weight: 800;
+            font-size: 0.85rem;
+            color: var(--accent);
+            margin-top: 10px;
+            letter-spacing: 2.5px;
+        }
 
-        .nav-menu { flex-grow: 1; padding: 10px; overflow-y: auto; }
-        .nav-label { font-size: 0.55rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; padding: 20px 15px 8px; }
+        .nav-menu {
+            flex-grow: 1;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        .nav-label {
+            font-size: 0.55rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 20px 15px 8px;
+        }
         
         .nav-btn {
-            display: flex; align-items: center; gap: 12px; padding: 12px 18px;
-            color: var(--text-muted); text-decoration: none; border-radius: var(--radius-md);
-            font-weight: 600; font-size: 0.8rem; transition: var(--transition); cursor: pointer; margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 18px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: var(--transition);
+            cursor: pointer;
+            margin-bottom: 2px;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
         }
-        .nav-btn:hover { color: var(--accent); background: rgba(255, 255, 255, 0.02); }
-        .nav-btn.active { background: var(--accent); color: var(--bg-deep); font-weight: 800; box-shadow: var(--shadow-glow); }
-        .nav-btn i { font-size: 1rem; width: 22px; text-align: center; }
+        .nav-btn:hover {
+            color: var(--accent);
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .nav-btn.active {
+            background: var(--accent);
+            color: var(--bg-deep);
+            font-weight: 800;
+            box-shadow: var(--shadow-glow);
+        }
+        .nav-btn i {
+            font-size: 1rem;
+            width: 22px;
+            text-align: center;
+        }
 
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); z-index: 4000; display: none; }
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(4px);
+            z-index: 4000;
+            display: none;
+        }
         .overlay.active { display: block; }
 
         /* ==========================================================================
-           4. MAIN CONTENT AREA
+           MAIN CONTENT
            ========================================================================== */
-        .main { flex: 1; display: flex; flex-direction: column; width: 100%; transition: var(--transition); }
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            transition: var(--transition);
+        }
 
         header {
-            height: 60px; padding: 0 15px;
+            height: 60px;
+            padding: 0 15px;
             background: rgba(15, 18, 26, 0.95);
             backdrop-filter: blur(15px);
             border-bottom: 1px solid var(--glass-border);
-            display: flex; align-items: center; justify-content: space-between;
-            position: sticky; top: 0; z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        .btn-menu { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent); cursor: pointer; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.02); }
+        .btn-menu {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: var(--accent);
+            cursor: pointer;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.02);
+        }
 
-        .header-title { font-weight: 800; font-size: 0.85rem; color: var(--white); text-transform: uppercase; letter-spacing: 1px; }
-        .admin-live { font-size: 0.5rem; font-weight: 800; color: var(--success); border: 1px solid var(--success); padding: 3px 8px; border-radius: 4px; display: flex; align-items: center; gap: 5px; }
-        .admin-live i { font-size: 0.4rem; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        .header-title {
+            font-weight: 800;
+            font-size: 0.85rem;
+            color: var(--white);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .admin-live {
+            font-size: 0.5rem;
+            font-weight: 800;
+            color: var(--success);
+            border: 1px solid var(--success);
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .admin-live i {
+            font-size: 0.4rem;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
 
-        .scroller { padding: 15px; flex: 1; overflow-y: auto; }
+        .scroller {
+            padding: 15px;
+            flex: 1;
+            overflow-y: auto;
+        }
 
         /* ==========================================================================
-           5. DASHBOARD STATS (KPIs)
+           KPI CARDS
            ========================================================================== */
-        .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
         .kpi-card {
-            background: var(--bg-card); padding: 15px; border-radius: var(--radius-lg);
-            border: 1px solid var(--glass-border); position: relative;
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--glass-border);
+            position: relative;
         }
-        .kpi-card span { font-size: 0.5rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-        .kpi-card h3 { font-size: 1.05rem; font-weight: 800; margin-top: 4px; color: var(--white); }
-        .kpi-card i { position: absolute; right: 10px; bottom: 10px; font-size: 2rem; color: var(--accent); opacity: 0.05; }
+        .kpi-card span {
+            font-size: 0.5rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .kpi-card h3 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            margin-top: 4px;
+            color: var(--white);
+        }
+        .kpi-card i {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            font-size: 2rem;
+            color: var(--accent);
+            opacity: 0.05;
+        }
 
         /* ==========================================================================
-           6. SECTION CARDS & LISTS
+           CARD & LIST ITEMS
            ========================================================================== */
-        .card { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--glass-border); margin-bottom: 20px; overflow: hidden; }
-        .card-header { padding: 15px 20px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.01); }
-        .card-header h4 { font-weight: 800; font-size: 0.7rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1.5px; }
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--glass-border);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .card-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.01);
+        }
+        .card-header h4 {
+            font-weight: 800;
+            font-size: 0.7rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
 
         .list-item {
-            padding: 12px 20px; border-bottom: 1px solid var(--glass-border);
-            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             transition: 0.3s;
         }
-        .list-item:hover { background: rgba(255, 255, 255, 0.02); }
+        .list-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
         
-        .item-side { display: flex; align-items: center; gap: 12px; }
-        .item-icon-box { width: 34px; height: 34px; background: var(--bg-deep); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; border: 1px solid var(--glass-border); color: var(--accent); }
+        .item-side {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .item-icon-box {
+            width: 34px;
+            height: 34px;
+            background: var(--bg-deep);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            border: 1px solid var(--glass-border);
+            color: var(--accent);
+        }
         
-        .item-info h5 { font-size: 0.75rem; font-weight: 700; color: var(--white); }
-        .item-info p { font-size: 0.6rem; color: var(--text-muted); font-weight: 600; }
+        .item-info h5 {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+        .item-info p {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
 
-        .status-pill { padding: 4px 10px; border-radius: 6px; font-size: 0.5rem; font-weight: 800; text-transform: uppercase; }
-        .st-en-attente { background: rgba(255, 187, 51, 0.1); color: var(--warning); }
-        .st-validé { background: rgba(0, 255, 136, 0.1); color: var(--success); }
-        .st-rejeté { background: rgba(255, 68, 68, 0.1); color: var(--error); }
+        .status-pill {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .st-en-attente {
+            background: rgba(255, 187, 51, 0.1);
+            color: var(--warning);
+        }
+        .st-validé {
+            background: rgba(0, 255, 136, 0.1);
+            color: var(--success);
+        }
+        .st-rejeté {
+            background: rgba(255, 68, 68, 0.1);
+            color: var(--error);
+        }
 
-        .btn-lite { padding: 6px 12px; border-radius: 8px; border: none; font-weight: 800; font-size: 0.6rem; cursor: pointer; background: var(--primary); color: white; transition: 0.3s; }
-        .btn-lite:hover { transform: scale(1.05); background: var(--accent); color: var(--bg-deep); }
+        .btn-lite {
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 800;
+            font-size: 0.6rem;
+            cursor: pointer;
+            background: var(--accent);
+            color: var(--bg-deep);
+            transition: 0.3s;
+        }
+        .btn-lite:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 209, 255, 0.5);
+        }
+        .btn-danger {
+            background: var(--error);
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #ff6666;
+        }
 
         /* ==========================================================================
-           7. MODAL SYSTEM (ULTRA-COMPACT)
+           MODAL SYSTEM
            ========================================================================== */
         .modal {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px);
-            z-index: 6000; align-items: flex-end; justify-content: center;
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 6000;
+            align-items: flex-end;
+            justify-content: center;
         }
         .modal-box {
-            background: var(--bg-card); width: 100%; max-width: 480px; border-radius: 20px 20px 0 0;
-            border: 1px solid var(--glass-border); padding: 25px; position: relative;
-            max-height: 85vh; overflow-y: auto; animation: slideUp 0.4s ease;
+            background: var(--bg-card);
+            width: 100%;
+            max-width: 480px;
+            border-radius: 20px 20px 0 0;
+            border: 1px solid var(--glass-border);
+            padding: 25px;
+            position: relative;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: slideUp 0.4s ease;
         }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .close-x { position: absolute; top: 15px; right: 20px; font-size: 1.2rem; color: var(--text-muted); cursor: pointer; }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .close-x {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
 
-        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
-        .detail-cell label { display: block; font-size: 0.5rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 3px; }
-        .detail-cell p { font-size: 0.8rem; font-weight: 700; color: var(--white); word-break: break-all; }
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .detail-cell label {
+            display: block;
+            font-size: 0.5rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 3px;
+        }
+        .detail-cell p {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--white);
+            word-break: break-all;
+        }
 
-        /* Image Proof Viewer */
-        .proof-box { margin-top: 15px; border-radius: 10px; overflow: hidden; border: 1px solid var(--glass-border); cursor: pointer; }
-        .proof-box img { width: 100%; height: auto; display: block; transition: 0.3s; }
-        .proof-box:hover img { transform: scale(1.02); }
+        .proof-box {
+            margin-top: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+        }
+        .proof-box img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: 0.3s;
+        }
+        .proof-box:hover img {
+            transform: scale(1.02);
+        }
 
         /* ==========================================================================
-           8. CRM CHAT (SAAS STYLE)
+           CRM CHAT
            ========================================================================== */
-        .chat-container { height: 500px; display: flex; flex-direction: column; }
-        .chat-user-list { flex: 1; overflow-y: auto; border-bottom: 1px solid var(--glass-border); }
-        .chat-active-window { flex: 2; display: none; flex-direction: column; background: rgba(0,0,0,0.2); }
-        .chat-log { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-        .m { max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
-        .m-admin { align-self: flex-end; background: var(--accent); color: var(--bg-deep); border-bottom-right-radius: 2px; }
-        .m-user { align-self: flex-start; background: var(--glass-border); color: #fff; border-bottom-left-radius: 2px; }
-        .chat-input-row { padding: 12px; display: flex; gap: 8px; background: var(--bg-card); border-top: 1px solid var(--glass-border); }
+        .chat-container {
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-user-list {
+            flex: 1;
+            overflow-y: auto;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .chat-active-window {
+            flex: 2;
+            display: none;
+            flex-direction: column;
+            background: rgba(0,0,0,0.2);
+        }
+        .chat-log {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .m {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .m-admin {
+            align-self: flex-end;
+            background: var(--accent);
+            color: var(--bg-deep);
+            border-bottom-right-radius: 2px;
+        }
+        .m-user {
+            align-self: flex-start;
+            background: var(--glass-border);
+            color: #fff;
+            border-bottom-left-radius: 2px;
+        }
+        .chat-input-row {
+            padding: 12px;
+            display: flex;
+            gap: 8px;
+            background: var(--bg-card);
+            border-top: 1px solid var(--glass-border);
+        }
 
         /* ==========================================================================
-           9. INPUTS & SWITCHES
+           FORMULAIRES & INPUTS
            ========================================================================== */
-        .adm-input { width: 100%; padding: 12px; background: var(--bg-deep); border: 1px solid var(--glass-border); border-radius: 10px; color: var(--white); outline: none; font-size: 0.8rem; margin-bottom: 10px; }
-        .adm-input:focus { border-color: var(--accent); }
+        .adm-input {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-deep);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--white);
+            outline: none;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+        .adm-input:focus {
+            border-color: var(--accent);
+        }
 
-        .btn-elite { padding: 14px; border-radius: 10px; border: none; font-weight: 800; text-transform: uppercase; font-size: 0.7rem; width: 100%; cursor: pointer; transition: 0.3s; }
-        .btn-green { background: var(--success); color: var(--bg-deep); }
-        .btn-red { background: var(--error); color: white; }
+        .btn-elite {
+            padding: 14px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-green {
+            background: var(--success);
+            color: var(--bg-deep);
+        }
+        .btn-red {
+            background: var(--error);
+            color: white;
+        }
 
-        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; inset: 0; background-color: #222; transition: .4s; border-radius: 34px; cursor: pointer; }
-        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--accent); }
-        input:checked + .slider:before { transform: translateX(20px); }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            inset: 0;
+            background-color: #222;
+            transition: .4s;
+            border-radius: 34px;
+            cursor: pointer;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: var(--accent);
+        }
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
 
         /* ==========================================================================
-           10. RESPONSIVE DESKTOP
+           RESPONSIVE DESKTOP
            ========================================================================== */
         @media (min-width: 1025px) {
-            .sidebar { left: 0; }
-            .main { margin-left: 260px; width: calc(100% - 260px); }
-            .btn-menu { display: none; }
-            .kpi-grid { grid-template-columns: repeat(4, 1fr); }
-            .modal { align-items: center; }
-            .modal-box { border-radius: var(--radius-xl); padding: 40px; }
-            .chat-container { flex-direction: row; height: 600px; }
-            .chat-user-list { width: 280px; height: 100%; border-right: 1px solid var(--glass-border); border-bottom: none; }
-            .chat-active-window { flex: 1; }
+            .sidebar {
+                left: 0;
+            }
+            .main {
+                margin-left: 260px;
+                width: calc(100% - 260px);
+            }
+            .btn-menu {
+                display: none;
+            }
+            .kpi-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            .modal {
+                align-items: center;
+            }
+            .modal-box {
+                border-radius: var(--radius-xl);
+                padding: 40px;
+            }
+            .chat-container {
+                flex-direction: row;
+                height: 600px;
+            }
+            .chat-user-list {
+                width: 280px;
+                height: 100%;
+                border-right: 1px solid var(--glass-border);
+                border-bottom: none;
+            }
+            .chat-active-window {
+                flex: 1;
+            }
         }
 
-        /* NOTIFICATIONS TOAST */
-        #fox-toast { position: fixed; top: 15px; right: 15px; z-index: 9999; background: var(--accent); color: var(--bg-deep); padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 0.7rem; transform: translateX(200%); transition: 0.4s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        #fox-toast.show { transform: translateX(0); }
-
+        /* ==========================================================================
+           TOAST NOTIFICATION
+           ========================================================================== */
+        #fox-toast {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 9999;
+            background: var(--accent);
+            color: var(--bg-deep);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 0.7rem;
+            transform: translateX(200%);
+            transition: 0.4s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        #fox-toast.show {
+            transform: translateX(0);
+        }
     </style>
 </head>
 <body>
 
+    <!-- Overlay pour mobile -->
     <div class="overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    
+    <!-- Toast -->
     <div id="fox-toast">Action réussie</div>
 
-    <!-- SIDEBAR ELITE -->
+    <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-brand">
             <img src="/assets/logos/payfusion-logo.png" alt="Fox Store">
@@ -249,13 +673,15 @@
         
         <div class="nav-menu">
             <p class="nav-label">Management</p>
-            <div class="nav-btn active" onclick="navTo('orders', this)"><i class="fas fa-layer-group"></i> Transactions</div>
-            <div class="nav-btn" onclick="navTo('users', this)"><i class="fas fa-user-shield"></i> Utilisateurs</div>
+            <button class="nav-btn active" onclick="navTo('orders', this)"><i class="fas fa-layer-group"></i> Transactions</button>
+            <button class="nav-btn" onclick="navTo('users', this)"><i class="fas fa-user-shield"></i> Utilisateurs</button>
+            
             <p class="nav-label">Système Fox</p>
-            <div class="nav-btn" onclick="navTo('cms', this)"><i class="fas fa-toggle-on"></i> CMS Services</div>
-            <div class="nav-btn" onclick="navTo('marketing', this)"><i class="fas fa-broadcast-tower"></i> Annonces</div>
+            <button class="nav-btn" onclick="navTo('cms', this)"><i class="fas fa-toggle-on"></i> CMS Services</button>
+            <button class="nav-btn" onclick="navTo('marketing', this)"><i class="fas fa-broadcast-tower"></i> Annonces</button>
+            
             <p class="nav-label">Relation Client</p>
-            <div class="nav-btn" onclick="navTo('crm', this)"><i class="fas fa-comment-dots"></i> Support Live</div>
+            <button class="nav-btn" onclick="navTo('crm', this)"><i class="fas fa-comment-dots"></i> Support Live</button>
         </div>
 
         <div style="padding: 15px; border-top: 1px solid var(--glass-border);">
@@ -273,15 +699,15 @@
 
         <!-- KPI INDICATORS -->
         <div class="kpi-grid">
-            <div class="kpi-card"><span>Revenu Brut</span><h3 id="valRev">0 HTG</h3></div>
-            <div class="kpi-card"><span>Bénéfice Réel</span><h3 id="valProfit" style="color:var(--success)">0 HTG</h3></div>
-            <div class="kpi-card"><span>Total Commandes</span><h3 id="valCount">0</h3></div>
-            <div class="kpi-card"><span>En Attente</span><h3 id="valPending" style="color:var(--warning)">0</h3></div>
+            <div class="kpi-card"><span>Revenu Brut</span><h3 id="valRev">0 HTG</h3><i class="fas fa-chart-line"></i></div>
+            <div class="kpi-card"><span>Bénéfice Réel</span><h3 id="valProfit" style="color:var(--success)">0 HTG</h3><i class="fas fa-coins"></i></div>
+            <div class="kpi-card"><span>Total Commandes</span><h3 id="valCount">0</h3><i class="fas fa-cart-shopping"></i></div>
+            <div class="kpi-card"><span>En Attente</span><h3 id="valPending" style="color:var(--warning)">0</h3><i class="fas fa-clock"></i></div>
         </div>
 
         <div class="scroller">
             
-            <!-- SECTION 1: ORDERS (FINANCIAL ENGINE) -->
+            <!-- SECTION 1: ORDERS -->
             <section id="ordersView" class="fox-tab active">
                 <div class="card">
                     <div class="card-header"><h4>Flux des paiements</h4></div>
@@ -291,7 +717,7 @@
                 </div>
             </section>
 
-            <!-- SECTION 2: USERS MODERATION -->
+            <!-- SECTION 2: USERS -->
             <section id="usersView" class="fox-tab" style="display: none;">
                 <div class="card">
                     <div class="card-header">
@@ -301,12 +727,12 @@
                 </div>
             </section>
 
-            <!-- SECTION 3: CMS CONTROL -->
+            <!-- SECTION 3: CMS -->
             <section id="cmsView" class="fox-tab" style="display: none;">
                 <div class="kpi-grid" id="cmsGrid"></div>
             </section>
 
-            <!-- SECTION 4: ANNONCES -->
+            <!-- SECTION 4: MARKETING (ANNONCES) -->
             <section id="marketingView" class="fox-tab" style="display: none;">
                 <div class="card" style="padding: 20px;">
                     <label class="nav-label">Nouvel avertissement système</label>
@@ -316,7 +742,7 @@
                 </div>
             </section>
 
-            <!-- SECTION 5: CRM SUPPORT CHAT -->
+            <!-- SECTION 5: CRM CHAT -->
             <section id="crmView" class="fox-tab" style="display: none;">
                 <div class="card chat-container">
                     <div class="chat-user-list" id="chatList"></div>
@@ -333,7 +759,7 @@
         </div>
     </div>
 
-    <!-- ELITE MODAL: TRANSACTION DETAILS -->
+    <!-- MODAL DÉTAILS COMMANDE -->
     <div class="modal" id="orderModal">
         <div class="modal-box">
             <i class="fas fa-times close-x" onclick="closeModal()"></i>
@@ -342,14 +768,14 @@
             
             <div class="detail-grid" id="modFields"></div>
             
-            <!-- PROOF LIGHTBOX (L'IMAGE DU REÇU) -->
-            <div class="proof-box" id="proofArea" onclick="openLightbox()">
+            <!-- PREUVE DE PAIEMENT -->
+            <div class="proof-box" id="proofArea" onclick="openLightbox()" style="display: none;">
                 <img id="modProofImg" src="" alt="Capture Reçu">
             </div>
 
             <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--glass-border);">
-                <label class="nav-label" style="padding-left:0;">Profit Management (Coût d'achat HTG)</label>
-                <input type="number" id="purchaseCostInput" class="adm-input" placeholder="0.00">
+                <label class="nav-label" style="padding-left:0;">Coût d'achat (HTG) pour calcul du profit</label>
+                <input type="number" id="purchaseCostInput" class="adm-input" placeholder="0.00" min="0" step="0.01">
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px;">
                     <button class="btn-elite btn-green" onclick="handleStatus('Validé')">Valider</button>
@@ -359,17 +785,15 @@
         </div>
     </div>
 
-    <!-- LIGHTBOX: FULL IMAGE -->
+    <!-- LIGHTBOX POUR IMAGE PLEIN ÉCRAN -->
     <div class="modal" id="lightbox" onclick="this.style.display='none'" style="align-items: center; background: rgba(0,0,0,0.95);">
         <img id="lightboxImg" src="" style="max-width: 98%; max-height: 95%; border-radius: 8px;">
     </div>
 
     <script>
         /* ==========================================================================
-           11. MOTEUR LOGIQUE (1000+ LIGNES D'INTELLIGENCE)
+           CONFIGURATION FIREBASE (IDENTIQUE POUR TOUTES LES PAGES)
            ========================================================================== */
-
-        // CONFIGURATION MASTER FOX STORE
         const firebaseConfig = {
             apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg",
             authDomain: "pay-fusion-6dfaf.firebaseapp.com",
@@ -384,12 +808,22 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
 
+        // ==========================================================================
+        // VARIABLES GLOBALES
+        // ==========================================================================
         let ordersCache = [];
         let usersCache = [];
         let activeOrderID = null;
         let activeChatUID = null;
 
-        // AUTHENTIFICATION ET SÉCURITÉ ADMIN
+        // Couleurs en dur pour les styles inline (évite var() dans les chaînes)
+        const COLOR_ERROR = '#ff4444';
+        const COLOR_SUCCESS = '#00ff88';
+        const COLOR_BG_DEEP = '#06070a';
+
+        // ==========================================================================
+        // AUTHENTIFICATION ADMIN (EMAIL FIXE)
+        // ==========================================================================
         auth.onAuthStateChanged(user => {
             if (!user || user.email !== "bmarcco4412@gmail.com") {
                 window.location.href = "/login.html";
@@ -406,12 +840,17 @@
             syncCRM();
         }
 
-        /* --- UI CONTROLLERS --- */
+        // ==========================================================================
+        // UTILITAIRES UI
+        // ==========================================================================
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');
         const menuBtn = document.getElementById('menuTrigger');
 
-        function toggleSidebar() { sidebar.classList.toggle('active'); overlay.classList.toggle('active'); }
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
         menuBtn.onclick = toggleSidebar;
 
         function navTo(viewId, btn) {
@@ -420,16 +859,19 @@
             document.getElementById(viewId + 'View').style.display = 'block';
             btn.classList.add('active');
             document.getElementById('tabNameDisplay').textContent = btn.textContent.trim();
-            if(window.innerWidth < 1025) toggleSidebar();
+            if (window.innerWidth < 1025) toggleSidebar();
         }
 
         function triggerToast(msg) {
             const t = document.getElementById('fox-toast');
-            t.textContent = msg; t.classList.add('show');
+            t.textContent = msg;
+            t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 3000);
         }
 
-        /* --- 1. MOTEUR FINANCIER (COMMANDES) --- */
+        // ==========================================================================
+        // 1. GESTION DES COMMANDES (ORDERS)
+        // ==========================================================================
         function syncOrders() {
             db.collection("orders").orderBy("createdAt", "desc").onSnapshot(snap => {
                 const list = document.getElementById('ordersContainer');
@@ -438,29 +880,38 @@
                 ordersCache = [];
 
                 snap.forEach(doc => {
-                    const o = doc.data(); const id = doc.id; ordersCache.push({id, ...o});
-                    if(o.status === 'en-attente') wait++;
-                    if(o.status === 'Validé') {
-                        const amount = parseFloat(o.service.price || 0);
+                    const o = doc.data();
+                    const id = doc.id;
+                    ordersCache.push({ id, ...o });
+                    
+                    if (o.status === 'en-attente') wait++;
+                    if (o.status === 'Validé') {
+                        const amount = parseFloat(o.service?.price || 0);
                         rev += amount;
                         profit += (amount - parseFloat(o.purchaseCost || 0));
                     }
-                    const stClass = `st-${o.status.toLowerCase().replace(' ', '-')}`;
+                    
+                    // Classe de statut (gestion des accents)
+                    const statusClass = o.status === 'en-attente' ? 'st-en-attente' : 
+                                        o.status === 'Validé' ? 'st-validé' : 
+                                        o.status === 'Rejeté' ? 'st-rejeté' : '';
+                    
                     list.innerHTML += `
                         <div class="list-item">
                             <div class="item-side">
-                                <div class="item-icon-box">${o.service.name.charAt(0)}</div>
+                                <div class="item-icon-box">${o.service?.name?.charAt(0) || '?'}</div>
                                 <div class="item-info">
-                                    <h5>#${o.orderId}</h5>
-                                    <p>${o.service.name} ● ${o.service.product}</p>
+                                    <h5>#${o.orderId || id.slice(0,6)}</h5>
+                                    <p>${o.service?.name || 'Service'} ● ${o.service?.product || ''}</p>
                                 </div>
                             </div>
                             <div style="text-align: right;">
-                                <div style="font-weight:800; font-size:0.8rem; color:var(--accent);">${o.service.price} HTG</div>
+                                <div style="font-weight:800; font-size:0.8rem; color:var(--accent);">${o.service?.price || 0} HTG</div>
                                 <button class="btn-lite" onclick="openOrderModal('${id}')" style="margin-top:4px;">GÉRER</button>
                             </div>
                         </div>`;
                 });
+                
                 document.getElementById('valRev').textContent = rev.toLocaleString() + " HTG";
                 document.getElementById('valProfit').textContent = profit.toLocaleString() + " HTG";
                 document.getElementById('valCount').textContent = snap.size;
@@ -471,17 +922,21 @@
         function openOrderModal(id) {
             activeOrderID = id;
             const o = ordersCache.find(x => x.id === id);
+            if (!o) return;
+            
             document.getElementById('modId').textContent = `DB_REF: ${o.id}`;
-            const grid = document.getElementById('modFields'); grid.innerHTML = '';
+            const grid = document.getElementById('modFields');
+            grid.innerHTML = '';
 
+            // Extraction des données selon la structure définie
             const data = {
-                "Service": o.service.product,
-                "WhatsApp": o.customerInfo.whatsapp,
-                "Identifiant": o.customerInfo.gameId || o.customerInfo.email || "N/A",
-                "Pseudo": o.customerInfo.gameName || "N/A",
-                "Méthode": o.payment.method.toUpperCase(),
-                "Titulaire": o.payment.senderName || "Non renseigné",
-                "Numéro": o.payment.senderPhone || "N/A"
+                "Service": o.service?.product || 'N/A',
+                "WhatsApp": o.customerInfo?.whatsapp || 'N/A',
+                "Identifiant": o.customerInfo?.gameId || o.customerInfo?.email || 'N/A',
+                "Pseudo": o.customerInfo?.gameName || 'N/A',
+                "Méthode": o.payment?.method?.toUpperCase() || 'N/A',
+                "Titulaire": o.payment?.senderName || 'Non renseigné',
+                "Numéro": o.payment?.senderPhone || 'N/A'
             };
 
             for (let [label, val] of Object.entries(data)) {
@@ -489,11 +944,12 @@
             }
 
             const img = document.getElementById('modProofImg');
-            if(o.payment.proof) {
+            const proofArea = document.getElementById('proofArea');
+            if (o.payment?.proof) {
                 img.src = o.payment.proof;
-                document.getElementById('proofArea').style.display = 'block';
+                proofArea.style.display = 'block';
             } else {
-                document.getElementById('proofArea').style.display = 'none';
+                proofArea.style.display = 'none';
             }
 
             document.getElementById('purchaseCostInput').value = o.purchaseCost || '';
@@ -501,12 +957,21 @@
         }
 
         function openLightbox() {
-            document.getElementById('lightboxImg').src = document.getElementById('modProofImg').src;
-            document.getElementById('lightbox').style.display = 'flex';
+            const src = document.getElementById('modProofImg').src;
+            if (src) {
+                document.getElementById('lightboxImg').src = src;
+                document.getElementById('lightbox').style.display = 'flex';
+            }
         }
 
         async function handleStatus(status) {
-            const cost = parseFloat(document.getElementById('purchaseCostInput').value) || 0;
+            const costInput = document.getElementById('purchaseCostInput');
+            const cost = parseFloat(costInput.value) || 0;
+            if (cost < 0) {
+                triggerToast("Le coût ne peut pas être négatif");
+                return;
+            }
+            
             await db.collection("orders").doc(activeOrderID).update({
                 status: status,
                 purchaseCost: cost,
@@ -516,85 +981,198 @@
             triggerToast(`Commande ${status}`);
         }
 
-        function closeModal() { document.getElementById('orderModal').style.display = 'none'; }
+        function closeModal() {
+            document.getElementById('orderModal').style.display = 'none';
+        }
 
-        /* --- 2. MOTEUR UTILISATEURS --- */
+        // ==========================================================================
+        // 2. GESTION DES UTILISATEURS
+        // ==========================================================================
         function syncUsers() {
             db.collection("users").onSnapshot(snap => {
-                usersCache = []; 
-                const container = document.getElementById('usersContainer'); container.innerHTML = '';
+                usersCache = [];
+                const container = document.getElementById('usersContainer');
+                container.innerHTML = '';
+                
                 snap.forEach(doc => {
-                    const u = doc.data(); const id = doc.id; usersCache.push({id, ...u});
+                    const u = doc.data();
+                    const id = doc.id;
+                    usersCache.push({ id, ...u });
+                    
+                    // Concaténer prénom et nom
+                    const firstName = u.personalInfo?.firstName || '';
+                    const lastName = u.personalInfo?.lastName || '';
+                    const fullName = (firstName + ' ' + lastName).trim() || 'Anonyme';
+                    
                     const isBanned = u.status === 'Banni';
+                    const bgColor = isBanned ? COLOR_ERROR : '#0066ff'; // info
+                    
                     container.innerHTML += `
                         <div class="list-item">
                             <div class="item-side">
-                                <div class="item-icon-box" style="border-radius:50%; background:${isBanned?'var(--error)':'var(--primary)'}">${u.personalInfo?.firstName?.charAt(0) || 'U'}</div>
+                                <div class="item-icon-box" style="border-radius:50%; background:${bgColor};">${fullName.charAt(0)}</div>
                                 <div class="item-info">
-                                    <h5 style="color:${isBanned?var(--error):'#fff'}">${u.personalInfo?.fullName || 'Anonyme'}</h5>
-                                    <p>${u.personalInfo?.email}</p>
+                                    <h5 style="color:${isBanned ? COLOR_ERROR : '#fff'}">${fullName}</h5>
+                                    <p>${u.personalInfo?.email || ''}</p>
                                 </div>
                             </div>
-                            <button class="btn-lite" style="background:${isBanned?var(--success):var(--error)}; color:${isBanned?var(--bg-deep):'#fff'}" onclick="banAction('${id}', '${u.status}')">${isBanned?'DÉBLOQUER':'BANNIR'}</button>
+                            <button class="btn-lite ${isBanned ? 'btn-green' : 'btn-danger'}" onclick="banAction('${id}', '${u.status || 'Actif'}')">
+                                ${isBanned ? 'DÉBLOQUER' : 'BANNIR'}
+                            </button>
                         </div>`;
                 });
             });
         }
-        function banAction(uid, s) { const next = s === 'Banni' ? 'Actif' : 'Banni'; db.collection("users").doc(uid).update({ status: next }); triggerToast("Modération appliquée"); }
-        function searchUsers(v) { /* Filtrage local si nécessaire */ }
 
-        /* --- 3. MOTEUR CMS SERVICES --- */
+        function banAction(uid, currentStatus) {
+            const nextStatus = currentStatus === 'Banni' ? 'Actif' : 'Banni';
+            db.collection("users").doc(uid).update({ status: nextStatus });
+            triggerToast("Modération appliquée");
+        }
+
+        function searchUsers(query) {
+            // Filtrage simple côté client (à améliorer si nécessaire)
+            const items = document.querySelectorAll('#usersContainer .list-item');
+            const lowerQuery = query.toLowerCase();
+            items.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                item.style.display = text.includes(lowerQuery) ? 'flex' : 'none';
+            });
+        }
+
+        // ==========================================================================
+        // 3. CMS SERVICES (ACTIVATION/DÉSACTIVATION)
+        // ==========================================================================
         function syncCMS() {
-            const svcs = ['Free Fire', 'FC Mobile', 'eFootball', 'PUBG Mobile', 'Blood Strike', 'Roblox', 'DLS 24', 'Minecraft', 'Flex City', 'Netflix', 'Disney+', 'Prime Video', 'Crunchyroll', 'PayPal', 'Wise', 'USDT', 'TRONX', 'Telegram Prem.', 'TikTok Coins'];
+            const svcs = [
+                'Free Fire', 'FC Mobile', 'eFootball', 'PUBG Mobile', 'Blood Strike',
+                'Roblox', 'DLS 24', 'Minecraft', 'Flex City', 'Netflix', 'Disney+',
+                'Prime Video', 'Crunchyroll', 'PayPal', 'Wise', 'USDT', 'TRONX',
+                'Telegram Prem.', 'TikTok Coins'
+            ];
+            
             db.collection("cms_services").onSnapshot(snap => {
-                const grid = document.getElementById('cmsGrid'); grid.innerHTML = '';
-                const states = {}; snap.forEach(d => states[d.id] = d.data().active);
+                const grid = document.getElementById('cmsGrid');
+                grid.innerHTML = '';
+                const states = {};
+                snap.forEach(d => states[d.id] = d.data().active);
+                
                 svcs.forEach(s => {
-                    const active = states[s] !== false;
-                    grid.innerHTML += `<div class="kpi-card" style="display:flex; justify-content:space-between; align-items:center; padding:15px 20px;"><div><span style="font-size:0.5rem;">Canal</span><h4 style="font-size:0.75rem;">${s}</h4></div><label class="switch"><input type="checkbox" ${active?'checked':''} onchange="toggleCMS('${s}', this.checked)"><span class="slider"></span></label></div>`;
+                    const active = states[s] !== false; // par défaut true
+                    grid.innerHTML += `
+                        <div class="kpi-card" style="display:flex; justify-content:space-between; align-items:center; padding:15px 20px;">
+                            <div>
+                                <span style="font-size:0.5rem;">Canal</span>
+                                <h4 style="font-size:0.75rem;">${s}</h4>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" ${active ? 'checked' : ''} onchange="toggleCMS('${s}', this.checked)">
+                                <span class="slider"></span>
+                            </label>
+                        </div>`;
                 });
             });
         }
-        function toggleCMS(id, val) { db.collection("cms_services").doc(id).set({ active: val }, { merge: true }); triggerToast(`${id} mis à jour`); }
 
-        /* --- 4. MOTEUR MARKETING ADS --- */
-        async function pushAd() {
-            const msg = document.getElementById('adTextarea').value; if(!msg) return;
-            await db.collection("announcements").add({ message: msg, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-            document.getElementById('adTextarea').value = ''; triggerToast("Annonce en ligne");
+        function toggleCMS(id, val) {
+            db.collection("cms_services").doc(id).set({ active: val }, { merge: true });
+            triggerToast(`${id} mis à jour`);
         }
+
+        // ==========================================================================
+        // 4. MARKETING (ANNONCES)
+        // ==========================================================================
+        async function pushAd() {
+            const msg = document.getElementById('adTextarea').value.trim();
+            if (!msg) {
+                triggerToast("Message vide");
+                return;
+            }
+            await db.collection("announcements").add({
+                message: msg,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            document.getElementById('adTextarea').value = '';
+            triggerToast("Annonce en ligne");
+        }
+
         function syncMarketing() {
             db.collection("announcements").orderBy("createdAt", "desc").limit(3).onSnapshot(snap => {
-                const hist = document.getElementById('adHistory'); hist.innerHTML = '<p class="nav-label">Historique</p>';
-                snap.forEach(doc => hist.innerHTML += `<div class="list-item" style="font-size:0.7rem; color:var(--text-muted);">${doc.data().message}</div>`);
+                const hist = document.getElementById('adHistory');
+                hist.innerHTML = '<p class="nav-label">Historique</p>';
+                snap.forEach(doc => {
+                    hist.innerHTML += `<div class="list-item" style="font-size:0.7rem; color:var(--text-muted);">${doc.data().message}</div>`;
+                });
             });
         }
 
-        /* --- 5. CRM CHAT SUPPORT --- */
+        // ==========================================================================
+        // 5. CRM SUPPORT CHAT
+        // ==========================================================================
         function syncCRM() {
             db.collection("chats").orderBy("timestamp", "desc").onSnapshot(snap => {
-                const list = document.getElementById('chatList'); list.innerHTML = ''; const grouped = {};
-                snap.forEach(doc => { const c = doc.data(); if(!grouped[c.userUID]) { grouped[c.userUID] = true; list.innerHTML += `<div class="list-item" style="cursor:pointer;" onclick="openChatRoom('${c.userUID}', '${c.userName}')"><div style="font-weight:800; font-size:0.75rem;">${c.userName.split('@')[0]}</div></div>`; } });
+                const list = document.getElementById('chatList');
+                list.innerHTML = '';
+                const grouped = {};
+                
+                snap.forEach(doc => {
+                    const c = doc.data();
+                    if (!grouped[c.userUID] && c.userUID) {
+                        grouped[c.userUID] = true;
+                        const userName = c.userName || c.userUID.slice(0,6);
+                        list.innerHTML += `
+                            <div class="list-item" style="cursor:pointer;" onclick="openChatRoom('${c.userUID}', '${userName}')">
+                                <div style="font-weight:800; font-size:0.75rem;">${userName}</div>
+                            </div>`;
+                    }
+                });
             });
         }
+
         function openChatRoom(uid, name) {
-            activeChatUID = uid; document.getElementById('chatWin').style.display = 'flex';
-            db.collection("chats").where("userUID", "==", uid).orderBy("timestamp", "asc").onSnapshot(snap => {
-                const flow = document.getElementById('chatFlow'); flow.innerHTML = '';
-                snap.forEach(doc => { const m = doc.data(); const adm = m.sender === 'admin'; flow.innerHTML += `<div class="m ${adm?'m-admin':'m-user'}">${m.text}</div>`; });
-                flow.scrollTop = flow.scrollHeight;
-            });
-            triggerToast(`Ticket : ${name.split('@')[0]}`);
+            activeChatUID = uid;
+            document.getElementById('chatWin').style.display = 'flex';
+            
+            db.collection("chats")
+                .where("userUID", "==", uid)
+                .orderBy("timestamp", "asc")
+                .onSnapshot(snap => {
+                    const flow = document.getElementById('chatFlow');
+                    flow.innerHTML = '';
+                    snap.forEach(doc => {
+                        const m = doc.data();
+                        const adm = m.sender === 'admin';
+                        flow.innerHTML += `<div class="m ${adm ? 'm-admin' : 'm-user'}">${m.text}</div>`;
+                    });
+                    flow.scrollTop = flow.scrollHeight;
+                });
+            
+            triggerToast(`Ticket : ${name}`);
         }
+
         document.getElementById('chatActionForm').onsubmit = async (e) => {
-            e.preventDefault(); const msg = document.getElementById('adminReply').value; if(!msg || !activeChatUID) return;
-            await db.collection("chats").add({ userUID: activeChatUID, text: msg, sender: "admin", timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+            e.preventDefault();
+            const msg = document.getElementById('adminReply').value.trim();
+            if (!msg || !activeChatUID) return;
+            
+            await db.collection("chats").add({
+                userUID: activeChatUID,
+                text: msg,
+                sender: "admin",
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
             document.getElementById('adminReply').value = '';
         };
 
-        // Gérer le redimensionnement Sidebar
-        window.onresize = () => { if(window.innerWidth > 1024) { sidebar.classList.remove('active'); overlay.classList.remove('active'); } };
-
+        // ==========================================================================
+        // GESTION REDIMENSIONNEMENT
+        // ==========================================================================
+        window.onresize = () => {
+            if (window.innerWidth > 1024) {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+        };
     </script>
 </body>
 </html>
