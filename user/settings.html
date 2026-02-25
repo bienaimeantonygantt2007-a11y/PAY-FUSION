@@ -3,140 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fox Store — Paramètres</title>
+    <title>Paramètres — Fox Store Elite</title>
     
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    
-    <!-- Font Awesome 6 Pro -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --primary: #0056b3;
-            --secondary: #001e62;
-            --bg: #ffffff;
-            --card-bg: #f8fafc;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --danger: #ef4444;
-            --border: #e2e8f0;
+            --primary: #0056b3; --bg: #f8fafc; --white: #ffffff;
+            --text: #1e293b; --muted: #64748b; --border: rgba(0, 86, 179, 0.08);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text-main); padding-bottom: 40px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding-bottom: 40px; }
 
-        header {
-            height: 60px; background: #fff; display: flex; align-items: center; 
-            padding: 0 5%; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--border);
+        /* --- NOTIFICATION TOAST PRO --- */
+        #toast {
+            position: fixed; top: 20px; right: 20px; background: var(--white);
+            border-left: 4px solid var(--primary); padding: 15px 25px; border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px;
+            transform: translateX(150%); transition: var(--transition); z-index: 9999;
         }
-        .back-btn { color: var(--primary); font-size: 1.1rem; text-decoration: none; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: var(--card-bg); }
+        #toast.active { transform: translateX(0); }
+        #toast i { font-size: 1.2rem; color: var(--primary); }
+        #toast span { font-size: 0.85rem; font-weight: 700; color: var(--text); }
 
-        .container { padding: 20px 5%; max-width: 500px; margin: 0 auto; }
+        header { height: 65px; background: #fff; display: flex; align-items: center; padding: 0 5%; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; }
+        .back-btn { color: var(--primary); font-size: 1.2rem; text-decoration: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 12px; transition: var(--transition); }
+        header h1 { font-size: 0.95rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; margin-left: 10px; }
 
-        .section-label { font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin: 25px 0 10px 5px; }
+        .container { padding: 25px 5%; max-width: 500px; margin: 0 auto; }
+        .card { background: #fff; border-radius: 24px; padding: 30px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 25px; }
+        .section-label { font-size: 0.7rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; padding-left: 5px; }
 
-        .settings-card { background: #fff; border-radius: 20px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 0.65rem; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+        .form-group input { width: 100%; padding: 15px; border: 1.5px solid #e2e8f0; border-radius: 14px; outline: none; font-size: 0.95rem; font-weight: 600; background: #fcfcfd; transition: 0.3s; }
+        .form-group input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.04); }
 
-        .setting-row {
-            padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid var(--border); cursor: pointer; transition: var(--transition);
-        }
-        .setting-row:last-child { border-bottom: none; }
-        .setting-row:active { background: var(--card-bg); }
+        .btn-primary { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 800; font-size: 0.9rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-primary:hover { background: #003d82; transform: translateY(-2px); }
 
-        .row-left { display: flex; align-items: center; gap: 15px; }
-        .row-left i { width: 32px; height: 32px; background: var(--card-bg); color: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
-        .row-left span { font-size: 0.85rem; font-weight: 700; }
-
-        .row-right { color: var(--text-muted); font-size: 0.8rem; font-weight: 600; }
-
-        /* Switch Toggle */
-        .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; inset: 0; background-color: #cbd5e1; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--primary); }
-        input:checked + .slider:before { transform: translateX(18px); }
-
-        .danger-item i { color: var(--danger) !important; background: #fff5f5 !important; }
-        .danger-item span { color: var(--danger); }
+        .setting-item { padding: 15px 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f8fafc; cursor: pointer; }
+        .setting-item:last-child { border-bottom: none; }
+        .item-text h4 { font-size: 0.9rem; font-weight: 700; color: var(--text); }
+        .item-text p { font-size: 0.75rem; color: var(--muted); font-weight: 600; }
     </style>
 </head>
 <body>
 
-    <header>
-        <a href="/home.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
-        <h1 style="font-size:0.9rem; font-weight:800; margin-left:15px; text-transform: uppercase;">Préférences</h1>
-    </header>
+    <div id="toast"><i class="fas fa-info-circle"></i> <span id="toastMsg">Message</span></div>
+
+    <header><a href="/home.html" class="back-btn"><i class="fas fa-arrow-left"></i></a><h1>Paramètres du Compte</h1></header>
 
     <div class="container">
-        
-        <!-- PRÉFÉRENCES -->
-        <p class="section-label">Application</p>
-        <div class="settings-card">
-            <div class="setting-row">
-                <div class="row-left"><i class="fas fa-globe"></i><span>Langue</span></div>
-                <div class="row-right">Français <i class="fas fa-chevron-right" style="margin-left:5px; font-size:0.7rem;"></i></div>
+        <p class="section-label">Identité Fox Store</p>
+        <div class="card">
+            <form id="profileForm">
+                <div class="form-group"><label>Prénom</label><input type="text" id="fn" required></div>
+                <div class="form-group"><label>Nom de famille</label><input type="text" id="ln" required></div>
+                <div class="form-group"><label>Numéro WhatsApp</label><input type="tel" id="ph" required></div>
+                <button type="submit" class="btn-primary">Enregistrer les changements <i class="fas fa-check-circle"></i></button>
+            </form>
+        </div>
+
+        <p class="section-label">Sécurité & Privacité</p>
+        <div class="card">
+            <div class="setting-item" onclick="triggerPassReset()">
+                <div class="item-text"><h4>Mot de passe</h4><p>Recevoir un lien de réinitialisation</p></div>
+                <i class="fas fa-chevron-right" style="color:var(--muted)"></i>
             </div>
-            <div class="setting-row">
-                <div class="row-left"><i class="fas fa-bell"></i><span>Notifications Push</span></div>
-                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            <div class="setting-item">
+                <div class="item-text"><h4>Authentification</h4><p>Compte protégé par cryptage SSL</p></div>
+                <i class="fas fa-shield-alt" style="color:var(--primary)"></i>
             </div>
         </div>
 
-        <!-- LÉGAL -->
-        <p class="section-label">Légal & Support</p>
-        <div class="settings-card">
-            <a href="/user/supports.html" style="text-decoration:none; color:inherit;">
-                <div class="setting-row">
-                    <div class="row-left"><i class="fas fa-question-circle"></i><span>Aide & FAQ</span></div>
-                    <div class="row-right"><i class="fas fa-external-link-alt"></i></div>
-                </div>
-            </a>
-            <div class="setting-row">
-                <div class="row-left"><i class="fas fa-file-shield"></i><span>Politique de confidentialité</span></div>
-                <div class="row-right"><i class="fas fa-chevron-right"></i></div>
-            </div>
-        </div>
-
-        <!-- COMPTE -->
-        <p class="section-label">Sécurité</p>
-        <div class="settings-card">
-            <div class="setting-row" onclick="handlePasswordReset()">
-                <div class="row-left"><i class="fas fa-fingerprint"></i><span>Double authentification</span></div>
-                <div class="row-right">Désactivé</div>
-            </div>
-            <div class="setting-row danger-item" onclick="confirmDelete()">
-                <div class="row-left"><i class="fas fa-user-slash"></i><span>Supprimer le compte</span></div>
-                <div class="row-right"><i class="fas fa-exclamation-triangle"></i></div>
-            </div>
-        </div>
-
-        <div style="text-align:center; margin-top:40px; opacity:0.4;">
-            <img src="/assets/logos/payfusion-logo.png" style="height:30px; filter:grayscale(1);">
-            <p style="font-size:0.6rem; font-weight:800; letter-spacing:1px; margin-top:10px;">VERSION 4.8.5 — BUILD 2026</p>
-        </div>
-
+        <a href="/logout.html" class="btn-primary" style="background:#fff5f5; color:#ff4444; border:1px solid #ffebee; margin-top:10px;">Déconnexion sécurisée <i class="fas fa-power-off"></i></a>
     </div>
 
     <script>
         const firebaseConfig = { apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg", authDomain: "pay-fusion-6dfaf.firebaseapp.com", projectId: "pay-fusion-6dfaf", storageBucket: "pay-fusion-6dfaf.firebasestorage.app", messagingSenderId: "945593776812", appId: "1:945593776812:web:4475e1085fdfa31690fd09", measurementId: "G-8FEQG6B7ZY" };
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
+        const auth = firebase.auth(), db = firebase.firestore();
 
-        function handlePasswordReset() {
-            auth.sendPasswordResetEmail(auth.currentUser.email).then(() => alert("Email de sécurité envoyé."));
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = msg;
+            t.classList.add('active');
+            setTimeout(() => t.classList.remove('active'), 4000);
         }
 
-        function confirmDelete() {
-            if(confirm("Action irréversible. Supprimer définitivement votre compte Fox Store ?")) {
-                alert("Veuillez contacter l'administrateur pour finaliser la suppression.");
-            }
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                db.collection("users").doc(user.uid).onSnapshot(doc => {
+                    const info = doc.data().personalInfo;
+                    document.getElementById('fn').value = info.firstName;
+                    document.getElementById('ln').value = info.lastName;
+                    document.getElementById('ph').value = info.phone;
+                });
+            } else { window.location.href = "/login.html"; }
+        });
+
+        document.getElementById('profileForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+            const fn = document.getElementById('fn').value, ln = document.getElementById('ln').value, ph = document.getElementById('ph').value;
+
+            try {
+                await db.collection("users").doc(user.uid).update({
+                    "personalInfo.firstName": fn, "personalInfo.lastName": ln,
+                    "personalInfo.fullName": fn + " " + ln, "personalInfo.phone": ph
+                });
+                showToast("Vos modifications ont été enregistrées.");
+            } catch (e) { showToast("Une erreur est survenue."); }
+        };
+
+        function triggerPassReset() {
+            auth.sendPasswordResetEmail(auth.currentUser.email).then(() => {
+                showToast("Email de sécurité envoyé avec succès.");
+            }).catch(() => showToast("Erreur lors de l'envoi de l'email."));
         }
     </script>
 </body>
