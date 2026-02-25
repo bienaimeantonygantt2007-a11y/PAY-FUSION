@@ -3,167 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fox Store - Mon Profil</title>
+    <title>Fox Store — Mon Profil Elite</title>
     
+    <!-- 
+        FOX STORE ARCHITECTURE v4.8 - ACCOUNT MANAGEMENT
+        PERMET LA MODIFICATION EN TEMPS RÉEL DU PROFIL (NOM, PRÉNOM, TÉL)
+        ZÉRO SIMULATION - INTÉGRATION FIRESTORE COMPLÈTE
+    -->
+
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     
-    <!-- Font Awesome 6 -->
+    <!-- Font Awesome 6 Pro -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Premium Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --primary: #0056b3;
-            --secondary: #002d5e;
+            --secondary: #001e62;
+            --accent: #00d1ff;
             --white: #ffffff;
-            --bg: #f8fafc;
+            --bg-body: #f8fafc;
             --text-main: #1e293b;
             --text-muted: #64748b;
+            --success: #00c853;
+            --danger: #ff4444;
             --border: rgba(0, 86, 179, 0.08);
-            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius: 20px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text-main); padding-bottom: 40px; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding-bottom: 40px; }
 
-        /* --- HEADER --- */
+        /* --- HEADER COMPACT --- */
         header {
-            height: 65px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            height: 60px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
             display: flex; align-items: center; padding: 0 5%; position: sticky; top: 0; z-index: 1000;
             border-bottom: 1px solid var(--border);
         }
         .back-btn { 
-            color: var(--primary); font-size: 1.2rem; text-decoration: none; 
-            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
-            border-radius: 12px; transition: var(--transition);
+            color: var(--primary); font-size: 1.1rem; text-decoration: none; 
+            width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;
+            border-radius: 10px; transition: var(--transition); background: #f0f7ff;
         }
-        .back-btn:hover { background: #f0f7ff; }
-        header h1 { font-size: 0.95rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-left: 10px; }
+        header h1 { font-size: 0.9rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-left: 12px; }
 
-        .container { padding: 25px 5%; max-width: 600px; margin: 0 auto; }
+        .container { padding: 20px 5%; max-width: 550px; margin: 0 auto; }
 
-        /* --- PROFILE HEADER --- */
-        .profile-card {
-            background: var(--white); border-radius: 25px; padding: 30px;
+        /* --- PROFILE CARD --- */
+        .profile-hero {
+            background: var(--white); border-radius: var(--radius); padding: 25px;
             text-align: center; border: 1px solid var(--border);
-            box-shadow: 0 10px 30px rgba(0, 86, 179, 0.03);
-            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0, 86, 179, 0.02);
+            margin-bottom: 20px;
         }
 
-        .avatar-circle {
-            width: 90px; height: 90px; background: #f0f7ff; color: var(--primary);
-            border-radius: 30px; display: flex; align-items: center; justify-content: center;
-            font-size: 2.5rem; margin: 0 auto 15px; border: 2px solid var(--white);
-            box-shadow: 0 8px 20px rgba(0, 86, 179, 0.1);
+        .avatar-box {
+            width: 70px; height: 70px; background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white; border-radius: 22px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; font-weight: 800; margin: 0 auto 15px;
+            box-shadow: 0 8px 20px rgba(0, 86, 179, 0.15);
         }
 
-        .profile-card h2 { font-size: 1.4rem; font-weight: 800; color: var(--secondary); margin-bottom: 5px; }
-        .profile-card p { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+        .profile-hero h2 { font-size: 1.2rem; font-weight: 800; color: var(--secondary); }
+        .profile-hero p { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
 
         /* --- STATS GRID --- */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
-        .stat-item {
-            background: var(--white); padding: 20px; border-radius: 20px;
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .stat-card {
+            background: var(--white); padding: 15px; border-radius: 18px;
             border: 1px solid var(--border); text-align: center;
         }
-        .stat-item span { font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; }
-        .stat-item b { font-size: 1.2rem; font-weight: 800; color: var(--primary); }
+        .stat-card span { font-size: 0.6rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; }
+        .stat-card b { font-size: 1rem; font-weight: 800; color: var(--primary); }
 
-        /* --- INFO LIST --- */
-        .info-section {
-            background: var(--white); border-radius: 25px; border: 1px solid var(--border);
-            overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+        /* --- FORMULAIRE DE MODIFICATION --- */
+        .section-label { font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin: 10px 0 12px 5px; display: flex; align-items: center; gap: 8px; }
+        
+        .form-card { background: var(--white); border-radius: var(--radius); padding: 25px; border: 1px solid var(--border); margin-bottom: 20px; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; margin-left: 4px; }
+        .form-group input {
+            width: 100%; padding: 14px; border: 1.5px solid #e2e8f0; border-radius: 12px;
+            outline: none; font-size: 0.9rem; font-weight: 600; color: var(--text-main); background: #fcfcfd; transition: 0.3s;
         }
+        .form-group input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.04); }
 
-        .info-row {
-            padding: 20px 25px; display: flex; align-items: center; gap: 15px;
-            border-bottom: 1px solid #f8fafc;
+        .btn-save { 
+            width: 100%; padding: 16px; background: var(--primary); color: white; border: none; 
+            border-radius: 14px; font-weight: 800; font-size: 0.85rem; cursor: pointer; 
+            transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 10px 20px rgba(0, 86, 179, 0.15);
         }
-        .info-row:last-child { border-bottom: none; }
+        .btn-save:hover { background: var(--secondary); transform: translateY(-2px); }
+        .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        .info-icon {
-            width: 40px; height: 40px; background: #f8fafc; border-radius: 12px;
-            display: flex; align-items: center; justify-content: center; color: var(--primary);
-            font-size: 1.1rem;
+        /* --- ACTIONS SECONDAIRES --- */
+        .action-row {
+            background: var(--white); padding: 18px 20px; border-radius: 16px; border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
+            cursor: pointer; transition: 0.3s;
         }
+        .action-row:active { background: #fcfdfe; }
+        .action-left { display: flex; align-items: center; gap: 12px; }
+        .action-left i { width: 32px; height: 32px; background: #f0f7ff; color: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
+        .action-left span { font-size: 0.85rem; font-weight: 700; }
 
-        .info-content label { display: block; font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; }
-        .info-content span { font-size: 0.95rem; font-weight: 700; color: var(--secondary); }
-
-        /* --- ACTIONS --- */
         .btn-logout {
-            margin-top: 30px; width: 100%; padding: 18px; border-radius: 15px;
-            border: 1px solid #ffebee; background: #fff5f5; color: #ff4444;
-            font-weight: 800; font-size: 0.9rem; cursor: pointer; transition: var(--transition);
+            margin-top: 20px; width: 100%; padding: 16px; border-radius: 14px;
+            border: 1px solid #ffebee; background: #fff5f5; color: var(--danger);
+            font-weight: 800; font-size: 0.85rem; cursor: pointer; text-decoration: none;
             display: flex; align-items: center; justify-content: center; gap: 10px;
-            text-decoration: none;
         }
-        .btn-logout:hover { background: #ff4444; color: white; transform: translateY(-3px); }
+
+        /* --- FEEDBACK TOAST --- */
+        #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--secondary); color: white; padding: 12px 25px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; display: none; z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.2); animation: slideDown 0.4s ease; }
+        @keyframes slideDown { from { top: -50px; } to { top: 20px; } }
 
     </style>
 </head>
 <body>
 
+    <div id="toast">Modifications enregistrées <i class="fas fa-check-circle"></i></div>
+
     <header>
         <a href="/home.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
-        <h1>Mon Profil</h1>
+        <h1>Mon Compte</h1>
     </header>
 
     <div class="container">
-        <!-- Carte de base -->
-        <div class="profile-card">
-            <div class="avatar-circle">
-                <i class="fas fa-user-tie"></i>
-            </div>
-            <h2 id="userName">Chargement...</h2>
-            <p id="userEmail">...</p>
+        
+        <!-- RÉSUMÉ PROFIL -->
+        <div class="profile-hero">
+            <div class="avatar-box" id="avatarInitials">FX</div>
+            <h2 id="fullNameDisplay">Chargement...</h2>
+            <p id="emailDisplay">...</p>
         </div>
 
-        <!-- Statistiques (Structure 8.1) -->
+        <!-- STATISTIQUES RÉELLES -->
         <div class="stats-grid">
-            <div class="stat-item">
+            <div class="stat-card">
                 <span>Commandes</span>
-                <b id="statOrders">0</b>
+                <b id="countOrders">0</b>
             </div>
-            <div class="stat-item">
+            <div class="stat-card">
                 <span>Total Dépensé</span>
-                <b id="statSpent">0 HTG</b>
+                <b id="totalSpent">0 HTG</b>
             </div>
         </div>
 
-        <!-- Détails personnels -->
-        <div class="info-section">
-            <div class="info-row">
-                <div class="info-icon"><i class="fas fa-envelope"></i></div>
-                <div class="info-content">
-                    <label>Adresse Email</label>
-                    <span id="detailEmail">...</span>
+        <!-- FORMULAIRE DE MISE À JOUR -->
+        <p class="section-label">Éditer mes informations</p>
+        <div class="form-card">
+            <form id="updateAccountForm">
+                <div class="form-group">
+                    <label>Prénom</label>
+                    <input type="text" id="firstName" required>
                 </div>
-            </div>
-            <div class="info-row">
-                <div class="info-icon"><i class="fas fa-phone"></i></div>
-                <div class="info-content">
-                    <label>Téléphone</label>
-                    <span id="detailPhone">...</span>
+                <div class="form-group">
+                    <label>Nom de famille</label>
+                    <input type="text" id="lastName" required>
                 </div>
-            </div>
-            <div class="info-row">
-                <div class="info-icon"><i class="fas fa-calendar-alt"></i></div>
-                <div class="info-content">
-                    <label>Membre depuis</label>
-                    <span id="detailDate">...</span>
+                <div class="form-group">
+                    <label>Téléphone WhatsApp</label>
+                    <input type="tel" id="phone" required>
                 </div>
-            </div>
+                <button type="submit" class="btn-save" id="btnSave">
+                    Mettre à jour le profil <i class="fas fa-sync-alt"></i>
+                </button>
+            </form>
         </div>
 
+        <!-- SÉCURITÉ -->
+        <p class="section-label">Sécurité & Accès</p>
+        <div class="action-row" onclick="sendPasswordReset()">
+            <div class="action-left">
+                <i class="fas fa-lock-alt"></i>
+                <span>Changer le mot de passe</span>
+            </div>
+            <i class="fas fa-chevron-right" style="font-size: 0.7rem; color: var(--text-muted);"></i>
+        </div>
+
+        <!-- DÉCONNEXION -->
         <a href="/logout.html" class="btn-logout">
             <i class="fas fa-power-off"></i> Déconnexion du compte
         </a>
+
+        <p style="text-align: center; color: var(--text-muted); font-size: 0.6rem; font-weight: 700; margin-top: 30px; letter-spacing: 1px;">FOX STORE ELITE v4.8.0</p>
     </div>
 
     <script>
@@ -179,39 +212,85 @@
         };
         
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
         const db = firebase.firestore();
+        const auth = firebase.auth();
 
+        // Écoute en temps réel des données
         auth.onAuthStateChanged(user => {
             if (user) {
-                // Récupération des données utilisateur en temps réel
                 db.collection("users").doc(user.uid).onSnapshot(doc => {
                     if (doc.exists) {
                         const data = doc.data();
                         const info = data.personalInfo || {};
                         const stats = data.stats || { ordersCount: 0, totalSpent: 0 };
 
-                        // Mise à jour de l'UI
-                        document.getElementById('userName').textContent = info.fullName || "Utilisateur Fox Store";
-                        document.getElementById('userEmail').textContent = info.email;
-                        document.getElementById('detailEmail').textContent = info.email;
-                        document.getElementById('detailPhone').textContent = info.phone || "Non renseigné";
+                        // Remplissage des champs
+                        document.getElementById('firstName').value = info.firstName || "";
+                        document.getElementById('lastName').value = info.lastName || "";
+                        document.getElementById('phone').value = info.phone || "";
                         
-                        // Statistiques
-                        document.getElementById('statOrders').textContent = stats.ordersCount;
-                        document.getElementById('statSpent').textContent = (stats.totalSpent || 0).toLocaleString() + " HTG";
+                        // Affichage dynamique
+                        document.getElementById('fullNameDisplay').textContent = info.fullName || "Utilisateur Fox";
+                        document.getElementById('emailDisplay').textContent = info.email;
+                        document.getElementById('countOrders').textContent = stats.ordersCount;
+                        document.getElementById('totalSpent').textContent = (stats.totalSpent || 0).toLocaleString() + " HTG";
 
-                        // Date de création
-                        if(info.createdAt) {
-                            const date = new Date(info.createdAt.seconds * 1000);
-                            document.getElementById('detailDate').textContent = date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-                        }
+                        // Initiales Avatar
+                        const initials = (info.firstName?.charAt(0) || "F") + (info.lastName?.charAt(0) || "X");
+                        document.getElementById('avatarInitials').textContent = initials.toUpperCase();
+
+                        // Anti-Ban
+                        if(data.status === "Banni") window.location.href = "/logout.html";
                     }
                 });
             } else {
                 window.location.href = "/login.html";
             }
         });
+
+        // Moteur de mise à jour (ZÉRO SIMULATION)
+        document.getElementById('updateAccountForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSave');
+            const fName = document.getElementById('firstName').value.trim();
+            const lName = document.getElementById('lastName').value.trim();
+            const ph = document.getElementById('phone').value.trim();
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Traitement...`;
+
+            try {
+                const user = auth.currentUser;
+                await db.collection("users").doc(user.uid).update({
+                    "personalInfo.firstName": fName,
+                    "personalInfo.lastName": lName,
+                    "personalInfo.fullName": fName + " " + lName,
+                    "personalInfo.phone": ph
+                });
+
+                showToast();
+            } catch (err) {
+                alert("Erreur lors de la mise à jour.");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `Mettre à jour le profil <i class="fas fa-sync-alt"></i>`;
+            }
+        };
+
+        function showToast() {
+            const t = document.getElementById('toast');
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
+        }
+
+        function sendPasswordReset() {
+            const email = auth.currentUser.email;
+            if(confirm("Envoyer un lien de réinitialisation de mot de passe à " + email + " ?")) {
+                auth.sendPasswordResetEmail(email).then(() => {
+                    alert("Email de sécurité envoyé !");
+                });
+            }
+        }
     </script>
 </body>
 </html>
