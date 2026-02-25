@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fox Store - Finaliser la commande</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #0056b3;
+            --secondary: #002d5e;
+            --accent: #00d2ff;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --text: #1e293b;
+            --muted: #64748b;
+            --success: #00c853;
+            --border: rgba(0, 86, 179, 0.08);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text); padding-bottom: 40px; }
+
+        /* --- HEADER --- */
+        header {
+            height: 65px; background: var(--white); display: flex; align-items: center; 
+            padding: 0 5%; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--border);
+        }
+        header .back-btn { color: var(--primary); font-size: 1.2rem; text-decoration: none; margin-right: 15px; }
+        header h1 { font-size: 0.95rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .container { padding: 20px 5%; max-width: 600px; margin: 0 auto; }
+
+        /* --- RÉSUMÉ PANIER --- */
+        .section-card { 
+            background: var(--white); padding: 20px; border-radius: 20px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02); margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+        .cart-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 12px 0; border-bottom: 1px solid #f1f5f9; 
+        }
+        .item-info h4 { font-size: 0.9rem; font-weight: 700; color: var(--secondary); }
+        .item-info p { font-size: 0.75rem; color: var(--muted); }
+        .item-price { font-weight: 800; color: var(--primary); font-size: 0.9rem; }
+
+        .summary { margin-top: 15px; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; color: var(--muted); }
+        .total-row { 
+            font-size: 1.1rem; font-weight: 900; color: var(--secondary); 
+            margin-top: 12px; padding-top: 12px; border-top: 2px dashed #e2e8f0;
+        }
+
+        /* --- PAIEMENT --- */
+        .payment-methods { display: none; animation: slideUp 0.4s ease; }
+        .payment-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        .method-card { 
+            background: var(--white); border: 2px solid transparent; border-radius: 15px; 
+            padding: 12px; text-align: center; cursor: pointer; transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+        .method-card img { height: 30px; width: auto; margin-bottom: 5px; filter: grayscale(1); opacity: 0.5; }
+        .method-card.selected { border-color: var(--primary); background: #f0f7ff; }
+        .method-card.selected img { filter: grayscale(0); opacity: 1; }
+
+        .payment-form { display: none; animation: fadeIn 0.5s ease; margin-top: 20px; }
+        .instruction-box { 
+            background: #f0f7ff; padding: 18px; border-radius: 15px; margin-bottom: 20px; 
+            font-size: 0.85rem; border-left: 4px solid var(--primary); line-height: 1.5;
+        }
+        .instruction-box b { color: var(--primary); }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.7rem; font-weight: 800; margin-bottom: 8px; color: var(--muted); text-transform: uppercase; }
+        .form-group input { 
+            width: 100%; padding: 14px; border: 1.5px solid #e2e8f0; border-radius: 12px; 
+            outline: none; font-size: 0.9rem; background: #fcfcfd;
+        }
+        
+        .upload-area { 
+            position: relative; border: 2px dashed #cbd5e1; padding: 25px; 
+            border-radius: 15px; text-align: center; transition: 0.3s; background: #fcfcfd;
+        }
+        .upload-area i { font-size: 1.5rem; color: var(--primary); margin-bottom: 8px; display: block; }
+        .upload-area p { font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+
+        .btn-pay { 
+            width: 100%; padding: 18px; background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+            color: white; border: none; border-radius: 15px; font-weight: 800; font-size: 1rem;
+            cursor: pointer; margin-top: 10px; transition: var(--transition);
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        .btn-pay:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* --- LOADING OVERLAY --- */
+        #loadingOverlay {
+            position: fixed; top:0; left:0; width:100%; height:100%; 
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(5px);
+            display:none; flex-direction:column; justify-content:center; align-items:center; z-index:2000;
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div id="loadingOverlay">
+        <i class="fas fa-spinner fa-spin fa-2x" style="color: var(--primary);"></i>
+        <p style="margin-top:15px; font-weight:800; color: var(--secondary);">Traitement de la commande...</p>
+    </div>
+
+    <header>
+        <a href="/home.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <h1>Vérification de commande</h1>
+    </header>
+
+    <div class="container">
+        <!-- RÉSUMÉ -->
+        <div class="section-card">
+            <h3 style="font-size: 0.7rem; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; letter-spacing: 1px;">Résumé des articles</h3>
+            <div id="cartList"></div>
+            
+            <div class="summary">
+                <div class="summary-row"><span>Sous-total</span> <span id="subtotal">0 HTG</span></div>
+                <div class="summary-row"><span>Frais de service</span> <span id="fees">0 HTG</span></div>
+                <div class="summary-row total-row"><span>Total à payer</span> <span id="totalPrice">0 HTG</span></div>
+            </div>
+        </div>
+
+        <button class="btn-pay" id="btnNext" onclick="showPaymentOptions()">
+            Continuer vers le paiement <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <!-- MODES DE PAIEMENT -->
+        <div class="payment-methods" id="paymentMethodsSec">
+            <h3 style="font-size: 0.7rem; text-transform: uppercase; color: var(--muted); margin: 15px 0; letter-spacing: 1px;">Méthode de paiement</h3>
+            <div class="payment-grid">
+                <div class="method-card" onclick="selectMethod('moncash', this)">
+                    <img src="/assets/logos/moncash-logo.png" alt="MonCash">
+                </div>
+                <div class="method-card" onclick="selectMethod('natcash', this)">
+                    <img src="/assets/logos/natcash-logo.png" alt="NatCash">
+                </div>
+                <div class="method-card" onclick="selectMethod('usdt', this)">
+                    <img src="/assets/logos/usdt-logo.png" alt="USDT">
+                </div>
+            </div>
+        </div>
+
+        <!-- FORMULAIRE PREUVE -->
+        <div class="payment-form" id="finalFormSec">
+            <div class="instruction-box" id="paymentInstructions"></div>
+            
+            <form id="orderForm">
+                <div id="dynamicInputs"></div>
+                
+                <div class="form-group">
+                    <label>Capture d'écran du reçu (Preuve)</label>
+                    <div class="upload-area">
+                        <i class="fas fa-camera"></i>
+                        <p id="fileLabel">Joindre le reçu de transfert</p>
+                        <input type="file" id="proofInput" accept="image/*" required style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-pay" id="submitBtn">
+                    Confirmer mon achat <i class="fas fa-check-circle"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Configuration Firebase Master Fox Store
+        const firebaseConfig = {
+            apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg",
+            authDomain: "pay-fusion-6dfaf.firebaseapp.com",
+            projectId: "pay-fusion-6dfaf",
+            storageBucket: "pay-fusion-6dfaf.firebasestorage.app",
+            messagingSenderId: "945593776812",
+            appId: "1:945593776812:web:4475e1085fdfa31690fd09",
+            measurementId: "G-8FEQG6B7ZY"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        let cart = JSON.parse(localStorage.getItem('foxstore_cart')) || [];
+        let methodSelected = '';
+        let proofBase64 = '';
+        let totalFinalHTG = 0;
+
+        // Protection de session
+        auth.onAuthStateChanged(user => {
+            if (!user) window.location.href = "/login.html";
+        });
+
+        // Affichage du panier
+        function renderCart() {
+            const list = document.getElementById('cartList');
+            let subtotal = 0;
+            let fees = 0;
+
+            if(cart.length === 0) {
+                list.innerHTML = "<p style='font-size:0.8rem; color:var(--muted); text-align:center;'>Panier vide.</p>";
+                document.getElementById('btnNext').style.display = 'none';
+                return;
+            }
+
+            list.innerHTML = cart.map(item => {
+                subtotal += item.price;
+                // Frais de 100 HTG sur services financiers
+                if(["PayPal", "Wise", "USDT", "TRONX"].includes(item.name)) fees += 100;
+                return `
+                    <div class="cart-item">
+                        <div class="item-info">
+                            <h4>${item.name}</h4>
+                            <p>${item.product}</p>
+                        </div>
+                        <div class="item-price">${item.price.toLocaleString()} HTG</div>
+                    </div>
+                `;
+            }).join('');
+
+            totalFinalHTG = subtotal + fees;
+            document.getElementById('subtotal').textContent = subtotal.toLocaleString() + " HTG";
+            document.getElementById('fees').textContent = fees.toLocaleString() + " HTG";
+            document.getElementById('totalPrice').textContent = totalFinalHTG.toLocaleString() + " HTG";
+        }
+
+        renderCart();
+
+        function showPaymentOptions() {
+            document.getElementById('btnNext').style.display = 'none';
+            document.getElementById('paymentMethodsSec').style.display = 'block';
+        }
+
+        function selectMethod(method, el) {
+            methodSelected = method;
+            document.querySelectorAll('.method-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            
+            const formSec = document.getElementById('finalFormSec');
+            const instructions = document.getElementById('paymentInstructions');
+            const inputs = document.getElementById('dynamicInputs');
+            
+            formSec.style.display = 'block';
+            inputs.innerHTML = '';
+
+            if(method === 'moncash') {
+                instructions.innerHTML = `Envoyez <b>${totalFinalHTG.toLocaleString()} HTG</b> sur :<br>Numéro : <b>+509 3653 5649</b><br>Nom : <b>Jinolyse Pierre Louis</b>`;
+                inputs.innerHTML = `
+                    <div class="form-group"><label>Numéro de téléphone MonCash</label><input type="tel" id="senderInfo" placeholder="Ex: 37000000" required></div>
+                    <div class="form-group"><label>Nom du compte MonCash</label><input type="text" id="senderName" placeholder="Ex: Jean Dupont" required></div>
+                `;
+            } else if(method === 'natcash') {
+                instructions.innerHTML = `Envoyez <b>${totalFinalHTG.toLocaleString()} HTG</b> sur :<br>Numéro : <b>+509 3566 9814</b><br>Nom : <b>Jinolyse Pierre Louis</b>`;
+                inputs.innerHTML = `
+                    <div class="form-group"><label>Numéro de téléphone NatCash</label><input type="tel" id="senderInfo" placeholder="Ex: 35000000" required></div>
+                    <div class="form-group"><label>Nom du compte NatCash</label><input type="text" id="senderName" placeholder="Ex: Jean Dupont" required></div>
+                `;
+            } else if(method === 'usdt') {
+                instructions.innerHTML = `Envoyez en <b>USDT (TRC20)</b> sur :<br><span style="font-size:0.6rem; word-break:break-all;"><b>TBcmhXsvnsyVCL3k5bmhxxwYWDYTTiLiwi</b></span>`;
+                inputs.innerHTML = `
+                    <div class="form-group"><label>Votre adresse Wallet USDT</label><input type="text" id="senderInfo" placeholder="T..." required></div>
+                    <div class="form-group"><label>Application utilisée</label><input type="text" id="senderName" placeholder="Ex: Binance" required></div>
+                `;
+            }
+        }
+
+        // Compression d'image pro
+        document.getElementById('proofInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+
+            document.getElementById('fileLabel').textContent = "Compression...";
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function(event) {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 800;
+                    const scale = MAX_WIDTH / img.width;
+                    canvas.width = MAX_WIDTH;
+                    canvas.height = img.height * scale;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    proofBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    document.getElementById('fileLabel').innerHTML = `<i class="fas fa-check" style="color:var(--success)"></i> Reçu chargé`;
+                };
+            };
+        });
+
+        // Envoi vers Firestore
+        document.getElementById('orderForm').onsubmit = async (e) => {
+            e.preventDefault();
+            
+            if(!proofBase64) {
+                alert("Veuillez joindre votre preuve de paiement.");
+                return;
+            }
+
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            const user = auth.currentUser;
+            const orderId = "CMD-" + Date.now().toString().slice(-6);
+
+            // On crée un document par article pour respecter l'architecture Admin
+            try {
+                for (const item of cart) {
+                    await db.collection("orders").add({
+                        orderId: orderId,
+                        userId: user.uid,
+                        service: {
+                            category: item.category,
+                            name: item.name,
+                            product: item.product,
+                            price: item.price
+                        },
+                        customerInfo: {
+                            whatsapp: item.whatsapp || "N/A",
+                            email: item.email || user.email,
+                            gameId: item.gameId || "N/A",
+                            gameName: item.gameName || "N/A"
+                        },
+                        payment: {
+                            method: methodSelected,
+                            amount: totalFinalHTG,
+                            proof: proofBase64,
+                            senderName: document.getElementById('senderName').value,
+                            senderPhone: document.getElementById('senderInfo').value
+                        },
+                        status: "en-attente",
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+
+                localStorage.removeItem('foxstore_cart');
+                window.location.href = "/pages/checkout/success.html";
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loadingOverlay').style.display = 'none';
+                alert("Une erreur est survenue lors de l'envoi.");
+            }
+        };
+    </script>
+</body>
+</html>

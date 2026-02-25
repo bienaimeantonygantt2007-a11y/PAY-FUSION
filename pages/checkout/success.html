@@ -1,1 +1,270 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fox Store - Commande Confirmée</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 
+    <style>
+        :root {
+            --primary: #0056b3;
+            --secondary: #002d5e;
+            --white: #ffffff;
+            --bg: #f8fafc;
+            --success: #00c853;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: rgba(0, 86, 179, 0.08);
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .success-card {
+            background: var(--white);
+            padding: 50px 30px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0, 45, 94, 0.05);
+            border: 1px solid var(--border);
+            position: relative;
+            z-index: 10;
+            animation: cardSlideUp 0.8s var(--transition);
+        }
+
+        @keyframes cardSlideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- ICON ANIMATION --- */
+        .icon-wrapper {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+        }
+
+        .icon-circle {
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 200, 83, 0.1);
+            color: var(--success);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.3s both;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .pulse {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border: 2px solid var(--success);
+            border-radius: 50%;
+            animation: pulseEffect 2s infinite;
+        }
+
+        @keyframes pulseEffect {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: var(--secondary);
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .order-info {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .order-info span { font-size: 0.65rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; }
+        .order-info b { font-family: monospace; font-size: 1.1rem; color: var(--primary); letter-spacing: 1px; }
+
+        /* --- BUTTONS --- */
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 16px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 86, 179, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0, 86, 179, 0.3);
+        }
+
+        .btn-outline {
+            background: var(--white);
+            color: var(--primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            background: #f0f7ff;
+            border-color: var(--primary);
+        }
+
+        /* --- CONFETTI --- */
+        .confetti {
+            position: absolute;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        @media (max-width: 480px) {
+            .success-card { padding: 40px 20px; border-radius: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="success-card">
+        <div class="icon-wrapper">
+            <div class="pulse"></div>
+            <div class="icon-circle">
+                <i class="fas fa-check-circle"></i>
+            </div>
+        </div>
+        
+        <h2>Commande Reçue</h2>
+        
+        <p>
+            Votre commande a été transmise avec succès. Notre équipe valide votre paiement et procède à la livraison sous peu.
+        </p>
+
+        <div class="order-info">
+            <span>Numéro de Commande</span>
+            <b id="orderId">CMD-CHARGEMENT</b>
+        </div>
+
+        <div class="btn-group">
+            <a href="/home.html" class="btn btn-primary">
+                <i class="fas fa-home"></i> Retour à l'accueil
+            </a>
+            <a href="/orders.html" class="btn btn-outline">
+                <i class="fas fa-history"></i> Suivre mes achats
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Configuration Firebase (Identique à la présentation)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg",
+            authDomain: "pay-fusion-6dfaf.firebaseapp.com",
+            projectId: "pay-fusion-6dfaf",
+            storageBucket: "pay-fusion-6dfaf.firebasestorage.app",
+            messagingSenderId: "945593776812",
+            appId: "1:945593776812:web:4475e1085fdfa31690fd09",
+            measurementId: "G-8FEQG6B7ZY"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Récupération de l'ID de commande via URL ou génération aléatoire pour l'affichage
+            const urlParams = new URLSearchParams(window.location.search);
+            let orderId = urlParams.get('id');
+            
+            if (!orderId) {
+                // Si non trouvé, on affiche une référence factice basée sur l'heure
+                orderId = "CMD-" + Date.now().toString().slice(-6);
+            }
+
+            document.getElementById('orderId').textContent = orderId;
+            
+            // Animation confettis professionnels
+            for (let i = 0; i < 30; i++) {
+                spawnConfetti();
+            }
+        });
+
+        function spawnConfetti() {
+            const colors = ['#0056b3', '#00d2ff', '#00c853', '#ffffff'];
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            
+            const size = Math.random() * 6 + 4 + 'px';
+            confetti.style.width = size;
+            confetti.style.height = size;
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.top = '-10px';
+            confetti.style.borderRadius = '2px';
+            confetti.style.opacity = Math.random();
+            confetti.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+            
+            document.body.appendChild(confetti);
+            setTimeout(() => confetti.remove(), 5000);
+        }
+    </script>
+</body>
+</html>
