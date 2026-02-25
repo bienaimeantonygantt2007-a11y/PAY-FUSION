@@ -3,593 +3,1523 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fox Admin — Command Center Ultimate</title>
+    <title>Fox Store - Administration</title>
 
-    <!-- 
-        ==========================================================================
-        FOX STORE ARCHITECTURE v6.0 - ULTIMATE ADMIN INTERFACE
-        LE CENTRE DE COMMANDE LE PLUS PERFORMANT DU MARCHÉ
-        OPTIMISATION TOTALE : FINANCE | CMS 20 SERVICES | CRM | MODÉRATION
-        ==========================================================================
-    -->
-
-    <!-- SDK FIREBASE -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     
-    <!-- ICONS & FONTS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Inter font (très professionnelle) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         /* ==========================================================================
-           1. SYSTÈME DE DESIGN "DEEP MIDNIGHT & ELECTRIC BLUE"
+           ROYAL BLUE & WHITE - PALETTE PROFESSIONNELLE
            ========================================================================== */
         :root {
-            --bg-deep: #06070a;
-            --bg-card: #0f121a;
-            --accent: #00d1ff;
-            --primary: #0056b3;
+            --royal-blue: #1e3a8a;      /* Bleu royal profond */
+            --royal-light: #3b5ba5;      /* Bleu royal plus clair */
+            --royal-dark: #0f2b6b;       /* Bleu royal foncé */
             --white: #ffffff;
-            --text-main: #ffffff;
-            --text-muted: #8e95a2;
-            --success: #00ff88;
-            --error: #ff4444;
-            --warning: #ffbb33;
-            --glass-border: rgba(255, 255, 255, 0.05);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --radius-xl: 24px;
-            --radius-lg: 16px;
-            --radius-md: 10px;
-            --shadow-elite: 0 0 40px rgba(0, 209, 255, 0.1);
+            --off-white: #f8fafc;
+            --gray-50: #f9f9f9;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --success: #059669;
+            --success-light: #d1fae5;
+            --warning: #d97706;
+            --warning-light: #fef3c7;
+            --error: #dc2626;
+            --error-light: #fee2e2;
+            --info: #2563eb;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --transition: all 0.2s ease;
         }
 
         /* ==========================================================================
-           2. GLOBAL RESET & MOBILE DENSITY
+           RESET & BASE (MOBILE-FIRST)
            ========================================================================== */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            background-color: var(--bg-deep); 
-            color: var(--text-main); 
-            min-height: 100vh; 
-            overflow: hidden;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-900);
+            line-height: 1.5;
+            min-height: 100vh;
             display: flex;
-            font-size: 13px; /* Densité accrue pour mobile */
+            flex-direction: column;
         }
 
-        ::-webkit-scrollbar { width: 3px; height: 3px; }
-        ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+        /* ==========================================================================
+           HEADER (MOBILE-FIRST)
+           ========================================================================== */
+        .admin-header {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .menu-btn:hover {
+            background: var(--gray-100);
+            color: var(--royal-blue);
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--royal-blue);
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            color: var(--gray-700);
+            font-weight: 500;
+            font-size: 0.875rem;
+            margin-left: 4px;
+        }
+
+        .admin-badge {
+            background: var(--royal-blue);
+            color: var(--white);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .admin-badge i {
+            font-size: 0.625rem;
+        }
 
         /* ==========================================================================
-           3. SIDEBAR NAVIGATION (DRAWER MOBILE)
+           SIDEBAR (MOBILE-FIRST - HIDDEN BY DEFAULT)
            ========================================================================== */
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+            display: none;
+            backdrop-filter: blur(2px);
+        }
+
         .sidebar {
-            width: 260px; height: 100vh;
-            background: var(--bg-card);
-            border-right: 1px solid var(--glass-border);
-            display: flex; flex-direction: column;
-            position: fixed; left: -260px; top: 0;
-            z-index: 5000; transition: var(--transition);
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background: var(--white);
+            border-right: 1px solid var(--gray-200);
+            z-index: 60;
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-lg);
         }
-        .sidebar.active { left: 0; }
 
-        .sidebar-header { padding: 35px 25px; text-align: center; border-bottom: 1px solid var(--glass-border); }
-        .sidebar-header img { height: 40px; filter: drop-shadow(0 0 10px var(--accent)); }
-        .sidebar-header h2 { font-weight: 800; font-size: 0.9rem; color: var(--accent); margin-top: 10px; letter-spacing: 3px; }
-
-        .nav-menu { flex-grow: 1; padding: 10px; overflow-y: auto; }
-        .nav-label { font-size: 0.55rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; padding: 20px 15px 8px; }
-        
-        .nav-btn {
-            display: flex; align-items: center; gap: 12px; padding: 12px 18px;
-            color: var(--text-muted); text-decoration: none; border-radius: var(--radius-md);
-            font-weight: 600; font-size: 0.8rem; transition: var(--transition); cursor: pointer; margin-bottom: 2px;
+        .sidebar.active {
+            left: 0;
         }
-        .nav-btn:hover { color: var(--accent); background: rgba(255, 255, 255, 0.02); }
-        .nav-btn.active { background: var(--accent); color: var(--bg-deep); font-weight: 800; box-shadow: var(--shadow-elite); }
-        .nav-btn i { font-size: 1rem; width: 22px; text-align: center; }
 
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); z-index: 4000; display: none; }
-        .overlay.active { display: block; }
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--royal-blue);
+        }
+
+        .sidebar-header p {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            margin-top: 4px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-section-title {
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-400);
+            margin-bottom: 8px;
+            padding-left: 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: var(--gray-600);
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: var(--transition);
+            cursor: pointer;
+            margin-bottom: 2px;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+
+        .nav-item i {
+            width: 20px;
+            font-size: 1rem;
+            color: var(--gray-400);
+        }
+
+        .nav-item:hover {
+            background: var(--gray-50);
+            color: var(--royal-blue);
+        }
+
+        .nav-item:hover i {
+            color: var(--royal-blue);
+        }
+
+        .nav-item.active {
+            background: var(--royal-blue);
+            color: var(--white);
+        }
+
+        .nav-item.active i {
+            color: var(--white);
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .store-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: var(--gray-600);
+            font-weight: 500;
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .store-link:hover {
+            background: var(--gray-50);
+            color: var(--royal-blue);
+        }
 
         /* ==========================================================================
-           4. MAIN CONTENT
+           MAIN CONTENT (MOBILE-FIRST)
            ========================================================================== */
-        .main { flex: 1; display: flex; flex-direction: column; width: 100%; transition: var(--transition); }
-
-        header {
-            height: 60px; padding: 0 15px;
-            background: rgba(6, 7, 10, 0.95);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--glass-border);
-            display: flex; align-items: center; justify-content: space-between;
-            position: sticky; top: 0; z-index: 1000;
+        .main-content {
+            flex: 1;
+            padding: 16px;
         }
 
-        .btn-burger { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--accent); cursor: pointer; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.02); }
+        /* Page title */
+        .page-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 4px;
+        }
 
-        .header-title { font-weight: 800; font-size: 0.85rem; color: var(--white); text-transform: uppercase; letter-spacing: 1px; }
-        .live-tag { font-size: 0.5rem; font-weight: 800; color: var(--success); border: 1px solid var(--success); padding: 3px 8px; border-radius: 4px; display: flex; align-items: center; gap: 5px; }
-        .live-tag i { font-size: 0.4rem; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
-
-        .scroller { padding: 15px; flex: 1; overflow-y: auto; }
+        .page-subtitle {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            margin-bottom: 20px;
+        }
 
         /* ==========================================================================
-           5. DASHBOARD STATS (MOTEUR FINANCIER)
+           KPI CARDS
            ========================================================================== */
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; }
-        .stat-card {
-            background: var(--bg-card); padding: 15px; border-radius: var(--radius-lg);
-            border: 1px solid var(--glass-border); position: relative;
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
         }
-        .stat-card span { font-size: 0.5rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
-        .stat-card h3 { font-size: 1.05rem; font-weight: 800; margin-top: 4px; color: var(--white); }
-        .stat-card i { position: absolute; right: 10px; bottom: 10px; font-size: 2rem; color: var(--accent); opacity: 0.05; }
+
+        .kpi-card {
+            background: var(--white);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .kpi-label {
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--gray-500);
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .kpi-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            line-height: 1.2;
+        }
+
+        .kpi-trend {
+            font-size: 0.625rem;
+            color: var(--gray-500);
+            margin-top: 4px;
+        }
+
+        .kpi-icon {
+            color: var(--royal-blue);
+            opacity: 0.2;
+            font-size: 2rem;
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .kpi-card {
+            position: relative;
+        }
 
         /* ==========================================================================
-           6. SECTION CARDS (ELITE LISTS)
+           CARDS
            ========================================================================== */
-        .card { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--glass-border); margin-bottom: 20px; overflow: hidden; }
-        .card-head { padding: 15px 20px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.01); }
-        .card-head h4 { font-weight: 800; font-size: 0.7rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1.5px; }
-
-        .list-row {
-            padding: 12px 20px; border-bottom: 1px solid var(--glass-border);
-            display: flex; align-items: center; justify-content: space-between;
-            transition: 0.3s;
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
         }
-        .list-row:last-child { border-bottom: none; }
-        .list-row:hover { background: rgba(255, 255, 255, 0.02); }
-        
-        .row-left { display: flex; align-items: center; gap: 12px; }
-        .row-icon { width: 34px; height: 34px; background: var(--bg-deep); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; border: 1px solid var(--glass-border); color: var(--accent); }
-        
-        .row-text h5 { font-size: 0.75rem; font-weight: 700; color: var(--white); }
-        .row-text p { font-size: 0.6rem; color: var(--text-muted); font-weight: 600; }
 
-        .badge { padding: 4px 10px; border-radius: 6px; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; }
-        .st-en-attente { background: rgba(255, 187, 51, 0.1); color: var(--warning); }
-        .st-validé { background: rgba(0, 255, 136, 0.1); color: var(--success); }
-        .st-rejeté { background: rgba(255, 68, 68, 0.1); color: var(--error); }
+        .card-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--off-white);
+        }
 
-        .btn-manage { padding: 6px 12px; border-radius: 8px; border: none; font-weight: 800; font-size: 0.6rem; cursor: pointer; background: var(--primary); color: white; transition: 0.3s; }
+        .card-header h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .card-header i {
+            color: var(--gray-400);
+        }
 
         /* ==========================================================================
-           7. MODAL ELITE (BOTTOM SHEET RESPONSIVE)
+           LIST ITEMS
+           ========================================================================== */
+        .list-item {
+            padding: 16px;
+            border-bottom: 1px solid var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: var(--transition);
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .list-item:hover {
+            background: var(--gray-50);
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-title {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--gray-800);
+            margin-bottom: 4px;
+        }
+
+        .item-subtitle {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .item-subtitle i {
+            font-size: 0.625rem;
+            color: var(--gray-400);
+        }
+
+        .item-amount {
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: var(--gray-900);
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.625rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-pending {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .badge-success {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .badge-error {
+            background: var(--error-light);
+            color: var(--error);
+        }
+
+        .btn-icon {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            color: var(--gray-600);
+        }
+
+        .btn-icon:hover {
+            background: var(--gray-50);
+            border-color: var(--royal-blue);
+            color: var(--royal-blue);
+        }
+
+        .btn-primary {
+            background: var(--royal-blue);
+            color: var(--white);
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-primary:hover {
+            background: var(--royal-dark);
+        }
+
+        /* ==========================================================================
+           FORM ELEMENTS
+           ========================================================================== */
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            margin-bottom: 4px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--royal-blue);
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+
+        /* ==========================================================================
+           MODAL
            ========================================================================== */
         .modal {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(10px);
-            z-index: 6000; align-items: flex-end; justify-content: center;
-        }
-        .modal-box {
-            background: var(--bg-card); width: 100%; max-width: 480px; border-radius: 20px 20px 0 0;
-            border: 1px solid var(--glass-border); padding: 25px; position: relative;
-            max-height: 90vh; overflow-y: auto; animation: slideUp 0.4s ease;
-        }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 1.2rem; color: var(--text-muted); cursor: pointer; }
-
-        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
-        .detail-cell label { display: block; font-size: 0.55rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 3px; }
-        .detail-cell p { font-size: 0.8rem; font-weight: 700; color: var(--white); word-break: break-all; }
-
-        .proof-viewer { margin-top: 15px; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border); cursor: pointer; background: #000; }
-        .proof-viewer img { width: 100%; height: auto; display: block; opacity: 0.8; transition: 0.3s; }
-        .proof-viewer:hover img { opacity: 1; transform: scale(1.02); }
-
-        /* ==========================================================================
-           8. CRM CHAT (SAAS SYSTEM)
-           ========================================================================== */
-        .crm-container { height: 500px; display: flex; flex-direction: column; }
-        .crm-users { flex: 1; overflow-y: auto; border-bottom: 1px solid var(--glass-border); }
-        .crm-chat { flex: 2; display: none; flex-direction: column; background: rgba(0,0,0,0.2); }
-        .chat-flow { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-        .msg { max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
-        .msg-adm { align-self: flex-end; background: var(--accent); color: var(--bg-deep); border-bottom-right-radius: 2px; }
-        .msg-user { align-self: flex-start; background: var(--glass-border); color: #fff; border-bottom-left-radius: 2px; }
-        .chat-input-bar { padding: 12px; display: flex; gap: 8px; background: var(--bg-card); border-top: 1px solid var(--glass-border); }
-
-        /* ==========================================================================
-           9. INPUTS, BUTTONS & CMS
-           ========================================================================== */
-        .adm-input { width: 100%; padding: 12px; background: var(--bg-deep); border: 1px solid var(--glass-border); border-radius: 10px; color: var(--white); outline: none; font-size: 0.8rem; margin-bottom: 10px; font-weight: 600; }
-        .adm-input:focus { border-color: var(--accent); }
-
-        .btn-elite { padding: 14px; border-radius: 10px; border: none; font-weight: 800; text-transform: uppercase; font-size: 0.75rem; width: 100%; cursor: pointer; transition: 0.3s; letter-spacing: 1px; }
-        .btn-ok { background: var(--success); color: var(--bg-deep); }
-        .btn-no { background: var(--error); color: white; }
-
-        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; inset: 0; background-color: #222; transition: .4s; border-radius: 34px; cursor: pointer; border: 1px solid var(--glass-border); }
-        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--accent); }
-        input:checked + .slider:before { transform: translateX(20px); }
-
-        /* ==========================================================================
-           10. DESKTOP OPTIMIZATION
-           ========================================================================== */
-        @media (min-width: 1025px) {
-            .sidebar { left: 0; }
-            .main { margin-left: 260px; width: calc(100% - 260px); }
-            .btn-burger { display: none; }
-            .kpi-grid { grid-template-columns: repeat(4, 1fr); }
-            .modal { align-items: center; }
-            .modal-box { border-radius: var(--radius-xl); padding: 40px; }
-            .detail-grid { grid-template-columns: 1fr 1fr; }
-            .crm-container { flex-direction: row; height: 600px; }
-            .crm-users { width: 300px; height: 100%; border-right: 1px solid var(--glass-border); border-bottom: none; }
-            .crm-chat { flex: 1; }
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            align-items: flex-end;
+            justify-content: center;
+            backdrop-filter: blur(2px);
         }
 
-        /* TOAST SYSTEM */
-        #toast { position: fixed; top: 15px; right: 15px; z-index: 9999; background: var(--accent); color: var(--bg-deep); padding: 12px 20px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; transform: translateX(200%); transition: 0.4s; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-        #toast.show { transform: translateX(0); }
+        .modal.active {
+            display: flex;
+        }
 
+        .modal-content {
+            background: var(--white);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 16px 16px 0 0;
+            padding: 24px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            color: var(--gray-500);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .detail-item label {
+            display: block;
+            font-size: 0.625rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .detail-item p {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-800);
+            word-break: break-word;
+        }
+
+        .proof-image {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+            margin: 16px 0;
+            cursor: pointer;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        /* ==========================================================================
+           CHAT INTERFACE
+           ========================================================================== */
+        .chat-container {
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-users {
+            border-bottom: 1px solid var(--gray-200);
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .chat-user-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--gray-100);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-user-item:hover {
+            background: var(--gray-50);
+        }
+
+        .chat-user-item.active {
+            background: var(--royal-blue);
+            color: var(--white);
+        }
+
+        .chat-window {
+            flex: 1;
+            display: none;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.875rem;
+        }
+
+        .message-admin {
+            align-self: flex-end;
+            background: var(--royal-blue);
+            color: var(--white);
+        }
+
+        .message-user {
+            align-self: flex-start;
+            background: var(--gray-100);
+            color: var(--gray-800);
+        }
+
+        .chat-input {
+            padding: 16px;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            gap: 8px;
+        }
+
+        /* ==========================================================================
+           UTILITIES
+           ========================================================================== */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray-400);
+            font-size: 0.875rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray-400);
+            font-size: 0.875rem;
+        }
+
+        .toast {
+            position: fixed;
+            top: 80px;
+            right: 16px;
+            background: var(--white);
+            border-left: 4px solid var(--royal-blue);
+            box-shadow: var(--shadow-lg);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 200;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        /* ==========================================================================
+           TABLET (768px+)
+           ========================================================================== */
+        @media (min-width: 768px) {
+            .kpi-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .modal-content {
+                border-radius: 16px;
+                margin-bottom: 0;
+            }
+
+            .modal {
+                align-items: center;
+            }
+
+            .chat-container {
+                flex-direction: row;
+                height: 600px;
+            }
+
+            .chat-users {
+                width: 280px;
+                border-right: 1px solid var(--gray-200);
+                border-bottom: none;
+                max-height: none;
+            }
+
+            .chat-window {
+                display: flex;
+            }
+        }
+
+        /* ==========================================================================
+           DESKTOP (1024px+)
+           ========================================================================== */
+        @media (min-width: 1024px) {
+            .sidebar {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 280px;
+                padding: 24px;
+            }
+
+            .admin-header {
+                left: 280px;
+                width: calc(100% - 280px);
+            }
+
+            .menu-btn {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-    <div id="toast">Action confirmée</div>
+    <!-- Overlay sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-    <!-- SIDEBAR ELITE (260px) -->
+    <!-- Toast notification -->
+    <div class="toast" id="toast">Action effectuée</div>
+
+    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <img src="/assets/logos/payfusion-logo.png" alt="Fox Store">
-            <h2>COMMAND</h2>
-        </div>
-        
-        <div class="nav-menu">
-            <p class="nav-label">Dashboard</p>
-            <div class="nav-btn active" onclick="navTo('orders', this)"><i class="fas fa-layer-group"></i> Commandes</div>
-            <div class="nav-btn" onclick="navTo('users', this)"><i class="fas fa-user-shield"></i> Utilisateurs</div>
-            
-            <p class="nav-label">Configuration Site</p>
-            <div class="nav-btn" onclick="navTo('cms', this)"><i class="fas fa-toggle-on"></i> CMS Services</div>
-            <div class="nav-btn" onclick="navTo('ads', this)"><i class="fas fa-bullhorn"></i> Annonces</div>
-            
-            <p class="nav-label">Support Elite</p>
-            <div class="nav-btn" onclick="navTo('crm', this)"><i class="fas fa-comment-dots"></i> Live Support</div>
+            <h2>Fox Store</h2>
+            <p>Administration</p>
         </div>
 
-        <div style="padding: 15px; border-top: 1px solid var(--glass-border);">
-            <a href="/home.html" class="nav-btn" style="color: var(--accent); background: rgba(0, 209, 255, 0.04);"><i class="fas fa-shopping-bag"></i> Boutique</a>
+        <div class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Management</div>
+                <button class="nav-item active" onclick="switchTab('dashboard', this)">
+                    <i class="fas fa-chart-pie"></i>
+                    Tableau de bord
+                </button>
+                <button class="nav-item" onclick="switchTab('orders', this)">
+                    <i class="fas fa-shopping-cart"></i>
+                    Commandes
+                </button>
+                <button class="nav-item" onclick="switchTab('users', this)">
+                    <i class="fas fa-users"></i>
+                    Utilisateurs
+                </button>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Configuration</div>
+                <button class="nav-item" onclick="switchTab('services', this)">
+                    <i class="fas fa-toggle-on"></i>
+                    Services
+                </button>
+                <button class="nav-item" onclick="switchTab('announcements', this)">
+                    <i class="fas fa-bullhorn"></i>
+                    Annonces
+                </button>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Support</div>
+                <button class="nav-item" onclick="switchTab('chat', this)">
+                    <i class="fas fa-comments"></i>
+                    Chat client
+                </button>
+            </div>
         </div>
-    </div>
 
-    <!-- MAIN APP PANEL -->
-    <div class="main">
-        <header>
-            <div class="btn-burger" id="burgerBtn"><i class="fas fa-bars-staggered"></i></div>
-            <div class="header-title" id="activeTabTitle">Transactions</div>
-            <div class="live-tag"><i class="fas fa-circle"></i> ELITE ADMIN</div>
-        </header>
-
-        <!-- FINANCE KPI BAR -->
-        <div class="kpi-grid">
-            <div class="kpi-card"><span>Chiffre d'Affaires</span><h3 id="revVal">0 HTG</h3></div>
-            <div class="kpi-card"><span>Profit Net</span><h3 id="profVal" style="color:var(--success)">0 HTG</h3></div>
-            <div class="kpi-card"><span>Commandes</span><h3 id="countVal">0</h3></div>
-            <div class="kpi-card"><span>Alertes</span><h3 id="waitVal" style="color:var(--warning)">0</h3></div>
-        </div>
-
-        <div class="scroller">
-            
-            <!-- SECTION 1: ORDERS ENGINE -->
-            <section id="ordersView" class="admin-tab active">
-                <div class="card">
-                    <div class="card-header"><h4>Flux de paiements</h4></div>
-                    <div id="ordersList">
-                        <div style="text-align:center; padding:40px; opacity:0.5;">Écoute du flux...</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- SECTION 2: USERS MODERATION -->
-            <section id="usersView" class="admin-tab" style="display: none;">
-                <div class="card">
-                    <div class="card-header">
-                        <input type="text" class="adm-input" placeholder="Chercher un membre..." style="margin-bottom:0; width:100%;" onkeyup="filterUsers(this.value)">
-                    </div>
-                    <div id="usersList"></div>
-                </div>
-            </section>
-
-            <!-- SECTION 3: CMS CONTROL (20 SERVICES) -->
-            <section id="cmsView" class="admin-tab" style="display: none;">
-                <div class="kpi-grid" id="cmsGrid"></div>
-            </section>
-
-            <!-- SECTION 4: ADS MARKETING -->
-            <section id="adsView" class="admin-tab" style="display: none;">
-                <div class="card" style="padding: 20px;">
-                    <textarea id="adInp" class="adm-input" rows="4" placeholder="Texte de l'annonce défilante..."></textarea>
-                    <button class="btn-elite btn-ok" onclick="pushAd()">Diffuser l'annonce</button>
-                    <div id="adHistory" style="margin-top:20px;"></div>
-                </div>
-            </section>
-
-            <!-- SECTION 5: CRM CHAT SUPPORT -->
-            <section id="crmView" class="admin-tab" style="display: none;">
-                <div class="card crm-container">
-                    <div class="crm-users" id="crmUserList"></div>
-                    <div class="crm-chat" id="crmWindow">
-                        <div class="chat-flow" id="chatFlow"></div>
-                        <form id="chatForm" class="chat-input-bar">
-                            <input type="text" id="chatReply" class="adm-input" placeholder="Réponse..." style="margin-bottom:0;">
-                            <button type="submit" class="btn-burger" style="border-color:var(--accent); color:var(--accent);"><i class="fas fa-paper-plane"></i></button>
-                        </form>
-                    </div>
-                </div>
-            </section>
-
+        <div class="sidebar-footer">
+            <a href="/home.html" class="store-link">
+                <i class="fas fa-store"></i>
+                Retour à la boutique
+            </a>
         </div>
     </div>
 
-    <!-- MODAL: FICHE TECHNIQUE ELITE -->
+    <!-- Header -->
+    <header class="admin-header">
+        <div class="header-left">
+            <div class="menu-btn" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="logo">
+                FOX<span>admin</span>
+            </div>
+        </div>
+        <div class="admin-badge">
+            <i class="fas fa-circle"></i>
+            ADMIN
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Le contenu sera chargé dynamiquement -->
+        <div id="dashboardView">
+            <h1 class="page-title">Tableau de bord</h1>
+            <p class="page-subtitle">Vue d'ensemble de l'activité</p>
+
+            <!-- KPI Cards -->
+            <div class="kpi-grid" id="kpiContainer">
+                <div class="kpi-card">
+                    <div class="kpi-label">Revenu total</div>
+                    <div class="kpi-value" id="totalRevenue">0 HTG</div>
+                    <div class="kpi-trend">Mensuel</div>
+                    <i class="fas fa-chart-line kpi-icon"></i>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Commandes</div>
+                    <div class="kpi-value" id="totalOrders">0</div>
+                    <div class="kpi-trend">Total</div>
+                    <i class="fas fa-shopping-bag kpi-icon"></i>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">En attente</div>
+                    <div class="kpi-value" id="pendingOrders">0</div>
+                    <div class="kpi-trend">À valider</div>
+                    <i class="fas fa-clock kpi-icon"></i>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Utilisateurs</div>
+                    <div class="kpi-value" id="totalUsers">0</div>
+                    <div class="kpi-trend">Inscrits</div>
+                    <i class="fas fa-users kpi-icon"></i>
+                </div>
+            </div>
+
+            <!-- Dernières commandes -->
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-clock" style="margin-right: 8px;"></i> Dernières commandes</h3>
+                </div>
+                <div id="recentOrders">
+                    <div class="loading">Chargement...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders View (hidden by default) -->
+        <div id="ordersView" style="display: none;">
+            <h1 class="page-title">Commandes</h1>
+            <p class="page-subtitle">Gestion des transactions</p>
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-list" style="margin-right: 8px;"></i> Toutes les commandes</h3>
+                </div>
+                <div id="allOrders">
+                    <div class="loading">Chargement...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users View -->
+        <div id="usersView" style="display: none;">
+            <h1 class="page-title">Utilisateurs</h1>
+            <p class="page-subtitle">Gestion des comptes</p>
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-search" style="margin-right: 8px;"></i> Rechercher</h3>
+                </div>
+                <div style="padding: 16px;">
+                    <input type="text" class="input-field" placeholder="Email ou nom..." id="userSearch" onkeyup="searchUsers()">
+                </div>
+                <div id="usersList">
+                    <div class="loading">Chargement...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services View -->
+        <div id="servicesView" style="display: none;">
+            <h1 class="page-title">Services</h1>
+            <p class="page-subtitle">Activation/désactivation des services</p>
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-gamepad" style="margin-right: 8px;"></i> Services disponibles</h3>
+                </div>
+                <div id="servicesList" class="kpi-grid" style="padding: 16px; grid-template-columns: 1fr;">
+                    <!-- Rempli dynamiquement -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Announcements View -->
+        <div id="announcementsView" style="display: none;">
+            <h1 class="page-title">Annonces</h1>
+            <p class="page-subtitle">Communication avec les clients</p>
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-plus" style="margin-right: 8px;"></i> Nouvelle annonce</h3>
+                </div>
+                <div style="padding: 16px;">
+                    <div class="input-group">
+                        <label class="input-label">Message</label>
+                        <textarea class="input-field" id="announcementMessage" rows="3" placeholder="Entrez votre message..."></textarea>
+                    </div>
+                    <button class="btn-primary" onclick="publishAnnouncement()" style="width: 100%;">
+                        <i class="fas fa-paper-plane" style="margin-right: 8px;"></i>
+                        Publier
+                    </button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-history" style="margin-right: 8px;"></i> Historique</h3>
+                </div>
+                <div id="announcementsHistory">
+                    <div class="loading">Chargement...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat View -->
+        <div id="chatView" style="display: none;">
+            <h1 class="page-title">Support client</h1>
+            <p class="page-subtitle">Chat en direct</p>
+            <div class="card chat-container">
+                <div class="chat-users" id="chatUsersList">
+                    <div class="loading">Chargement des conversations...</div>
+                </div>
+                <div class="chat-window" id="chatWindow">
+                    <div class="chat-messages" id="chatMessages"></div>
+                    <div class="chat-input">
+                        <input type="text" class="input-field" placeholder="Votre message..." id="chatInput" style="margin-bottom: 0;">
+                        <button class="btn-primary" onclick="sendMessage()" style="width: auto; padding: 10px 20px;">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Order Detail Modal -->
     <div class="modal" id="orderModal">
-        <div class="modal-box">
-            <i class="fas fa-times close-btn" onclick="closeModal()"></i>
-            <h3 style="font-weight: 800; font-size: 1.1rem; color: var(--accent);">Vérification Transactionnelle</h3>
-            <p id="modRef" style="font-family: monospace; font-size: 0.65rem; color: var(--text-muted); margin-top: 3px;"></p>
-            
-            <div class="detail-grid" id="modData"></div>
-            
-            <!-- PROOF VIEWER SYSTEM (L'IMAGE DU REÇU) -->
-            <div class="proof-viewer" id="proofView" onclick="zoomProof()">
-                <img id="modProofImg" src="" alt="Capture Reçu">
-            </div>
-
-            <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid var(--glass-border);">
-                <label style="font-size: 0.6rem; font-weight: 800; color: var(--accent); display: block; margin-bottom: 8px;">CALCUL DE PROFIT (COÛT FOURNISSEUR HTG)</label>
-                <input type="number" id="buyCost" class="adm-input" placeholder="0.00">
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px;">
-                    <button class="btn-elite btn-ok" onclick="finalizeOrder('Validé')">APPROUVER</button>
-                    <button class="btn-elite btn-no" onclick="finalizeOrder('Rejeté')">REJETER</button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Détails de la commande</h3>
+                <div class="modal-close" onclick="closeOrderModal()">
+                    <i class="fas fa-times"></i>
                 </div>
             </div>
+            <div id="orderDetailContent">
+                <!-- Rempli dynamiquement -->
+            </div>
         </div>
-    </div>
-
-    <!-- LIGHTBOX: ZOOM FULL HD -->
-    <div class="modal" id="zoomModal" onclick="this.style.display='none'" style="align-items: center; background: rgba(0,0,0,0.98);">
-        <img id="zoomedImg" src="" style="max-width: 98%; max-height: 95%; border-radius: 8px;">
     </div>
 
     <script>
-        /* ==========================================================================
-           11. MOTEUR LOGIQUE (1200+ LIGNES D'INTELLIGENCE)
-           ========================================================================== */
-
-        // CONFIGURATION FIREBASE MASTER FOX STORE
+        // Configuration Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg",
             authDomain: "pay-fusion-6dfaf.firebaseapp.com",
             projectId: "pay-fusion-6dfaf",
             storageBucket: "pay-fusion-6dfaf.firebasestorage.app",
             messagingSenderId: "945593776812",
-            appId: "1:945593776812:web:4475e1085fdfa31690fd09",
-            measurementId: "G-8FEQG6B7ZY"
+            appId: "1:945593776812:web:4475e1085fdfa31690fd09"
         };
-        
+
+        // Initialisation Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
 
-        let ordersData = [], usersData = [], activeOrderDoc = null, activeChatUID = null;
+        // Variables globales
+        let currentUser = null;
+        let currentOrderId = null;
+        let currentChatUser = null;
+        let unsubscribeChat = null;
 
-        // VÉRIFICATION DE SÉCURITÉ ADMIN ÉLITE
+        // Vérification authentification admin
         auth.onAuthStateChanged(user => {
-            if (!user || user.email !== "bmarcco4412@gmail.com") {
-                window.location.href = "/login.html";
+            if (!user || user.email !== 'bmarcco4412@gmail.com') {
+                window.location.href = '/login.html';
             } else {
-                launchAdminEngines();
+                currentUser = user;
+                loadDashboard();
+                setupRealtimeListeners();
             }
         });
 
-        function launchAdminEngines() {
-            startOrdersSync();
-            startUsersSync();
-            startCMSSync();
-            startAdsSync();
-            startCRMSync();
-        }
+        // Setup des écouteurs en temps réel
+        function setupRealtimeListeners() {
+            // Écouter les commandes
+            db.collection('orders').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+                updateKPIs(snapshot);
+                updateOrdersList(snapshot);
+                updateRecentOrders(snapshot);
+            });
 
-        /* --- UI CONTROLLERS --- */
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        const burger = document.getElementById('burgerBtn');
+            // Écouter les utilisateurs
+            db.collection('users').onSnapshot(snapshot => {
+                updateUsersList(snapshot);
+                document.getElementById('totalUsers').textContent = snapshot.size;
+            });
 
-        function toggleSidebar() { sidebar.classList.toggle('active'); overlay.classList.toggle('active'); }
-        burger.onclick = toggleSidebar;
+            // Écouter les annonces
+            db.collection('announcements').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+                updateAnnouncementsList(snapshot);
+            });
 
-        function navTo(v, b) {
-            document.querySelectorAll('.admin-tab').forEach(t => t.style.display = 'none');
-            document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
-            document.getElementById(v + 'View').style.display = 'block';
-            b.classList.add('active');
-            document.getElementById('activeTabTitle').textContent = b.textContent.trim();
-            if(window.innerWidth < 1025) toggleSidebar();
-        }
-
-        function showToast(m) {
-            const t = document.getElementById('toast');
-            t.textContent = m; t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
-        }
-
-        /* --- 1. MOTEUR COMMANDES & PROFIT --- */
-        function startOrdersSync() {
-            db.collection("orders").orderBy("createdAt", "desc").onSnapshot(snap => {
-                const list = document.getElementById('ordersList');
-                list.innerHTML = '';
-                let revenue = 0, profit = 0, wait = 0;
-                ordersData = [];
-
-                snap.forEach(doc => {
-                    const o = doc.data(); const id = doc.id; ordersData.push({id, ...o});
-                    if(o.status === 'en-attente') wait++;
-                    if(o.status === 'Validé') {
-                        const price = parseFloat(o.service.price || 0);
-                        revenue += price;
-                        profit += (price - parseFloat(o.purchaseCost || 0));
-                    }
-                    const stCls = `st-${o.status.toLowerCase().replace(' ', '-')}`;
-                    list.innerHTML += `
-                        <div class="list-row">
-                            <div class="row-left">
-                                <div class="row-icon">${o.service.name.charAt(0)}</div>
-                                <div class="row-text">
-                                    <h5>#${o.orderId}</h5>
-                                    <p>${o.service.name} ● ${o.service.product}</p>
-                                </div>
-                            </div>
-                            <div style="text-align: right;">
-                                <div style="font-weight:800; font-size:0.8rem; color:var(--accent);">${o.service.price} HTG</div>
-                                <button class="btn-manage" style="margin-top:4px;" onclick="openOrderModal('${id}')">GÉRER</button>
-                            </div>
-                        </div>`;
-                });
-                document.getElementById('revVal').textContent = revenue.toLocaleString() + " HTG";
-                document.getElementById('profVal').textContent = profit.toLocaleString() + " HTG";
-                document.getElementById('countVal').textContent = snap.size;
-                document.getElementById('waitVal').textContent = wait;
+            // Écouter les chats
+            db.collection('chats').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
+                updateChatUsersList(snapshot);
             });
         }
 
-        function openOrderModal(id) {
-            activeOrderDoc = id;
-            const o = ordersData.find(x => x.id === id);
-            document.getElementById('modRef').textContent = `DBID: ${o.id}`;
-            const grid = document.getElementById('modData'); grid.innerHTML = '';
+        // Mise à jour des KPIs
+        function updateKPIs(snapshot) {
+            let revenue = 0;
+            let pending = 0;
 
-            const data = {
-                "Service": o.service.product,
-                "WhatsApp": o.customerInfo.whatsapp,
-                "Identifiant": o.customerInfo.gameId || o.customerInfo.email || "N/A",
-                "Pseudo": o.customerInfo.gameName || "N/A",
-                "Paiement": o.payment.method.toUpperCase(),
-                "Titulaire": o.payment.senderName || "Inconnu",
-                "Numéro": o.payment.senderPhone || "N/A"
-            };
+            snapshot.forEach(doc => {
+                const order = doc.data();
+                if (order.status === 'Validé' && order.service?.price) {
+                    revenue += parseFloat(order.service.price);
+                }
+                if (order.status === 'en-attente') {
+                    pending++;
+                }
+            });
 
-            for (let [l, v] of Object.entries(data)) {
-                grid.innerHTML += `<div class="detail-cell"><label>${l}</label><p>${v}</p></div>`;
-            }
-
-            const img = document.getElementById('modProofImg');
-            if(o.payment.proof) {
-                img.src = o.payment.proof;
-                document.getElementById('proofView').style.display = 'block';
-            } else {
-                document.getElementById('proofView').style.display = 'none';
-            }
-
-            document.getElementById('buyCost').value = o.purchaseCost || '';
-            document.getElementById('orderModal').style.display = 'flex';
+            document.getElementById('totalRevenue').textContent = revenue.toLocaleString() + ' HTG';
+            document.getElementById('totalOrders').textContent = snapshot.size;
+            document.getElementById('pendingOrders').textContent = pending;
         }
 
-        function zoomProof() {
-            document.getElementById('zoomedImg').src = document.getElementById('modProofImg').src;
-            document.getElementById('zoomModal').style.display = 'flex';
+        // Mise à jour de la liste des commandes
+        function updateOrdersList(snapshot) {
+            const container = document.getElementById('allOrders') || document.getElementById('recentOrders');
+            if (!container) return;
+
+            let html = '';
+            let count = 0;
+
+            snapshot.forEach(doc => {
+                if (count >= 10 && container.id === 'recentOrders') return;
+                
+                const order = doc.data();
+                const orderId = doc.id;
+                
+                const statusClass = order.status === 'en-attente' ? 'badge-pending' :
+                                   order.status === 'Validé' ? 'badge-success' :
+                                   order.status === 'Rejeté' ? 'badge-error' : '';
+                
+                const statusText = order.status === 'en-attente' ? 'En attente' :
+                                  order.status === 'Validé' ? 'Validé' :
+                                  order.status === 'Rejeté' ? 'Rejeté' : order.status;
+
+                html += `
+                    <div class="list-item">
+                        <div class="item-info">
+                            <div class="item-title">${order.service?.name || 'Service'} - ${order.service?.product || ''}</div>
+                            <div class="item-subtitle">
+                                <span>#${order.orderId || orderId.slice(0,8)}</span>
+                                <i class="fas fa-circle" style="font-size: 0.25rem;"></i>
+                                <span>${order.customerInfo?.whatsapp || 'N/A'}</span>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="item-amount">${order.service?.price || 0} HTG</div>
+                            <span class="badge ${statusClass}" style="margin-top: 4px; display: inline-block;">${statusText}</span>
+                        </div>
+                        <button class="btn-icon" style="margin-left: 12px;" onclick="openOrderModal('${orderId}')">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                `;
+                count++;
+            });
+
+            if (count === 0) {
+                html = '<div class="empty-state">Aucune commande</div>';
+            }
+
+            container.innerHTML = html;
         }
 
-        async function finalizeOrder(status) {
-            const cost = parseFloat(document.getElementById('buyCost').value) || 0;
-            await db.collection("orders").doc(activeOrderDoc).update({
+        // Mise à jour des utilisateurs
+        function updateUsersList(snapshot) {
+            const container = document.getElementById('usersList');
+            if (!container) return;
+
+            let html = '';
+            snapshot.forEach(doc => {
+                const user = doc.data();
+                const fullName = user.personalInfo ? 
+                    `${user.personalInfo.firstName || ''} ${user.personalInfo.lastName || ''}`.trim() : 
+                    'Anonyme';
+                
+                const isBanned = user.status === 'Banni';
+
+                html += `
+                    <div class="list-item" data-userid="${doc.id}">
+                        <div class="item-info">
+                            <div class="item-title">${fullName || 'Anonyme'}</div>
+                            <div class="item-subtitle">
+                                <span>${user.personalInfo?.email || 'Email inconnu'}</span>
+                                ${user.personalInfo?.phone ? `<i class="fas fa-circle" style="font-size: 0.25rem;"></i><span>${user.personalInfo.phone}</span>` : ''}
+                            </div>
+                        </div>
+                        <button class="btn-icon ${isBanned ? '' : 'btn-primary'}" onclick="toggleUserStatus('${doc.id}', '${user.status || 'Actif'}')">
+                            ${isBanned ? 'Débloquer' : 'Bloquer'}
+                        </button>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Mise à jour des services
+        function updateServicesList() {
+            const services = [
+                'Free Fire', 'FC Mobile', 'eFootball', 'PUBG Mobile', 'Blood Strike',
+                'Roblox', 'DLS 24', 'Minecraft', 'Flex City', 'Netflix', 'Disney+',
+                'Prime Video', 'Crunchyroll', 'PayPal', 'Wise', 'USDT', 'TRONX',
+                'Telegram', 'TikTok'
+            ];
+
+            const container = document.getElementById('servicesList');
+            if (!container) return;
+
+            let html = '';
+            services.forEach(service => {
+                html += `
+                    <div class="list-item">
+                        <div class="item-info">
+                            <div class="item-title">${service}</div>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked onchange="toggleService('${service}', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Mise à jour des annonces
+        function updateAnnouncementsList(snapshot) {
+            const container = document.getElementById('announcementsHistory');
+            if (!container) return;
+
+            let html = '';
+            snapshot.forEach(doc => {
+                const ann = doc.data();
+                const date = ann.createdAt ? new Date(ann.createdAt.toDate()).toLocaleDateString('fr-FR') : 'Date inconnue';
+                
+                html += `
+                    <div class="list-item">
+                        <div class="item-info">
+                            <div class="item-title">${ann.message}</div>
+                            <div class="item-subtitle">Publié le ${date}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (html === '') {
+                html = '<div class="empty-state">Aucune annonce</div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        // Mise à jour des chats
+        function updateChatUsersList(snapshot) {
+            const container = document.getElementById('chatUsersList');
+            if (!container) return;
+
+            const users = new Map();
+            
+            snapshot.forEach(doc => {
+                const chat = doc.data();
+                if (chat.userUID && !users.has(chat.userUID)) {
+                    users.set(chat.userUID, {
+                        uid: chat.userUID,
+                        name: chat.userName || chat.userUID.slice(0,8),
+                        lastMessage: chat.text
+                    });
+                }
+            });
+
+            let html = '';
+            users.forEach(user => {
+                const isActive = currentChatUser === user.uid;
+                html += `
+                    <div class="chat-user-item ${isActive ? 'active' : ''}" onclick="selectChatUser('${user.uid}', '${user.name}')">
+                        <i class="fas fa-user-circle" style="font-size: 1.5rem; color: ${isActive ? 'white' : 'var(--gray-400)'};"></i>
+                        <div>
+                            <div style="font-weight: 600; font-size: 0.875rem;">${user.name}</div>
+                            <div style="font-size: 0.75rem; opacity: 0.7;">${user.lastMessage?.substring(0,30)}...</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (html === '') {
+                html = '<div class="empty-state">Aucune conversation</div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        // Navigation entre les onglets
+        function switchTab(tabName, element) {
+            // Mise à jour des classes actives
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+
+            // Cacher toutes les vues
+            document.getElementById('dashboardView').style.display = 'none';
+            document.getElementById('ordersView').style.display = 'none';
+            document.getElementById('usersView').style.display = 'none';
+            document.getElementById('servicesView').style.display = 'none';
+            document.getElementById('announcementsView').style.display = 'none';
+            document.getElementById('chatView').style.display = 'none';
+
+            // Afficher la vue sélectionnée
+            document.getElementById(tabName + 'View').style.display = 'block';
+
+            // Charger les données spécifiques si nécessaire
+            if (tabName === 'services') {
+                updateServicesList();
+            }
+
+            // Fermer la sidebar sur mobile
+            if (window.innerWidth < 1024) {
+                toggleSidebar();
+            }
+        }
+
+        // Chargement du tableau de bord
+        function loadDashboard() {
+            // Les données sont chargées via les listeners
+        }
+
+        // Recherche utilisateurs
+        function searchUsers() {
+            const search = document.getElementById('userSearch').value.toLowerCase();
+            const items = document.querySelectorAll('#usersList .list-item');
+
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(search) ? 'flex' : 'none';
+            });
+        }
+
+        // Modal commande
+        function openOrderModal(orderId) {
+            currentOrderId = orderId;
+            
+            db.collection('orders').doc(orderId).get().then(doc => {
+                if (!doc.exists) return;
+                
+                const order = doc.data();
+                const modal = document.getElementById('orderDetailContent');
+                
+                const statusClass = order.status === 'en-attente' ? 'badge-pending' :
+                                   order.status === 'Validé' ? 'badge-success' :
+                                   order.status === 'Rejeté' ? 'badge-error' : '';
+
+                const proofHtml = order.payment?.proof ? 
+                    `<img src="${order.payment.proof}" class="proof-image" onclick="window.open('${order.payment.proof}', '_blank')">` : 
+                    '<p style="color: var(--gray-400);">Aucune preuve fournie</p>';
+
+                modal.innerHTML = `
+                    <div style="margin-bottom: 16px;">
+                        <span class="badge ${statusClass}">${order.status || 'Statut inconnu'}</span>
+                    </div>
+                    
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>Service</label>
+                            <p>${order.service?.name || 'N/A'}</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Produit</label>
+                            <p>${order.service?.product || 'N/A'}</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Prix</label>
+                            <p>${order.service?.price || 0} HTG</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Méthode</label>
+                            <p>${order.payment?.method || 'N/A'}</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>WhatsApp</label>
+                            <p>${order.customerInfo?.whatsapp || 'N/A'}</p>
+                        </div>
+                        <div class="detail-item">
+                            <label>Identifiant</label>
+                            <p>${order.customerInfo?.gameId || order.customerInfo?.email || 'N/A'}</p>
+                        </div>
+                    </div>
+
+                    <div style="margin: 20px 0;">
+                        <label class="input-label">Preuve de paiement</label>
+                        ${proofHtml}
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Coût d'achat (pour calcul du profit)</label>
+                        <input type="number" class="input-field" id="purchaseCost" value="${order.purchaseCost || ''}" placeholder="0.00">
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn-primary" onclick="updateOrderStatus('Validé')" style="background: var(--success);">Valider</button>
+                        <button class="btn-primary" onclick="updateOrderStatus('Rejeté')" style="background: var(--error);">Rejeter</button>
+                    </div>
+                `;
+
+                document.getElementById('orderModal').classList.add('active');
+            });
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').classList.remove('active');
+            currentOrderId = null;
+        }
+
+        async function updateOrderStatus(status) {
+            if (!currentOrderId) return;
+
+            const purchaseCost = parseFloat(document.getElementById('purchaseCost')?.value) || 0;
+
+            await db.collection('orders').doc(currentOrderId).update({
                 status: status,
-                purchaseCost: cost,
+                purchaseCost: purchaseCost,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
-            closeModal();
-            showToast(`Statut : ${status}`);
+
+            closeOrderModal();
+            showToast(`Commande ${status === 'Validé' ? 'validée' : 'rejetée'}`);
         }
 
-        function closeModal() { document.getElementById('orderModal').style.display = 'none'; }
+        // Gestion utilisateurs
+        async function toggleUserStatus(userId, currentStatus) {
+            const newStatus = currentStatus === 'Banni' ? 'Actif' : 'Banni';
+            await db.collection('users').doc(userId).update({
+                status: newStatus
+            });
+            showToast(`Utilisateur ${newStatus === 'Banni' ? 'bloqué' : 'débloqué'}`);
+        }
 
-        /* --- 2. MOTEUR UTILISATEURS (MODÉRATION) --- */
-        function startUsersSync() {
-            db.collection("users").onSnapshot(snap => {
-                usersData = [];
-                const container = document.getElementById('usersList'); container.innerHTML = '';
-                snap.forEach(doc => {
-                    const u = doc.data(); const id = doc.id; usersData.push({id, ...u});
-                    const isBanned = u.status === 'Banni';
-                    container.innerHTML += `
-                        <div class="list-row">
-                            <div class="row-left">
-                                <div class="row-icon" style="border-radius:50%; background:${isBanned?'var(--error)':'var(--primary)'}">${u.personalInfo?.firstName?.charAt(0) || 'U'}</div>
-                                <div class="row-text">
-                                    <h5 style="color:${isBanned?var(--error):'#fff'}">${u.personalInfo?.fullName || 'Anonyme'}</h5>
-                                    <p>${u.personalInfo?.email}</p>
-                                </div>
+        // Gestion services
+        async function toggleService(serviceName, isActive) {
+            await db.collection('cms_services').doc(serviceName).set({
+                active: isActive
+            }, { merge: true });
+            showToast(`${serviceName} ${isActive ? 'activé' : 'désactivé'}`);
+        }
+
+        // Gestion annonces
+        async function publishAnnouncement() {
+            const message = document.getElementById('announcementMessage').value.trim();
+            if (!message) {
+                showToast('Veuillez entrer un message');
+                return;
+            }
+
+            await db.collection('announcements').add({
+                message: message,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            document.getElementById('announcementMessage').value = '';
+            showToast('Annonce publiée');
+        }
+
+        // Gestion chat
+        function selectChatUser(userId, userName) {
+            currentChatUser = userId;
+
+            // Mise à jour UI
+            document.querySelectorAll('.chat-user-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            // Afficher la fenêtre de chat
+            document.getElementById('chatWindow').style.display = 'flex';
+
+            // Charger les messages
+            if (unsubscribeChat) unsubscribeChat();
+            
+            unsubscribeChat = db.collection('chats')
+                .where('userUID', '==', userId)
+                .orderBy('timestamp', 'asc')
+                .onSnapshot(snapshot => {
+                    const messagesContainer = document.getElementById('chatMessages');
+                    let html = '';
+
+                    snapshot.forEach(doc => {
+                        const msg = doc.data();
+                        const isAdmin = msg.sender === 'admin';
+                        html += `
+                            <div class="message ${isAdmin ? 'message-admin' : 'message-user'}">
+                                ${msg.text}
                             </div>
-                            <button class="btn-manage" style="background:${isBanned?var(--success):var(--error)};" onclick="toggleBan('${id}', '${u.status}')">${isBanned?'ACTIVER':'BANNIR'}</button>
-                        </div>`;
+                        `;
+                    });
+
+                    messagesContainer.innerHTML = html;
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
                 });
-            });
-        }
-        function toggleBan(uid, s) { const next = s === 'Banni' ? 'Actif' : 'Banni'; db.collection("users").doc(uid).update({ status: next }); showToast("Compte modifié"); }
-        function filterUsers(v) { /* Filtrage local possible */ }
-
-        /* --- 3. MOTEUR CMS SERVICES (INTÉGRATION MERU & ALL) --- */
-        function startCMSSync() {
-            const list = ['Free Fire', 'FC Mobile', 'eFootball', 'PUBG Mobile', 'Blood Strike', 'Roblox', 'DLS 24', 'Minecraft', 'Flex City', 'Netflix', 'Disney+', 'Prime Video', 'Crunchyroll', 'PayPal', 'Wise', 'USDT', 'TRONX', 'MERU', 'Telegram Prem.', 'TikTok Coins'];
-            db.collection("cms_services").onSnapshot(snap => {
-                const grid = document.getElementById('cmsGrid'); grid.innerHTML = '';
-                const states = {}; snap.forEach(d => states[d.id] = d.data().active);
-                list.forEach(s => {
-                    const active = states[s] !== false;
-                    grid.innerHTML += `<div class="stat-card" style="display:flex; justify-content:space-between; align-items:center; padding:15px 20px;"><div><span style="font-size:0.5rem;">Canal</span><h4 style="font-size:0.75rem;">${s}</h4></div><label class="switch"><input type="checkbox" ${active?'checked':''} onchange="toggleCMS('${s}', this.checked)"><span class="slider"></span></label></div>`;
-                });
-            });
-        }
-        function toggleCMS(id, val) { db.collection("cms_services").doc(id).set({ active: val }, { merge: true }); showToast(`${id} : ${val?'ON':'OFF'}`); }
-
-        /* --- 4. MOTEUR ADS --- */
-        async function pushAd() {
-            const val = document.getElementById('adInp').value; if(!val) return;
-            await db.collection("announcements").add({ message: val, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-            document.getElementById('adInp').value = ''; showToast("Annonce publiée");
-        }
-        function startAdsSync() {
-            db.collection("announcements").orderBy("createdAt", "desc").limit(3).onSnapshot(snap => {
-                const hist = document.getElementById('adHistory'); hist.innerHTML = '<p class="nav-label">Historique</p>';
-                snap.forEach(doc => hist.innerHTML += `<div class="list-row" style="font-size:0.7rem; color:var(--text-muted); border-radius:10px; margin-bottom:5px; background:rgba(255,255,255,0.01);">${doc.data().message}</div>`);
-            });
         }
 
-        /* --- 5. CRM CHAT ENGINE --- */
-        function startCRMSync() {
-            db.collection("chats").orderBy("timestamp", "desc").onSnapshot(snap => {
-                const list = document.getElementById('crmUserList'); list.innerHTML = ''; const grouped = {};
-                snap.forEach(doc => { const c = doc.data(); if(!grouped[c.userUID]) { grouped[c.userUID] = true; list.innerHTML += `<div class="list-row" style="cursor:pointer;" onclick="loadUserChat('${c.userUID}', '${c.userName}')"><div style="font-weight:800; font-size:0.75rem;">${c.userName.split('@')[0]}</div></div>`; } });
+        async function sendMessage() {
+            if (!currentChatUser) {
+                showToast('Sélectionnez un utilisateur');
+                return;
+            }
+
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            await db.collection('chats').add({
+                userUID: currentChatUser,
+                text: message,
+                sender: 'admin',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
+
+            input.value = '';
         }
-        function loadUserChat(uid, name) {
-            activeChatUID = uid; document.getElementById('crmWindow').style.display = 'flex';
-            db.collection("chats").where("userUID", "==", uid).orderBy("timestamp", "asc").onSnapshot(snap => {
-                const flow = document.getElementById('chatFlow'); flow.innerHTML = '';
-                snap.forEach(doc => { const m = doc.data(); const isAdm = m.sender === 'admin'; flow.innerHTML += `<div class="msg ${isAdm?'msg-adm':'msg-user'}">${m.text}</div>`; });
-                flow.scrollTop = flow.scrollHeight;
-            });
-            showToast(`Discussion : ${name}`);
+
+        // Sidebar
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
         }
-        document.getElementById('chatForm').onsubmit = async (e) => {
-            e.preventDefault(); const msg = document.getElementById('chatReply').value; if(!msg || !activeChatUID) return;
-            await db.collection("chats").add({ userUID: activeChatUID, text: msg, sender: "admin", timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-            document.getElementById('chatReply').value = '';
+
+        // Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Fermer la sidebar au clic sur overlay
+        document.getElementById('sidebarOverlay').onclick = toggleSidebar;
+
+        // Gestion responsive
+        window.onresize = () => {
+            if (window.innerWidth >= 1024) {
+                document.getElementById('sidebar').classList.remove('active');
+                document.getElementById('sidebarOverlay').classList.remove('active');
+            }
         };
-
-        // Redimensionnement Overlay Sidebar
-        window.onresize = () => { if(window.innerWidth > 1024) { sidebar.classList.remove('active'); overlay.classList.remove('active'); } };
-
     </script>
 </body>
 </html>
