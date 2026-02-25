@@ -3,137 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fox Admin — Panel de Contrôle Elite</title>
+    <title>Fox Admin — Command Center</title>
     
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Font Awesome 6 Pro -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
+        /* ==========================================================================
+           SYSTÈME DE DESIGN ADMIN ELITE (LIGHT MODE PREMIUM)
+           ========================================================================== */
         :root {
-            --bg-deep: #06070a; --bg-card: #0f121a; --accent: #00d1ff; --white: #ffffff;
-            --muted: #8e95a2; --success: #00ff88; --error: #ff4444; --border: rgba(255,255,255,0.05);
+            --primary: #0056b3;
+            --secondary: #001e62;
+            --accent: #00d1ff;
+            --bg: #f4f7fa;
+            --white: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --error: #ef4444;
+            --border: #e2e8f0;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg-deep); color: white; display: flex; font-size: 13px; }
+        body { background-color: var(--bg); color: var(--text-dark); display: flex; font-size: 13px; height: 100vh; overflow: hidden; }
 
-        /* --- SIDEBAR MOBILE FIXED --- */
-        .sidebar { position: fixed; left: -260px; top: 0; width: 260px; height: 100vh; background: var(--bg-card); border-right: 1px solid var(--border); z-index: 5000; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; }
+        /* --- SIDEBAR MOBILE --- */
+        .sidebar {
+            position: fixed; left: -280px; top: 0; width: 280px; height: 100vh;
+            background: var(--white); border-right: 1px solid var(--border);
+            z-index: 5000; transition: var(--transition); display: flex; flex-direction: column;
+            box-shadow: 20px 0 50px rgba(0,0,0,0.05);
+        }
         .sidebar.active { left: 0; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 4000; display: none; }
-        .overlay.active { display: block; }
 
-        .nav-btn { padding: 12px 20px; display: flex; align-items: center; gap: 12px; color: var(--muted); text-decoration: none; font-weight: 600; cursor: pointer; transition: 0.3s; }
-        .nav-btn:hover, .nav-btn.active { color: var(--accent); background: rgba(255,255,255,0.02); }
-        .nav-btn.active { border-right: 3px solid var(--accent); background: rgba(0, 209, 255, 0.05); }
+        .sidebar-brand { padding: 40px 30px; border-bottom: 1px solid var(--border); text-align: center; }
+        .sidebar-brand img { height: 40px; }
+        .sidebar-brand h2 { font-weight: 800; font-size: 1rem; color: var(--primary); margin-top: 10px; letter-spacing: 2px; }
+
+        .nav-menu { flex-grow: 1; padding: 20px; overflow-y: auto; }
+        .nav-label { font-size: 0.6rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; padding: 20px 10px 8px; }
+        .nav-btn { display: flex; align-items: center; gap: 12px; padding: 14px 18px; color: var(--text-muted); text-decoration: none; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.3s; margin-bottom: 4px; }
+        .nav-btn:hover { color: var(--primary); background: #f0f7ff; }
+        .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 10px 20px rgba(0, 86, 179, 0.15); }
+
+        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 4000; display: none; }
+        .sidebar-overlay.active { display: block; }
 
         /* --- MAIN LAYOUT --- */
-        .main { flex: 1; display: flex; flex-direction: column; width: 100%; }
-        header { height: 55px; padding: 0 15px; background: rgba(15,18,26,0.9); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top:0; z-index: 1000; }
+        .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
         
-        .menu-icon { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; color: var(--accent); cursor: pointer; border: 1px solid var(--border); border-radius: 8px; }
+        header {
+            height: 65px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px);
+            padding: 0 20px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 1000;
+        }
 
-        .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 15px; }
-        .kpi-card { background: var(--bg-card); padding: 15px; border-radius: 15px; border: 1px solid var(--border); position: relative; }
-        .kpi-card span { font-size: 0.55rem; font-weight: 800; color: var(--muted); text-transform: uppercase; }
-        .kpi-card h3 { font-size: 1rem; margin-top: 5px; color: #fff; font-weight: 800; }
+        .menu-icon { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--primary); cursor: pointer; border-radius: 10px; border: 1px solid var(--border); }
 
-        .section-card { background: var(--bg-card); border-radius: 20px; border: 1px solid var(--border); margin: 0 15px 20px; overflow: hidden; }
-        .card-head { padding: 15px 20px; border-bottom: 1px solid var(--border); font-weight: 800; font-size: 0.75rem; color: var(--accent); text-transform: uppercase; }
+        .scroller { padding: 15px; overflow-y: auto; flex: 1; }
 
-        /* --- LIST ROWS --- */
-        .row { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-        .row-info h5 { font-size: 0.8rem; font-weight: 700; color: #fff; }
-        .row-info p { font-size: 0.65rem; color: var(--muted); }
-        
-        .btn-lite { padding: 6px 12px; border-radius: 6px; border: none; font-weight: 800; font-size: 0.6rem; cursor: pointer; background: var(--accent); color: var(--bg-deep); }
-        .badge { padding: 3px 8px; border-radius: 4px; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; }
-        .badge-wa { background: rgba(255, 187, 51, 0.1); color: var(--warning); }
-        .badge-ok { background: rgba(0, 255, 136, 0.1); color: var(--success); }
+        /* --- KPI GRID --- */
+        .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+        .kpi-card { background: white; padding: 20px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.01); }
+        .kpi-card span { font-size: 0.6rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+        .kpi-card h3 { font-size: 1.1rem; font-weight: 800; margin-top: 5px; color: var(--secondary); }
+
+        /* --- LIST CARDS --- */
+        .section-card { background: white; border-radius: 24px; border: 1px solid var(--border); margin-bottom: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.02); }
+        .card-header { padding: 18px 25px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #fcfdfe; }
+        .card-header h4 { font-weight: 800; font-size: 0.8rem; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
+
+        .list-item { padding: 18px 25px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .list-item:hover { background: #f8fbff; }
+        .item-box { display: flex; align-items: center; gap: 15px; }
+        .item-icon { width: 40px; height: 40px; background: #f0f4f8; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--primary); border: 1px solid var(--border); }
+        .item-text h5 { font-size: 0.85rem; font-weight: 700; color: var(--text-dark); }
+        .item-text p { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; }
+
+        .badge { padding: 5px 10px; border-radius: 50px; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; }
+        .badge-wa { background: #fff8e1; color: #ffab00; }
+        .badge-ok { background: #e8f5e9; color: var(--success); }
+
+        .btn-manage { padding: 8px 14px; border-radius: 10px; border: none; font-weight: 800; font-size: 0.7rem; background: var(--primary); color: white; cursor: pointer; transition: 0.3s; }
 
         /* --- MODAL ELITE --- */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 6000; align-items: flex-end; }
-        .modal-box { background: var(--bg-card); width: 100%; border-radius: 25px 25px 0 0; padding: 25px; max-height: 85vh; overflow-y: auto; border: 1px solid var(--border); }
-        .detail-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .detail-cell label { font-size: 0.5rem; font-weight: 800; color: var(--muted); text-transform: uppercase; }
-        .detail-cell p { font-size: 0.8rem; font-weight: 700; }
-        .proof-img { width: 100%; border-radius: 12px; margin-top: 15px; border: 1px solid var(--border); }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(10px); z-index: 6000; align-items: flex-end; justify-content: center; }
+        .modal-content { background: white; width: 100%; max-width: 550px; border-radius: 30px 30px 0 0; padding: 30px; max-height: 90vh; overflow-y: auto; box-shadow: 0 -20px 50px rgba(0,0,0,0.1); }
+        .close-btn { float: right; font-size: 1.5rem; color: var(--text-muted); cursor: pointer; }
+        
+        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px; }
+        .detail-item label { display: block; font-size: 0.6rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
+        .detail-item p { font-size: 0.9rem; font-weight: 700; color: var(--text-dark); }
 
-        .input-dark { width: 100%; padding: 12px; background: #000; border: 1px solid var(--border); border-radius: 10px; color: #fff; font-size: 0.8rem; margin-top: 10px; outline: none; }
-        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .action-btn { padding: 12px; border-radius: 10px; border: none; font-weight: 800; font-size: 0.7rem; cursor: pointer; text-transform: uppercase; }
+        .proof-frame { width: 100%; border-radius: 15px; margin-top: 20px; border: 1px solid var(--border); overflow: hidden; cursor: pointer; }
+        .proof-frame img { width: 100%; height: auto; display: block; }
 
-        @media (min-width: 1025px) { .sidebar { left: 0; } .main { margin-left: 260px; } .menu-icon { display: none; } .kpi-grid { grid-template-columns: repeat(4, 1fr); } }
+        .admin-input { width: 100%; padding: 15px; border-radius: 14px; border: 1.5px solid var(--border); background: #fcfcfd; font-size: 0.9rem; margin-top: 10px; outline: none; }
+        .admin-input:focus { border-color: var(--primary); background: #fff; }
+
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px; }
+        .btn-elite { padding: 16px; border-radius: 14px; border: none; font-weight: 800; text-transform: uppercase; font-size: 0.75rem; cursor: pointer; transition: 0.3s; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--error); color: white; }
+
+        /* Switch CMS */
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; inset: 0; background-color: #cbd5e1; transition: .4s; border-radius: 34px; cursor: pointer; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        @media (min-width: 1025px) {
+            .sidebar { left: 0; border-radius: 0; }
+            .main { margin-left: 280px; }
+            .menu-icon { display: none; }
+            .kpi-grid { grid-template-columns: repeat(4, 1fr); }
+            .modal { align-items: center; }
+            .modal-content { border-radius: 24px; }
+        }
     </style>
 </head>
 <body>
-    <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
+    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-brand"><img src="/assets/logos/payfusion-logo.png"><h2>FOX COMMAND</h2></div>
-        <div class="nav-menu">
-            <div class="nav-btn active" onclick="showTab('orders', this)"><i class="fas fa-list"></i> Commandes</div>
-            <div class="nav-btn" onclick="showTab('users', this)"><i class="fas fa-users"></i> Clients</div>
-            <div class="nav-btn" onclick="showTab('cms', this)"><i class="fas fa-toggle-on"></i> CMS Services</div>
-            <div class="nav-btn" onclick="showTab('chat', this)"><i class="fas fa-comment-dots"></i> Support</div>
+        <div class="sidebar-brand">
+            <img src="/assets/logos/payfusion-logo.png">
+            <h2>COMMAND</h2>
         </div>
-        <a href="/home.html" class="nav-btn" style="margin-top:auto; border-top:1px solid var(--border);"><i class="fas fa-store"></i> Boutique</a>
+        <div class="nav-menu">
+            <p class="nav-label">Gestion</p>
+            <div class="nav-btn active" onclick="switchTab('orders', this)"><i class="fas fa-receipt"></i> Commandes</div>
+            <div class="nav-btn" onclick="switchTab('users', this)"><i class="fas fa-users-crown"></i> Utilisateurs</div>
+            <p class="nav-label">Configuration</p>
+            <div class="nav-btn" onclick="switchTab('cms', this)"><i class="fas fa-sliders-h"></i> CMS Services</div>
+            <div class="nav-btn" onclick="switchTab('chat', this)"><i class="fas fa-comment-dots"></i> Support Chat</div>
+        </div>
+        <div style="padding: 25px; border-top: 1px solid var(--border);">
+            <a href="/home.html" class="nav-btn" style="color: var(--primary); background: #f0f7ff;"><i class="fas fa-store"></i> Boutique</a>
+        </div>
     </div>
 
+    <!-- MAIN -->
     <div class="main">
         <header>
             <div class="menu-icon" onclick="toggleSidebar()"><i class="fas fa-bars-staggered"></i></div>
-            <div class="header-title" id="tabTitle">Commandes</div>
-            <div class="badge badge-ok">Elite Sync</div>
+            <div id="tabName" style="font-weight: 800; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;">Commandes</div>
+            <div class="badge badge-ok">Elite Active</div>
         </header>
 
-        <div class="kpi-grid">
-            <div class="kpi-card"><span>Chiffre Affaires</span><h3 id="statRev">0 HTG</h3></div>
-            <div class="kpi-card"><span>Bénéfice Net</span><h3 id="statProfit" style="color:var(--success)">0 HTG</h3></div>
-            <div class="kpi-card"><span>Total</span><h3 id="statCount">0</h3></div>
-            <div class="kpi-card"><span>En Attente</span><h3 id="statPending" style="color:var(--warning)">0</h3></div>
-        </div>
-
-        <!-- SECTION COMMANDES -->
-        <section id="ordersTab" class="admin-tab">
-            <div class="section-card">
-                <div class="card-head">Flux Transactions</div>
-                <div id="ordersList"></div>
+        <div class="scroller">
+            
+            <!-- KPI -->
+            <div class="kpi-grid">
+                <div class="kpi-card"><span>Chiffre Affaires</span><h3 id="statRev">0 HTG</h3></div>
+                <div class="kpi-card"><span>Profit Net</span><h3 id="statProfit" style="color: var(--success)">0 HTG</h3></div>
+                <div class="kpi-card"><span>Total</span><h3 id="statCount">0</h3></div>
+                <div class="kpi-card"><span>En Attente</span><h3 id="statWait" style="color: var(--warning)">0</h3></div>
             </div>
-        </section>
 
-        <!-- SECTION UTILISATEURS -->
-        <section id="usersTab" class="admin-tab" style="display:none">
-            <div class="section-card"><div class="card-head">Membres</div><div id="usersList"></div></div>
-        </section>
+            <!-- TABS -->
+            <section id="ordersTab" class="admin-tab">
+                <div class="section-card">
+                    <div class="card-header"><h4>Flux des Transactions</h4></div>
+                    <div id="ordersList"></div>
+                </div>
+            </section>
 
-        <!-- SECTION CMS -->
-        <section id="cmsTab" class="admin-tab" style="display:none">
-            <div class="kpi-grid" id="cmsGrid"></div>
-        </section>
+            <section id="usersTab" class="admin-tab" style="display:none">
+                <div class="section-card"><div class="card-header">Gestion Membres</div><div id="usersList"></div></div>
+            </section>
 
-        <!-- SECTION CHAT -->
-        <section id="chatTab" class="admin-tab" style="display:none">
-            <div class="section-card"><div id="chatUsersList"></div></div>
-        </section>
+            <section id="cmsTab" class="admin-tab" style="display:none">
+                <div class="kpi-grid" id="cmsGrid"></div>
+            </section>
+
+        </div>
     </div>
 
     <!-- MODAL COMMANDE -->
     <div class="modal" id="orderModal">
-        <div class="modal-box">
-            <i class="fas fa-times" onclick="closeModal()" style="float:right; cursor:pointer; color:var(--muted);"></i>
-            <h3 style="font-size:1rem; font-weight:800; color:var(--accent);">Détails Transaction</h3>
-            <div class="detail-row" id="modalData"></div>
-            <img id="proofImg" class="proof-img" onclick="window.open(this.src)">
-            <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:15px;">
-                <label style="font-size:0.55rem; font-weight:800; color:var(--accent);">Coût d'achat (HTG)</label>
-                <input type="number" id="purchaseCost" class="input-dark" placeholder="Ex: 150">
+        <div class="modal-content">
+            <i class="fas fa-times close-btn" onclick="closeModal()"></i>
+            <h3 style="font-weight: 800; font-size: 1.1rem; color: var(--primary);">Fiche de Commande</h3>
+            <div class="detail-grid" id="modalData"></div>
+            <div class="proof-frame"><img id="modalImg" onclick="window.open(this.src)"></div>
+            <div style="margin-top:20px;">
+                <label style="font-size:0.6rem; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Ajustement Profit (Coût Fournisseur HTG)</label>
+                <input type="number" id="costHTG" class="admin-input" placeholder="0.00">
                 <div class="btn-group">
-                    <button class="action-btn" style="background:var(--success); color:black;" onclick="setStatus('Validé')">Valider</button>
-                    <button class="action-btn" style="background:var(--error); color:white;" onclick="setStatus('Rejeté')">Rejeter</button>
+                    <button class="btn-elite btn-success" onclick="updateOrder('Validé')">Valider</button>
+                    <button class="btn-elite btn-danger" onclick="updateOrder('Rejeté')">Rejeter</button>
                 </div>
             </div>
         </div>
@@ -145,76 +217,73 @@
         const db = firebase.firestore(), auth = firebase.auth();
         let orders = [], activeID = null;
 
+        // Security check
         auth.onAuthStateChanged(user => {
             if(!user || user.email !== "bmarcco4412@gmail.com") window.location.href = "/login.html";
-            else init();
+            else { init(); }
         });
 
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
-        
-        function showTab(id, el) {
+        function switchTab(id, el) { 
             document.querySelectorAll('.admin-tab').forEach(t => t.style.display = 'none');
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id + 'Tab').style.display = 'block';
-            el.classList.add('active'); document.getElementById('tabTitle').textContent = el.textContent.trim();
+            el.classList.add('active'); document.getElementById('tabName').textContent = el.textContent.trim();
             if(window.innerWidth < 1025) toggleSidebar();
         }
 
         function init() {
-            // Orders Engine
+            // Moteur Orders
             db.collection("orders").orderBy("createdAt", "desc").onSnapshot(snap => {
                 const list = document.getElementById('ordersList'); list.innerHTML = '';
-                let rev = 0, prof = 0, pend = 0; orders = [];
+                let rev = 0, prof = 0, wait = 0; orders = [];
                 snap.forEach(doc => {
                     const o = doc.data(); const id = doc.id; orders.push({id, ...o});
-                    if(o.status === 'en-attente') pend++;
-                    if(o.status === 'Validé') { 
-                        rev += o.service.price; 
-                        prof += (o.service.price - (o.purchaseCost || 0)); 
-                    }
-                    list.innerHTML += `<div class="row"><div class="row-info"><h5>#${o.orderId}</h5><p>${o.service.name} ● ${o.service.product}</p></div><div style="text-align:right"><span class="badge ${o.status === 'en-attente'?'badge-wa':'badge-ok'}">${o.status}</span><br><button class="btn-lite" onclick="openOrder('${id}')" style="margin-top:5px">GÉRER</button></div></div>`;
+                    if(o.status === 'en-attente') wait++;
+                    if(o.status === 'Validé') { rev += o.service.price; prof += (o.service.price - (o.purchaseCost || 0)); }
+                    list.innerHTML += `<div class="list-item"><div class="item-box"><div class="item-icon">${o.service.name.charAt(0)}</div><div class="item-text"><h5>#${o.orderId}</h5><p>${o.service.name} ● ${o.service.product}</p></div></div><div style="text-align:right"><span class="badge ${o.status==='en-attente'?'badge-wa':'badge-ok'}">${o.status}</span><br><button class="btn-manage" onclick="openOrder('${id}')" style="margin-top:5px">GÉRER</button></div></div>`;
                 });
                 document.getElementById('statRev').textContent = rev.toLocaleString() + " HTG";
                 document.getElementById('statProfit').textContent = prof.toLocaleString() + " HTG";
                 document.getElementById('statCount').textContent = snap.size;
-                document.getElementById('statPending').textContent = pend;
+                document.getElementById('statWait').textContent = wait;
             });
 
-            // Users Engine
+            // Moteur Users
             db.collection("users").onSnapshot(snap => {
                 const list = document.getElementById('usersList'); list.innerHTML = '';
                 snap.forEach(doc => {
                     const u = doc.data(); const ban = u.status === 'Banni';
-                    list.innerHTML += `<div class="row"><div class="row-info"><h5>${u.personalInfo.fullName}</h5><p>${u.personalInfo.email}</p></div><button class="btn-lite" style="background:${ban?var(--success):var(--error)}" onclick="toggleBan('${doc.id}','${u.status}')">${ban?'ACTIVER':'BANNIR'}</button></div>`;
+                    list.innerHTML += `<div class="list-item"><div class="item-box"><div class="item-icon"><i class="fas fa-user"></i></div><div class="item-text"><h5>${u.personalInfo.fullName}</h5><p>${u.personalInfo.email}</p></div></div><button class="btn-manage" style="background:${ban?'var(--success)':'var(--error)'}" onclick="toggleBan('${doc.id}','${u.status}')">${ban?'ACTIVER':'BANNIR'}</button></div>`;
                 });
             });
 
             // CMS Engine
-            const svcs = ['Free Fire', 'Netflix', 'Disney+', 'PayPal', 'Wise', 'USDT', 'FC Mobile', 'eFootball'];
+            const list = ['Free Fire', 'FC Mobile', 'eFootball', 'Netflix', 'Disney+', 'PayPal', 'Wise', 'USDT'];
             db.collection("cms_services").onSnapshot(snap => {
                 const grid = document.getElementById('cmsGrid'); grid.innerHTML = '';
                 const states = {}; snap.forEach(d => states[d.id] = d.data().active);
-                svcs.forEach(s => {
+                list.forEach(s => {
                     const active = states[s] !== false;
-                    grid.innerHTML += `<div class="kpi-card" style="display:flex; justify-content:space-between; align-items:center;"><div><span>SERVICE</span><h4 style="font-size:0.75rem">${s}</h4></div><label class="switch"><input type="checkbox" ${active?'checked':''} onchange="setCMS('${s}', this.checked)"><span class="slider"></span></label></div>`;
+                    grid.innerHTML += `<div class="kpi-card" style="display:flex; justify-content:space-between; align-items:center;"><div><span>Service</span><h4 style="font-size:0.75rem">${s}</h4></div><label class="switch"><input type="checkbox" ${active?'checked':''} onchange="setCMS('${s}', this.checked)"><span class="slider"></span></label></div>`;
                 });
             });
         }
 
         function openOrder(id) {
             activeID = id; const o = orders.find(x => x.id === id);
-            const body = document.getElementById('modalData'); body.innerHTML = '';
-            const data = { "WhatsApp": o.customerInfo.whatsapp, "ID/Email": o.customerInfo.gameId || o.customerInfo.email, "Montant": o.service.price + " HTG", "Paiement": o.payment.method, "Expéditeur": o.payment.senderName };
-            for(let [l,v] of Object.entries(data)) body.innerHTML += `<div class="detail-cell"><label>${l}</label><p>${v}</p></div>`;
-            document.getElementById('proofImg').src = o.payment.proof;
-            document.getElementById('purchaseCost').value = o.purchaseCost || '';
+            const grid = document.getElementById('modalData'); grid.innerHTML = '';
+            const data = { "WhatsApp": o.customerInfo.whatsapp, "Identifiant": o.customerInfo.gameId || o.customerInfo.email, "Montant": o.service.price + " HTG", "Méthode": o.payment.method.toUpperCase(), "Expéditeur": o.payment.senderName };
+            for(let [l,v] of Object.entries(data)) grid.innerHTML += `<div class="detail-item"><label>${l}</label><p>${v}</p></div>`;
+            document.getElementById('modalImg').src = o.payment.proof;
+            document.getElementById('costHTG').value = o.purchaseCost || '';
             document.getElementById('orderModal').style.display = 'flex';
         }
 
-        async function setStatus(s) { 
-            const cost = parseFloat(document.getElementById('purchaseCost').value) || 0;
-            await db.collection("orders").doc(activeID).update({ status: s, purchaseCost: cost }); 
-            closeModal(); 
+        async function updateOrder(s) {
+            const cost = parseFloat(document.getElementById('costHTG').value) || 0;
+            await db.collection("orders").doc(activeID).update({ status: s, purchaseCost: cost });
+            closeModal();
         }
 
         function closeModal() { document.getElementById('orderModal').style.display = 'none'; }
