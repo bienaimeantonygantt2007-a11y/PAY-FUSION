@@ -3,291 +3,417 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fox Admin — Command Center Ultimate</title>
+    <title>Fox Admin — Command Center V10</title>
 
-    <!-- 
-        ==========================================================================
-        FOX STORE ARCHITECTURE v9.5 - ULTIMATE ADMIN (CORRIGÉ)
-        UNIFICATION DU WALLET (users.wallet_balance)
-        ZÉRO SIMULATION | DESIGN COMPACT ELITE
-        ==========================================================================
-    -->
-
-    <!-- Firebase SDK -->
+    <!-- FIREBASE SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     
-    <!-- Font Awesome 6 Pro -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- Plus Jakarta Sans -->
+    <!-- ICONS & FONTS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
+        /* ==========================================================================
+           1. DESIGN SYSTEM ELITE
+           ========================================================================== */
         :root {
-            --primary: #1e3a8a; --accent: #00d1ff; --secondary: #06070a;
-            --white: #ffffff; --bg: #f4f7fa; --text: #0f172a; --muted: #64748b;
+            --primary: #1e3a8a; --accent: #00d1ff; --secondary: #0f172a;
+            --white: #ffffff; --bg: #f8fafc; --text: #0f172a; --muted: #64748b;
             --success: #10b981; --error: #ef4444; --warning: #f59e0b;
             --border: #e2e8f0; --transition: all 0.3s ease;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text); display: flex; font-size: 12px; height: 100vh; overflow: hidden; }
+        
+        body { 
+            background-color: var(--bg); 
+            color: var(--text); 
+            display: flex; 
+            font-size: 12px; /* Taille compacte pour téléphone */
+            height: 100vh; 
+            overflow: hidden; 
+        }
 
-        /* --- SIDEBAR & OVERLAY --- */
-        .sidebar { position: fixed; left: -260px; top: 0; width: 260px; height: 100vh; background: #0f121a; color: white; z-index: 5000; transition: var(--transition); display: flex; flex-direction: column; }
+        /* ==========================================================================
+           2. SIDEBAR & MENU LOGIC (FIXED)
+           ========================================================================== */
+        .sidebar { 
+            position: fixed; left: -280px; top: 0; width: 280px; height: 100vh; 
+            background: #0f121a; color: white; z-index: 5000; 
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            display: flex; flex-direction: column; 
+            border-right: 1px solid rgba(255,255,255,0.05); 
+        }
         .sidebar.active { left: 0; }
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 4500; display: none; }
-        .overlay.active { display: block; }
-        .sidebar-brand { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .sidebar-brand img { height: 35px; filter: drop-shadow(0 0 10px var(--accent)); }
-        .nav-link { padding: 12px 20px; display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.6); text-decoration: none; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .nav-link.active { color: var(--accent); background: rgba(0, 209, 255, 0.05); border-right: 3px solid var(--accent); }
 
-        /* --- LAYOUT --- */
+        .overlay { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7); 
+            backdrop-filter: blur(4px); z-index: 4500; 
+            display: none; opacity: 0; transition: 0.3s;
+        }
+        .overlay.active { display: block; opacity: 1; }
+
+        .sidebar-brand { padding: 35px 25px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .sidebar-brand img { height: 35px; filter: drop-shadow(0 0 8px var(--accent)); }
+        
+        .nav-menu { flex-grow: 1; padding: 10px; overflow-y: auto; }
+        .nav-label { font-size: 0.55rem; font-weight: 800; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; padding: 20px 15px 8px; }
+        
+        .nav-link { 
+            display: flex; align-items: center; gap: 12px; padding: 12px 18px; 
+            color: rgba(255,255,255,0.6); text-decoration: none; border-radius: 12px; 
+            font-weight: 600; cursor: pointer; transition: 0.2s; margin-bottom: 2px;
+        }
+        .nav-link:hover { color: var(--accent); background: rgba(255,255,255,0.02); }
+        .nav-link.active { background: var(--primary); color: white; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+
+        /* ==========================================================================
+           3. MAIN LAYOUT & HEADER
+           ========================================================================== */
         .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-        header { height: 55px; padding: 0 15px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top:0; z-index: 1000; }
-        .burger { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: var(--primary); cursor: pointer; border: 1px solid var(--border); border-radius: 8px; }
+        
+        header { 
+            height: 55px; padding: 0 15px; background: rgba(255,255,255,0.95); 
+            backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); 
+            display: flex; align-items: center; justify-content: space-between; 
+            position: sticky; top: 0; z-index: 1000;
+        }
+        
+        .burger { 
+            width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; 
+            color: var(--primary); cursor: pointer; border: 1.5px solid var(--border); border-radius: 8px; 
+            background: white;
+        }
 
-        .scroller { padding: 10px 15px; overflow-y: auto; flex: 1; }
+        .header-title { font-weight: 800; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .scroller { padding: 10px 15px 30px; overflow-y: auto; flex: 1; }
+
+        /* ==========================================================================
+           4. KPI STATS (COMPACT)
+           ========================================================================== */
         .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 15px; }
-        .kpi-card { background: white; padding: 12px; border-radius: 15px; border: 1px solid var(--border); }
+        .kpi-card { background: white; padding: 12px; border-radius: 15px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.01); }
         .kpi-card span { font-size: 0.5rem; font-weight: 800; color: var(--muted); text-transform: uppercase; }
-        .kpi-card h3 { font-size: 0.9rem; font-weight: 800; margin-top: 3px; color: var(--secondary); }
+        .kpi-card h3 { font-size: 0.95rem; font-weight: 800; margin-top: 3px; color: var(--secondary); }
 
-        .section-card { background: white; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 15px; overflow: hidden; }
-        .card-head { padding: 12px 20px; border-bottom: 1px solid var(--border); font-weight: 800; font-size: 0.7rem; color: var(--primary); text-transform: uppercase; display: flex; justify-content: space-between; }
+        /* ==========================================================================
+           5. DATA CARDS & LISTS
+           ========================================================================== */
+        .section-card { background: white; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; overflow: hidden; }
+        .card-head { padding: 12px 18px; border-bottom: 1px solid var(--border); font-weight: 800; font-size: 0.7rem; color: var(--primary); text-transform: uppercase; background: #fcfdfe; }
 
-        /* --- LIST ROWS --- */
-        .row { padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-        .row:hover { background: #f8fbff; }
-        .row-info h5 { font-size: 0.8rem; font-weight: 700; }
-        .row-info p { font-size: 0.65rem; color: var(--muted); }
-
-        .badge { padding: 3px 8px; border-radius: 4px; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; }
-        .st-pending { background: #fff8e1; color: #ffab00; }
-        .st-success { background: #e8f5e9; color: var(--success); }
+        .list-row { 
+            padding: 12px 18px; border-bottom: 1px solid var(--border); 
+            display: flex; align-items: center; justify-content: space-between;
+            transition: 0.2s;
+        }
+        .list-row:hover { background: #f8fbff; }
+        
+        .row-info h5 { font-size: 0.8rem; font-weight: 700; color: #1e293b; }
+        .row-info p { font-size: 0.65rem; color: var(--muted); font-weight: 600; }
 
         .btn-manage { padding: 6px 12px; border-radius: 8px; border: none; font-weight: 800; font-size: 0.6rem; background: var(--primary); color: white; cursor: pointer; }
+        
+        .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; }
+        .st-pending { background: #fff8e1; color: #ffab00; }
+        .st-valide { background: #e8f5e9; color: var(--success); }
 
-        /* --- MODAL --- */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 6000; align-items: flex-end; justify-content: center; }
-        .modal-box { background: white; width: 100%; max-width: 500px; border-radius: 25px 25px 0 0; padding: 25px; border: 1px solid var(--border); max-height: 85vh; overflow-y: auto; }
-        .close-btn { float: right; cursor: pointer; color: var(--muted); font-size: 1.2rem; }
+        /* ==========================================================================
+           6. MODAL & PROOF VIEWER
+           ========================================================================== */
+        .modal { 
+            display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.9); 
+            backdrop-filter: blur(8px); z-index: 6000; align-items: flex-end; justify-content: center; 
+        }
+        .modal-box { 
+            background: white; width: 100%; max-width: 500px; border-radius: 25px 25px 0 0; 
+            padding: 25px; border: 1px solid var(--border); max-height: 85vh; overflow-y: auto; 
+        }
+        .close-modal { float: right; cursor: pointer; color: var(--muted); font-size: 1.2rem; }
 
-        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .detail-cell label { font-size: 0.5rem; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 3px; display: block; }
+        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
+        .detail-cell label { font-size: 0.5rem; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 2px; display: block; }
         .detail-cell p { font-size: 0.8rem; font-weight: 700; color: var(--secondary); word-break: break-all; }
 
-        .proof-viewer { width: 100%; border-radius: 12px; margin-top: 15px; border: 1px solid var(--border); cursor: pointer; }
+        .proof-frame { width: 100%; border-radius: 12px; margin-top: 15px; border: 1.5px solid var(--border); overflow: hidden; cursor: pointer; background: #000; }
+        .proof-frame img { width: 100%; height: auto; display: block; opacity: 0.9; }
 
-        /* --- CMS & INPUTS --- */
-        .switch { position: relative; display: inline-block; width: 38px; height: 20px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; inset: 0; background-color: #cbd5e1; transition: .4s; border-radius: 34px; cursor: pointer; }
-        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--primary); }
-        input:checked + .slider:before { transform: translateX(18px); }
-
+        /* ==========================================================================
+           7. FORM ELEMENTS & CMS
+           ========================================================================== */
         .adm-input { width: 100%; padding: 12px; background: #fcfcfd; border: 1.5px solid var(--border); border-radius: 12px; outline: none; font-size: 0.85rem; font-weight: 600; margin-top: 10px; }
-        .btn-elite { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 800; text-transform: uppercase; font-size: 0.75rem; cursor: pointer; margin-top: 10px; }
+        .adm-input:focus { border-color: var(--primary); background: #fff; }
+
+        .btn-elite { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 800; text-transform: uppercase; font-size: 0.75rem; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         .btn-ok { background: var(--success); color: white; }
         .btn-no { background: var(--error); color: white; }
 
-        /* --- CHAT CRM --- */
-        .chat-container { height: 450px; display: flex; flex-direction: column; }
-        .chat-users { flex: 1; overflow-y: auto; border-bottom: 1px solid var(--border); }
-        .chat-main { flex: 2; display: none; flex-direction: column; background: #fcfcfd; }
+        .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; inset: 0; background-color: #cbd5e1; transition: .4s; border-radius: 34px; cursor: pointer; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(18px); }
+
+        /* ==========================================================================
+           8. CRM CHAT ENGINE
+           ========================================================================== */
+        .chat-container { height: 500px; display: flex; flex-direction: column; }
+        .chat-sidebar { flex: 1; overflow-y: auto; border-bottom: 1px solid var(--border); }
+        .chat-main { flex: 2; display: none; flex-direction: column; background: #f8fafc; }
         .chat-log { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-        .m { max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 0.75rem; font-weight: 600; }
-        .m-adm { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 2px; }
-        .m-user { align-self: flex-start; background: #eee; color: var(--text); border-bottom-left-radius: 2px; }
+        .msg-bubble { max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 0.75rem; font-weight: 600; }
+        .msg-adm { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 2px; }
+        .msg-user { align-self: flex-start; background: #fff; border: 1px solid var(--border); color: var(--text); border-bottom-left-radius: 2px; }
 
-        @media (min-width: 1025px) { .sidebar { left: 0; } .main { margin-left: 260px; } .burger { display: none; } .kpi-grid { grid-template-columns: repeat(4, 1fr); } .modal { align-items: center; } .modal-box { border-radius: 20px; } .chat-container { flex-direction: row; height: 600px; } .chat-users { width: 280px; border-right: 1px solid var(--border); border-bottom: none; } }
+        /* ==========================================================================
+           9. RESPONSIVE DESKTOP
+           ========================================================================== */
+        @media (min-width: 1025px) {
+            .sidebar { left: 0; }
+            .main { margin-left: 280px; }
+            .burger { display: none; }
+            .kpi-grid { grid-template-columns: repeat(4, 1fr); }
+            .modal { align-items: center; }
+            .modal-box { border-radius: 20px; padding: 35px; }
+            .chat-container { flex-direction: row; height: 600px; }
+            .chat-sidebar { width: 280px; border-right: 1px solid var(--border); border-bottom: none; }
+        }
 
-        #toast { position: fixed; top: 15px; right: 15px; z-index: 9999; background: var(--secondary); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 0.7rem; transform: translateX(200%); transition: 0.4s; border: 1px solid var(--accent); }
-        #toast.show { transform: translateX(0); }
+        #toast { position: fixed; top: 15px; right: 15px; z-index: 9999; background: var(--secondary); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 0.7rem; transform: translateX(250%); transition: 0.4s; border: 1px solid var(--accent); }
+        #toast.active { transform: translateX(0); }
     </style>
 </head>
 <body>
 
-    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+    <div class="overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
     <div id="toast">Confirmation Elite</div>
 
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR NAVIGATION -->
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-brand"><img src="/assets/logos/payfusion-logo.png"><h2>COMMAND</h2></div>
-        <div class="nav-menu">
-            <p class="nav-label">Finance</p>
-            <div class="nav-link active" onclick="switchTab('orders', this)"><i class="fas fa-receipt"></i> Ventes</div>
-            <div class="nav-link" onclick="switchTab('wallet', this)"><i class="fas fa-wallet"></i> Portefeuille</div>
-            <div class="nav-link" onclick="switchTab('users', this)"><i class="fas fa-users-gear"></i> Utilisateurs</div>
-            <p class="nav-label">Configuration</p>
-            <div class="nav-btn" onclick="switchTab('cms', this)"><i class="fas fa-toggle-on"></i> CMS Services</div>
-            <div class="nav-btn" onclick="switchTab('marketing', this)"><i class="fas fa-bullhorn"></i> Annonces</div>
-            <p class="nav-label">CRM</p>
-            <div class="nav-btn" onclick="switchTab('chat', this)"><i class="fas fa-comment-dots"></i> Support</div>
+        <div class="sidebar-brand">
+            <img src="/assets/logos/payfusion-logo.png">
+            <h2>FOX COMMAND</h2>
         </div>
-        <a href="/home.html" class="nav-link" style="margin-top:auto; border-top:1px solid rgba(255,255,255,0.05);"><i class="fas fa-store"></i> Boutique</a>
+        <div class="nav-menu">
+            <p class="nav-label">Finances</p>
+            <div class="nav-link active" onclick="switchTab('orders', this)"><i class="fas fa-receipt"></i> Ventes Directes</div>
+            <div class="nav-link" onclick="switchTab('wallet', this)"><i class="fas fa-wallet"></i> Portefeuille (D/R)</div>
+            <div class="nav-link" onclick="switchTab('users', this)"><i class="fas fa-users-gear"></i> Gestion Membres</div>
+            <p class="nav-label">Contrôle Site</p>
+            <div class="nav-link" onclick="switchTab('cms', this)"><i class="fas fa-toggle-on"></i> CMS Services</div>
+            <div class="nav-link" onclick="switchTab('ads', this)"><i class="fas fa-bullhorn"></i> Annonces Flash</div>
+            <p class="nav-label">Assistance</p>
+            <div class="nav-link" onclick="switchTab('chat', this)"><i class="fas fa-comment-dots"></i> Chat Support</div>
+        </div>
+        <div style="padding: 20px; border-top: 1px solid rgba(255,255,255,0.05);">
+            <a href="/home.html" class="nav-link" style="color:var(--accent); background:rgba(0, 209, 255, 0.05);"><i class="fas fa-store"></i> Boutique Fox</a>
+        </div>
     </div>
 
     <!-- MAIN INTERFACE -->
     <div class="main">
         <header>
             <div class="burger" onclick="toggleSidebar()"><i class="fas fa-bars-staggered"></i></div>
-            <div id="sectionTitle" style="font-weight: 800; font-size: 0.8rem; text-transform: uppercase;">Commandes</div>
-            <div class="badge st-success">Elite Active</div>
+            <div id="headerTitle" style="font-weight: 800; font-size: 0.8rem;">Ventes Directes</div>
+            <div class="badge st-valide">Live Sync</div>
         </header>
 
+        <!-- KPI SUMMARY -->
         <div class="kpi-grid">
-            <div class="kpi-card"><span>Chiffre Ventes</span><h3 id="statRev">0 HTG</h3></div>
-            <div class="kpi-card"><span>Profit Net</span><h3 id="statProfit" style="color:var(--success)">0 HTG</h3></div>
-            <div class="kpi-card"><span>Membres</span><h3 id="statUsers">0</h3></div>
-            <div class="kpi-card"><span>Alertes</span><h3 id="statWait" style="color:var(--warning)">0</h3></div>
+            <div class="kpi-card"><span>Chiffre d'Affaires</span><h3 id="revTotal">0 HTG</h3></div>
+            <div class="kpi-card"><span>Bénéfice Réel</span><h3 id="profTotal" style="color:var(--success)">0 HTG</h3></div>
+            <div class="kpi-card"><span>Total Membres</span><h3 id="userTotal">0</h3></div>
+            <div class="kpi-card"><span>En Attente</span><h3 id="waitTotal" style="color:var(--warning)">0</h3></div>
         </div>
 
         <div class="scroller">
-            <!-- TABS -->
-            <section id="ordersTab" class="fox-tab">
+            
+            <!-- VENTES DIRECTES -->
+            <section id="ordersTab" class="admin-tab">
                 <div class="section-card"><div id="ordersList"></div></div>
             </section>
 
-            <section id="walletTab" class="fox-tab" style="display:none">
-                <div class="section-card"><div class="card-head">Dépôts / Retraits</div><div id="walletList"></div></div>
+            <!-- WALLET TRANSACTIONS -->
+            <section id="walletTab" class="admin-tab" style="display:none">
+                <div class="section-card"><div class="card-head">Dépôts & Retraits Portefeuille</div><div id="walletList"></div></div>
             </section>
 
-            <section id="usersTab" class="fox-tab" style="display:none">
-                <div class="section-card"><div id="usersList"></div></div>
+            <!-- USERS LIST -->
+            <section id="usersTab" class="admin-tab" style="display:none">
+                <div class="section-card">
+                    <div class="card-head"><input type="text" id="uSearch" placeholder="Chercher un membre..." style="background:none; border:none; color:var(--primary); outline:none; font-weight:800;" onkeyup="filterUsers(this.value)"></div>
+                    <div id="usersList"></div>
+                </div>
             </section>
 
-            <section id="cmsTab" class="fox-tab" style="display:none">
+            <!-- CMS CONTROL -->
+            <section id="cmsTab" class="admin-tab" style="display:none">
                 <div class="kpi-grid" id="cmsGrid"></div>
             </section>
 
-            <section id="chatTab" class="fox-tab" style="display:none">
+            <!-- CHAT CRM -->
+            <section id="chatTab" class="admin-tab" style="display:none">
                 <div class="section-card chat-container">
-                    <div class="chat-users" id="chatUsersList"></div>
+                    <div class="chat-users" id="chatUserList"></div>
                     <div class="chat-main" id="chatWin">
                         <div class="chat-log" id="chatFlow"></div>
-                        <form id="replyForm" style="padding:10px; display:flex; gap:5px; border-top:1px solid var(--border);">
-                            <input type="text" id="replyMsg" class="adm-input" placeholder="Répondre..." style="margin-top:0;">
-                            <button type="submit" class="burger" style="border-color:var(--primary); color:var(--primary);"><i class="fas fa-paper-plane"></i></button>
+                        <form id="adminReplyForm" style="padding:10px; display:flex; gap:8px; border-top:1px solid var(--border); background:white;">
+                            <input type="text" id="adminMsg" class="adm-input" placeholder="Réponse..." style="margin-top:0;">
+                            <button type="submit" class="burger" style="border-color:var(--primary);"><i class="fas fa-paper-plane"></i></button>
                         </form>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+
+            <!-- MARKETING ADS -->
+            <section id="adsTab" class="admin-tab" style="display:none">
+                <div class="section-card" style="padding:20px;">
+                    <textarea id="adText" class="adm-input" rows="4" placeholder="Message défilant sur l'accueil..."></textarea>
+                    <button class="btn-elite btn-ok" onclick="pushAd()">Diffuser maintenant</button>
+                    <div id="adHistory" style="margin-top:20px;"></div>
+                </div>
+            </section>
+
+        </div>
     </div>
 
-    <!-- MODALS -->
+    <!-- MODAL: FICHE VENTE -->
     <div class="modal" id="orderModal">
         <div class="modal-box">
-            <i class="fas fa-times close-btn" onclick="closeModal()"></i>
-            <h3 style="font-weight:800; color:var(--primary);">Détails Vente</h3>
+            <i class="fas fa-times close-modal" onclick="closeModal()"></i>
+            <h3 style="font-weight: 800; font-size: 1rem; color: var(--primary);">Vérification de Vente</h3>
             <div class="detail-grid" id="orderFields"></div>
-            <img id="orderImg" class="proof-viewer" onclick="window.open(this.src)">
-            <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:15px;">
-                <label style="font-size:0.5rem; font-weight:800; color:var(--muted);">COÛT FOURNISSEUR (HTG)</label>
-                <input type="number" id="purchaseCost" class="adm-input">
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
-                    <button class="btn-elite btn-ok" onclick="handleOrder('Validé')">Valider</button>
-                    <button class="btn-elite btn-no" onclick="handleOrder('Rejeté')">Rejeter</button>
+            <div class="proof-frame" onclick="openImage()"><img id="orderImg"></div>
+            <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:20px;">
+                <label style="font-size:0.55rem; font-weight:800; color:var(--muted); text-transform:uppercase;">Coût fournisseur (HTG)</label>
+                <input type="number" id="purchaseCost" class="adm-input" placeholder="0.00">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
+                    <button class="btn-elite btn-ok" onclick="processOrder('Validé')">Approuver</button>
+                    <button class="btn-elite btn-no" onclick="processOrder('Rejeté')">Rejeter</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- MODAL: FICHE PORTEFEUILLE -->
     <div class="modal" id="walletModal">
         <div class="modal-box">
-            <i class="fas fa-times close-btn" onclick="closeModal()"></i>
-            <h3 style="font-weight:800; color:var(--primary);">Validation Portefeuille</h3>
+            <i class="fas fa-times close-modal" onclick="closeModal()"></i>
+            <h3 style="font-weight: 800; font-size: 1rem; color: var(--primary);">Demande Portefeuille</h3>
             <div class="detail-grid" id="walletFields"></div>
-            <img id="walletImg" class="proof-viewer" onclick="window.open(this.src)">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:20px;">
-                <button class="btn-elite btn-ok" onclick="handleWallet('valide')">Confirmer</button>
-                <button class="btn-elite btn-no" onclick="handleWallet('rejete')">Refuser</button>
+            <div class="proof-frame" id="walletProofArea" onclick="openImage()"><img id="walletImg"></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:25px;">
+                <button class="btn-elite btn-ok" onclick="processWallet('valide')">Confirmer</button>
+                <button class="btn-elite btn-no" onclick="processWallet('rejete')">Refuser</button>
             </div>
         </div>
     </div>
 
     <script>
-        const firebaseConfig = { apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg", authDomain: "pay-fusion-6dfaf.firebaseapp.com", projectId: "pay-fusion-6dfaf", storageBucket: "pay-fusion-6dfaf.firebasestorage.app", messagingSenderId: "945593776812", appId: "1:945593776812:web:4475e1085fdfa31690fd09", measurementId: "G-8FEQG6B7ZY" };
+        // ==========================================================================
+        // 11. MOTEUR LOGIQUE INTÉGRAL (ZÉRO SIMULATION)
+        // ==========================================================================
+
+        const firebaseConfig = { 
+            apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg", 
+            authDomain: "pay-fusion-6dfaf.firebaseapp.com", 
+            projectId: "pay-fusion-6dfaf", 
+            storageBucket: "pay-fusion-6dfaf.firebasestorage.app", 
+            messagingSenderId: "945593776812", 
+            appId: "1:945593776812:web:4475e1085fdfa31690fd09", 
+            measurementId: "G-8FEQG6B7ZY" 
+        };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore(), auth = firebase.auth();
-        let ordersData = [], walletData = [], activeID = null, activeChatUID = null;
+        
+        let ordersData = [], walletData = [], usersData = [], activeID = null, activeChatUID = null;
 
+        // AUTH & BOOT
         auth.onAuthStateChanged(user => {
             if(!user || user.email !== "bmarcco4412@gmail.com") window.location.href = "/login.html";
-            else launchEngine();
+            else launchEngines();
         });
 
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+        function toggleSidebar() { 
+            document.getElementById('sidebar').classList.toggle('active'); 
+            document.getElementById('sidebarOverlay').classList.toggle('active'); 
+        }
+
         function switchTab(id, el) {
-            document.querySelectorAll('.fox-tab').forEach(t => t.style.display = 'none');
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.admin-tab').forEach(t => t.style.display = 'none');
+            document.querySelectorAll('.nav-link, .nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(id + 'Tab').style.display = 'block';
-            el.classList.add('active'); document.getElementById('sectionTitle').textContent = el.textContent.trim();
+            el.classList.add('active'); 
+            document.getElementById('headerTitle').textContent = el.textContent.trim();
             if(window.innerWidth < 1025) toggleSidebar();
         }
 
-        function launchEngine() {
-            // Ventes
+        function launchEngines() {
+            // Moteur Ventes
             db.collection("orders").orderBy("createdAt", "desc").onSnapshot(snap => {
                 const list = document.getElementById('ordersList'); list.innerHTML = '';
                 let rev = 0, prof = 0, wait = 0; ordersData = [];
                 snap.forEach(doc => {
                     const o = doc.data(); const id = doc.id; ordersData.push({id, ...o});
                     if(o.status === 'en-attente') wait++;
-                    if(o.status === 'Validé') { rev += o.service.price; prof += (o.service.price - (o.purchaseCost || 0)); }
-                    list.innerHTML += `<div class="list-row"><div class="row-info"><h5>#${o.orderId}</h5><p>${o.service.name} ● ${o.service.product}</p></div><div style="text-align:right"><span class="badge ${o.status==='en-attente'?'st-pending':'st-success'}">${o.status}</span><br><button class="btn-manage" onclick="openOrderModal('${id}')" style="margin-top:5px">GÉRER</button></div></div>`;
+                    if(o.status === 'Validé') { 
+                        rev += o.service.price; 
+                        prof += (o.service.price - (o.purchaseCost || 0)); 
+                    }
+                    list.innerHTML += `<div class="list-row"><div class="row-info"><h5>#${o.orderId}</h5><p>${o.service.name} ● ${o.service.product}</p></div><div style="text-align:right"><span class="badge ${o.status==='en-attente'?'st-pending':'st-valide'}">${o.status}</span><br><button class="btn-manage" style="margin-top:5px" onclick="openOrderModal('${id}')">GÉRER</button></div></div>`;
                 });
                 document.getElementById('statRev').textContent = rev.toLocaleString() + " HTG";
                 document.getElementById('statProfit').textContent = prof.toLocaleString() + " HTG";
                 document.getElementById('statWait').textContent = wait;
             });
 
-            // Wallet
+            // Moteur Wallet
             db.collection("wallet_transactions").orderBy("createdAt", "desc").onSnapshot(snap => {
                 const list = document.getElementById('walletList'); list.innerHTML = ''; walletData = [];
                 snap.forEach(doc => {
                     const t = doc.data(); const id = doc.id; walletData.push({id, ...t});
-                    list.innerHTML += `<div class="list-row"><div class="row-info"><h5>${t.type.toUpperCase()}</h5><p>${t.amount} HTG ● ${t.userEmail}</p></div><div style="text-align:right"><span class="badge ${t.status==='en-attente'?'st-pending':'st-success'}">${t.status}</span><br><button class="btn-manage" onclick="openWalletModal('${id}')" style="margin-top:5px">GÉRER</button></div></div>`;
+                    list.innerHTML += `<div class="list-row"><div class="row-info"><h5>${t.type.toUpperCase()}</h5><p>${t.amount} HTG ● ${t.userEmail}</p></div><div style="text-align:right"><span class="badge ${t.status==='en-attente'?'st-pending':'st-valide'}">${t.status}</span><br><button class="btn-manage" style="margin-top:5px" onclick="openWalletModal('${id}')">GÉRER</button></div></div>`;
                 });
             });
 
-            // Membres
+            // Moteur Utilisateurs
             db.collection("users").onSnapshot(snap => {
-                const list = document.getElementById('usersList'); list.innerHTML = '';
-                document.getElementById('statUsers').textContent = snap.size;
+                const list = document.getElementById('usersList'); list.innerHTML = ''; usersData = [];
+                document.getElementById('userTotal').textContent = snap.size;
                 snap.forEach(doc => {
-                    const u = doc.data(); const id = doc.id; const isBanned = u.status === 'Banni';
-                    list.innerHTML += `<div class="list-row"><div class="row-info"><h5>${u.personalInfo?.fullName || 'Utilisateur'}</h5><p>${u.personalInfo?.email} ● Solde: ${u.wallet_balance || 0} HTG</p></div><button class="btn-manage" style="background:${isBanned?var(--success):var(--error)}" onclick="toggleBan('${id}', '${u.status}')">${isBanned?'ACTIVER':'BANNIR'}</button></div>`;
+                    const u = doc.data(); const id = doc.id; usersData.push({id, ...u});
+                    const isBanned = u.status === 'Banni';
+                    list.innerHTML += `<div class="list-row"><div class="row-info"><h5>${u.personalInfo?.fullName || 'Membre'}</h5><p>${u.personalInfo?.email} ● Solde: ${u.wallet_balance || 0} HTG</p></div><button class="btn-manage" style="background:${isBanned?var(--success):var(--error)}" onclick="toggleBan('${id}', '${u.status}')">${isBanned?'ACTIVER':'BANNIR'}</button></div>`;
                 });
             });
 
-            // CMS
-            const listSvc = ['Free Fire', 'FC Mobile', 'eFootball', 'PUBG Mobile', 'Blood Strike', 'Roblox', 'DLS 24', 'Minecraft', 'Flex City', 'Netflix', 'Disney+', 'Prime Video', 'Crunchyroll', 'PayPal', 'Wise', 'USDT', 'TRONX', 'MERU', 'Telegram Prem.', 'TikTok Coins'];
+            // Moteur CMS
+            const svcs = ['Free Fire', 'FC Mobile', 'eFootball', 'PUBG Mobile', 'Blood Strike', 'Roblox', 'DLS 24', 'Minecraft', 'Flex City', 'Netflix', 'Disney+', 'Prime Video', 'Crunchyroll', 'PayPal', 'Wise', 'USDT', 'TRONX', 'MERU', 'Telegram Prem.', 'TikTok Coins'];
             db.collection("cms_services").onSnapshot(snap => {
                 const grid = document.getElementById('cmsGrid'); grid.innerHTML = '';
                 const states = {}; snap.forEach(d => states[d.id] = d.data().active);
-                listSvc.forEach(s => {
+                svcs.forEach(s => {
                     const active = states[s] !== false;
-                    grid.innerHTML += `<div class="kpi-card" style="display:flex; justify-content:space-between; align-items:center; padding:15px 20px;"><div><span>SERVICE</span><h4 style="font-size:0.75rem">${s}</h4></div><label class="switch"><input type="checkbox" ${active?'checked':''} onchange="setCMS('${s}', this.checked)"><span class="slider"></span></label></div>`;
+                    grid.innerHTML += `<div class="kpi-card" style="display:flex; justify-content:space-between; align-items:center; padding:15px 20px;"><div><span>CANAL</span><h4 style="font-size:0.75rem">${s}</h4></div><label class="switch"><input type="checkbox" ${active?'checked':''} onchange="setCMS('${s}', this.checked)"><span class="slider"></span></label></div>`;
                 });
             });
 
-            // Chat
+            // Moteur CRM Chat
             db.collection("chats").orderBy("timestamp", "desc").onSnapshot(snap => {
-                const list = document.getElementById('chatUsersList'); list.innerHTML = ''; const grouped = {};
+                const list = document.getElementById('chatUserList'); list.innerHTML = ''; const grouped = {};
                 snap.forEach(doc => { const c = doc.data(); if(!grouped[c.userUID]) { grouped[c.userUID] = true; list.innerHTML += `<div class="list-row" style="cursor:pointer;" onclick="loadChat('${c.userUID}', '${c.userName}')"><h5>${c.userName.split('@')[0]}</h5></div>`; } });
             });
         }
 
+        // --- HANDLERS MODAUX ---
         function openOrderModal(id) {
             activeID = id; const o = ordersData.find(x => x.id === id);
             const grid = document.getElementById('orderFields'); grid.innerHTML = '';
-            const d = { "Service": o.service.product, "WhatsApp": o.customerInfo.whatsapp, "ID/Email": o.customerInfo.gameId || o.customerInfo.email, "Montant": o.service.price + " HTG", "Méthode": o.payment.method.toUpperCase(), "Emetteur": o.payment.senderName };
+            const d = { "Service": o.service.product, "WhatsApp": o.customerInfo.whatsapp, "Identifiant": o.customerInfo.gameId || o.customerInfo.email, "Paiement": o.payment.method.toUpperCase(), "Emetteur": o.payment.senderName };
             for(let [l,v] of Object.entries(d)) grid.innerHTML += `<div class="detail-cell"><label>${l}</label><p>${v}</p></div>`;
             document.getElementById('orderImg').src = o.payment.proof;
             document.getElementById('purchaseCost').value = o.purchaseCost || '';
@@ -299,25 +425,26 @@
             const grid = document.getElementById('walletFields'); grid.innerHTML = '';
             const d = { "Type": t.type.toUpperCase(), "Client": t.userEmail, "Montant": t.amount + " HTG", "Méthode": t.method, "Expéditeur": t.senderName };
             for(let [l,v] of Object.entries(d)) grid.innerHTML += `<div class="detail-cell"><label>${l}</label><p>${v}</p></div>`;
-            if(t.proof) { document.getElementById('walletImg').src = t.proof; document.getElementById('walletImg').style.display = 'block'; }
-            else document.getElementById('walletImg').style.display = 'none';
+            if(t.proof) { document.getElementById('walletImg').src = t.proof; document.getElementById('walletProofArea').style.display = 'block'; }
+            else document.getElementById('walletProofArea').style.display = 'none';
             document.getElementById('walletModal').style.display = 'flex';
         }
 
-        async function handleOrder(s) {
+        // --- ACTIONS FIREBASE ---
+        async function processOrder(s) {
             const cost = parseFloat(document.getElementById('purchaseCost').value) || 0;
             await db.collection("orders").doc(activeID).update({ status: s, purchaseCost: cost, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
-            closeModal(); showToast("Commande mise à jour");
+            closeModal(); toast("Vente traitée");
         }
 
-        async function handleWallet(s) {
+        async function processWallet(s) {
             const t = walletData.find(x => x.id === activeID);
             if(s === 'valide') {
                 const change = t.type === 'depot' ? t.amount : -t.amount;
                 await db.collection("users").doc(t.userId).update({ wallet_balance: firebase.firestore.FieldValue.increment(change) });
             }
             await db.collection("wallet_transactions").doc(activeID).update({ status: s });
-            closeModal(); showToast("Portefeuille mis à jour");
+            closeModal(); toast("Portefeuille mis à jour");
         }
 
         function loadChat(uid, name) {
@@ -329,16 +456,18 @@
             });
         }
 
-        document.getElementById('replyForm').onsubmit = async (e) => {
-            e.preventDefault(); const msg = document.getElementById('replyMsg').value; if(!msg) return;
+        document.getElementById('adminReplyForm').onsubmit = async (e) => {
+            e.preventDefault(); const msg = document.getElementById('adminMsg').value; if(!msg) return;
             await db.collection("chats").add({ userUID: activeChatUID, text: msg, sender: "admin", timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-            document.getElementById('replyMsg').value = '';
+            document.getElementById('adminMsg').value = '';
         };
 
-        function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
-        function showToast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
         function toggleBan(id, s) { db.collection("users").doc(id).update({ status: s === 'Banni' ? 'Actif' : 'Banni' }); }
         function setCMS(id, val) { db.collection("cms_services").doc(id).set({ active: val }, { merge: true }); }
+        function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+        function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('active'); setTimeout(() => t.classList.remove('active'), 3000); }
+        function openImage() { window.open(document.getElementById('orderImg').src || document.getElementById('walletImg').src); }
+        async function pushAd() { const val = document.getElementById('adText').value; if(val) { await db.collection("announcements").add({ message: val, createdAt: firebase.firestore.FieldValue.serverTimestamp() }); document.getElementById('adText').value = ''; toast("Annonce en ligne"); } }
     </script>
 </body>
 </html>
