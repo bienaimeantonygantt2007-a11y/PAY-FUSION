@@ -18,16 +18,20 @@
 
     <style>
         :root {
-            --primary: #0056b3;
-            --secondary: #002d5e;
-            --accent: #00d1ff;
+            --primary: #1e3a8a;
+            --secondary: #0f2b6b;
+            --accent: #3b5ba5;
             --bg: #f8fafc;
             --white: #ffffff;
             --text-main: #1e293b;
             --text-muted: #64748b;
-            --border: rgba(0, 86, 179, 0.08);
+            --success: #059669;
+            --warning: #d97706;
+            --error: #dc2626;
+            --border: #e2e8f0;
             --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             --radius: 20px;
+            --shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -51,7 +55,7 @@
         .section-title { font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 15px; margin-top: 25px; }
 
         /* --- ÉTAPE 1: ARTICLES --- */
-        .cart-card { background: #fff; border-radius: var(--radius); border: 1px solid var(--border); padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .cart-card { background: #fff; border-radius: var(--radius); border: 1px solid var(--border); padding: 20px; box-shadow: var(--shadow); }
         .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
         .cart-item:last-child { border-bottom: none; }
         .item-info h4 { font-size: 0.9rem; font-weight: 800; color: var(--secondary); }
@@ -61,6 +65,21 @@
         .total-box { margin-top: 15px; padding-top: 15px; border-top: 2px dashed #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
         .total-box span { font-weight: 800; color: var(--secondary); }
         .total-box b { font-size: 1.2rem; color: var(--primary); font-weight: 900; }
+
+        /* --- CARTE SOLDE FOX --- */
+        .balance-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: var(--radius);
+            padding: 20px;
+            color: white;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+        .balance-label { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; opacity: 0.9; }
+        .balance-value { font-size: 1.5rem; font-weight: 800; }
 
         /* --- ÉTAPE 2: CATÉGORIES --- */
         .category-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
@@ -77,11 +96,37 @@
         .service-btn img { height: 35px; margin-bottom: 10px; object-fit: contain; }
         .service-btn span { display: block; font-size: 0.8rem; font-weight: 800; color: var(--secondary); }
 
+        /* --- OPTION SOLDE FOX SPÉCIALE --- */
+        .fox-balance-option {
+            background: linear-gradient(135deg, #f0f7ff, #fff);
+            border: 2px solid var(--primary);
+            margin-bottom: 20px;
+        }
+        .fox-balance-option .balance-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+        }
+
         /* --- ÉTAPE 4: FORMULAIRE FINAL --- */
         .instruction-box { background: #f0f7ff; border-left: 4px solid var(--primary); padding: 20px; border-radius: 15px; margin-bottom: 25px; line-height: 1.6; }
         .instruction-box h4 { font-size: 0.85rem; font-weight: 800; color: var(--secondary); margin-bottom: 10px; text-transform: uppercase; }
         .instruction-box p { font-size: 0.9rem; color: var(--secondary); font-weight: 600; }
         .instruction-box b { color: var(--primary); font-size: 1rem; }
+
+        /* --- MESSAGE SUCCÈS SOLDE --- */
+        .success-message {
+            background: var(--success);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
 
         .form-group { margin-bottom: 18px; }
         .form-group label { display: block; font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
@@ -93,6 +138,10 @@
 
         .btn-pay { width: 100%; padding: 20px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.3s; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-pay:hover { background: var(--secondary); transform: translateY(-3px); }
+        .btn-pay:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .btn-success { background: var(--success); }
+        .btn-success:hover { background: #047857; }
 
         #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 5000; align-items: center; justify-content: center; flex-direction: column; }
     </style>
@@ -124,7 +173,27 @@
         <!-- ÉTAPE 2 : CHOIX CATÉGORIE -->
         <div id="step2" class="step-container">
             <p class="section-title">Méthode de paiement</p>
+            
+            <!-- Affichage du solde Fox -->
+            <div class="balance-card" id="balanceCard" style="display: none;">
+                <span class="balance-label">Votre solde Fox</span>
+                <span class="balance-value" id="walletBalance">0 HTG</span>
+            </div>
+
             <div class="category-grid">
+                <!-- Nouvelle option : Payer avec mon solde Fox -->
+                <div class="category-btn fox-balance-option" id="foxBalanceOption" onclick="checkFoxBalance()" style="display: none;">
+                    <i class="fas fa-wallet" style="color: var(--primary);"></i>
+                    <div>
+                        <h5>Payer avec mon solde Fox</h5>
+                        <p>Utilisez votre portefeuille Fox Store</p>
+                        <div class="balance-info">
+                            <span style="font-size:0.8rem; color:var(--text-muted);">Disponible</span>
+                            <span style="font-weight:800; color:var(--primary);" id="foxBalanceAmount">0 HTG</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="category-btn" onclick="showServices('mobile')">
                     <i class="fas fa-mobile-alt"></i>
                     <div><h5>Paiement Mobile</h5><p>Moncash, Natcash</p></div>
@@ -167,6 +236,44 @@
             </form>
         </div>
 
+        <!-- ÉTAPE SPÉCIALE : CONFIRMATION PAIEMENT SOLDE -->
+        <div id="stepBalance" class="step-container">
+            <div class="success-message" id="balanceCheckMessage">
+                <i class="fas fa-check-circle" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                <h3 style="margin-bottom: 10px;">Solde suffisant !</h3>
+                <p id="balanceCheckText">Vérification en cours...</p>
+            </div>
+
+            <div class="cart-card">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <i class="fas fa-wallet" style="font-size: 3rem; color: var(--primary); margin-bottom: 10px;"></i>
+                    <h3>Confirmation de paiement</h3>
+                </div>
+
+                <div style="margin-bottom: 20px; padding: 15px; background: #f8fafc; border-radius: 12px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>Total de la commande</span>
+                        <span style="font-weight: 800;" id="confirmTotal">0 HTG</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>Solde disponible</span>
+                        <span style="font-weight: 800; color: var(--success);" id="confirmBalance">0 HTG</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding-top: 10px; border-top: 2px dashed var(--border);">
+                        <span>Nouveau solde après achat</span>
+                        <span style="font-weight: 800; color: var(--primary);" id="newBalance">0 HTG</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-pay" onclick="goToStep(2)" style="background: var(--text-muted);">Annuler</button>
+                    <button class="btn-pay btn-success" onclick="processFoxPayment()" id="confirmFoxPayment">
+                        Confirmer le paiement <i class="fas fa-check"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -189,28 +296,148 @@
         let totalHTG = 0;
         let selectedMethod = "";
         let proofBase64 = "";
+        let userBalance = 0;
+        let currentUser = null;
 
         // Initialisation Panier
         function initCart() {
             const list = document.getElementById('itemsList');
+            totalHTG = 0;
+            
             if(cart.length === 0) {
                 list.innerHTML = `<p style="text-align:center; padding:20px; font-weight:700; color:var(--text-muted);">Votre panier est vide.</p>`;
+                document.getElementById('finalTotal').textContent = "0 HTG";
                 return;
             }
+            
             list.innerHTML = cart.map(item => {
                 totalHTG += item.price;
                 return `<div class="cart-item"><div class="item-info"><h4>${item.name}</h4><p>${item.product}</p></div><div class="item-price">${item.price.toLocaleString()} HTG</div></div>`;
             }).join('');
+            
             document.getElementById('finalTotal').textContent = totalHTG.toLocaleString() + " HTG";
         }
         initCart();
 
+        // Auth State
+        auth.onAuthStateChanged(user => { 
+            if(!user) {
+                window.location.href = "/login.html";
+            } else {
+                currentUser = user;
+                loadWalletBalance(user.uid);
+            }
+        });
+
+        // Charger le solde du portefeuille
+        function loadWalletBalance(uid) {
+            db.collection('wallets').doc(uid).onSnapshot(doc => {
+                if (doc.exists) {
+                    userBalance = doc.data().balance || 0;
+                } else {
+                    userBalance = 0;
+                }
+                
+                document.getElementById('walletBalance').textContent = userBalance.toLocaleString() + ' HTG';
+                document.getElementById('foxBalanceAmount').textContent = userBalance.toLocaleString() + ' HTG';
+                document.getElementById('balanceCard').style.display = 'flex';
+                
+                // Afficher l'option Fox Balance seulement si solde > 0
+                if (userBalance > 0) {
+                    document.getElementById('foxBalanceOption').style.display = 'flex';
+                }
+            });
+        }
+
+        // Vérifier si le solde est suffisant
+        function checkFoxBalance() {
+            if (userBalance >= totalHTG) {
+                document.getElementById('confirmTotal').textContent = totalHTG.toLocaleString() + ' HTG';
+                document.getElementById('confirmBalance').textContent = userBalance.toLocaleString() + ' HTG';
+                document.getElementById('newBalance').textContent = (userBalance - totalHTG).toLocaleString() + ' HTG';
+                document.getElementById('balanceCheckText').innerHTML = `Votre solde de <strong>${userBalance.toLocaleString()} HTG</strong> est suffisant pour cet achat.`;
+                
+                goToStep('balance');
+                document.getElementById('headerTitle').textContent = "Paiement par solde";
+            } else {
+                alert(`Solde insuffisant. Il vous manque ${(totalHTG - userBalance).toLocaleString()} HTG.`);
+            }
+        }
+
+        // Traiter le paiement via solde Fox
+        async function processFoxPayment() {
+            if (!currentUser) return;
+            
+            document.getElementById('loader').style.display = 'flex';
+            document.getElementById('confirmFoxPayment').disabled = true;
+            
+            try {
+                const orderId = "FOX-" + Date.now().toString().slice(-6);
+                const batch = db.batch();
+                
+                // Déduire le solde
+                const walletRef = db.collection('wallets').doc(currentUser.uid);
+                batch.update(walletRef, {
+                    balance: firebase.firestore.FieldValue.increment(-totalHTG)
+                });
+
+                // Créer les commandes
+                for (const item of cart) {
+                    const orderRef = db.collection("orders").doc();
+                    batch.set(orderRef, {
+                        orderId: orderId,
+                        userId: currentUser.uid,
+                        userEmail: currentUser.email,
+                        service: item,
+                        payment: {
+                            method: "fox_balance",
+                            amount: totalHTG,
+                            status: "payé"
+                        },
+                        status: "en-attente",
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+
+                // Ajouter une transaction
+                const transactionRef = db.collection('wallet_transactions').doc();
+                batch.set(transactionRef, {
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    transactionId: 'PAY-' + Date.now().toString().slice(-8),
+                    type: 'paiement',
+                    amount: totalHTG,
+                    description: `Paiement commande ${orderId}`,
+                    status: 'complété',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                await batch.commit();
+                
+                localStorage.removeItem('foxstore_cart');
+                window.location.href = "/pages/checkout/success.html?method=fox_balance";
+                
+            } catch (error) {
+                console.error("Erreur paiement:", error);
+                alert("Une erreur est survenue lors du paiement.");
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('confirmFoxPayment').disabled = false;
+            }
+        }
+
         // Navigation entre étapes
         function goToStep(step) {
             document.querySelectorAll('.step-container').forEach(s => s.classList.remove('active'));
-            document.getElementById('step' + step).classList.add('active');
+            
+            if (step === 'balance') {
+                document.getElementById('stepBalance').classList.add('active');
+                document.getElementById('headerTitle').textContent = "Paiement par solde";
+            } else {
+                document.getElementById('step' + step).classList.add('active');
+                if(step === 2) document.getElementById('headerTitle').textContent = "Méthode de paiement";
+            }
+            
             window.scrollTo(0,0);
-            if(step === 2) document.getElementById('headerTitle').textContent = "Méthode de paiement";
         }
 
         // Affichage des services par catégorie
@@ -271,7 +498,7 @@
             } else {
                 const addr = "TBcmhXsvnsyVCL3k5bmhxxwYWDYTTiLiwi";
                 details = `<h4>Paiement Crypto (TRC20)</h4><p>Envoyez à l'adresse :</p><p style="font-size:0.7rem; word-break:break-all;"><b>${addr}</b></p>`;
-                inputs.innerHTML = `<div class="form-group"><label>Votre Adresse Wallet</label><input type="text" id="senderName" required></div><div class="form-group"><label>Montant envoyé</label><input type="text" id="senderInfo" required></div>`;
+                inputs.innerHTML = `<div class="form-group"><label>Votre Adresse Wallet</label><input type="text" id="senderName" required></div><div class="form-group"><label>Hash de transaction (TXID)</label><input type="text" id="senderInfo" required></div>`;
             }
 
             instr.innerHTML = details;
@@ -282,18 +509,28 @@
         // Compression image Base64
         document.getElementById('proofInput').onchange = function(e) {
             const file = e.target.files[0];
+            if (!file) return;
+            
+            if (file.size > 5 * 1024 * 1024) {
+                alert("Le fichier ne doit pas dépasser 5 Mo");
+                this.value = '';
+                return;
+            }
+
             const reader = new FileReader();
             reader.onload = function(event) {
                 const img = new Image();
                 img.src = event.target.result;
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    const scale = 800 / img.width;
-                    canvas.width = 800; canvas.height = img.height * scale;
+                    const MAX_WIDTH = 800;
+                    const scale = MAX_WIDTH / img.width;
+                    canvas.width = MAX_WIDTH;
+                    canvas.height = img.height * scale;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     proofBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                    document.getElementById('fileLabel').innerHTML = `<i class="fas fa-check-circle" style="color:var(--primary)"></i> Reçu chargé avec succès`;
+                    document.getElementById('fileLabel').innerHTML = `<i class="fas fa-check-circle" style="color:var(--success)"></i> Reçu chargé avec succès`;
                 };
             };
             reader.readAsDataURL(file);
@@ -309,31 +546,33 @@
             const orderId = "FOX-" + Date.now().toString().slice(-6);
 
             try {
-                // Création d'une commande par article pour la gestion admin granulaire
+                // Création d'une commande par article
                 for (const item of cart) {
                     await db.collection("orders").add({
                         orderId: orderId,
                         userId: user.uid,
+                        userEmail: user.email,
                         service: item,
                         payment: {
                             method: selectedMethod,
                             proof: proofBase64,
                             senderName: document.getElementById('senderName').value,
-                            senderPhone: document.getElementById('senderInfo').value
+                            senderInfo: document.getElementById('senderInfo').value,
+                            amount: totalHTG
                         },
                         status: "en-attente",
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 }
+                
                 localStorage.removeItem('foxstore_cart');
                 window.location.href = "/pages/checkout/success.html";
             } catch (err) {
+                console.error("Erreur:", err);
                 alert("Erreur lors de la validation.");
                 document.getElementById('loader').style.display = 'none';
             }
         };
-
-        auth.onAuthStateChanged(user => { if(!user) window.location.href = "/login.html"; });
     </script>
 </body>
 </html>
