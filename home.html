@@ -1059,9 +1059,10 @@
                     const initial = (firstName.charAt(0) || 'U').toUpperCase();
                     document.getElementById('userAvatar').innerHTML = `<span style="font-size: 1.5rem;">${initial}</span>`;
 
-                    // Vérification admin - CORRIGÉ pour correspondre aux règles Firestore
-                    if (user.email === 'bmarcco4412@gmail.com') {
-                        document.getElementById('adminSection').style.display = 'block';
+                    // Vérification admin - FORCÉ POUR TEST
+document.getElementById('adminSection').style.display = 'block';
+console.log('Admin section affichée pour test');
+```
                     }
                 }
             });
