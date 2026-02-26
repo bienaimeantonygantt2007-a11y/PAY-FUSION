@@ -3,30 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fox Store - Accueil</title>
+    <title>Fox Store • Accueil</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     
-    <!-- Font Awesome -->
+    <!-- Font Awesome 6 Pro -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <!-- Google Fonts - System font stack pour performance -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 
     <style>
         /* ==========================================================================
-           ROYAL BLUE & WHITE - PALETTE PROFESSIONNELLE
+           DESIGN SYSTEM ULTRA PROFESSIONNEL
            ========================================================================== */
         :root {
-            --royal-blue: #1e3a8a;
-            --royal-light: #3b5ba5;
-            --royal-dark: #0f2b6b;
+            /* Couleurs principales */
+            --primary: #0a2540;
+            --primary-light: #1a3a5c;
+            --primary-dark: #051a2b;
+            --accent: #0056b3;
+            --accent-light: #eef4ff;
             --white: #ffffff;
-            --off-white: #f8fafc;
-            --gray-50: #f9f9f9;
+            --off-white: #f9fafc;
+            
+            /* Échelle de gris sophistiquée */
+            --gray-50: #f8fafc;
             --gray-100: #f1f5f9;
             --gray-200: #e2e8f0;
             --gray-300: #cbd5e1;
@@ -36,24 +41,37 @@
             --gray-700: #334155;
             --gray-800: #1e293b;
             --gray-900: #0f172a;
-            --success: #059669;
-            --success-light: #d1fae5;
-            --warning: #d97706;
-            --warning-light: #fef3c7;
-            --error: #dc2626;
-            --error-light: #fee2e2;
-            --border: #e2e8f0;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
-            --transition: all 0.2s ease;
-            --radius-lg: 20px;
-            --radius-md: 12px;
-            --radius-sm: 8px;
+            
+            /* États */
+            --success: #0e7b4e;
+            --success-light: #e6f7ef;
+            --warning: #b45b0f;
+            --warning-light: #fff1e0;
+            --error: #b91c1c;
+            --error-light: #fee9e9;
+            
+            /* Effets */
+            --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.02);
+            --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.03), 0 1px 2px -1px rgb(0 0 0 / 0.02);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.03), 0 2px 4px -2px rgb(0 0 0 / 0.02);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.03), 0 4px 6px -4px rgb(0 0 0 / 0.02);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.03), 0 8px 10px -6px rgb(0 0 0 / 0.02);
+            
+            /* Animations */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* Bordures */
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 20px;
         }
 
         /* ==========================================================================
-           RESET & BASE (MOBILE-FIRST)
+           RESET & BASE
            ========================================================================== */
         * {
             margin: 0;
@@ -62,27 +80,29 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: var(--gray-50);
-            color: var(--gray-800);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--off-white);
+            color: var(--gray-900);
             line-height: 1.5;
-            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         /* ==========================================================================
-           HEADER (MOBILE-FIRST)
+           HEADER LUXUEUX
            ========================================================================== */
         .header {
-            background: var(--white);
-            border-bottom: 1px solid var(--gray-200);
-            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+            padding: 12px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             position: sticky;
             top: 0;
-            z-index: 40;
-            box-shadow: var(--shadow-sm);
+            z-index: 50;
         }
 
         .header-left {
@@ -92,36 +112,44 @@
         }
 
         .menu-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: var(--gray-50);
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            background: var(--white);
             border: 1px solid var(--gray-200);
             color: var(--gray-600);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: var(--transition);
+            transition: var(--transition-fast);
+            box-shadow: var(--shadow-xs);
         }
 
         .menu-btn:hover {
-            background: var(--gray-100);
-            color: var(--royal-blue);
+            background: var(--gray-50);
+            color: var(--primary);
+            border-color: var(--primary);
+            transform: scale(1.02);
         }
 
         .logo {
-            font-weight: 800;
-            font-size: 1.25rem;
-            color: var(--royal-blue);
-            letter-spacing: -0.5px;
+            font-weight: 700;
+            font-size: 1.35rem;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .logo span {
+            font-weight: 400;
             color: var(--gray-500);
-            font-weight: 500;
-            font-size: 0.875rem;
-            margin-left: 4px;
+            background: none;
+            -webkit-text-fill-color: var(--gray-500);
+            font-size: 1rem;
+            margin-left: 2px;
         }
 
         .header-right {
@@ -131,54 +159,63 @@
         }
 
         .icon-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: var(--gray-50);
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            background: var(--white);
             border: 1px solid var(--gray-200);
             color: var(--gray-600);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: var(--transition);
+            transition: var(--transition-fast);
             text-decoration: none;
+            position: relative;
+            box-shadow: var(--shadow-xs);
         }
 
         .icon-btn:hover {
-            background: var(--gray-100);
-            color: var(--royal-blue);
+            background: var(--gray-50);
+            color: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
         }
 
         /* ==========================================================================
-           SIDEBAR (MOBILE-FIRST)
+           SIDEBAR ÉLÉGANTE
            ========================================================================== */
         .sidebar-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 50;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 60;
             display: none;
-            backdrop-filter: blur(2px);
+            opacity: 0;
+            transition: opacity var(--transition-base);
         }
 
         .sidebar-overlay.active {
             display: block;
+            opacity: 1;
         }
 
         .sidebar {
             position: fixed;
             top: 0;
-            left: -280px;
-            width: 280px;
+            left: -320px;
+            width: 300px;
             height: 100vh;
             background: var(--white);
             border-right: 1px solid var(--gray-200);
-            z-index: 60;
-            transition: left 0.3s ease;
+            z-index: 70;
+            transition: left var(--transition-base);
             display: flex;
             flex-direction: column;
-            box-shadow: var(--shadow-lg);
+            box-shadow: var(--shadow-xl);
         }
 
         .sidebar.active {
@@ -186,53 +223,56 @@
         }
 
         .sidebar-header {
-            padding: 24px 20px;
-            border-bottom: 1px solid var(--gray-200);
-            background: linear-gradient(135deg, var(--royal-blue), var(--royal-dark));
+            padding: 32px 24px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: var(--white);
         }
 
-        .user-avatar {
-            width: 56px;
-            height: 56px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 16px;
+        .user-avatar-large {
+            width: 64px;
+            height: 64px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: var(--radius-lg);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 12px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            font-size: 1.75rem;
+            margin-bottom: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
-        .user-name {
+        .user-name-large {
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 1.1rem;
             margin-bottom: 4px;
+            letter-spacing: -0.01em;
         }
 
-        .user-email {
-            font-size: 0.75rem;
+        .user-email-large {
+            font-size: 0.8rem;
             opacity: 0.8;
+            font-weight: 400;
         }
 
         .sidebar-nav {
             flex: 1;
-            padding: 16px;
+            padding: 24px 16px;
             overflow-y: auto;
         }
 
         .nav-section {
-            margin-bottom: 24px;
+            margin-bottom: 28px;
         }
 
         .nav-section-title {
-            font-size: 0.625rem;
+            font-size: 0.7rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: var(--gray-400);
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             padding-left: 12px;
         }
 
@@ -240,39 +280,43 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 12px;
-            border-radius: 10px;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
             color: var(--gray-600);
             font-weight: 500;
-            font-size: 0.875rem;
-            transition: var(--transition);
+            font-size: 0.9rem;
+            transition: all var(--transition-fast);
             cursor: pointer;
             text-decoration: none;
             width: 100%;
+            margin-bottom: 2px;
         }
 
         .nav-item i {
             width: 20px;
-            font-size: 1rem;
+            font-size: 1.1rem;
             color: var(--gray-400);
+            transition: color var(--transition-fast);
         }
 
         .nav-item:hover {
             background: var(--gray-50);
-            color: var(--royal-blue);
+            color: var(--primary);
+            transform: translateX(4px);
         }
 
         .nav-item:hover i {
-            color: var(--royal-blue);
+            color: var(--primary);
         }
 
         .nav-item.active {
-            background: var(--royal-blue);
-            color: var(--white);
+            background: var(--accent-light);
+            color: var(--accent);
+            font-weight: 600;
         }
 
         .nav-item.active i {
-            color: var(--white);
+            color: var(--accent);
         }
 
         .nav-item.logout {
@@ -286,175 +330,191 @@
             color: var(--error);
         }
 
-        /* Badge pour le solde du wallet */
         .wallet-badge {
             background: var(--success);
             color: white;
-            font-size: 0.65rem;
-            font-weight: 700;
-            padding: 2px 8px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 4px 8px;
             border-radius: 20px;
             margin-left: auto;
-        }
-
-        /* ==========================================================================
-           BOUTON FLOTTANT ADMIN (BULBE)
-           ========================================================================== */
-        .admin-floating {
-            position: fixed;
-            bottom: 100px; /* Au-dessus du panier */
-            right: 24px;
-            width: 60px;
-            height: 60px;
-            background: var(--error);
-            color: var(--white);
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
-            text-decoration: none;
-            z-index: 35;
-            transition: var(--transition);
-            border: 2px solid var(--white);
-            animation: pulse 2s infinite;
-        }
-
-        .admin-floating:hover {
-            transform: scale(1.1) rotate(-5deg);
-            background: #b91c1c;
-        }
-
-        .admin-floating i {
-            font-size: 1.5rem;
-        }
-
-        .admin-floating .badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--white);
-            color: var(--error);
-            font-size: 0.7rem;
-            font-weight: 800;
-            padding: 2px 6px;
-            border-radius: 10px;
-            border: 2px solid var(--error);
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+            letter-spacing: normal;
         }
 
         /* ==========================================================================
            MAIN CONTENT
            ========================================================================== */
         .main {
-            padding: 16px;
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
+            padding: 20px;
         }
 
         /* ==========================================================================
-           HERO SECTION
+           HERO SECTION - LUXE
            ========================================================================== */
         .hero {
-            background: linear-gradient(135deg, var(--royal-blue), var(--royal-dark));
-            border-radius: 20px;
-            padding: 24px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: var(--radius-2xl);
+            padding: 32px;
             color: var(--white);
-            margin-bottom: 24px;
+            margin-bottom: 32px;
             position: relative;
             overflow: hidden;
             box-shadow: var(--shadow-lg);
         }
 
-        .hero::after {
-            content: "";
+        .hero::before {
+            content: '';
             position: absolute;
-            top: -50px;
-            right: -50px;
-            width: 200px;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.05);
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
             border-radius: 50%;
         }
 
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
         .hero-greeting {
-            font-size: 0.875rem;
+            font-size: 0.9rem;
             font-weight: 500;
             opacity: 0.9;
             margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 8px;
+            letter-spacing: 0.3px;
         }
 
         .hero-title {
-            font-size: 1.75rem;
-            font-weight: 800;
+            font-size: 2rem;
+            font-weight: 700;
             line-height: 1.2;
             margin-bottom: 8px;
-            letter-spacing: -0.5px;
+            letter-spacing: -0.02em;
         }
 
         .hero-subtitle {
-            font-size: 0.875rem;
+            font-size: 0.95rem;
             opacity: 0.9;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+            font-weight: 400;
         }
 
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 8px 16px;
-            border-radius: 40px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .hero-stats {
+            display: flex;
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .hero-stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hero-stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .hero-stat-label {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         /* ==========================================================================
-           ANNOUNCEMENT MARQUEE
+           ANNOUNCEMENT BANNER
            ========================================================================== */
-        .marquee {
+        .announcement {
             background: var(--white);
             border: 1px solid var(--gray-200);
-            border-radius: 40px;
-            padding: 8px 16px;
-            margin-bottom: 24px;
+            border-radius: var(--radius-xl);
+            padding: 12px 20px;
+            margin-bottom: 32px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            overflow: hidden;
+            gap: 16px;
             box-shadow: var(--shadow-sm);
         }
 
-        .marquee-label {
-            background: var(--royal-blue);
-            color: var(--white);
-            padding: 4px 12px;
+        .announcement-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--accent-light);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 1rem;
+        }
+
+        .announcement-text {
+            flex: 1;
+            font-size: 0.9rem;
+            color: var(--gray-700);
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .announcement-badge {
+            background: var(--primary);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* ==========================================================================
+           CATEGORY TABS
+           ========================================================================== */
+        .category-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+        }
+
+        .category-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-tab {
+            padding: 8px 16px;
             border-radius: 40px;
-            font-size: 0.625rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-
-        .marquee-text {
-            font-size: 0.875rem;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            font-size: 0.85rem;
+            font-weight: 600;
             color: var(--gray-600);
+            cursor: pointer;
+            transition: all var(--transition-fast);
             white-space: nowrap;
-            animation: scroll 20s linear infinite;
         }
 
-        @keyframes scroll {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
+        .category-tab:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-300);
+        }
+
+        .category-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
         }
 
         /* ==========================================================================
@@ -464,7 +524,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin: 32px 0 16px;
+            margin: 40px 0 20px;
         }
 
         .section-title {
@@ -473,61 +533,72 @@
             gap: 10px;
         }
 
-        .section-title i {
-            color: var(--royal-blue);
-            font-size: 1.25rem;
+        .section-title-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--accent-light);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
         }
 
         .section-title h2 {
             font-size: 1.1rem;
             font-weight: 700;
             color: var(--gray-800);
+            letter-spacing: -0.01em;
         }
 
         .section-link {
-            color: var(--royal-blue);
-            font-size: 0.75rem;
+            color: var(--accent);
+            font-size: 0.8rem;
             font-weight: 600;
             text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+
+        .section-link:hover {
+            color: var(--primary);
         }
 
         /* ==========================================================================
-           SERVICE GRID - AVEC LOGOS PLUS LARGES
+           SERVICE GRID - PROFESSIONNEL
            ========================================================================== */
         .service-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
+            gap: 12px;
         }
 
         .service-card {
             background: var(--white);
-            border-radius: 16px;
-            padding: 20px 12px;
+            border-radius: var(--radius-lg);
+            padding: 16px 12px;
             text-decoration: none;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
             border: 1px solid var(--gray-200);
-            transition: var(--transition);
-            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-base);
             position: relative;
+            box-shadow: var(--shadow-xs);
         }
 
         .service-card:hover {
             transform: translateY(-4px);
-            border-color: var(--royal-blue);
-            box-shadow: var(--shadow-md);
+            border-color: var(--accent);
+            box-shadow: var(--shadow-lg);
         }
 
-        /* LOGOS PLUS LARGES - 120x120 comme demandé */
         .service-card img {
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             object-fit: contain;
-            margin-bottom: 16px;
-            transition: var(--transition);
+            margin-bottom: 12px;
+            transition: transform var(--transition-base);
         }
 
         .service-card:hover img {
@@ -535,14 +606,13 @@
         }
 
         .service-card span {
-            font-weight: 700;
-            font-size: 0.875rem;
-            color: var(--gray-700);
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--gray-800);
         }
 
-        /* Service indisponible */
         .service-card.offline {
-            opacity: 0.6;
+            opacity: 0.5;
             filter: grayscale(1);
             pointer-events: none;
         }
@@ -552,72 +622,116 @@
             position: absolute;
             top: 8px;
             right: 8px;
-            background: var(--error);
-            color: var(--white);
-            font-size: 0.5rem;
-            font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 4px;
-            text-transform: uppercase;
+            background: var(--gray-500);
+            color: white;
+            font-size: 0.6rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 12px;
         }
 
         /* ==========================================================================
-           SKELETON LOADING
+           QUICK ACTIONS
            ========================================================================== */
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: 16px;
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin: 32px 0;
         }
 
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+        .quick-action {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: 12px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: var(--gray-700);
+            transition: all var(--transition-fast);
+        }
+
+        .quick-action:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .quick-action i {
+            font-size: 1.25rem;
+        }
+
+        .quick-action span {
+            font-size: 0.7rem;
+            font-weight: 600;
         }
 
         /* ==========================================================================
-           FLOATING CART BUTTON
+           FLOATING BUTTONS
            ========================================================================== */
-        .cart-floating {
+        .floating-buttons {
             position: fixed;
             bottom: 24px;
             right: 24px;
-            width: 60px;
-            height: 60px;
-            background: var(--royal-blue);
-            color: var(--white);
-            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 40;
+        }
+
+        .floating-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 8px 20px rgba(30, 58, 138, 0.3);
+            color: white;
             text-decoration: none;
-            z-index: 30;
-            transition: var(--transition);
-            border: 2px solid var(--white);
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-base);
+            border: 2px solid white;
         }
 
-        .cart-floating:hover {
+        .floating-btn:hover {
             transform: scale(1.1) rotate(-5deg);
-            background: var(--royal-dark);
         }
 
-        .cart-count {
+        .floating-btn.cart {
+            background: var(--primary);
+        }
+
+        .floating-btn.admin {
+            background: var(--error);
+            animation: pulse 2s infinite;
+        }
+
+        .floating-btn .badge {
             position: absolute;
             top: -5px;
             right: -5px;
             background: var(--error);
-            color: var(--white);
-            font-size: 0.75rem;
+            color: white;
+            font-size: 0.7rem;
             font-weight: 700;
             width: 22px;
             height: 22px;
-            border-radius: 50%;
+            border-radius: 11px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 2px solid var(--white);
+            border: 2px solid white;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(185, 28, 28, 0.7); }
+            70% { box-shadow: 0 0 0 12px rgba(185, 28, 28, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(185, 28, 28, 0); }
         }
 
         /* ==========================================================================
@@ -625,28 +739,29 @@
            ========================================================================== */
         .toast-container {
             position: fixed;
-            top: 20px;
+            top: 80px;
             right: 20px;
             z-index: 100;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
         .toast {
             background: var(--white);
             padding: 12px 20px;
-            border-radius: 10px;
+            border-radius: var(--radius-md);
             box-shadow: var(--shadow-lg);
-            border-left: 4px solid var(--royal-blue);
+            border-left: 4px solid var(--primary);
             display: flex;
             align-items: center;
             gap: 12px;
             transform: translateX(120%);
-            transition: transform 0.3s ease;
+            transition: transform var(--transition-base);
             font-weight: 500;
-            font-size: 0.875rem;
-            min-width: 250px;
+            font-size: 0.85rem;
+            min-width: 280px;
+            border: 1px solid var(--gray-200);
         }
 
         .toast.active {
@@ -662,40 +777,49 @@
         }
 
         /* ==========================================================================
-           FOOTER STYLES
+           SKELETON LOADING
+           ========================================================================== */
+        .skeleton {
+            background: linear-gradient(90deg, var(--gray-200) 25%, var(--gray-100) 50%, var(--gray-200) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: var(--radius-lg);
+            min-height: 140px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ==========================================================================
+           FOOTER ÉLÉGANT
            ========================================================================== */
         .footer {
             margin-top: 60px;
-            padding: 40px 0 20px;
+            padding: 48px 0 24px;
             border-top: 1px solid var(--gray-200);
+            background: var(--white);
         }
 
         .footer-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 32px;
+            margin-bottom: 32px;
         }
 
         .footer-title {
-            color: var(--royal-blue);
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 16px;
-        }
-
-        .footer-title-light {
-            color: var(--gray-700);
-            font-size: 0.875rem;
             font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--gray-800);
             margin-bottom: 16px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: -0.01em;
         }
 
         .footer-text {
-            color: var(--gray-600);
-            font-size: 0.875rem;
+            color: var(--gray-500);
+            font-size: 0.8rem;
             line-height: 1.6;
             margin-bottom: 16px;
         }
@@ -706,12 +830,22 @@
         }
 
         .social-link {
-            color: var(--gray-400);
-            transition: var(--transition);
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-md);
+            background: var(--gray-100);
+            color: var(--gray-600);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all var(--transition-fast);
         }
 
         .social-link:hover {
-            color: var(--royal-blue);
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
         }
 
         .footer-links {
@@ -724,44 +858,37 @@
 
         .footer-links a {
             color: var(--gray-500);
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             text-decoration: none;
-            transition: var(--transition);
+            transition: color var(--transition-fast);
         }
 
         .footer-links a:hover {
-            color: var(--royal-blue);
+            color: var(--primary);
         }
 
         .footer-bottom {
             text-align: center;
-            padding-top: 20px;
+            padding-top: 24px;
             border-top: 1px solid var(--gray-200);
             color: var(--gray-400);
             font-size: 0.75rem;
         }
 
         /* ==========================================================================
-           TABLET (768px+)
+           RESPONSIVE
            ========================================================================== */
-        @media (min-width: 768px) {
+        @media (min-width: 640px) {
             .service-grid {
                 grid-template-columns: repeat(3, 1fr);
-                gap: 20px;
-            }
-
-            .hero-title {
-                font-size: 2rem;
+                gap: 16px;
             }
         }
 
-        /* ==========================================================================
-           DESKTOP (1024px+)
-           ========================================================================== */
         @media (min-width: 1024px) {
             .service-grid {
                 grid-template-columns: repeat(4, 1fr);
-                gap: 24px;
+                gap: 20px;
             }
 
             .main {
@@ -769,8 +896,18 @@
             }
 
             .service-card img {
-                width: 140px;
-                height: 140px;
+                width: 120px;
+                height: 120px;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .service-grid {
+                grid-template-columns: repeat(5, 1fr);
             }
         }
 
@@ -793,11 +930,9 @@
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <div class="user-avatar" id="userAvatar">
-                <i class="fas fa-user"></i>
-            </div>
-            <div class="user-name" id="sidebarName">Chargement...</div>
-            <div class="user-email" id="sidebarEmail">Connexion en cours</div>
+            <div class="user-avatar-large" id="userAvatar">U</div>
+            <div class="user-name-large" id="sidebarName">Chargement...</div>
+            <div class="user-email-large" id="sidebarEmail">Connexion en cours</div>
         </div>
 
         <div class="sidebar-nav">
@@ -834,7 +969,7 @@
             </div>
 
             <div class="nav-section">
-                <div class="nav-section-title">Mon portefeuille</div>
+                <div class="nav-section-title">Portefeuille</div>
                 <a href="/user/wallet.html" class="nav-item">
                     <i class="fas fa-credit-card"></i>
                     Mon solde
@@ -892,7 +1027,7 @@
             </div>
         </div>
         <div class="header-right">
-            <a href="/user/wallet.html" class="icon-btn" title="Mon portefeuille">
+            <a href="/user/wallet.html" class="icon-btn" title="Portefeuille">
                 <i class="fas fa-credit-card"></i>
             </a>
             <a href="/user/account.html" class="icon-btn">
@@ -906,73 +1041,76 @@
         
         <!-- Hero Section -->
         <section class="hero">
-            <div class="hero-greeting">
-                <i class="fas fa-sparkles"></i>
-                <span id="greeting">Bonjour</span>
-            </div>
-            <h1 class="hero-title" id="userName">Cher client</h1>
-            <div class="hero-subtitle">Prêt pour une nouvelle transaction ?</div>
-            <div class="hero-badge">
-                <i class="fas fa-shield"></i>
-                Paiement sécurisé
+            <div class="hero-content">
+                <div class="hero-greeting">
+                    <i class="fas fa-sparkles"></i>
+                    <span id="greeting">Bonjour</span>
+                </div>
+                <h1 class="hero-title" id="userName">Cher client</h1>
+                <div class="hero-subtitle">Découvrez nos services premium</div>
+                
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <span class="hero-stat-value">20+</span>
+                        <span class="hero-stat-label">Services</span>
+                    </div>
+                    <div class="hero-stat">
+                        <span class="hero-stat-value" id="serviceCount">-</span>
+                        <span class="hero-stat-label">Disponibles</span>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- Announcement Marquee -->
-        <div class="marquee" id="marqueeContainer" style="display: none;">
-            <span class="marquee-label">Actualité</span>
-            <span class="marquee-text" id="marqueeText">Bienvenue sur Fox Store</span>
-        </div>
-
-        <!-- Gaming Section -->
-        <div class="section-header" id="gaming">
-            <div class="section-title">
-                <i class="fas fa-gamepad"></i>
-                <h2>Gaming</h2>
+        <!-- Announcement Banner -->
+        <div class="announcement" id="announcementBanner" style="display: none;">
+            <div class="announcement-icon">
+                <i class="fas fa-bullhorn"></i>
             </div>
-            <a href="#gaming" class="section-link">Voir tout</a>
-        </div>
-        <div class="service-grid" id="gamingGrid">
-            <!-- Skeleton loaders -->
-            <div class="service-card skeleton" style="height: 200px;"></div>
-            <div class="service-card skeleton" style="height: 200px;"></div>
-            <div class="service-card skeleton" style="height: 200px;"></div>
-            <div class="service-card skeleton" style="height: 200px;"></div>
+            <div class="announcement-text" id="announcementText"></div>
+            <span class="announcement-badge">Nouveau</span>
         </div>
 
-        <!-- Streaming Section -->
-        <div class="section-header" id="streaming">
-            <div class="section-title">
-                <i class="fas fa-film"></i>
-                <h2>Streaming</h2>
-            </div>
-            <a href="#streaming" class="section-link">Voir tout</a>
-        </div>
-        <div class="service-grid" id="streamingGrid">
-            <div class="service-card skeleton" style="height: 200px;"></div>
-            <div class="service-card skeleton" style="height: 200px;"></div>
-        </div>
-
-        <!-- Digital Services Section -->
-        <div class="section-header" id="digital">
-            <div class="section-title">
-                <i class="fas fa-wallet"></i>
-                <h2>Services digitaux</h2>
-            </div>
-            <a href="#digital" class="section-link">Voir tout</a>
-        </div>
-        <div class="service-grid" id="digitalGrid">
-            <div class="service-card skeleton" style="height: 200px;"></div>
-            <div class="service-card skeleton" style="height: 200px;"></div>
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="/user/deposit.html" class="quick-action">
+                <i class="fas fa-arrow-down"></i>
+                <span>Déposer</span>
+            </a>
+            <a href="/user/withdraw.html" class="quick-action">
+                <i class="fas fa-arrow-up"></i>
+                <span>Retirer</span>
+            </a>
+            <a href="/user/transfert.html" class="quick-action">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Transférer</span>
+            </a>
+            <a href="/orders.html" class="quick-action">
+                <i class="fas fa-history"></i>
+                <span>Commandes</span>
+            </a>
         </div>
 
-        <!-- FOOTER -->
-        <footer class="footer">
+        <!-- Category Tabs -->
+        <div class="category-tabs">
+            <button class="category-tab active" onclick="filterCategory('all')">Tous</button>
+            <button class="category-tab" onclick="filterCategory('gaming')">Gaming</button>
+            <button class="category-tab" onclick="filterCategory('streaming')">Streaming</button>
+            <button class="category-tab" onclick="filterCategory('digital')">Services digitaux</button>
+        </div>
+
+        <!-- Services Grid Container -->
+        <div id="servicesContainer"></div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="main">
             <div class="footer-grid">
-                <!-- Colonne 1: À propos -->
                 <div>
                     <h4 class="footer-title">Fox Store</h4>
-                    <p class="footer-text">Services digitaux premium : gaming, streaming et solutions financières. Livraison instantanée 24h/24.</p>
+                    <p class="footer-text">Services digitaux premium depuis 2024. Rapidité, fiabilité, sécurité.</p>
                     <div class="social-links">
                         <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
                         <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
@@ -981,20 +1119,18 @@
                     </div>
                 </div>
                 
-                <!-- Colonne 2: Liens rapides -->
                 <div>
-                    <h4 class="footer-title-light">Liens rapides</h4>
+                    <h4 class="footer-title">Liens rapides</h4>
                     <ul class="footer-links">
                         <li><a href="/home.html">Accueil</a></li>
                         <li><a href="/orders.html">Mes commandes</a></li>
-                        <li><a href="/pages/checkout/cart.html">Mon panier</a></li>
-                        <li><a href="/user/wallet.html">Mon portefeuille</a></li>
+                        <li><a href="/pages/checkout/cart.html">Panier</a></li>
+                        <li><a href="/user/wallet.html">Portefeuille</a></li>
                     </ul>
                 </div>
                 
-                <!-- Colonne 3: Catégories -->
                 <div>
-                    <h4 class="footer-title-light">Catégories</h4>
+                    <h4 class="footer-title">Catégories</h4>
                     <ul class="footer-links">
                         <li><a href="#gaming">Gaming</a></li>
                         <li><a href="#streaming">Streaming</a></li>
@@ -1002,37 +1138,32 @@
                     </ul>
                 </div>
                 
-                <!-- Colonne 4: Contact -->
                 <div>
-                    <h4 class="footer-title-light">Support</h4>
+                    <h4 class="footer-title">Support</h4>
                     <ul class="footer-links">
                         <li><a href="/user/supports.html">Centre d'aide</a></li>
                         <li><a href="/user/supports.html">Contact</a></li>
                         <li><a href="#">WhatsApp: +509 36 53 56 49</a></li>
-                        <li><a href="#">Email: support@foxstore.com</a></li>
                     </ul>
                 </div>
             </div>
             
-            <!-- Copyright -->
             <div class="footer-bottom">
-                <p>© 2026 Fox Store. Tous droits réservés. | Design élite · Sécurité absolue</p>
+                <p>© 2026 Fox Store. Tous droits réservés. Design élite.</p>
             </div>
-        </footer>
+        </div>
+    </footer>
 
-    </main>
-
-    <!-- Bouton flottant Admin (visible uniquement pour l'admin) -->
-    <a href="/admin.html" class="admin-floating" id="adminFloating" style="display: none;">
-        <i class="fas fa-shield-alt"></i>
-        <span class="badge">ADMIN</span>
-    </a>
-
-    <!-- Floating Cart Button -->
-    <a href="/pages/checkout/cart.html" class="cart-floating" id="cartButton">
-        <i class="fas fa-shopping-bag"></i>
-        <span class="cart-count" id="cartCount">0</span>
-    </a>
+    <!-- Floating Buttons -->
+    <div class="floating-buttons">
+        <a href="/pages/checkout/cart.html" class="floating-btn cart">
+            <i class="fas fa-shopping-bag"></i>
+            <span class="badge" id="cartCount">0</span>
+        </a>
+        <a href="/admin.html" class="floating-btn admin" id="adminButton" style="display: none;">
+            <i class="fas fa-shield-alt"></i>
+        </a>
+    </div>
 
     <script>
         // Configuration Firebase
@@ -1045,7 +1176,6 @@
             appId: "1:945593776812:web:4475e1085fdfa31690fd09"
         };
 
-        // Initialisation Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
@@ -1054,7 +1184,40 @@
         // VARIABLES GLOBALES
         // ==========================================================================
         let currentUser = null;
-        let cart = [];
+        let allServices = [];
+
+        // ==========================================================================
+        // LISTE COMPLÈTE DES 20 SERVICES (AVEC MERU !)
+        // ==========================================================================
+        const services = [
+            // GAMING (9 services)
+            { id: 'freefire', name: 'Free Fire', category: 'gaming', logo: 'freefire-logo.png' },
+            { id: 'fcmobile', name: 'FC Mobile', category: 'gaming', logo: 'fcmobile-logo.png' },
+            { id: 'efootball', name: 'eFootball', category: 'gaming', logo: 'efootball-logo.png' },
+            { id: 'pubgmobile', name: 'PUBG Mobile', category: 'gaming', logo: 'pubgmobile-logo.png' },
+            { id: 'bloodstrike', name: 'Blood Strike', category: 'gaming', logo: 'bloodstrike-logo.png' },
+            { id: 'roblox', name: 'Roblox', category: 'gaming', logo: 'roblox-logo.png' },
+            { id: 'dls', name: 'DLS 26', category: 'gaming', logo: 'dls-logo.png' },
+            { id: 'minecraft', name: 'Minecraft', category: 'gaming', logo: 'minecraft-logo.png' },
+            { id: 'flexcity', name: 'Flex City', category: 'gaming', logo: 'flexcity-logo.png' },
+            
+            // STREAMING (4 services)
+            { id: 'netflix', name: 'Netflix', category: 'streaming', logo: 'netflix-logo.png' },
+            { id: 'disneyplus', name: 'Disney+', category: 'streaming', logo: 'disneyplus-logo.png' },
+            { id: 'primevideo', name: 'Prime Video', category: 'streaming', logo: 'primevideo-logo.png' },
+            { id: 'crunchyroll', name: 'Crunchyroll', category: 'streaming', logo: 'crunchyroll-logo.png' },
+            
+            // SERVICES DIGITAUX (7 services - avec MERU !)
+            { id: 'paypal', name: 'PayPal', category: 'digital', logo: 'paypal-logo.png' },
+            { id: 'wise', name: 'Wise', category: 'digital', logo: 'wise-logo.png' },
+            { id: 'usdt', name: 'USDT', category: 'digital', logo: 'usdt-logo.png' },
+            { id: 'tronx', name: 'TRONX', category: 'digital', logo: 'tronx-logo.png' },
+            { id: 'telegram', name: 'Telegram', category: 'digital', logo: 'telegram-logo.png' },
+            { id: 'tiktok', name: 'TikTok', category: 'digital', logo: 'tiktok-logo.png' },
+            { id: 'meru', name: 'MERU', category: 'digital', logo: 'meru-logo.png' } // MERU EST LÀ !
+        ];
+
+        console.log(`✅ ${services.length} services chargés (dont MERU)`); // Vérification
 
         // ==========================================================================
         // UTILITAIRES
@@ -1116,13 +1279,11 @@
                 if (doc.exists) {
                     const data = doc.data();
                     
-                    // Vérification bannissement
                     if (data.status === 'Banni') {
                         window.location.href = '/logout.html';
                         return;
                     }
 
-                    // Mise à jour UI
                     const firstName = data.personalInfo?.firstName || '';
                     const lastName = data.personalInfo?.lastName || '';
                     const fullName = (firstName + ' ' + lastName).trim() || 'Cher client';
@@ -1130,70 +1291,26 @@
                     document.getElementById('userName').textContent = fullName;
                     document.getElementById('sidebarName').textContent = fullName;
                     document.getElementById('sidebarEmail').textContent = user.email;
+                    document.getElementById('userAvatar').innerHTML = `<span>${(firstName.charAt(0) || 'U').toUpperCase()}</span>`;
 
-                    // Avatar
-                    const initial = (firstName.charAt(0) || 'U').toUpperCase();
-                    document.getElementById('userAvatar').innerHTML = `<span style="font-size: 1.5rem;">${initial}</span>`;
-
-                    // Vérification admin - Affiche le bouton flottant uniquement pour l'admin
+                    // Bouton admin
                     if (user.email === 'bmarcco4412@gmail.com') {
-                        document.getElementById('adminFloating').style.display = 'flex';
-                        console.log('Bouton admin affiché pour', user.email);
-                    } else {
-                        document.getElementById('adminFloating').style.display = 'none';
+                        document.getElementById('adminButton').style.display = 'flex';
                     }
                 }
             });
         }
 
-        // ==========================================================================
-        // PORTEFEUILLE - Récupérer le solde
-        // ==========================================================================
         function loadWalletBalance(uid) {
             db.collection('wallets').doc(uid).onSnapshot(doc => {
-                if (doc.exists) {
-                    const balance = doc.data().balance || 0;
-                    document.getElementById('walletBalance').textContent = balance.toLocaleString() + ' HTG';
-                } else {
-                    // Créer un wallet si inexistant
-                    db.collection('wallets').doc(uid).set({
-                        balance: 0,
-                        userId: uid,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    document.getElementById('walletBalance').textContent = '0 HTG';
-                }
+                const balance = doc.exists ? doc.data().balance || 0 : 0;
+                document.getElementById('walletBalance').textContent = balance.toLocaleString() + ' HTG';
             });
         }
 
         // ==========================================================================
-        // SERVICES (AVEC LOGOS PLUS LARGES)
+        // SERVICES
         // ==========================================================================
-        const services = [
-            // Gaming
-            { id: 'freefire', name: 'Free Fire', category: 'gaming', logo: 'freefire-logo.png' },
-            { id: 'fcmobile', name: 'FC Mobile', category: 'gaming', logo: 'fcmobile-logo.png' },
-            { id: 'efootball', name: 'eFootball', category: 'gaming', logo: 'efootball-logo.png' },
-            { id: 'pubgmobile', name: 'PUBG Mobile', category: 'gaming', logo: 'pubgmobile-logo.png' },
-            { id: 'bloodstrike', name: 'Blood Strike', category: 'gaming', logo: 'bloodstrike-logo.png' },
-            { id: 'roblox', name: 'Roblox', category: 'gaming', logo: 'roblox-logo.png' },
-            { id: 'dls', name: 'DLS 26', category: 'gaming', logo: 'dls-logo.png' },
-            { id: 'minecraft', name: 'Minecraft', category: 'gaming', logo: 'minecraft-logo.png' },
-            { id: 'flexcity', name: 'Flex City', category: 'gaming', logo: 'flexcity-logo.png' },
-            // Streaming
-            { id: 'netflix', name: 'Netflix', category: 'streaming', logo: 'netflix-logo.png' },
-            { id: 'disneyplus', name: 'Disney+', category: 'streaming', logo: 'disneyplus-logo.png' },
-            { id: 'primevideo', name: 'Prime Video', category: 'streaming', logo: 'primevideo-logo.png' },
-            { id: 'crunchyroll', name: 'Crunchyroll', category: 'streaming', logo: 'crunchyroll-logo.png' },
-            // Digital
-            { id: 'paypal', name: 'PayPal', category: 'digital', logo: 'paypal-logo.png' },
-            { id: 'wise', name: 'Wise', category: 'digital', logo: 'wise-logo.png' },
-            { id: 'usdt', name: 'USDT', category: 'digital', logo: 'usdt-logo.png' },
-            { id: 'tronx', name: 'TRONX', category: 'digital', logo: 'tronx-logo.png' },
-            { id: 'telegram', name: 'Telegram', category: 'digital', logo: 'telegram-logo.png' },
-            { id: 'tiktok', name: 'TikTok', category: 'digital', logo: 'tiktok-logo.png' }
-        ];
-
         function loadServices() {
             db.collection('cms_services').onSnapshot(snapshot => {
                 const statusMap = {};
@@ -1201,37 +1318,103 @@
                     statusMap[doc.id] = doc.data().active;
                 });
 
-                // Nettoyer les grids
-                document.getElementById('gamingGrid').innerHTML = '';
-                document.getElementById('streamingGrid').innerHTML = '';
-                document.getElementById('digitalGrid').innerHTML = '';
+                allServices = services.map(service => ({
+                    ...service,
+                    active: statusMap[service.name] !== false
+                }));
 
-                services.forEach(service => {
-                    const isActive = statusMap[service.name] !== false;
-                    const card = createServiceCard(service, isActive);
-                    
-                    if (service.category === 'gaming') {
-                        document.getElementById('gamingGrid').appendChild(card);
-                    } else if (service.category === 'streaming') {
-                        document.getElementById('streamingGrid').appendChild(card);
-                    } else {
-                        document.getElementById('digitalGrid').appendChild(card);
-                    }
-                });
+                document.getElementById('serviceCount').textContent = allServices.filter(s => s.active).length;
+                renderServices(allServices);
             });
         }
 
-        function createServiceCard(service, isActive) {
-            const card = document.createElement('a');
-            card.href = `/pages/products/${service.id}.html`;
-            card.className = `service-card ${isActive ? '' : 'offline'}`;
+        function renderServices(servicesToRender) {
+            const container = document.getElementById('servicesContainer');
             
-            card.innerHTML = `
-                <img src="/assets/logos/${service.logo}" alt="${service.name}" loading="lazy">
-                <span>${service.name}</span>
+            // Grouper par catégorie
+            const gaming = servicesToRender.filter(s => s.category === 'gaming');
+            const streaming = servicesToRender.filter(s => s.category === 'streaming');
+            const digital = servicesToRender.filter(s => s.category === 'digital');
+
+            container.innerHTML = `
+                <!-- Gaming Section -->
+                <div class="section-header" id="gaming">
+                    <div class="section-title">
+                        <div class="section-title-icon"><i class="fas fa-gamepad"></i></div>
+                        <h2>Gaming</h2>
+                    </div>
+                    <span class="section-link">${gaming.length} services</span>
+                </div>
+                <div class="service-grid">
+                    ${gaming.map(createServiceCard).join('')}
+                </div>
+
+                <!-- Streaming Section -->
+                <div class="section-header" id="streaming">
+                    <div class="section-title">
+                        <div class="section-title-icon"><i class="fas fa-film"></i></div>
+                        <h2>Streaming</h2>
+                    </div>
+                    <span class="section-link">${streaming.length} services</span>
+                </div>
+                <div class="service-grid">
+                    ${streaming.map(createServiceCard).join('')}
+                </div>
+
+                <!-- Digital Section -->
+                <div class="section-header" id="digital">
+                    <div class="section-title">
+                        <div class="section-title-icon"><i class="fas fa-wallet"></i></div>
+                        <h2>Services digitaux</h2>
+                    </div>
+                    <span class="section-link">${digital.length} services</span>
+                </div>
+                <div class="service-grid">
+                    ${digital.map(createServiceCard).join('')}
+                </div>
             `;
-            
-            return card;
+        }
+
+        function createServiceCard(service) {
+            return `
+                <a href="/pages/products/${service.id}.html" class="service-card ${service.active ? '' : 'offline'}">
+                    <img src="/assets/logos/${service.logo}" alt="${service.name}" loading="lazy">
+                    <span>${service.name}</span>
+                </a>
+            `;
+        }
+
+        // ==========================================================================
+        // FILTRAGE
+        // ==========================================================================
+        function filterCategory(category) {
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.textContent.toLowerCase().includes(category === 'all' ? 'tous' : category)) {
+                    tab.classList.add('active');
+                }
+            });
+
+            if (category === 'all') {
+                renderServices(allServices);
+            } else {
+                const filtered = allServices.filter(s => s.category === category);
+                
+                container.innerHTML = `
+                    <div class="section-header">
+                        <div class="section-title">
+                            <div class="section-title-icon">
+                                <i class="fas fa-${category === 'gaming' ? 'gamepad' : category === 'streaming' ? 'film' : 'wallet'}"></i>
+                            </div>
+                            <h2>${category === 'gaming' ? 'Gaming' : category === 'streaming' ? 'Streaming' : 'Services digitaux'}</h2>
+                        </div>
+                        <span class="section-link">${filtered.length} services</span>
+                    </div>
+                    <div class="service-grid">
+                        ${filtered.map(createServiceCard).join('')}
+                    </div>
+                `;
+            }
         }
 
         // ==========================================================================
@@ -1244,31 +1427,23 @@
                 .onSnapshot(snapshot => {
                     if (!snapshot.empty) {
                         const announcement = snapshot.docs[0].data();
-                        document.getElementById('marqueeText').textContent = announcement.message;
-                        document.getElementById('marqueeContainer').style.display = 'flex';
+                        document.getElementById('announcementText').textContent = announcement.message;
+                        document.getElementById('announcementBanner').style.display = 'flex';
                     }
                 });
         }
 
         // ==========================================================================
-        // GESTIONNAIRE DE CONNEXION
+        // GESTIONNAIRE RÉSEAU
         // ==========================================================================
-        window.addEventListener('offline', () => {
-            showToast('Connexion internet perdue', 'error');
-        });
+        window.addEventListener('offline', () => showToast('Connexion perdue', 'error'));
+        window.addEventListener('online', () => showToast('Connexion rétablie', 'success'));
 
-        window.addEventListener('online', () => {
-            showToast('Connexion rétablie', 'success');
-        });
-
-        // Mise à jour du panier au chargement
+        // Mise à jour du panier
         window.addEventListener('storage', (e) => {
-            if (e.key === 'foxstore_cart') {
-                updateCartCount();
-            }
+            if (e.key === 'foxstore_cart') updateCartCount();
         });
 
-        // Fermer la sidebar au clic en dehors sur desktop
         window.addEventListener('resize', () => {
             if (window.innerWidth >= 1024) {
                 document.getElementById('sidebar').classList.remove('active');
