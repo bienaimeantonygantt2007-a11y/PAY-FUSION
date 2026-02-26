@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fox Admin — Ultimate Command Center</title>
-    
+    <title>Fox Admin — Command Center Ultimate</title>
+
     <!-- 
-        FOX STORE ARCHITECTURE v9.0 - ULTIMATE ADMIN
-        CORE: FIREBASE REALTIME ENGINE
-        UI: COMPACT SAAS ELITE
+        ==========================================================================
+        FOX STORE ARCHITECTURE v9.5 - ULTIMATE ADMIN (CORRIGÉ)
+        UNIFICATION DU WALLET (users.wallet_balance)
+        ZÉRO SIMULATION | DESIGN COMPACT ELITE
+        ==========================================================================
     -->
 
     <!-- Firebase SDK -->
@@ -19,75 +21,68 @@
     <!-- Font Awesome 6 Pro -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- Google Fonts -->
+    <!-- Plus Jakarta Sans -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --primary: #0056b3; --secondary: #06070a; --accent: #00d1ff;
+            --primary: #1e3a8a; --accent: #00d1ff; --secondary: #06070a;
             --white: #ffffff; --bg: #f4f7fa; --text: #0f172a; --muted: #64748b;
             --success: #10b981; --error: #ef4444; --warning: #f59e0b;
-            --border: #e2e8f0; --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border: #e2e8f0; --transition: all 0.3s ease;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg); color: var(--text); display: flex; font-size: 12px; height: 100vh; overflow: hidden; }
 
-        /* --- NAVIGATION: SIDEBAR --- */
-        .sidebar {
-            position: fixed; left: -260px; top: 0; width: 260px; height: 100vh;
-            background: #0f121a; color: white; z-index: 5000; transition: var(--transition);
-            display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.05);
-        }
+        /* --- SIDEBAR & OVERLAY --- */
+        .sidebar { position: fixed; left: -260px; top: 0; width: 260px; height: 100vh; background: #0f121a; color: white; z-index: 5000; transition: var(--transition); display: flex; flex-direction: column; }
         .sidebar.active { left: 0; }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 4500; display: none; }
+        .overlay.active { display: block; }
         .sidebar-brand { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .sidebar-brand img { height: 35px; filter: drop-shadow(0 0 10px var(--accent)); }
+        .nav-link { padding: 12px 20px; display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.6); text-decoration: none; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .nav-link.active { color: var(--accent); background: rgba(0, 209, 255, 0.05); border-right: 3px solid var(--accent); }
 
-        .nav-menu { flex-grow: 1; padding: 10px; overflow-y: auto; }
-        .nav-label { font-size: 0.5rem; font-weight: 800; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; padding: 20px 15px 8px; }
-        .nav-btn { display: flex; align-items: center; gap: 10px; padding: 12px 15px; color: rgba(255,255,255,0.6); text-decoration: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-bottom: 2px; }
-        .nav-btn:hover { color: var(--accent); background: rgba(255,255,255,0.02); }
-        .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-
-        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 4500; display: none; }
-        .sidebar-overlay.active { display: block; }
-
-        /* --- MAIN LAYOUT --- */
+        /* --- LAYOUT --- */
         .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
         header { height: 55px; padding: 0 15px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top:0; z-index: 1000; }
-        
         .burger { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: var(--primary); cursor: pointer; border: 1px solid var(--border); border-radius: 8px; }
 
-        .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 10px 15px; }
+        .scroller { padding: 10px 15px; overflow-y: auto; flex: 1; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 15px; }
         .kpi-card { background: white; padding: 12px; border-radius: 15px; border: 1px solid var(--border); }
         .kpi-card span { font-size: 0.5rem; font-weight: 800; color: var(--muted); text-transform: uppercase; }
         .kpi-card h3 { font-size: 0.9rem; font-weight: 800; margin-top: 3px; color: var(--secondary); }
 
-        /* --- CONTENT SCROLLER --- */
-        .scroller { padding: 0 15px 20px; overflow-y: auto; flex: 1; }
         .section-card { background: white; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 15px; overflow: hidden; }
-        .card-head { padding: 12px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #fcfdfe; }
-        .card-head h4 { font-weight: 800; font-size: 0.7rem; color: var(--primary); text-transform: uppercase; }
+        .card-head { padding: 12px 20px; border-bottom: 1px solid var(--border); font-weight: 800; font-size: 0.7rem; color: var(--primary); text-transform: uppercase; display: flex; justify-content: space-between; }
 
-        .list-row { padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-        .row-info h5 { font-size: 0.8rem; font-weight: 700; color: #1e293b; }
-        .row-info p { font-size: 0.65rem; color: var(--muted); font-weight: 600; }
+        /* --- LIST ROWS --- */
+        .row { padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+        .row:hover { background: #f8fbff; }
+        .row-info h5 { font-size: 0.8rem; font-weight: 700; }
+        .row-info p { font-size: 0.65rem; color: var(--muted); }
+
+        .badge { padding: 3px 8px; border-radius: 4px; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; }
+        .st-pending { background: #fff8e1; color: #ffab00; }
+        .st-success { background: #e8f5e9; color: var(--success); }
 
         .btn-manage { padding: 6px 12px; border-radius: 8px; border: none; font-weight: 800; font-size: 0.6rem; background: var(--primary); color: white; cursor: pointer; }
-        .badge { padding: 3px 8px; border-radius: 4px; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; }
-        .st-en-attente { background: #fff8e1; color: #ffab00; }
-        .st-valide { background: #e8f5e9; color: var(--success); }
 
-        /* --- MODAL SYSTEM --- */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.8); backdrop-filter: blur(10px); z-index: 6000; align-items: flex-end; justify-content: center; }
+        /* --- MODAL --- */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 6000; align-items: flex-end; justify-content: center; }
         .modal-box { background: white; width: 100%; max-width: 500px; border-radius: 25px 25px 0 0; padding: 25px; border: 1px solid var(--border); max-height: 85vh; overflow-y: auto; }
+        .close-btn { float: right; cursor: pointer; color: var(--muted); font-size: 1.2rem; }
+
         .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .detail-cell label { font-size: 0.5rem; font-weight: 800; color: var(--muted); text-transform: uppercase; display: block; }
+        .detail-cell label { font-size: 0.5rem; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 3px; display: block; }
         .detail-cell p { font-size: 0.8rem; font-weight: 700; color: var(--secondary); word-break: break-all; }
 
         .proof-viewer { width: 100%; border-radius: 12px; margin-top: 15px; border: 1px solid var(--border); cursor: pointer; }
 
-        /* --- CMS SWITCHES --- */
+        /* --- CMS & INPUTS --- */
         .switch { position: relative; display: inline-block; width: 38px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; inset: 0; background-color: #cbd5e1; transition: .4s; border-radius: 34px; cursor: pointer; }
@@ -95,21 +90,22 @@
         input:checked + .slider { background-color: var(--primary); }
         input:checked + .slider:before { transform: translateX(18px); }
 
-        /* --- CHAT CRM --- */
-        .chat-container { height: 450px; display: flex; flex-direction: column; }
-        .chat-users { flex: 1; overflow-y: auto; border-bottom: 1px solid var(--border); }
-        .chat-window { flex: 2; display: none; flex-direction: column; background: #f8fafc; }
-        .chat-log { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-        .m { max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
-        .m-adm { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 2px; }
-        .m-user { align-self: flex-start; background: #fff; border: 1px solid var(--border); color: var(--text); border-bottom-left-radius: 2px; }
-
-        .admin-btn { padding: 12px; border-radius: 10px; border: none; font-weight: 800; font-size: 0.7rem; cursor: pointer; text-transform: uppercase; width: 100%; transition: 0.3s; }
+        .adm-input { width: 100%; padding: 12px; background: #fcfcfd; border: 1.5px solid var(--border); border-radius: 12px; outline: none; font-size: 0.85rem; font-weight: 600; margin-top: 10px; }
+        .btn-elite { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: 800; text-transform: uppercase; font-size: 0.75rem; cursor: pointer; margin-top: 10px; }
         .btn-ok { background: var(--success); color: white; }
         .btn-no { background: var(--error); color: white; }
 
-        @media (min-width: 1025px) { .sidebar { left: 0; } .main { margin-left: 280px; } .burger { display: none; } .kpi-grid { grid-template-columns: repeat(4, 1fr); } .modal { align-items: center; } .modal-box { border-radius: 20px; } .chat-container { flex-direction: row; height: 600px; } .chat-users { width: 280px; border-right: 1px solid var(--border); border-bottom: none; } }
-        
+        /* --- CHAT CRM --- */
+        .chat-container { height: 450px; display: flex; flex-direction: column; }
+        .chat-users { flex: 1; overflow-y: auto; border-bottom: 1px solid var(--border); }
+        .chat-main { flex: 2; display: none; flex-direction: column; background: #fcfcfd; }
+        .chat-log { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .m { max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 0.75rem; font-weight: 600; }
+        .m-adm { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 2px; }
+        .m-user { align-self: flex-start; background: #eee; color: var(--text); border-bottom-left-radius: 2px; }
+
+        @media (min-width: 1025px) { .sidebar { left: 0; } .main { margin-left: 260px; } .burger { display: none; } .kpi-grid { grid-template-columns: repeat(4, 1fr); } .modal { align-items: center; } .modal-box { border-radius: 20px; } .chat-container { flex-direction: row; height: 600px; } .chat-users { width: 280px; border-right: 1px solid var(--border); border-bottom: none; } }
+
         #toast { position: fixed; top: 15px; right: 15px; z-index: 9999; background: var(--secondary); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 0.7rem; transform: translateX(200%); transition: 0.4s; border: 1px solid var(--accent); }
         #toast.show { transform: translateX(0); }
     </style>
@@ -121,27 +117,27 @@
 
     <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-header"><img src="/assets/logos/payfusion-logo.png"><h2>FOX COMMAND</h2></div>
+        <div class="sidebar-brand"><img src="/assets/logos/payfusion-logo.png"><h2>COMMAND</h2></div>
         <div class="nav-menu">
             <p class="nav-label">Finance</p>
-            <div class="nav-link active" onclick="switchTab('orders', this)"><i class="fas fa-receipt"></i> Flux Ventes</div>
+            <div class="nav-link active" onclick="switchTab('orders', this)"><i class="fas fa-receipt"></i> Ventes</div>
             <div class="nav-link" onclick="switchTab('wallet', this)"><i class="fas fa-wallet"></i> Portefeuille</div>
             <div class="nav-link" onclick="switchTab('users', this)"><i class="fas fa-users-gear"></i> Utilisateurs</div>
-            <p class="nav-label">Système</p>
+            <p class="nav-label">Configuration</p>
             <div class="nav-btn" onclick="switchTab('cms', this)"><i class="fas fa-toggle-on"></i> CMS Services</div>
-            <div class="nav-btn" onclick="switchTab('ads', this)"><i class="fas fa-bullhorn"></i> Annonces</div>
+            <div class="nav-btn" onclick="switchTab('marketing', this)"><i class="fas fa-bullhorn"></i> Annonces</div>
             <p class="nav-label">CRM</p>
-            <div class="nav-btn" onclick="switchTab('chat', this)"><i class="fas fa-comment-dots"></i> Support Live</div>
+            <div class="nav-btn" onclick="switchTab('chat', this)"><i class="fas fa-comment-dots"></i> Support</div>
         </div>
         <a href="/home.html" class="nav-link" style="margin-top:auto; border-top:1px solid rgba(255,255,255,0.05);"><i class="fas fa-store"></i> Boutique</a>
     </div>
 
-    <!-- MAIN -->
+    <!-- MAIN INTERFACE -->
     <div class="main">
         <header>
             <div class="burger" onclick="toggleSidebar()"><i class="fas fa-bars-staggered"></i></div>
-            <div id="sectionHeader" style="font-weight: 800; text-transform: uppercase;">Commandes</div>
-            <div class="live-tag">LIVE SYNC</div>
+            <div id="sectionTitle" style="font-weight: 800; font-size: 0.8rem; text-transform: uppercase;">Commandes</div>
+            <div class="badge st-success">Elite Active</div>
         </header>
 
         <div class="kpi-grid">
@@ -172,31 +168,31 @@
             <section id="chatTab" class="fox-tab" style="display:none">
                 <div class="section-card chat-container">
                     <div class="chat-users" id="chatUsersList"></div>
-                    <div class="chat-window" id="chatWin">
+                    <div class="chat-main" id="chatWin">
                         <div class="chat-log" id="chatFlow"></div>
                         <form id="replyForm" style="padding:10px; display:flex; gap:5px; border-top:1px solid var(--border);">
-                            <input type="text" id="replyMsg" class="adm-input" placeholder="Réponse..." style="margin-top:0;">
+                            <input type="text" id="replyMsg" class="adm-input" placeholder="Répondre..." style="margin-top:0;">
                             <button type="submit" class="burger" style="border-color:var(--primary); color:var(--primary);"><i class="fas fa-paper-plane"></i></button>
                         </form>
                     </div>
                 </div>
-            </section>
-        </div>
+            </div>
+        </section>
     </div>
 
     <!-- MODALS -->
     <div class="modal" id="orderModal">
         <div class="modal-box">
-            <i class="fas fa-times" onclick="closeModal()" style="float:right; cursor:pointer;"></i>
-            <h3 style="font-weight:800; color:var(--primary);">Détails Transaction</h3>
+            <i class="fas fa-times close-btn" onclick="closeModal()"></i>
+            <h3 style="font-weight:800; color:var(--primary);">Détails Vente</h3>
             <div class="detail-grid" id="orderFields"></div>
             <img id="orderImg" class="proof-viewer" onclick="window.open(this.src)">
             <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:15px;">
                 <label style="font-size:0.5rem; font-weight:800; color:var(--muted);">COÛT FOURNISSEUR (HTG)</label>
                 <input type="number" id="purchaseCost" class="adm-input">
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
-                    <button class="admin-btn btn-ok" onclick="handleOrder('Validé')">Valider</button>
-                    <button class="admin-btn btn-no" onclick="handleOrder('Rejeté')">Rejeter</button>
+                    <button class="btn-elite btn-ok" onclick="handleOrder('Validé')">Valider</button>
+                    <button class="btn-elite btn-no" onclick="handleOrder('Rejeté')">Rejeter</button>
                 </div>
             </div>
         </div>
@@ -204,13 +200,13 @@
 
     <div class="modal" id="walletModal">
         <div class="modal-box">
-            <i class="fas fa-times" onclick="closeModal()" style="float:right; cursor:pointer;"></i>
+            <i class="fas fa-times close-btn" onclick="closeModal()"></i>
             <h3 style="font-weight:800; color:var(--primary);">Validation Portefeuille</h3>
             <div class="detail-grid" id="walletFields"></div>
             <img id="walletImg" class="proof-viewer" onclick="window.open(this.src)">
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;">
-                <button class="admin-btn btn-ok" onclick="handleWallet('valide')">Confirmer</button>
-                <button class="admin-btn btn-no" onclick="handleWallet('rejete')">Refuser</button>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:20px;">
+                <button class="btn-elite btn-ok" onclick="handleWallet('valide')">Confirmer</button>
+                <button class="btn-elite btn-no" onclick="handleWallet('rejete')">Refuser</button>
             </div>
         </div>
     </div>
@@ -230,13 +226,13 @@
         function switchTab(id, el) {
             document.querySelectorAll('.fox-tab').forEach(t => t.style.display = 'none');
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            document.getElementById(id + 'Tab').style.display = 'block'; el.classList.add('active');
-            document.getElementById('sectionHeader').textContent = el.textContent.trim();
+            document.getElementById(id + 'Tab').style.display = 'block';
+            el.classList.add('active'); document.getElementById('sectionTitle').textContent = el.textContent.trim();
             if(window.innerWidth < 1025) toggleSidebar();
         }
 
         function launchEngine() {
-            // SYNC VENTES
+            // Ventes
             db.collection("orders").orderBy("createdAt", "desc").onSnapshot(snap => {
                 const list = document.getElementById('ordersList'); list.innerHTML = '';
                 let rev = 0, prof = 0, wait = 0; ordersData = [];
@@ -244,56 +240,54 @@
                     const o = doc.data(); const id = doc.id; ordersData.push({id, ...o});
                     if(o.status === 'en-attente') wait++;
                     if(o.status === 'Validé') { rev += o.service.price; prof += (o.service.price - (o.purchaseCost || 0)); }
-                    list.innerHTML += `<div class="list-row"><div class="row-info"><h5>#${o.orderId}</h5><p>${o.service.name} ● ${o.service.product}</p></div><div style="text-align:right"><span class="badge ${o.status==='en-attente'?'st-pending':'st-valide'}">${o.status}</span><br><button class="btn-lite" onclick="openOrderModal('${id}')" style="margin-top:5px">GÉRER</button></div></div>`;
+                    list.innerHTML += `<div class="list-row"><div class="row-info"><h5>#${o.orderId}</h5><p>${o.service.name} ● ${o.service.product}</p></div><div style="text-align:right"><span class="badge ${o.status==='en-attente'?'st-pending':'st-success'}">${o.status}</span><br><button class="btn-manage" onclick="openOrderModal('${id}')" style="margin-top:5px">GÉRER</button></div></div>`;
                 });
                 document.getElementById('statRev').textContent = rev.toLocaleString() + " HTG";
                 document.getElementById('statProfit').textContent = prof.toLocaleString() + " HTG";
                 document.getElementById('statWait').textContent = wait;
-                document.getElementById('statCount').textContent = snap.size;
             });
 
-            // SYNC WALLET
+            // Wallet
             db.collection("wallet_transactions").orderBy("createdAt", "desc").onSnapshot(snap => {
                 const list = document.getElementById('walletList'); list.innerHTML = ''; walletData = [];
                 snap.forEach(doc => {
                     const t = doc.data(); const id = doc.id; walletData.push({id, ...t});
-                    list.innerHTML += `<div class="list-row"><div class="row-info"><h5>${t.type.toUpperCase()}</h5><p>${t.amount} HTG ● ${t.userEmail}</p></div><div style="text-align:right"><span class="badge ${t.status==='en-attente'?'st-pending':'st-valide'}">${t.status}</span><br><button class="btn-lite" onclick="openWalletModal('${id}')" style="margin-top:5px">GÉRER</button></div></div>`;
+                    list.innerHTML += `<div class="list-row"><div class="row-info"><h5>${t.type.toUpperCase()}</h5><p>${t.amount} HTG ● ${t.userEmail}</p></div><div style="text-align:right"><span class="badge ${t.status==='en-attente'?'st-pending':'st-success'}">${t.status}</span><br><button class="btn-manage" onclick="openWalletModal('${id}')" style="margin-top:5px">GÉRER</button></div></div>`;
                 });
             });
 
-            // SYNC USERS
+            // Membres
             db.collection("users").onSnapshot(snap => {
                 const list = document.getElementById('usersList'); list.innerHTML = '';
                 document.getElementById('statUsers').textContent = snap.size;
                 snap.forEach(doc => {
-                    const u = doc.data(); const isBanned = u.status === 'Banni';
-                    list.innerHTML += `<div class="list-row"><div class="row-info"><h5>${u.personalInfo.fullName}</h5><p>${u.personalInfo.email} ● Solde: ${u.wallet_balance || 0} HTG</p></div><button class="btn-lite" style="background:${isBanned?var(--success):var(--error)}" onclick="toggleBan('${doc.id}', '${u.status}')">${isBanned?'ACTIVER':'BANNIR'}</button></div>`;
+                    const u = doc.data(); const id = doc.id; const isBanned = u.status === 'Banni';
+                    list.innerHTML += `<div class="list-row"><div class="row-info"><h5>${u.personalInfo?.fullName || 'Utilisateur'}</h5><p>${u.personalInfo?.email} ● Solde: ${u.wallet_balance || 0} HTG</p></div><button class="btn-manage" style="background:${isBanned?var(--success):var(--error)}" onclick="toggleBan('${id}', '${u.status}')">${isBanned?'ACTIVER':'BANNIR'}</button></div>`;
                 });
             });
 
-            // CMS ENGINE
+            // CMS
             const listSvc = ['Free Fire', 'FC Mobile', 'eFootball', 'PUBG Mobile', 'Blood Strike', 'Roblox', 'DLS 24', 'Minecraft', 'Flex City', 'Netflix', 'Disney+', 'Prime Video', 'Crunchyroll', 'PayPal', 'Wise', 'USDT', 'TRONX', 'MERU', 'Telegram Prem.', 'TikTok Coins'];
             db.collection("cms_services").onSnapshot(snap => {
                 const grid = document.getElementById('cmsGrid'); grid.innerHTML = '';
                 const states = {}; snap.forEach(d => states[d.id] = d.data().active);
                 listSvc.forEach(s => {
                     const active = states[s] !== false;
-                    grid.innerHTML += `<div class="kpi-card" style="display:flex; justify-content:space-between; align-items:center;"><div><span>SERVICE</span><h4 style="font-size:0.75rem">${s}</h4></div><label class="switch"><input type="checkbox" ${active?'checked':''} onchange="setCMS('${s}', this.checked)"><span class="slider"></span></label></div>`;
+                    grid.innerHTML += `<div class="kpi-card" style="display:flex; justify-content:space-between; align-items:center; padding:15px 20px;"><div><span>SERVICE</span><h4 style="font-size:0.75rem">${s}</h4></div><label class="switch"><input type="checkbox" ${active?'checked':''} onchange="setCMS('${s}', this.checked)"><span class="slider"></span></label></div>`;
                 });
             });
 
-            // CRM ENGINE
+            // Chat
             db.collection("chats").orderBy("timestamp", "desc").onSnapshot(snap => {
                 const list = document.getElementById('chatUsersList'); list.innerHTML = ''; const grouped = {};
                 snap.forEach(doc => { const c = doc.data(); if(!grouped[c.userUID]) { grouped[c.userUID] = true; list.innerHTML += `<div class="list-row" style="cursor:pointer;" onclick="loadChat('${c.userUID}', '${c.userName}')"><h5>${c.userName.split('@')[0]}</h5></div>`; } });
             });
         }
 
-        // --- HANDLERS ---
         function openOrderModal(id) {
             activeID = id; const o = ordersData.find(x => x.id === id);
             const grid = document.getElementById('orderFields'); grid.innerHTML = '';
-            const d = { "Service": o.service.product, "WhatsApp": o.customerInfo.whatsapp, "Identifiant": o.customerInfo.gameId || o.customerInfo.email, "Montant": o.service.price + " HTG", "Méthode": o.payment.method.toUpperCase(), "Emetteur": o.payment.senderName };
+            const d = { "Service": o.service.product, "WhatsApp": o.customerInfo.whatsapp, "ID/Email": o.customerInfo.gameId || o.customerInfo.email, "Montant": o.service.price + " HTG", "Méthode": o.payment.method.toUpperCase(), "Emetteur": o.payment.senderName };
             for(let [l,v] of Object.entries(d)) grid.innerHTML += `<div class="detail-cell"><label>${l}</label><p>${v}</p></div>`;
             document.getElementById('orderImg').src = o.payment.proof;
             document.getElementById('purchaseCost').value = o.purchaseCost || '';
@@ -313,7 +307,7 @@
         async function handleOrder(s) {
             const cost = parseFloat(document.getElementById('purchaseCost').value) || 0;
             await db.collection("orders").doc(activeID).update({ status: s, purchaseCost: cost, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
-            closeModal(); showToast("Statut mis à jour");
+            closeModal(); showToast("Commande mise à jour");
         }
 
         async function handleWallet(s) {
