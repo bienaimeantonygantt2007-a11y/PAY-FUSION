@@ -1,1 +1,162 @@
-sksks
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fox Store — Transfert P2P</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #0056b3; --secondary: #001e62; --accent: #00d1ff;
+            --white: #ffffff; --bg: #ffffff; --input-bg: #f8fafc;
+            --text-main: #0f172a; --text-muted: #64748b;
+            --error: #ef4444; --success: #10b981; --border: #e2e8f0;
+            --transition: all 0.4s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); }
+
+        header { height: 65px; background: #fff; display: flex; align-items: center; padding: 0 5%; border-bottom: 1px solid var(--border); }
+        .back-btn { color: var(--primary); font-size: 1.2rem; text-decoration: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 12px; }
+        header h1 { font-size: 0.95rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; margin-left: 10px; }
+
+        .container { padding: 25px 5%; max-width: 600px; margin: 0 auto; }
+
+        .balance-badge { background: var(--secondary); color: white; padding: 20px; border-radius: 20px; text-align: center; margin-bottom: 30px; box-shadow: 0 10px 25px rgba(0, 30, 98, 0.15); }
+        .balance-badge span { font-size: 0.7rem; font-weight: 700; opacity: 0.7; text-transform: uppercase; }
+        .balance-badge h2 { font-size: 1.8rem; font-weight: 800; margin-top: 5px; }
+
+        .card { background: #fff; border-radius: 20px; border: 1.5px solid var(--border); padding: 25px; margin-bottom: 25px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+        .form-group input { width: 100%; padding: 16px; border: 1.5px solid var(--border); border-radius: 16px; outline: none; font-size: 1rem; font-weight: 700; background: var(--input-bg); transition: 0.3s; }
+        .form-group input:focus { border-color: var(--primary); }
+
+        .btn-transfer { width: 100%; padding: 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; border-radius: 18px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        
+        #loader { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 5000; align-items: center; justify-content: center; flex-direction: column; }
+    </style>
+</head>
+<body>
+
+    <div id="loader"><i class="fas fa-spinner fa-spin fa-2x" style="color:var(--primary)"></i><p style="margin-top:15px; font-weight:800;">Envoi sécurisé...</p></div>
+
+    <header>
+        <a href="/user/wallet.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        <h1>Transfert d'argent</h1>
+    </header>
+
+    <div class="container">
+        <div class="balance-badge">
+            <span>Votre solde Fox</span>
+            <h2 id="myBal">0.00 HTG</h2>
+        </div>
+
+        <form id="transferForm">
+            <div class="card">
+                <div class="form-group">
+                    <label>Email du destinataire Fox Store</label>
+                    <input type="email" id="targetEmail" placeholder="destinataire@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Montant à envoyer (HTG)</label>
+                    <input type="number" id="sendAmount" placeholder="0.00" min="10" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-transfer">Envoyer maintenant <i class="fas fa-paper-plane"></i></button>
+        </form>
+    </div>
+
+    <script>
+        const firebaseConfig = { apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg", authDomain: "pay-fusion-6dfaf.firebaseapp.com", projectId: "pay-fusion-6dfaf", storageBucket: "pay-fusion-6dfaf.firebasestorage.app", messagingSenderId: "945593776812", appId: "1:945593776812:web:4475e1085fdfa31690fd09", measurementId: "G-8FEQG6B7ZY" };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore(), auth = firebase.auth();
+        let myBalance = 0;
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                db.collection("users").doc(user.uid).onSnapshot(doc => {
+                    myBalance = doc.data().wallet_balance || 0;
+                    document.getElementById('myBal').textContent = myBalance.toLocaleString() + " HTG";
+                });
+            } else { window.location.href = "/login.html"; }
+        });
+
+        document.getElementById('transferForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const targetEmail = document.getElementById('targetEmail').value.trim().toLowerCase();
+            const amount = parseFloat(document.getElementById('sendAmount').value);
+            const sender = auth.currentUser;
+
+            if(targetEmail === sender.email) return alert("Vous ne pouvez pas vous envoyer d'argent.");
+            if(amount > myBalance) return alert("Solde insuffisant.");
+
+            document.getElementById('loader').style.display = 'flex';
+
+            try {
+                // 1. Chercher le destinataire
+                const targetSnap = await db.collection("users").where("personalInfo.email", "==", targetEmail).get();
+                if(targetSnap.empty) {
+                    alert("Utilisateur non trouvé sur Fox Store.");
+                    document.getElementById('loader').style.display = 'none';
+                    return;
+                }
+
+                const targetUser = targetSnap.docs[0];
+                const targetUID = targetUser.id;
+
+                // 2. Transaction Atomique (Débit/Crédit simultané)
+                const batch = db.batch();
+                
+                // Débit expéditeur
+                batch.update(db.collection("users").doc(sender.uid), {
+                    wallet_balance: firebase.firestore.FieldValue.increment(-amount)
+                });
+
+                // Crédit destinataire
+                batch.update(db.collection("users").doc(targetUID), {
+                    wallet_balance: firebase.firestore.FieldValue.increment(amount)
+                });
+
+                // Logs de transaction
+                const logRef = db.collection("wallet_transactions").doc();
+                batch.set(logRef, {
+                    userId: sender.uid,
+                    type: "transfert_envoye",
+                    amount: amount,
+                    recipientEmail: targetEmail,
+                    status: "valide",
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                const logRefRecu = db.collection("wallet_transactions").doc();
+                batch.set(logRefRecu, {
+                    userId: targetUID,
+                    type: "transfert_recu",
+                    amount: amount,
+                    senderEmail: sender.email,
+                    status: "valide",
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                await batch.commit();
+                alert("Transfert effectué avec succès !");
+                window.location.href = "/user/wallet.html";
+
+            } catch (err) {
+                alert("Erreur lors du transfert.");
+                document.getElementById('loader').style.display = 'none';
+            }
+        };
+    </script>
+</body>
+</html>
