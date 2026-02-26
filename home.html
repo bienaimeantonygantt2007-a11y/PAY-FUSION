@@ -897,7 +897,7 @@
             <div class="service-card skeleton" style="height: 200px;"></div>
         </div>
 
-        <!-- FOOTER AJOUTÉ ICI -->
+        <!-- FOOTER -->
         <footer class="footer">
             <div class="footer-grid">
                 <!-- Colonne 1: À propos -->
@@ -1059,8 +1059,8 @@
                     const initial = (firstName.charAt(0) || 'U').toUpperCase();
                     document.getElementById('userAvatar').innerHTML = `<span style="font-size: 1.5rem;">${initial}</span>`;
 
-                    // Vérification admin
-                    if (data.role === 'admin' || user.email === 'bmarcco4412@gmail.com') {
+                    // Vérification admin - CORRIGÉ pour correspondre aux règles Firestore
+                    if (user.email === 'bmarcco4412@gmail.com') {
                         document.getElementById('adminSection').style.display = 'block';
                     }
                 }
