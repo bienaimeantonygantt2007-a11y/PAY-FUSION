@@ -3,115 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fox Store - Mes Commandes</title>
+    <title>Fox Store — Mes Achats</title>
     
+    <!-- 
+        FOX STORE ARCHITECTURE v10.0 - ORDERS ENGINE
+        COMPATIBILITÉ : ACHATS DIRECTS & PAIEMENTS PORTEFEUILLE
+        ZÉRO SIMULATION - DESIGN WHITE ELITE
+    -->
+
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     
-    <!-- Font Awesome -->
+    <!-- Font Awesome 6 Pro -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --primary: #0056b3;
-            --primary-light: #00d2ff;
-            --secondary: #002d5e;
+            --secondary: #0f172a;
             --white: #ffffff;
-            --bg-body: #f8fafc;
+            --bg: #ffffff; 
+            --card-bg: #f8fafc;
             --text-main: #1e293b;
             --text-muted: #64748b;
-            --border: rgba(0, 86, 179, 0.08);
-            --success: #00c853;
-            --warning: #ffab00;
-            --danger: #ff4444;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border: #eef2f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --radius: 20px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; }
+        body { background-color: var(--bg); color: var(--text-main); line-height: 1.5; overflow-x: hidden; min-height: 100vh; }
 
-        /* --- HEADER COMPACT --- */
+        /* --- HEADER --- */
         header {
-            height: 65px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
-            display: flex; align-items: center; padding: 0 20px; position: sticky; top: 0; z-index: 1000;
+            height: 65px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            display: flex; align-items: center; padding: 0 5%; position: sticky; top: 0; z-index: 1000;
             border-bottom: 1px solid var(--border);
         }
-
         .back-btn { 
-            color: var(--primary); font-size: 1.2rem; text-decoration: none; 
-            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
-            border-radius: 12px; transition: var(--transition);
+            color: var(--primary); font-size: 1.1rem; text-decoration: none; 
+            width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
+            border-radius: 12px; transition: var(--transition); background: var(--card-bg);
         }
-        .back-btn:hover { background: #f0f7ff; }
+        .back-btn:hover { background: #f1f5f9; transform: translateX(-3px); }
+        header h1 { font-size: 0.9rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; letter-spacing: 1px; margin-left: 15px; }
 
-        header h1 { font-size: 1rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-left: 10px; }
+        .container { padding: 20px 5% 100px; max-width: 650px; margin: 0 auto; }
 
-        .container { padding: 20px; max-width: 800px; margin: 0 auto; }
-
-        /* --- FILTRES CHIPS --- */
-        .filters {
-            display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px;
-            margin-bottom: 15px; scrollbar-width: none;
-        }
-        .filters::-webkit-scrollbar { display: none; }
-
-        .chip {
-            padding: 10px 20px; background: var(--white); border-radius: 50px; font-size: 0.8rem;
-            white-space: nowrap; cursor: pointer; transition: var(--transition); 
-            color: var(--text-muted); font-weight: 700; border: 1.5px solid var(--border);
-        }
+        /* --- FILTERS --- */
+        .filter-wrapper { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 20px; scrollbar-width: none; }
+        .filter-wrapper::-webkit-scrollbar { display: none; }
+        .chip { padding: 8px 18px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 50px; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); white-space: nowrap; cursor: pointer; transition: 0.3s; }
         .chip.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2); }
 
-        /* --- CARDS COMMANDES --- */
+        /* --- ORDER CARDS --- */
+        .order-list { display: flex; flex-direction: column; gap: 15px; }
         .order-card {
-            background: var(--white); border-radius: 20px; padding: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.02); border: 1px solid var(--border);
-            margin-bottom: 15px; display: flex; flex-direction: column; gap: 15px;
-            transition: var(--transition); animation: slideUp 0.4s ease;
+            background: var(--white); border-radius: var(--radius); padding: 20px;
+            border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02); transition: var(--transition);
+            animation: slideUp 0.5s ease forwards;
         }
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        .order-header { display: flex; justify-content: space-between; align-items: center; }
-        .order-id { font-size: 0.7rem; color: var(--text-muted); font-weight: 700; font-family: monospace; }
+        .order-left { display: flex; align-items: center; gap: 15px; }
+        .order-icon-box { 
+            width: 52px; height: 52px; background: var(--card-bg); border-radius: 16px; 
+            display: flex; align-items: center; justify-content: center; 
+            color: var(--primary); font-size: 1.3rem; border: 1px solid var(--border);
+            position: relative;
+        }
         
-        .status-badge {
-            padding: 5px 12px; border-radius: 50px; font-size: 0.65rem; font-weight: 800; 
-            text-transform: uppercase; letter-spacing: 0.5px;
+        /* Badge spécial pour paiement Wallet */
+        .wallet-pay-indicator {
+            position: absolute; bottom: -5px; right: -5px; width: 22px; height: 22px;
+            background: var(--secondary); color: var(--accent); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.65rem; border: 2px solid var(--white);
         }
-        .status-en-attente { background: #fff8e1; color: var(--warning); }
-        .status-validé { background: #e8f5e9; color: var(--success); }
-        .status-livré { background: #e0f7fa; color: #006064; }
-        .status-rejeté { background: #ffebee; color: var(--danger); }
 
-        .order-content { display: flex; align-items: center; gap: 15px; }
-        .order-icon { 
-            width: 50px; height: 50px; background: #f0f7ff; border-radius: 15px; 
-            display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.3rem;
-        }
-        .order-details h3 { font-size: 0.95rem; font-weight: 800; color: var(--secondary); }
-        .order-details p { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+        .order-info h4 { font-size: 0.95rem; font-weight: 800; color: var(--secondary); margin-bottom: 3px; }
+        .order-info p { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+        .order-date { font-size: 0.65rem; color: #cbd5e1; font-weight: 700; text-transform: uppercase; margin-top: 5px; display: block; }
 
-        .order-footer { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding-top: 12px; border-top: 1px solid var(--bg-body);
-        }
-        .order-date { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 6px; }
-        .order-total { font-weight: 800; color: var(--primary); font-size: 1rem; }
+        .order-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+        .order-price { font-weight: 900; color: var(--primary); font-size: 1rem; letter-spacing: -0.5px; }
+        
+        .status-pill { padding: 5px 12px; border-radius: 8px; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        .st-en-attente { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .st-validé { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .st-rejeté { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
 
-        /* --- ÉTATS --- */
-        #loading { text-align: center; padding: 40px; color: var(--primary); }
-        .empty-state { text-align: center; padding: 60px 20px; }
-        .empty-state i { font-size: 3.5rem; color: #e2e8f0; margin-bottom: 15px; display: block; }
-        .empty-state p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; }
+        /* --- STATES --- */
+        #loader { text-align: center; padding: 60px; color: var(--primary); }
+        .empty-state { text-align: center; padding: 80px 20px; }
+        .empty-state i { font-size: 3.5rem; color: #f1f5f9; margin-bottom: 20px; display: block; }
+        .empty-state p { font-weight: 700; color: var(--text-muted); margin-bottom: 25px; }
+        .btn-browse { display: inline-block; padding: 14px 28px; background: var(--primary); color: white; text-decoration: none; border-radius: 14px; font-weight: 800; font-size: 0.85rem; }
 
-        .btn-shop {
-            display: inline-block; padding: 12px 25px; background: var(--primary); color: white;
-            text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 0.85rem;
+        @media (max-width: 480px) {
+            .order-card { padding: 15px; }
+            .order-icon-box { width: 45px; height: 45px; font-size: 1.1rem; }
+            .order-info h4 { font-size: 0.85rem; }
         }
     </style>
 </head>
@@ -119,37 +120,38 @@
 
     <header>
         <a href="/home.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
-        <h1>Mes Commandes</h1>
+        <h1>Mes Achats</h1>
     </header>
 
     <div class="container">
-        <!-- Filtres -->
-        <div class="filters">
-            <div class="chip active" onclick="applyFilter('all', this)">Toutes</div>
+        
+        <!-- BARRE DE FILTRES -->
+        <div class="filter-wrapper">
+            <div class="chip active" onclick="applyFilter('all', this)">Tous</div>
             <div class="chip" onclick="applyFilter('en-attente', this)">En attente</div>
-            <div class="chip" onclick="applyFilter('Validé', this)">Validées</div>
-            <div class="chip" onclick="applyFilter('Rejeté', this)">Rejetées</div>
+            <div class="chip" onclick="applyFilter('Validé', this)">Validés</div>
+            <div class="chip" onclick="applyFilter('Rejeté', this)">Annulés</div>
         </div>
 
-        <!-- Chargement -->
-        <div id="loading">
-            <i class="fas fa-spinner fa-spin fa-2x"></i>
-            <p style="margin-top: 10px; font-weight: 700; font-size: 0.8rem;">Mise à jour...</p>
+        <!-- LISTE DYNAMIQUE -->
+        <div id="loader"><i class="fas fa-circle-notch fa-spin fa-2x"></i></div>
+        <div class="order-list" id="orderList"></div>
+
+        <!-- ÉCRAN VIDE -->
+        <div class="empty-state" id="emptyMsg" style="display: none;">
+            <i class="fas fa-receipt"></i>
+            <p>Aucune transaction enregistrée.</p>
+            <a href="/home.html" class="btn-browse">Explorer la boutique</a>
         </div>
 
-        <!-- Liste des commandes -->
-        <div id="ordersContainer"></div>
-
-        <!-- Vide -->
-        <div class="empty-state" id="emptyState" style="display: none;">
-            <i class="fas fa-shopping-bag"></i>
-            <p>Vous n'avez pas encore passé de commande.</p>
-            <a href="/home.html" class="btn-shop">Découvrir nos services</a>
-        </div>
     </div>
 
     <script>
-        // Configuration Firebase Master Fox Store
+        /* ==========================================================================
+           MOTEUR DE SUIVI FOX STORE (COMPATIBLE WALLET)
+           ========================================================================== */
+
+        // 1. CONFIGURATION FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg",
             authDomain: "pay-fusion-6dfaf.firebaseapp.com",
@@ -165,98 +167,98 @@
         const auth = firebase.auth();
 
         let userOrders = [];
-        let activeFilter = 'all';
+        let filterStatus = 'all';
 
+        // 2. ÉCOUTE EN TEMPS RÉEL
         auth.onAuthStateChanged(user => {
             if (user) {
-                // Écoute en temps réel des commandes de l'utilisateur
+                // On Snapshot pour voir les changements de l'admin en direct
                 db.collection("orders")
                   .where("userId", "==", user.uid)
-                  .onSnapshot((snapshot) => {
-                      document.getElementById('loading').style.display = 'none';
-                      
+                  .orderBy("createdAt", "desc")
+                  .onSnapshot(snap => {
+                      document.getElementById('loader').style.display = 'none';
                       userOrders = [];
-                      snapshot.forEach(doc => {
-                          userOrders.push({ id: doc.id, ...doc.data() });
-                      });
-
-                      // Tri par date décroissante (les plus récentes en premier)
-                      userOrders.sort((a, b) => {
-                          const dateA = a.createdAt ? a.createdAt.seconds : 0;
-                          const dateB = b.createdAt ? b.createdAt.seconds : 0;
-                          return dateB - dateA;
-                      });
-
+                      snap.forEach(doc => userOrders.push({ id: doc.id, ...doc.data() }));
                       renderOrders();
-                  }, (error) => {
-                      console.error("Erreur Firestore:", error);
-                      document.getElementById('loading').innerHTML = "<p style='color:red;'>Erreur de synchronisation.</p>";
+
+                      // Sécurité Anti-Ban instantanée
+                      db.collection("users").doc(user.uid).get().then(doc => {
+                          if(doc.exists && doc.data().status === "Banni") window.location.href = "/logout.html";
+                      });
+                  }, err => {
+                      console.error(err);
+                      document.getElementById('loader').innerHTML = `<p style="color:var(--danger); font-size:0.7rem;">Erreur de chargement.</p>`;
                   });
             } else {
                 window.location.href = "/login.html";
             }
         });
 
+        // 3. RENDU DES CARTES
         function renderOrders() {
-            const container = document.getElementById('ordersContainer');
-            const emptyState = document.getElementById('emptyState');
+            const container = document.getElementById('orderList');
+            const empty = document.getElementById('emptyMsg');
             
-            // Filtrage
-            const filtered = activeFilter === 'all' 
+            const filtered = filterStatus === 'all' 
                 ? userOrders 
-                : userOrders.filter(o => o.status === activeFilter);
+                : userOrders.filter(o => o.status === filterStatus);
 
             container.innerHTML = '';
 
-            if(filtered.length === 0) {
-                emptyState.style.display = 'block';
+            if (filtered.length === 0) {
+                empty.style.display = 'block';
                 return;
             }
 
-            emptyState.style.display = 'none';
+            empty.style.display = 'none';
 
             filtered.forEach(order => {
-                const date = order.createdAt 
-                    ? new Date(order.createdAt.seconds * 1000).toLocaleDateString('fr-FR', {day: 'numeric', month: 'short'}) 
-                    : "En cours";
+                const dateObj = order.createdAt ? new Date(order.createdAt.seconds * 1000) : new Date();
+                const formattedDate = dateObj.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+                const stClass = `st-${order.status.toLowerCase().replace(' ', '-')}`;
                 
-                const statusClass = order.status.toLowerCase().replace(' ', '-');
-                
-                // Choix de l'icône par catégorie
-                let icon = "fa-box";
-                const category = order.service.category;
-                if(category === "gaming") icon = "fa-gamepad";
-                if(category === "streaming") icon = "fa-play-circle";
-                if(category === "financière" || category === "crypto") icon = "fa-wallet";
+                // Détection de la catégorie pour l'icône
+                let icon = "fa-box-open";
+                const cat = order.service?.category;
+                if(cat === "gaming") icon = "fa-gamepad";
+                else if(cat === "streaming") icon = "fa-play-circle";
+                else if(cat === "financière" || cat === "crypto") icon = "fa-wallet";
+
+                // COMPATIBILITÉ WALLET : Indicateur visuel si payé par solde
+                const isWalletPay = order.payment?.method === "portefeuille" || order.payment?.proof === "PAID_BY_WALLET";
+                const walletBadge = isWalletPay ? `<div class="wallet-pay-indicator" title="Payé par solde"><i class="fas fa-bolt"></i></div>` : "";
 
                 container.innerHTML += `
                     <div class="order-card">
-                        <div class="order-header">
-                            <span class="order-id">REF: #${order.orderId || order.id.substring(0,8).toUpperCase()}</span>
-                            <span class="status-badge status-${statusClass}">${order.status}</span>
-                        </div>
-                        <div class="order-content">
-                            <div class="order-icon"><i class="fas ${icon}"></i></div>
-                            <div class="order-details">
-                                <h3>${order.service.name}</h3>
-                                <p>${order.service.product}</p>
+                        <div class="order-left">
+                            <div class="order-icon-box">
+                                <i class="fas ${icon}"></i>
+                                ${walletBadge}
+                            </div>
+                            <div class="order-info">
+                                <h4>${order.service?.name || "Service Fox"}</h4>
+                                <p>${order.service?.product || "Commande"}</p>
+                                <span class="order-date">${formattedDate}</span>
                             </div>
                         </div>
-                        <div class="order-footer">
-                            <span class="order-date"><i class="far fa-calendar-alt"></i> ${date}</span>
-                            <span class="order-total">${order.service.price.toLocaleString()} HTG</span>
+                        <div class="order-right">
+                            <span class="order-price">${(order.service?.price || 0).toLocaleString()} HTG</span>
+                            <span class="status-pill ${stClass}">${order.status}</span>
                         </div>
                     </div>
                 `;
             });
         }
 
-        function applyFilter(status, element) {
-            activeFilter = status;
+        // 4. LOGIQUE FILTRES
+        function applyFilter(status, el) {
+            filterStatus = status;
             document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            element.classList.add('active');
+            el.classList.add('active');
             renderOrders();
         }
+
     </script>
 </body>
 </html>
