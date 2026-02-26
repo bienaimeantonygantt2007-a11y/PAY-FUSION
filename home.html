@@ -10,28 +10,24 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     
-    <!-- Font Awesome 6 Pro -->
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- Google Fonts - System font stack pour performance -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Inter (moderne et lisible) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;1,14..32,400&display=swap" rel="stylesheet">
 
     <style>
         /* ==========================================================================
-           DESIGN SYSTEM ULTRA PROFESSIONNEL
+           VARIABLES DESIGN SYSTEM (ROYAL BLUE & BLANC)
            ========================================================================== */
         :root {
-            /* Couleurs principales */
-            --primary: #0a2540;
-            --primary-light: #1a3a5c;
-            --primary-dark: #051a2b;
-            --accent: #0056b3;
-            --accent-light: #eef4ff;
+            --primary: #1e3a8a;          /* Bleu royal profond */
+            --primary-light: #3b5ba5;     /* Bleu royal clair */
+            --primary-dark: #0f2b6b;      /* Bleu royal foncé */
+            --accent: #00a3ff;             /* Accent moderne */
             --white: #ffffff;
-            --off-white: #f9fafc;
-            
-            /* Échelle de gris sophistiquée */
-            --gray-50: #f8fafc;
+            --off-white: #f8fafc;
+            --gray-50: #f9f9f9;
             --gray-100: #f1f5f9;
             --gray-200: #e2e8f0;
             --gray-300: #cbd5e1;
@@ -41,28 +37,19 @@
             --gray-700: #334155;
             --gray-800: #1e293b;
             --gray-900: #0f172a;
-            
-            /* États */
-            --success: #0e7b4e;
-            --success-light: #e6f7ef;
-            --warning: #b45b0f;
-            --warning-light: #fff1e0;
-            --error: #b91c1c;
-            --error-light: #fee9e9;
-            
-            /* Effets */
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --error: #ef4444;
+            --error-light: #fee2e2;
+            --border: #e2e8f0;
             --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.02);
             --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.03), 0 1px 2px -1px rgb(0 0 0 / 0.02);
             --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.03), 0 2px 4px -2px rgb(0 0 0 / 0.02);
             --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.03), 0 4px 6px -4px rgb(0 0 0 / 0.02);
             --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.03), 0 8px 10px -6px rgb(0 0 0 / 0.02);
-            
-            /* Animations */
-            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
-            
-            /* Bordures */
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             --radius-sm: 6px;
             --radius-md: 8px;
             --radius-lg: 12px;
@@ -80,16 +67,19 @@
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', sans-serif;
             background: var(--off-white);
             color: var(--gray-900);
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         /* ==========================================================================
-           HEADER LUXUEUX
+           HEADER (MOBILE-FIRST)
            ========================================================================== */
         .header {
             background: rgba(255, 255, 255, 0.85);
@@ -103,6 +93,7 @@
             position: sticky;
             top: 0;
             z-index: 50;
+            box-shadow: var(--shadow-sm);
         }
 
         .header-left {
@@ -122,7 +113,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: var(--transition-fast);
+            transition: var(--transition);
             box-shadow: var(--shadow-xs);
         }
 
@@ -137,7 +128,7 @@
             font-weight: 700;
             font-size: 1.35rem;
             letter-spacing: -0.02em;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -169,9 +160,8 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: var(--transition-fast);
+            transition: var(--transition);
             text-decoration: none;
-            position: relative;
             box-shadow: var(--shadow-xs);
         }
 
@@ -184,18 +174,18 @@
         }
 
         /* ==========================================================================
-           SIDEBAR ÉLÉGANTE
+           SIDEBAR (MOBILE-FIRST)
            ========================================================================== */
         .sidebar-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
             z-index: 60;
             display: none;
             opacity: 0;
-            transition: opacity var(--transition-base);
+            transition: opacity 0.2s ease;
         }
 
         .sidebar-overlay.active {
@@ -212,7 +202,7 @@
             background: var(--white);
             border-right: 1px solid var(--gray-200);
             z-index: 70;
-            transition: left var(--transition-base);
+            transition: left 0.3s ease;
             display: flex;
             flex-direction: column;
             box-shadow: var(--shadow-xl);
@@ -224,14 +214,14 @@
 
         .sidebar-header {
             padding: 32px 24px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: var(--white);
         }
 
         .user-avatar-large {
             width: 64px;
             height: 64px;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             border-radius: var(--radius-lg);
@@ -240,7 +230,7 @@
             justify-content: center;
             font-size: 1.75rem;
             margin-bottom: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
         }
 
         .user-name-large {
@@ -285,7 +275,7 @@
             color: var(--gray-600);
             font-weight: 500;
             font-size: 0.9rem;
-            transition: all var(--transition-fast);
+            transition: var(--transition);
             cursor: pointer;
             text-decoration: none;
             width: 100%;
@@ -296,7 +286,7 @@
             width: 20px;
             font-size: 1.1rem;
             color: var(--gray-400);
-            transition: color var(--transition-fast);
+            transition: color var(--transition);
         }
 
         .nav-item:hover {
@@ -310,13 +300,12 @@
         }
 
         .nav-item.active {
-            background: var(--accent-light);
-            color: var(--accent);
-            font-weight: 600;
+            background: var(--primary);
+            color: var(--white);
         }
 
         .nav-item.active i {
-            color: var(--accent);
+            color: var(--white);
         }
 
         .nav-item.logout {
@@ -338,23 +327,24 @@
             padding: 4px 8px;
             border-radius: 20px;
             margin-left: auto;
-            letter-spacing: normal;
         }
 
         /* ==========================================================================
            MAIN CONTENT
            ========================================================================== */
         .main {
+            flex: 1;
             max-width: 1280px;
             margin: 0 auto;
             padding: 20px;
+            width: 100%;
         }
 
         /* ==========================================================================
-           HERO SECTION - LUXE
+           HERO SECTION
            ========================================================================== */
         .hero {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             border-radius: var(--radius-2xl);
             padding: 32px;
             color: var(--white);
@@ -388,7 +378,6 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            letter-spacing: 0.3px;
         }
 
         .hero-title {
@@ -448,12 +437,12 @@
         .announcement-icon {
             width: 32px;
             height: 32px;
-            background: var(--accent-light);
+            background: var(--primary-light);
             border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--accent);
+            color: var(--white);
             font-size: 1rem;
         }
 
@@ -475,6 +464,48 @@
             font-size: 0.7rem;
             font-weight: 600;
             white-space: nowrap;
+        }
+
+        /* ==========================================================================
+           QUICK ACTIONS
+           ========================================================================== */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin: 32px 0;
+        }
+
+        .quick-action {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: 12px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: var(--gray-700);
+            transition: var(--transition);
+            box-shadow: var(--shadow-xs);
+        }
+
+        .quick-action:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .quick-action i {
+            font-size: 1.25rem;
+        }
+
+        .quick-action span {
+            font-size: 0.7rem;
+            font-weight: 600;
         }
 
         /* ==========================================================================
@@ -502,8 +533,9 @@
             font-weight: 600;
             color: var(--gray-600);
             cursor: pointer;
-            transition: all var(--transition-fast);
+            transition: var(--transition);
             white-space: nowrap;
+            box-shadow: var(--shadow-xs);
         }
 
         .category-tab:hover {
@@ -536,12 +568,12 @@
         .section-title-icon {
             width: 32px;
             height: 32px;
-            background: var(--accent-light);
+            background: var(--primary-light);
             border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--accent);
+            color: var(--white);
         }
 
         .section-title h2 {
@@ -552,19 +584,19 @@
         }
 
         .section-link {
-            color: var(--accent);
+            color: var(--primary);
             font-size: 0.8rem;
             font-weight: 600;
             text-decoration: none;
-            transition: color var(--transition-fast);
+            transition: color var(--transition);
         }
 
         .section-link:hover {
-            color: var(--primary);
+            color: var(--primary-dark);
         }
 
         /* ==========================================================================
-           SERVICE GRID - PROFESSIONNEL
+           SERVICE GRID
            ========================================================================== */
         .service-grid {
             display: grid;
@@ -582,14 +614,13 @@
             align-items: center;
             text-align: center;
             border: 1px solid var(--gray-200);
-            transition: all var(--transition-base);
-            position: relative;
+            transition: var(--transition);
             box-shadow: var(--shadow-xs);
         }
 
         .service-card:hover {
             transform: translateY(-4px);
-            border-color: var(--accent);
+            border-color: var(--primary);
             box-shadow: var(--shadow-lg);
         }
 
@@ -598,7 +629,7 @@
             height: 100px;
             object-fit: contain;
             margin-bottom: 12px;
-            transition: transform var(--transition-base);
+            transition: transform 0.2s ease;
         }
 
         .service-card:hover img {
@@ -631,47 +662,6 @@
         }
 
         /* ==========================================================================
-           QUICK ACTIONS
-           ========================================================================== */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin: 32px 0;
-        }
-
-        .quick-action {
-            background: var(--white);
-            border: 1px solid var(--gray-200);
-            border-radius: var(--radius-lg);
-            padding: 12px 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            text-decoration: none;
-            color: var(--gray-700);
-            transition: all var(--transition-fast);
-        }
-
-        .quick-action:hover {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .quick-action i {
-            font-size: 1.25rem;
-        }
-
-        .quick-action span {
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-
-        /* ==========================================================================
            FLOATING BUTTONS
            ========================================================================== */
         .floating-buttons {
@@ -694,7 +684,7 @@
             color: white;
             text-decoration: none;
             box-shadow: var(--shadow-lg);
-            transition: all var(--transition-base);
+            transition: var(--transition);
             border: 2px solid white;
         }
 
@@ -729,9 +719,9 @@
         }
 
         @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(185, 28, 28, 0.7); }
-            70% { box-shadow: 0 0 0 12px rgba(185, 28, 28, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(185, 28, 28, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
 
         /* ==========================================================================
@@ -757,7 +747,7 @@
             align-items: center;
             gap: 12px;
             transform: translateX(120%);
-            transition: transform var(--transition-base);
+            transition: transform 0.3s ease;
             font-weight: 500;
             font-size: 0.85rem;
             min-width: 280px;
@@ -793,7 +783,7 @@
         }
 
         /* ==========================================================================
-           FOOTER ÉLÉGANT
+           FOOTER
            ========================================================================== */
         .footer {
             margin-top: 60px;
@@ -814,7 +804,6 @@
             font-size: 0.9rem;
             color: var(--gray-800);
             margin-bottom: 16px;
-            letter-spacing: -0.01em;
         }
 
         .footer-text {
@@ -839,7 +828,7 @@
             align-items: center;
             justify-content: center;
             text-decoration: none;
-            transition: all var(--transition-fast);
+            transition: var(--transition);
         }
 
         .social-link:hover {
@@ -860,7 +849,7 @@
             color: var(--gray-500);
             font-size: 0.8rem;
             text-decoration: none;
-            transition: color var(--transition-fast);
+            transition: color var(--transition);
         }
 
         .footer-links a:hover {
@@ -909,13 +898,6 @@
             .service-grid {
                 grid-template-columns: repeat(5, 1fr);
             }
-        }
-
-        /* ==========================================================================
-           UTILITIES
-           ========================================================================== */
-        .hidden {
-            display: none !important;
         }
     </style>
 </head>
@@ -1099,8 +1081,12 @@
             <button class="category-tab" onclick="filterCategory('digital')">Services digitaux</button>
         </div>
 
-        <!-- Services Grid Container -->
-        <div id="servicesContainer"></div>
+        <!-- Services Container (will be populated by JS) -->
+        <div id="servicesContainer">
+            <!-- Skeleton loaders will be shown while loading -->
+            <div class="skeleton" style="height: 200px; margin-bottom: 16px;"></div>
+            <div class="skeleton" style="height: 200px; margin-bottom: 16px;"></div>
+        </div>
 
     </main>
 
@@ -1166,7 +1152,9 @@
     </div>
 
     <script>
-        // Configuration Firebase
+        // ==========================================================================
+        // CONFIGURATION FIREBASE
+        // ==========================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg",
             authDomain: "pay-fusion-6dfaf.firebaseapp.com",
@@ -1176,6 +1164,7 @@
             appId: "1:945593776812:web:4475e1085fdfa31690fd09"
         };
 
+        // Initialisation Firebase
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
@@ -1187,10 +1176,10 @@
         let allServices = [];
 
         // ==========================================================================
-        // LISTE COMPLÈTE DES 20 SERVICES (AVEC MERU !)
+        // LISTE COMPLÈTE DES 20 SERVICES (AVEC MERU)
         // ==========================================================================
         const services = [
-            // GAMING (9 services)
+            // GAMING (9)
             { id: 'freefire', name: 'Free Fire', category: 'gaming', logo: 'freefire-logo.png' },
             { id: 'fcmobile', name: 'FC Mobile', category: 'gaming', logo: 'fcmobile-logo.png' },
             { id: 'efootball', name: 'eFootball', category: 'gaming', logo: 'efootball-logo.png' },
@@ -1201,26 +1190,26 @@
             { id: 'minecraft', name: 'Minecraft', category: 'gaming', logo: 'minecraft-logo.png' },
             { id: 'flexcity', name: 'Flex City', category: 'gaming', logo: 'flexcity-logo.png' },
             
-            // STREAMING (4 services)
+            // STREAMING (4)
             { id: 'netflix', name: 'Netflix', category: 'streaming', logo: 'netflix-logo.png' },
             { id: 'disneyplus', name: 'Disney+', category: 'streaming', logo: 'disneyplus-logo.png' },
             { id: 'primevideo', name: 'Prime Video', category: 'streaming', logo: 'primevideo-logo.png' },
             { id: 'crunchyroll', name: 'Crunchyroll', category: 'streaming', logo: 'crunchyroll-logo.png' },
             
-            // SERVICES DIGITAUX (7 services - avec MERU !)
+            // DIGITAL (7 dont MERU)
             { id: 'paypal', name: 'PayPal', category: 'digital', logo: 'paypal-logo.png' },
             { id: 'wise', name: 'Wise', category: 'digital', logo: 'wise-logo.png' },
             { id: 'usdt', name: 'USDT', category: 'digital', logo: 'usdt-logo.png' },
             { id: 'tronx', name: 'TRONX', category: 'digital', logo: 'tronx-logo.png' },
             { id: 'telegram', name: 'Telegram', category: 'digital', logo: 'telegram-logo.png' },
             { id: 'tiktok', name: 'TikTok', category: 'digital', logo: 'tiktok-logo.png' },
-            { id: 'meru', name: 'MERU', category: 'digital', logo: 'meru-logo.png' } // MERU EST LÀ !
+            { id: 'meru', name: 'MERU', category: 'digital', logo: 'meru-logo.png' } // MERU présent !
         ];
 
-        console.log(`✅ ${services.length} services chargés (dont MERU)`); // Vérification
+        console.log(`✅ ${services.length} services chargés (dont MERU)`);
 
         // ==========================================================================
-        // UTILITAIRES
+        // FONCTIONS UTILITAIRES
         // ==========================================================================
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('active');
@@ -1293,7 +1282,7 @@
                     document.getElementById('sidebarEmail').textContent = user.email;
                     document.getElementById('userAvatar').innerHTML = `<span>${(firstName.charAt(0) || 'U').toUpperCase()}</span>`;
 
-                    // Bouton admin
+                    // Admin button
                     if (user.email === 'bmarcco4412@gmail.com') {
                         document.getElementById('adminButton').style.display = 'flex';
                     }
@@ -1331,7 +1320,7 @@
         function renderServices(servicesToRender) {
             const container = document.getElementById('servicesContainer');
             
-            // Grouper par catégorie
+            // Group by category
             const gaming = servicesToRender.filter(s => s.category === 'gaming');
             const streaming = servicesToRender.filter(s => s.category === 'streaming');
             const digital = servicesToRender.filter(s => s.category === 'digital');
@@ -1385,9 +1374,10 @@
         }
 
         // ==========================================================================
-        // FILTRAGE
+        // FILTRAGE PAR CATÉGORIE
         // ==========================================================================
         function filterCategory(category) {
+            // Update active tab
             document.querySelectorAll('.category-tab').forEach(tab => {
                 tab.classList.remove('active');
                 if (tab.textContent.toLowerCase().includes(category === 'all' ? 'tous' : category)) {
@@ -1399,14 +1389,14 @@
                 renderServices(allServices);
             } else {
                 const filtered = allServices.filter(s => s.category === category);
-                
-                container.innerHTML = `
+                const icon = category === 'gaming' ? 'gamepad' : (category === 'streaming' ? 'film' : 'wallet');
+                const title = category === 'gaming' ? 'Gaming' : (category === 'streaming' ? 'Streaming' : 'Services digitaux');
+
+                document.getElementById('servicesContainer').innerHTML = `
                     <div class="section-header">
                         <div class="section-title">
-                            <div class="section-title-icon">
-                                <i class="fas fa-${category === 'gaming' ? 'gamepad' : category === 'streaming' ? 'film' : 'wallet'}"></i>
-                            </div>
-                            <h2>${category === 'gaming' ? 'Gaming' : category === 'streaming' ? 'Streaming' : 'Services digitaux'}</h2>
+                            <div class="section-title-icon"><i class="fas fa-${icon}"></i></div>
+                            <h2>${title}</h2>
                         </div>
                         <span class="section-link">${filtered.length} services</span>
                     </div>
@@ -1434,16 +1424,17 @@
         }
 
         // ==========================================================================
-        // GESTIONNAIRE RÉSEAU
+        // GESTION RÉSEAU
         // ==========================================================================
         window.addEventListener('offline', () => showToast('Connexion perdue', 'error'));
         window.addEventListener('online', () => showToast('Connexion rétablie', 'success'));
 
-        // Mise à jour du panier
+        // Mise à jour du panier via localStorage
         window.addEventListener('storage', (e) => {
             if (e.key === 'foxstore_cart') updateCartCount();
         });
 
+        // Fermer la sidebar sur desktop
         window.addEventListener('resize', () => {
             if (window.innerWidth >= 1024) {
                 document.getElementById('sidebar').classList.remove('active');
