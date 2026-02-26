@@ -286,14 +286,6 @@
             color: var(--error);
         }
 
-        .admin-link {
-            margin-top: 10px;
-            padding: 12px;
-            background: var(--gray-50);
-            border-radius: 10px;
-            border: 1px solid var(--gray-200);
-        }
-
         /* Badge pour le solde du wallet */
         .wallet-badge {
             background: var(--success);
@@ -303,6 +295,57 @@
             padding: 2px 8px;
             border-radius: 20px;
             margin-left: auto;
+        }
+
+        /* ==========================================================================
+           BOUTON FLOTTANT ADMIN (BULBE)
+           ========================================================================== */
+        .admin-floating {
+            position: fixed;
+            bottom: 100px; /* Au-dessus du panier */
+            right: 24px;
+            width: 60px;
+            height: 60px;
+            background: var(--error);
+            color: var(--white);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+            text-decoration: none;
+            z-index: 35;
+            transition: var(--transition);
+            border: 2px solid var(--white);
+            animation: pulse 2s infinite;
+        }
+
+        .admin-floating:hover {
+            transform: scale(1.1) rotate(-5deg);
+            background: #b91c1c;
+        }
+
+        .admin-floating i {
+            font-size: 1.5rem;
+        }
+
+        .admin-floating .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--white);
+            color: var(--error);
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 10px;
+            border: 2px solid var(--error);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
         }
 
         /* ==========================================================================
@@ -831,15 +874,6 @@
                 </a>
             </div>
 
-            <!-- Admin section (injectée dynamiquement) -->
-            <div id="adminSection" class="nav-section" style="display: none;">
-                <div class="nav-section-title">Administration</div>
-                <a href="/admin.html" class="nav-item admin-link">
-                    <i class="fas fa-shield-alt"></i>
-                    Panneau d'administration
-                </a>
-            </div>
-
             <a href="/logout.html" class="nav-item logout">
                 <i class="fas fa-sign-out-alt"></i>
                 Déconnexion
@@ -988,6 +1022,12 @@
 
     </main>
 
+    <!-- Bouton flottant Admin (visible uniquement pour l'admin) -->
+    <a href="/admin.html" class="admin-floating" id="adminFloating" style="display: none;">
+        <i class="fas fa-shield-alt"></i>
+        <span class="badge">ADMIN</span>
+    </a>
+
     <!-- Floating Cart Button -->
     <a href="/pages/checkout/cart.html" class="cart-floating" id="cartButton">
         <i class="fas fa-shopping-bag"></i>
@@ -1095,12 +1135,12 @@
                     const initial = (firstName.charAt(0) || 'U').toUpperCase();
                     document.getElementById('userAvatar').innerHTML = `<span style="font-size: 1.5rem;">${initial}</span>`;
 
-                    // Vérification admin - Affiche le panneau admin uniquement pour l'email spécifié
+                    // Vérification admin - Affiche le bouton flottant uniquement pour l'admin
                     if (user.email === 'bmarcco4412@gmail.com') {
-                        document.getElementById('adminSection').style.display = 'block';
-                        console.log('Admin section affichée pour', user.email);
+                        document.getElementById('adminFloating').style.display = 'flex';
+                        console.log('Bouton admin affiché pour', user.email);
                     } else {
-                        document.getElementById('adminSection').style.display = 'none';
+                        document.getElementById('adminFloating').style.display = 'none';
                     }
                 }
             });
