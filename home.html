@@ -791,28 +791,12 @@
             </div>
 
             <div class="nav-section">
-                <div class="nav-section-title">Mon portefeuille</div>
+                <div class="nav-section-title">Mon compte</div>
                 <a href="/user/wallet.html" class="nav-item">
                     <i class="fas fa-credit-card"></i>
-                    Mon solde
+                    Mon portefeuille
                     <span class="wallet-badge" id="walletBalance">0 HTG</span>
                 </a>
-                <a href="/user/deposit.html" class="nav-item">
-                    <i class="fas fa-arrow-down"></i>
-                    Déposer
-                </a>
-                <a href="/user/withdraw.html" class="nav-item">
-                    <i class="fas fa-arrow-up"></i>
-                    Retirer
-                </a>
-                <a href="/user/transfert.html" class="nav-item">
-                    <i class="fas fa-exchange-alt"></i>
-                    Transférer
-                </a>
-            </div>
-
-            <div class="nav-section">
-                <div class="nav-section-title">Mon compte</div>
                 <a href="/user/account.html" class="nav-item">
                     <i class="fas fa-user-circle"></i>
                     Profil
@@ -1095,10 +1079,12 @@
                     const initial = (firstName.charAt(0) || 'U').toUpperCase();
                     document.getElementById('userAvatar').innerHTML = `<span style="font-size: 1.5rem;">${initial}</span>`;
 
-                    // Vérification admin - CORRIGÉ pour afficher le panneau admin
+                    // Vérification admin - AFFICHE LE PANNEAU ADMIN
                     if (user.email === 'bmarcco4412@gmail.com') {
                         document.getElementById('adminSection').style.display = 'block';
                         console.log('Admin section affichée pour', user.email);
+                    } else {
+                        document.getElementById('adminSection').style.display = 'none';
                     }
                 }
             });
