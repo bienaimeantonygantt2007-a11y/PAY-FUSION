@@ -10,140 +10,1051 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
 
     <style>
+        /* ==========================================================================
+           ROYAL BLUE & WHITE - PALETTE PROFESSIONNELLE
+           ========================================================================== */
         :root {
-            --primary: #1e3a8a; --secondary: #0f172a; --accent: #00d1ff;
-            --white: #ffffff; --bg: #ffffff; --input-bg: #f8fafc;
-            --text-main: #0f172a; --text-muted: #64748b;
-            --error: #ef4444; --success: #10b981; --border: #e2e8f0;
-            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --royal-blue: #1e3a8a;
+            --royal-light: #3b5ba5;
+            --royal-dark: #0f2b6b;
+            --white: #ffffff;
+            --off-white: #f8fafc;
+            --gray-50: #f9f9f9;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --success: #059669;
+            --success-light: #d1fae5;
+            --warning: #d97706;
+            --warning-light: #fef3c7;
+            --error: #dc2626;
+            --error-light: #fee2e2;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+            --transition: all 0.2s ease;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text-main); line-height: 1.6; }
+        /* ==========================================================================
+           RESET & BASE
+           ========================================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        header { height: 65px; background: #fff; display: flex; align-items: center; padding: 0 5%; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid var(--border); }
-        .back-btn { color: var(--primary); font-size: 1.2rem; text-decoration: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 12px; transition: var(--transition); }
-        header h1 { font-size: 0.95rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-left: 10px; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-800);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
 
-        .container { padding: 25px 5%; max-width: 600px; margin: 0 auto; }
+        /* ==========================================================================
+           HEADER
+           ========================================================================== */
+        .header {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            box-shadow: var(--shadow-sm);
+        }
 
-        /* --- BALANCE INFO --- */
-        .balance-strip { background: #f0f7ff; padding: 15px 20px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border: 1px solid rgba(30, 58, 138, 0.1); }
-        .balance-strip span { font-size: 0.75rem; font-weight: 700; color: var(--primary); text-transform: uppercase; }
-        .balance-strip b { font-size: 1rem; font-weight: 800; color: var(--secondary); }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-        .card { background: #fff; border-radius: 20px; border: 1.5px solid var(--border); padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); margin-bottom: 25px; }
-        .section-label { font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 15px; }
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            color: var(--gray-600);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
 
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
-        .form-group input, .form-group select { width: 100%; padding: 16px; border: 1.5px solid var(--border); border-radius: 16px; outline: none; font-size: 1rem; font-weight: 700; color: var(--text-main); background: var(--input-bg); transition: 0.3s; appearance: none; }
-        .form-group input:focus { border-color: var(--primary); background: #fff; }
+        .back-btn:hover {
+            background: var(--gray-100);
+            color: var(--royal-blue);
+        }
 
-        .btn-elite { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 16px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 10px 25px rgba(30, 58, 138, 0.2); }
-        .btn-elite:disabled { opacity: 0.6; cursor: not-allowed; }
+        .logo {
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--royal-blue);
+            letter-spacing: -0.5px;
+        }
 
-        #loader { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); backdrop-filter: blur(8px); z-index: 5000; align-items: center; justify-content: center; flex-direction: column; }
+        .logo span {
+            color: var(--gray-500);
+            font-weight: 500;
+            font-size: 0.875rem;
+            margin-left: 4px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            color: var(--gray-600);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .icon-btn:hover {
+            background: var(--gray-100);
+            color: var(--royal-blue);
+        }
+
+        /* ==========================================================================
+           MAIN CONTENT
+           ========================================================================== */
+        .main {
+            padding: 24px 16px 40px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* ==========================================================================
+           BALANCE CARD
+           ========================================================================== */
+        .balance-card {
+            background: linear-gradient(135deg, var(--royal-blue), var(--royal-dark));
+            border-radius: var(--radius-md);
+            padding: 20px;
+            color: var(--white);
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+        }
+
+        .balance-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        .balance-value {
+            font-size: 1.75rem;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        /* ==========================================================================
+           STEP INDICATOR
+           ========================================================================== */
+        .steps {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 40px;
+            right: 40px;
+            height: 2px;
+            background: var(--gray-200);
+            z-index: 1;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            z-index: 2;
+            background: var(--gray-50);
+            padding: 0 8px;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            background: var(--white);
+            border: 2px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--gray-400);
+            transition: var(--transition);
+        }
+
+        .step.active .step-number {
+            background: var(--royal-blue);
+            border-color: var(--royal-blue);
+            color: var(--white);
+        }
+
+        .step.completed .step-number {
+            background: var(--success);
+            border-color: var(--success);
+            color: var(--white);
+        }
+
+        .step-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-500);
+        }
+
+        .step.active .step-label {
+            color: var(--royal-blue);
+            font-weight: 700;
+        }
+
+        /* ==========================================================================
+           STEP VIEWS
+           ========================================================================== */
+        .step-view {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .step-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ==========================================================================
+           CARDS
+           ========================================================================== */
+        .card {
+            background: var(--white);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--gray-200);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-title {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--gray-700);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title i {
+            color: var(--royal-blue);
+        }
+
+        /* ==========================================================================
+           FORM ELEMENTS
+           ========================================================================== */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            margin-bottom: 6px;
+            margin-left: 4px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1.5px solid var(--gray-200);
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            font-weight: 500;
+            transition: var(--transition);
+            background: var(--gray-50);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--royal-blue);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.1);
+        }
+
+        .form-input.error {
+            border-color: var(--error);
+            background: var(--error-light);
+        }
+
+        .form-hint {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+            margin-top: 4px;
+            margin-left: 4px;
+        }
+
+        .form-hint.error {
+            color: var(--error);
+        }
+
+        /* ==========================================================================
+           METHOD GRID
+           ========================================================================== */
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .method-card {
+            background: var(--white);
+            border: 1.5px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            padding: 20px 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .method-card:hover {
+            border-color: var(--royal-blue);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .method-card.selected {
+            border-color: var(--royal-blue);
+            background: rgba(30, 58, 138, 0.02);
+        }
+
+        .method-card img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .method-card span {
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: var(--gray-700);
+        }
+
+        /* ==========================================================================
+           FEE INFO
+           ========================================================================== */
+        .fee-info {
+            background: var(--gray-50);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin: 20px 0;
+            border: 1px solid var(--gray-200);
+        }
+
+        .fee-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .fee-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .fee-label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .fee-value {
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .fee-total {
+            border-top: 1px solid var(--gray-200);
+            margin-top: 8px;
+            padding-top: 8px;
+            font-weight: 800;
+            color: var(--royal-blue);
+        }
+
+        /* ==========================================================================
+           SUMMARY CARD
+           ========================================================================== */
+        .summary-card {
+            background: rgba(30, 58, 138, 0.05);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .summary-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .summary-label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .summary-value {
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        /* ==========================================================================
+           BUTTONS
+           ========================================================================== */
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: var(--royal-blue);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--royal-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-outline {
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            color: var(--royal-blue);
+            border: 1.5px solid var(--royal-blue);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 10px;
+        }
+
+        .btn-outline:hover {
+            background: rgba(30, 58, 138, 0.05);
+        }
+
+        .btn-danger {
+            background: var(--error);
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        /* ==========================================================================
+           TOAST NOTIFICATION
+           ========================================================================== */
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 16px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: var(--white);
+            padding: 12px 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-lg);
+            border-left: 4px solid var(--royal-blue);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            font-weight: 500;
+            font-size: 0.875rem;
+            min-width: 250px;
+        }
+
+        .toast.active {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left-color: var(--success);
+        }
+
+        .toast.error {
+            border-left-color: var(--error);
+        }
+
+        /* ==========================================================================
+           LOADER
+           ========================================================================== */
+        .loader-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            z-index: 5000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--gray-200);
+            border-top-color: var(--royal-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loader-text {
+            font-weight: 700;
+            color: var(--royal-blue);
+        }
+
+        /* ==========================================================================
+           WITHDRAWAL LIMITS
+           ========================================================================== */
+        .limits-info {
+            background: var(--gray-50);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .limits-info i {
+            color: var(--royal-blue);
+        }
     </style>
 </head>
 <body>
 
-    <div id="loader"><i class="fas fa-circle-notch fa-spin fa-2x" style="color:var(--primary)"></i><p style="margin-top:15px; font-weight:800;">Traitement du retrait...</p></div>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
 
-    <header>
-        <a href="/user/wallet.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
-        <h1>Demander un Retrait</h1>
+    <!-- Loader -->
+    <div class="loader-overlay" id="loader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Traitement de votre retrait...</div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <a href="/user/wallet.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div class="logo">
+                FOX<span>withdraw</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <a href="/user/wallet.html" class="icon-btn">
+                <i class="fas fa-credit-card"></i>
+            </a>
+            <a href="/user/account.html" class="icon-btn">
+                <i class="fas fa-user"></i>
+            </a>
+        </div>
     </header>
 
-    <div class="container">
-        <div class="balance-strip">
-            <span>Solde actuel</span>
-            <b id="currentBalance">0.00 HTG</b>
+    <!-- Main Content -->
+    <main class="main">
+        
+        <!-- Balance Card -->
+        <div class="balance-card">
+            <span class="balance-label">Solde disponible</span>
+            <span class="balance-value" id="currentBalance">0 HTG</span>
         </div>
 
-        <p class="section-label">Détails du retrait</p>
-        <form id="withdrawForm">
+        <!-- Step Indicator -->
+        <div class="steps">
+            <div class="step active" id="step1Indicator">
+                <div class="step-number">1</div>
+                <div class="step-label">Montant</div>
+            </div>
+            <div class="step" id="step2Indicator">
+                <div class="step-number">2</div>
+                <div class="step-label">Méthode</div>
+            </div>
+            <div class="step" id="step3Indicator">
+                <div class="step-number">3</div>
+                <div class="step-label">Confirmation</div>
+            </div>
+        </div>
+
+        <!-- STEP 1: AMOUNT -->
+        <div id="step1" class="step-view active">
             <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-coins"></i>
+                    Montant du retrait
+                </div>
+                
                 <div class="form-group">
-                    <label>Montant à retirer (HTG)</label>
-                    <input type="number" id="amount" placeholder="Ex: 500" required>
+                    <label class="form-label">Combien souhaitez-vous retirer ? (HTG)</label>
+                    <input type="number" id="withdrawAmount" class="form-input" placeholder="Ex: 1000" min="100" step="100">
+                    <div class="form-hint">Minimum : 100 HTG • Maximum : 50 000 HTG</div>
                 </div>
 
-                <div class="form-group">
-                    <label>Méthode de réception</label>
-                    <select id="method" required>
-                        <option value="moncash">Moncash</option>
-                        <option value="natcash">Natcash</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Numéro de téléphone / Coordonnées</label>
-                    <input type="tel" id="recipientInfo" placeholder="Ex: +50937000000" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Nom complet sur le compte</label>
-                    <input type="text" id="recipientName" placeholder="Ex: Jean Dupont" required>
+                <div class="limits-info">
+                    <i class="fas fa-info-circle"></i>
+                    Les retraits sont traités sous 24-48h ouvrées
                 </div>
             </div>
 
-            <button type="submit" class="btn-elite" id="submitBtn">Confirmer le retrait <i class="fas fa-hand-holding-usd"></i></button>
-        </form>
-    </div>
+            <button class="btn-primary" onclick="validateStep1()">
+                Continuer <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <!-- STEP 2: METHOD -->
+        <div id="step2" class="step-view">
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-credit-card"></i>
+                    Méthode de réception
+                </div>
+                
+                <div class="method-grid" id="methodGrid">
+                    <!-- Moncash -->
+                    <div class="method-card" data-method="moncash" onclick="selectMethod('moncash')">
+                        <img src="/assets/logos/moncash-logo.png" alt="Moncash">
+                        <span>Moncash</span>
+                    </div>
+                    
+                    <!-- Natcash -->
+                    <div class="method-card" data-method="natcash" onclick="selectMethod('natcash')">
+                        <img src="/assets/logos/natcash-logo.png" alt="Natcash">
+                        <span>Natcash</span>
+                    </div>
+                </div>
+
+                <!-- Frais éventuels -->
+                <div class="fee-info">
+                    <div class="fee-row">
+                        <span class="fee-label">Montant demandé</span>
+                        <span class="fee-value" id="feeAmount">0 HTG</span>
+                    </div>
+                    <div class="fee-row">
+                        <span class="fee-label">Frais de retrait</span>
+                        <span class="fee-value" id="feeValue">0 HTG</span>
+                    </div>
+                    <div class="fee-row fee-total">
+                        <span class="fee-label">Net reçu</span>
+                        <span class="fee-value" id="netAmount">0 HTG</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-outline" onclick="goToStep(1)" style="width: auto; flex: 1;">
+                    <i class="fas fa-arrow-left"></i> Retour
+                </button>
+                <button class="btn-primary" onclick="validateStep2()" style="width: auto; flex: 2;" id="continueStep2" disabled>
+                    Continuer <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 3: CONFIRMATION -->
+        <div id="step3" class="step-view">
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-check-circle"></i>
+                    Confirmation du retrait
+                </div>
+
+                <!-- Récapitulatif -->
+                <div class="summary-card">
+                    <div class="summary-row">
+                        <span class="summary-label">Montant demandé</span>
+                        <span class="summary-value" id="summaryAmount">0 HTG</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Méthode</span>
+                        <span class="summary-value" id="summaryMethod">-</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Frais</span>
+                        <span class="summary-value" id="summaryFee">0 HTG</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Net à recevoir</span>
+                        <span class="summary-value" style="color: var(--royal-blue); font-weight: 800;" id="summaryNet">0 HTG</span>
+                    </div>
+                </div>
+
+                <form id="withdrawForm">
+                    <div class="form-group">
+                        <label class="form-label">Numéro de téléphone</label>
+                        <input type="tel" class="form-input" id="recipientPhone" placeholder="Ex: 37XX XXXX" required>
+                        <div class="form-hint">Numéro où recevoir l'argent</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Nom complet sur le compte</label>
+                        <input type="text" class="form-input" id="recipientName" placeholder="Ex: Jean Dupont" required>
+                    </div>
+                </form>
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-direction: column;">
+                <button class="btn-primary" onclick="submitWithdraw()" id="submitBtn">
+                    Confirmer le retrait <i class="fas fa-check"></i>
+                </button>
+                <button class="btn-outline" onclick="goToStep(2)">
+                    <i class="fas fa-arrow-left"></i> Changer de méthode
+                </button>
+            </div>
+        </div>
+
+    </main>
 
     <script>
-        const firebaseConfig = { apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg", authDomain: "pay-fusion-6dfaf.firebaseapp.com", projectId: "pay-fusion-6dfaf", storageBucket: "pay-fusion-6dfaf.firebasestorage.app", messagingSenderId: "945593776812", appId: "1:945593776812:web:4475e1085fdfa31690fd09", measurementId: "G-8FEQG6B7ZY" };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore(), auth = firebase.auth();
-        let userBalance = 0;
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg",
+            authDomain: "pay-fusion-6dfaf.firebaseapp.com",
+            projectId: "pay-fusion-6dfaf",
+            storageBucket: "pay-fusion-6dfaf.firebasestorage.app",
+            messagingSenderId: "945593776812",
+            appId: "1:945593776812:web:4475e1085fdfa31690fd09"
+        };
 
+        // Initialisation Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // ==========================================================================
+        // VARIABLES GLOBALES
+        // ==========================================================================
+        let currentUser = null;
+        let userBalance = 0;
+        let withdrawAmount = 0;
+        let selectedMethod = null;
+        let feePercentage = 0.02; // 2% de frais
+
+        // ==========================================================================
+        // AUTHENTIFICATION
+        // ==========================================================================
         auth.onAuthStateChanged(user => {
             if (user) {
-                db.collection("users").doc(user.uid).onSnapshot(doc => {
-                    userBalance = doc.data().wallet_balance || 0;
-                    document.getElementById('currentBalance').textContent = userBalance.toLocaleString() + " HTG";
-                });
-            } else { window.location.href = "/login.html"; }
+                currentUser = user;
+                loadUserBalance(user.uid);
+            } else {
+                window.location.href = '/login.html';
+            }
         });
 
-        document.getElementById('withdrawForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const amount = parseFloat(document.getElementById('amount').value);
-            
-            if(amount > userBalance) return alert("Solde insuffisant.");
-            if(amount < 100) return alert("Le montant minimum est de 100 HTG.");
+        // ==========================================================================
+        // CHARGEMENT DU SOLDE
+        // ==========================================================================
+        function loadUserBalance(uid) {
+            db.collection('wallets').doc(uid).onSnapshot(doc => {
+                if (doc.exists) {
+                    userBalance = doc.data().balance || 0;
+                } else {
+                    userBalance = 0;
+                }
+                document.getElementById('currentBalance').textContent = userBalance.toLocaleString() + ' HTG';
+            });
+        }
 
+        // ==========================================================================
+        // TOAST NOTIFICATION
+        // ==========================================================================
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('active'), 100);
+            setTimeout(() => {
+                toast.classList.remove('active');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // ==========================================================================
+        // VALIDATION ÉTAPE 1
+        // ==========================================================================
+        function validateStep1() {
+            const amount = parseFloat(document.getElementById('withdrawAmount').value);
+            
+            if (!amount || amount < 100) {
+                showToast('Le montant minimum est de 100 HTG', 'error');
+                return;
+            }
+            
+            if (amount > 50000) {
+                showToast('Le montant maximum est de 50 000 HTG', 'error');
+                return;
+            }
+
+            if (amount > userBalance) {
+                showToast('Solde insuffisant', 'error');
+                return;
+            }
+
+            withdrawAmount = amount;
+            
+            // Mise à jour des indicateurs
+            document.getElementById('step1Indicator').classList.add('completed');
+            document.getElementById('step2Indicator').classList.add('active');
+            
+            // Mettre à jour l'affichage des frais
+            updateFeeDisplay();
+            
+            goToStep(2);
+        }
+
+        // ==========================================================================
+        // MISE À JOUR DES FRAIS
+        // ==========================================================================
+        function updateFeeDisplay() {
+            const fee = withdrawAmount * feePercentage;
+            const net = withdrawAmount - fee;
+            
+            document.getElementById('feeAmount').textContent = withdrawAmount.toLocaleString() + ' HTG';
+            document.getElementById('feeValue').textContent = fee.toLocaleString() + ' HTG';
+            document.getElementById('netAmount').textContent = net.toLocaleString() + ' HTG';
+        }
+
+        // ==========================================================================
+        // SÉLECTION DE MÉTHODE
+        // ==========================================================================
+        function selectMethod(method) {
+            // Retirer la sélection précédente
+            document.querySelectorAll('.method-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Ajouter la sélection
+            document.querySelector(`[data-method="${method}"]`).classList.add('selected');
+            
+            selectedMethod = method;
+            document.getElementById('continueStep2').disabled = false;
+        }
+
+        function validateStep2() {
+            if (!selectedMethod) {
+                showToast('Veuillez sélectionner une méthode de retrait', 'error');
+                return;
+            }
+
+            // Mise à jour des indicateurs
+            document.getElementById('step2Indicator').classList.add('completed');
+            document.getElementById('step3Indicator').classList.add('active');
+            
+            // Mettre à jour le récapitulatif
+            updateSummary();
+            
+            goToStep(3);
+        }
+
+        // ==========================================================================
+        // MISE À JOUR DU RÉCAPITULATIF
+        // ==========================================================================
+        function updateSummary() {
+            const fee = withdrawAmount * feePercentage;
+            const net = withdrawAmount - fee;
+            
+            document.getElementById('summaryAmount').textContent = withdrawAmount.toLocaleString() + ' HTG';
+            document.getElementById('summaryMethod').textContent = selectedMethod === 'moncash' ? 'Moncash' : 'Natcash';
+            document.getElementById('summaryFee').textContent = fee.toLocaleString() + ' HTG';
+            document.getElementById('summaryNet').textContent = net.toLocaleString() + ' HTG';
+        }
+
+        // ==========================================================================
+        // SOUMISSION DU RETRAIT
+        // ==========================================================================
+        async function submitWithdraw() {
+            // Vérifications
+            if (!selectedMethod) {
+                showToast('Méthode de retrait manquante', 'error');
+                return;
+            }
+
+            const phone = document.getElementById('recipientPhone')?.value;
+            const name = document.getElementById('recipientName')?.value;
+
+            if (!phone || !name) {
+                showToast('Veuillez remplir tous les champs', 'error');
+                return;
+            }
+
+            // Vérification du solde (double vérification)
+            if (withdrawAmount > userBalance) {
+                showToast('Solde insuffisant', 'error');
+                return;
+            }
+
+            // Afficher le loader
             document.getElementById('loader').style.display = 'flex';
-            const user = auth.currentUser;
 
             try {
-                // Création de la transaction de retrait (En attente de validation admin)
-                await db.collection("wallet_transactions").add({
-                    userId: user.uid,
-                    userEmail: user.email,
-                    type: "retrait",
-                    amount: amount,
-                    method: document.getElementById('method').value,
-                    recipientInfo: document.getElementById('recipientInfo').value,
-                    recipientName: document.getElementById('recipientName').value,
-                    status: "en-attente",
+                const fee = withdrawAmount * feePercentage;
+                const netAmount = withdrawAmount - fee;
+
+                // Générer un ID de transaction
+                const transactionId = 'WIT-' + Date.now().toString().slice(-8);
+
+                // Enregistrer dans Firestore
+                await db.collection('wallet_transactions').add({
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    transactionId: transactionId,
+                    type: 'retrait',
+                    amount: withdrawAmount,
+                    fee: fee,
+                    netAmount: netAmount,
+                    method: selectedMethod,
+                    recipientPhone: phone,
+                    recipientName: name,
+                    status: 'en-attente',
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                // Optionnel : On peut déduire le solde immédiatement ou attendre la validation admin.
-                // Ici, pour plus de sécurité Fox Store, on bloque le montant seulement après validation.
+                // NOTE: On ne déduit pas le solde immédiatement
+                // L'admin validera et déduira le solde manuellement
+
+                showToast('Demande de retrait envoyée avec succès', 'success');
                 
-                window.location.href = "/user/wallet.html";
-            } catch (err) {
-                alert("Erreur système.");
+                // Redirection après un court délai
+                setTimeout(() => {
+                    window.location.href = '/user/wallet.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error('Erreur retrait:', error);
+                showToast('Une erreur est survenue. Veuillez réessayer.', 'error');
                 document.getElementById('loader').style.display = 'none';
             }
-        };
+        }
+
+        // ==========================================================================
+        // NAVIGATION
+        // ==========================================================================
+        function goToStep(step) {
+            // Cacher toutes les étapes
+            document.querySelectorAll('.step-view').forEach(view => {
+                view.classList.remove('active');
+            });
+            
+            // Afficher l'étape demandée
+            document.getElementById('step' + step).classList.add('active');
+            
+            // Mettre à jour les indicateurs si on recule
+            if (step === 1) {
+                document.getElementById('step2Indicator').classList.remove('active', 'completed');
+                document.getElementById('step3Indicator').classList.remove('active', 'completed');
+            } else if (step === 2) {
+                document.getElementById('step3Indicator').classList.remove('active', 'completed');
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     </script>
 </body>
 </html>
