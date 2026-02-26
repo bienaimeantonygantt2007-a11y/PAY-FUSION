@@ -3,471 +3,2195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fox Admin — Command Center V10</title>
+    <title>Fox Store • Administration</title>
 
-    <!-- FIREBASE SDK -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     
-    <!-- ICONS & FONTS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800&display=swap" rel="stylesheet">
 
     <style>
         /* ==========================================================================
-           1. DESIGN SYSTEM ELITE
+           VARIABLES & RESET
            ========================================================================== */
         :root {
-            --primary: #1e3a8a; --accent: #00d1ff; --secondary: #0f172a;
-            --white: #ffffff; --bg: #f8fafc; --text: #0f172a; --muted: #64748b;
-            --success: #10b981; --error: #ef4444; --warning: #f59e0b;
-            --border: #e2e8f0; --transition: all 0.3s ease;
+            --primary: #1e3a8a;
+            --primary-light: #3b5ba5;
+            --primary-dark: #0f2b6b;
+            --white: #ffffff;
+            --off-white: #f8fafc;
+            --gray-50: #f9f9f9;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --success: #10b981;
+            --success-light: #d1fae5;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --error: #ef4444;
+            --error-light: #fee2e2;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px 0 rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            --transition: all 0.2s ease;
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            background-color: var(--bg); 
-            color: var(--text); 
-            display: flex; 
-            font-size: 12px; /* Taille compacte pour téléphone */
-            height: 100vh; 
-            overflow: hidden; 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--off-white);
+            color: var(--gray-900);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         /* ==========================================================================
-           2. SIDEBAR & MENU LOGIC (FIXED)
+           HEADER (mobile-first)
            ========================================================================== */
-        .sidebar { 
-            position: fixed; left: -280px; top: 0; width: 280px; height: 100vh; 
-            background: #0f121a; color: white; z-index: 5000; 
-            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            display: flex; flex-direction: column; 
-            border-right: 1px solid rgba(255,255,255,0.05); 
+        .admin-header {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: var(--shadow-sm);
         }
-        .sidebar.active { left: 0; }
 
-        .overlay { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.7); 
-            backdrop-filter: blur(4px); z-index: 4500; 
-            display: none; opacity: 0; transition: 0.3s;
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-        .overlay.active { display: block; opacity: 1; }
 
-        .sidebar-brand { padding: 35px 25px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .sidebar-brand img { height: 35px; filter: drop-shadow(0 0 8px var(--accent)); }
-        
-        .nav-menu { flex-grow: 1; padding: 10px; overflow-y: auto; }
-        .nav-label { font-size: 0.55rem; font-weight: 800; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; padding: 20px 15px 8px; }
-        
-        .nav-link { 
-            display: flex; align-items: center; gap: 12px; padding: 12px 18px; 
-            color: rgba(255,255,255,0.6); text-decoration: none; border-radius: 12px; 
-            font-weight: 600; cursor: pointer; transition: 0.2s; margin-bottom: 2px;
+        .menu-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            background: var(--gray-50);
+            border: 1px solid var(--border);
+            color: var(--gray-600);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
         }
-        .nav-link:hover { color: var(--accent); background: rgba(255,255,255,0.02); }
-        .nav-link.active { background: var(--primary); color: white; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+
+        .menu-btn:hover {
+            background: var(--gray-100);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.35rem;
+            letter-spacing: -0.02em;
+            color: var(--primary);
+        }
+
+        .logo span {
+            font-weight: 400;
+            color: var(--gray-500);
+            font-size: 1rem;
+            margin-left: 2px;
+        }
+
+        .admin-badge {
+            background: var(--primary);
+            color: var(--white);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .admin-badge i {
+            font-size: 0.7rem;
+        }
 
         /* ==========================================================================
-           3. MAIN LAYOUT & HEADER
+           SIDEBAR (mobile-first)
            ========================================================================== */
-        .main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-        
-        header { 
-            height: 55px; padding: 0 15px; background: rgba(255,255,255,0.95); 
-            backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); 
-            display: flex; align-items: center; justify-content: space-between; 
-            position: sticky; top: 0; z-index: 1000;
-        }
-        
-        .burger { 
-            width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; 
-            color: var(--primary); cursor: pointer; border: 1.5px solid var(--border); border-radius: 8px; 
-            background: white;
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 60;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.2s;
         }
 
-        .header-title { font-weight: 800; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
-
-        .scroller { padding: 10px 15px 30px; overflow-y: auto; flex: 1; }
-
-        /* ==========================================================================
-           4. KPI STATS (COMPACT)
-           ========================================================================== */
-        .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 15px; }
-        .kpi-card { background: white; padding: 12px; border-radius: 15px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.01); }
-        .kpi-card span { font-size: 0.5rem; font-weight: 800; color: var(--muted); text-transform: uppercase; }
-        .kpi-card h3 { font-size: 0.95rem; font-weight: 800; margin-top: 3px; color: var(--secondary); }
-
-        /* ==========================================================================
-           5. DATA CARDS & LISTS
-           ========================================================================== */
-        .section-card { background: white; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; overflow: hidden; }
-        .card-head { padding: 12px 18px; border-bottom: 1px solid var(--border); font-weight: 800; font-size: 0.7rem; color: var(--primary); text-transform: uppercase; background: #fcfdfe; }
-
-        .list-row { 
-            padding: 12px 18px; border-bottom: 1px solid var(--border); 
-            display: flex; align-items: center; justify-content: space-between;
-            transition: 0.2s;
-        }
-        .list-row:hover { background: #f8fbff; }
-        
-        .row-info h5 { font-size: 0.8rem; font-weight: 700; color: #1e293b; }
-        .row-info p { font-size: 0.65rem; color: var(--muted); font-weight: 600; }
-
-        .btn-manage { padding: 6px 12px; border-radius: 8px; border: none; font-weight: 800; font-size: 0.6rem; background: var(--primary); color: white; cursor: pointer; }
-        
-        .badge { padding: 4px 8px; border-radius: 6px; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; }
-        .st-pending { background: #fff8e1; color: #ffab00; }
-        .st-valide { background: #e8f5e9; color: var(--success); }
-
-        /* ==========================================================================
-           6. MODAL & PROOF VIEWER
-           ========================================================================== */
-        .modal { 
-            display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.9); 
-            backdrop-filter: blur(8px); z-index: 6000; align-items: flex-end; justify-content: center; 
-        }
-        .modal-box { 
-            background: white; width: 100%; max-width: 500px; border-radius: 25px 25px 0 0; 
-            padding: 25px; border: 1px solid var(--border); max-height: 85vh; overflow-y: auto; 
-        }
-        .close-modal { float: right; cursor: pointer; color: var(--muted); font-size: 1.2rem; }
-
-        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
-        .detail-cell label { font-size: 0.5rem; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 2px; display: block; }
-        .detail-cell p { font-size: 0.8rem; font-weight: 700; color: var(--secondary); word-break: break-all; }
-
-        .proof-frame { width: 100%; border-radius: 12px; margin-top: 15px; border: 1.5px solid var(--border); overflow: hidden; cursor: pointer; background: #000; }
-        .proof-frame img { width: 100%; height: auto; display: block; opacity: 0.9; }
-
-        /* ==========================================================================
-           7. FORM ELEMENTS & CMS
-           ========================================================================== */
-        .adm-input { width: 100%; padding: 12px; background: #fcfcfd; border: 1.5px solid var(--border); border-radius: 12px; outline: none; font-size: 0.85rem; font-weight: 600; margin-top: 10px; }
-        .adm-input:focus { border-color: var(--primary); background: #fff; }
-
-        .btn-elite { width: 100%; padding: 15px; border-radius: 12px; border: none; font-weight: 800; text-transform: uppercase; font-size: 0.75rem; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        .btn-ok { background: var(--success); color: white; }
-        .btn-no { background: var(--error); color: white; }
-
-        .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; inset: 0; background-color: #cbd5e1; transition: .4s; border-radius: 34px; cursor: pointer; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--primary); }
-        input:checked + .slider:before { transform: translateX(18px); }
-
-        /* ==========================================================================
-           8. CRM CHAT ENGINE
-           ========================================================================== */
-        .chat-container { height: 500px; display: flex; flex-direction: column; }
-        .chat-sidebar { flex: 1; overflow-y: auto; border-bottom: 1px solid var(--border); }
-        .chat-main { flex: 2; display: none; flex-direction: column; background: #f8fafc; }
-        .chat-log { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-        .msg-bubble { max-width: 85%; padding: 10px 14px; border-radius: 14px; font-size: 0.75rem; font-weight: 600; }
-        .msg-adm { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 2px; }
-        .msg-user { align-self: flex-start; background: #fff; border: 1px solid var(--border); color: var(--text); border-bottom-left-radius: 2px; }
-
-        /* ==========================================================================
-           9. RESPONSIVE DESKTOP
-           ========================================================================== */
-        @media (min-width: 1025px) {
-            .sidebar { left: 0; }
-            .main { margin-left: 280px; }
-            .burger { display: none; }
-            .kpi-grid { grid-template-columns: repeat(4, 1fr); }
-            .modal { align-items: center; }
-            .modal-box { border-radius: 20px; padding: 35px; }
-            .chat-container { flex-direction: row; height: 600px; }
-            .chat-sidebar { width: 280px; border-right: 1px solid var(--border); border-bottom: none; }
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
         }
 
-        #toast { position: fixed; top: 15px; right: 15px; z-index: 9999; background: var(--secondary); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 0.7rem; transform: translateX(250%); transition: 0.4s; border: 1px solid var(--accent); }
-        #toast.active { transform: translateX(0); }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 280px;
+            height: 100vh;
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            z-index: 70;
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            padding: 32px 24px;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .sidebar-header p {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 24px 16px;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 28px;
+        }
+
+        .nav-section-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-400);
+            margin-bottom: 12px;
+            padding-left: 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            color: var(--gray-600);
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            margin-bottom: 2px;
+        }
+
+        .nav-item i {
+            width: 20px;
+            font-size: 1.1rem;
+            color: var(--gray-400);
+            transition: color var(--transition);
+        }
+
+        .nav-item:hover {
+            background: var(--gray-50);
+            color: var(--primary);
+        }
+
+        .nav-item:hover i {
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .nav-item.active i {
+            color: var(--white);
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .store-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: var(--radius-md);
+            color: var(--gray-600);
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .store-link:hover {
+            background: var(--gray-50);
+            color: var(--primary);
+        }
+
+        /* ==========================================================================
+           MAIN CONTENT (mobile-first)
+           ========================================================================== */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 4px;
+            letter-spacing: -0.02em;
+        }
+
+        .page-subtitle {
+            font-size: 0.85rem;
+            color: var(--gray-500);
+            margin-bottom: 24px;
+        }
+
+        /* ==========================================================================
+           KPI CARDS
+           ========================================================================== */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+        }
+
+        .kpi-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--gray-500);
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .kpi-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            line-height: 1.2;
+        }
+
+        .kpi-trend {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+            margin-top: 4px;
+        }
+
+        .kpi-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2.5rem;
+            color: var(--primary);
+            opacity: 0.1;
+        }
+
+        /* ==========================================================================
+           CARD
+           ========================================================================== */
+        .card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            margin-bottom: 24px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--off-white);
+        }
+
+        .card-header h3 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-header i {
+            color: var(--primary);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* ==========================================================================
+           LIST ITEMS
+           ========================================================================== */
+        .list-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: var(--transition);
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .list-item:hover {
+            background: var(--gray-50);
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--gray-800);
+            margin-bottom: 4px;
+        }
+
+        .item-subtitle {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .item-subtitle i {
+            font-size: 0.5rem;
+            color: var(--gray-400);
+        }
+
+        .item-amount {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--gray-900);
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-pending {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .badge-success {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .badge-error {
+            background: var(--error-light);
+            color: var(--error);
+        }
+
+        .badge-info {
+            background: rgba(30, 58, 138, 0.1);
+            color: var(--primary);
+        }
+
+        .btn-icon {
+            padding: 8px 12px;
+            border-radius: var(--radius-md);
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--white);
+            border: 1px solid var(--border);
+            color: var(--gray-600);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-icon:hover {
+            background: var(--gray-50);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-success:hover {
+            background: #0b8e5e;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        .btn-danger {
+            background: var(--error);
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        /* ==========================================================================
+           FORM ELEMENTS
+           ========================================================================== */
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            margin-bottom: 4px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            transition: var(--transition);
+            background: var(--off-white);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+            background: var(--white);
+        }
+
+        textarea.input-field {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* ==========================================================================
+           SEARCH RESULTS (pour wallet)
+           ========================================================================== */
+        .search-results {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            box-shadow: var(--shadow-md);
+            display: none;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .search-result-item:hover {
+            background: var(--gray-50);
+        }
+
+        .search-result-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--gray-800);
+        }
+
+        .search-result-email {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        /* ==========================================================================
+           MODAL
+           ========================================================================== */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            width: 100%;
+            max-width: 500px;
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+            padding: 24px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            background: var(--gray-50);
+            border: 1px solid var(--border);
+            color: var(--gray-500);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: var(--gray-100);
+            color: var(--primary);
+        }
+
+        .user-info-card {
+            background: var(--off-white);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .user-avatar {
+            width: 56px;
+            height: 56px;
+            background: var(--primary);
+            color: var(--white);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .user-details h4 {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .user-details p {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+
+        .balance-display {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .balance-label {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+
+        .balance-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .reason-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .reason-btn {
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            background: var(--white);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .reason-btn:hover {
+            border-color: var(--primary);
+            background: var(--gray-50);
+        }
+
+        .reason-btn.selected {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        /* ==========================================================================
+           TRANSACTION ITEMS (pour historique)
+           ========================================================================== */
+        .transaction-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .transaction-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .transaction-icon.credit {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .transaction-icon.debit {
+            background: var(--error-light);
+            color: var(--error);
+        }
+
+        .transaction-details {
+            flex: 1;
+        }
+
+        .transaction-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 2px;
+        }
+
+        .transaction-meta {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+        }
+
+        .transaction-amount {
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .transaction-amount.credit {
+            color: var(--success);
+        }
+
+        .transaction-amount.debit {
+            color: var(--error);
+        }
+
+        /* ==========================================================================
+           CHAT INTERFACE
+           ========================================================================== */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+
+        .chat-users {
+            border-bottom: 1px solid var(--border);
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .chat-user-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition);
+        }
+
+        .chat-user-item:hover {
+            background: var(--gray-50);
+        }
+
+        .chat-user-item.active {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .chat-user-item.active i {
+            color: var(--white) !important;
+        }
+
+        .chat-window {
+            flex: 1;
+            display: none;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: var(--radius-lg);
+            font-size: 0.9rem;
+            word-wrap: break-word;
+        }
+
+        .message-admin {
+            align-self: flex-end;
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .message-user {
+            align-self: flex-start;
+            background: var(--gray-100);
+            color: var(--gray-800);
+        }
+
+        .chat-input {
+            padding: 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+        }
+
+        /* ==========================================================================
+           UTILITIES
+           ========================================================================== */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray-400);
+            font-size: 0.9rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray-400);
+            font-size: 0.9rem;
+        }
+
+        .toast {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: var(--white);
+            border-left: 4px solid var(--primary);
+            box-shadow: var(--shadow-lg);
+            padding: 12px 20px;
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 200;
+            border: 1px solid var(--border);
+            min-width: 250px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left-color: var(--success);
+        }
+
+        .toast.error {
+            border-left-color: var(--error);
+        }
+
+        /* ==========================================================================
+           RESPONSIVE TABLET/DESKTOP
+           ========================================================================== */
+        @media (min-width: 768px) {
+            .kpi-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .modal-content {
+                border-radius: var(--radius-xl);
+                margin-bottom: 0;
+            }
+
+            .modal {
+                align-items: center;
+            }
+
+            .chat-container {
+                flex-direction: row;
+                height: 600px;
+            }
+
+            .chat-users {
+                width: 280px;
+                border-right: 1px solid var(--border);
+                border-bottom: none;
+                max-height: none;
+            }
+
+            .chat-window {
+                display: flex;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .sidebar {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 280px;
+                padding: 24px;
+            }
+
+            .admin-header {
+                left: 280px;
+                width: calc(100% - 280px);
+            }
+
+            .menu-btn {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-    <div id="toast">Confirmation Elite</div>
+    <!-- Overlay sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-    <!-- SIDEBAR NAVIGATION -->
+    <!-- Toast notification -->
+    <div class="toast" id="toast">Action effectuée</div>
+
+    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
-        <div class="sidebar-brand">
-            <img src="/assets/logos/payfusion-logo.png">
-            <h2>FOX COMMAND</h2>
+        <div class="sidebar-header">
+            <h2>Fox Store</h2>
+            <p>Administration</p>
         </div>
-        <div class="nav-menu">
-            <p class="nav-label">Finances</p>
-            <div class="nav-link active" onclick="switchTab('orders', this)"><i class="fas fa-receipt"></i> Ventes Directes</div>
-            <div class="nav-link" onclick="switchTab('wallet', this)"><i class="fas fa-wallet"></i> Portefeuille (D/R)</div>
-            <div class="nav-link" onclick="switchTab('users', this)"><i class="fas fa-users-gear"></i> Gestion Membres</div>
-            <p class="nav-label">Contrôle Site</p>
-            <div class="nav-link" onclick="switchTab('cms', this)"><i class="fas fa-toggle-on"></i> CMS Services</div>
-            <div class="nav-link" onclick="switchTab('ads', this)"><i class="fas fa-bullhorn"></i> Annonces Flash</div>
-            <p class="nav-label">Assistance</p>
-            <div class="nav-link" onclick="switchTab('chat', this)"><i class="fas fa-comment-dots"></i> Chat Support</div>
+
+        <div class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Management</div>
+                <button class="nav-item active" onclick="switchTab('dashboard', this)">
+                    <i class="fas fa-chart-pie"></i> Tableau de bord
+                </button>
+                <button class="nav-item" onclick="switchTab('orders', this)">
+                    <i class="fas fa-shopping-cart"></i> Commandes
+                </button>
+                <button class="nav-item" onclick="switchTab('users', this)">
+                    <i class="fas fa-users"></i> Utilisateurs
+                </button>
+                <button class="nav-item" onclick="switchTab('wallets', this)">
+                    <i class="fas fa-wallet"></i> Portefeuilles
+                </button>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Configuration</div>
+                <button class="nav-item" onclick="switchTab('services', this)">
+                    <i class="fas fa-toggle-on"></i> Services
+                </button>
+                <button class="nav-item" onclick="switchTab('announcements', this)">
+                    <i class="fas fa-bullhorn"></i> Annonces
+                </button>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Support</div>
+                <button class="nav-item" onclick="switchTab('chat', this)">
+                    <i class="fas fa-comments"></i> Chat client
+                </button>
+            </div>
         </div>
-        <div style="padding: 20px; border-top: 1px solid rgba(255,255,255,0.05);">
-            <a href="/home.html" class="nav-link" style="color:var(--accent); background:rgba(0, 209, 255, 0.05);"><i class="fas fa-store"></i> Boutique Fox</a>
+
+        <div class="sidebar-footer">
+            <a href="/home.html" class="store-link">
+                <i class="fas fa-store"></i> Retour à la boutique
+            </a>
         </div>
     </div>
 
-    <!-- MAIN INTERFACE -->
-    <div class="main">
-        <header>
-            <div class="burger" onclick="toggleSidebar()"><i class="fas fa-bars-staggered"></i></div>
-            <div id="headerTitle" style="font-weight: 800; font-size: 0.8rem;">Ventes Directes</div>
-            <div class="badge st-valide">Live Sync</div>
-        </header>
+    <!-- Header -->
+    <header class="admin-header">
+        <div class="header-left">
+            <div class="menu-btn" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="logo">
+                FOX<span>admin</span>
+            </div>
+        </div>
+        <div class="admin-badge">
+            <i class="fas fa-shield-alt"></i> ADMIN
+        </div>
+    </header>
 
-        <!-- KPI SUMMARY -->
-        <div class="kpi-grid">
-            <div class="kpi-card"><span>Chiffre d'Affaires</span><h3 id="revTotal">0 HTG</h3></div>
-            <div class="kpi-card"><span>Bénéfice Réel</span><h3 id="profTotal" style="color:var(--success)">0 HTG</h3></div>
-            <div class="kpi-card"><span>Total Membres</span><h3 id="userTotal">0</h3></div>
-            <div class="kpi-card"><span>En Attente</span><h3 id="waitTotal" style="color:var(--warning)">0</h3></div>
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Dashboard View -->
+        <div id="dashboardView">
+            <h1 class="page-title">Tableau de bord</h1>
+            <p class="page-subtitle">Vue d'ensemble de l'activité</p>
+
+            <div class="kpi-grid" id="kpiContainer">
+                <div class="kpi-card">
+                    <div class="kpi-label">Revenu total</div>
+                    <div class="kpi-value" id="totalRevenue">0 HTG</div>
+                    <div class="kpi-trend">Mensuel</div>
+                    <i class="fas fa-chart-line kpi-icon"></i>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Commandes</div>
+                    <div class="kpi-value" id="totalOrders">0</div>
+                    <div class="kpi-trend">Total</div>
+                    <i class="fas fa-shopping-bag kpi-icon"></i>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">En attente</div>
+                    <div class="kpi-value" id="pendingOrders">0</div>
+                    <div class="kpi-trend">À valider</div>
+                    <i class="fas fa-clock kpi-icon"></i>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Utilisateurs</div>
+                    <div class="kpi-value" id="totalUsers">0</div>
+                    <div class="kpi-trend">Inscrits</div>
+                    <i class="fas fa-users kpi-icon"></i>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-clock"></i> Dernières commandes</h3>
+                </div>
+                <div id="recentOrders" class="card-body">
+                    <div class="loading">Chargement...</div>
+                </div>
+            </div>
         </div>
 
-        <div class="scroller">
-            
-            <!-- VENTES DIRECTES -->
-            <section id="ordersTab" class="admin-tab">
-                <div class="section-card"><div id="ordersList"></div></div>
-            </section>
-
-            <!-- WALLET TRANSACTIONS -->
-            <section id="walletTab" class="admin-tab" style="display:none">
-                <div class="section-card"><div class="card-head">Dépôts & Retraits Portefeuille</div><div id="walletList"></div></div>
-            </section>
-
-            <!-- USERS LIST -->
-            <section id="usersTab" class="admin-tab" style="display:none">
-                <div class="section-card">
-                    <div class="card-head"><input type="text" id="uSearch" placeholder="Chercher un membre..." style="background:none; border:none; color:var(--primary); outline:none; font-weight:800;" onkeyup="filterUsers(this.value)"></div>
-                    <div id="usersList"></div>
+        <!-- Orders View -->
+        <div id="ordersView" style="display: none;">
+            <h1 class="page-title">Commandes</h1>
+            <p class="page-subtitle">Gestion des transactions</p>
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-list"></i> Toutes les commandes</h3>
                 </div>
-            </section>
+                <div id="allOrders" class="card-body">
+                    <div class="loading">Chargement...</div>
+                </div>
+            </div>
+        </div>
 
-            <!-- CMS CONTROL -->
-            <section id="cmsTab" class="admin-tab" style="display:none">
-                <div class="kpi-grid" id="cmsGrid"></div>
-            </section>
+        <!-- Users View -->
+        <div id="usersView" style="display: none;">
+            <h1 class="page-title">Utilisateurs</h1>
+            <p class="page-subtitle">Gestion des comptes</p>
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-search"></i> Rechercher</h3>
+                </div>
+                <div class="card-body">
+                    <input type="text" class="input-field" placeholder="Email ou nom..." id="userSearch" onkeyup="searchUsers()">
+                </div>
+                <div id="usersList" class="card-body">
+                    <div class="loading">Chargement...</div>
+                </div>
+            </div>
+        </div>
 
-            <!-- CHAT CRM -->
-            <section id="chatTab" class="admin-tab" style="display:none">
-                <div class="section-card chat-container">
-                    <div class="chat-users" id="chatUserList"></div>
-                    <div class="chat-main" id="chatWin">
-                        <div class="chat-log" id="chatFlow"></div>
-                        <form id="adminReplyForm" style="padding:10px; display:flex; gap:8px; border-top:1px solid var(--border); background:white;">
-                            <input type="text" id="adminMsg" class="adm-input" placeholder="Réponse..." style="margin-top:0;">
-                            <button type="submit" class="burger" style="border-color:var(--primary);"><i class="fas fa-paper-plane"></i></button>
-                        </form>
+        <!-- Wallets View -->
+        <div id="walletsView" style="display: none;">
+            <h1 class="page-title">Portefeuilles</h1>
+            <p class="page-subtitle">Gestion des soldes utilisateurs</p>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-search"></i> Rechercher un utilisateur</h3>
+                </div>
+                <div class="card-body" style="position: relative;">
+                    <div class="input-group">
+                        <label class="input-label">Email de l'utilisateur</label>
+                        <input type="email" class="input-field" id="walletUserSearch" placeholder="exemple@email.com" autocomplete="off">
+                    </div>
+                    <div class="search-results" id="walletSearchResults"></div>
+                    <button class="btn-primary" onclick="searchWalletUser()" style="width: 100%;">
+                        <i class="fas fa-search"></i> Rechercher
+                    </button>
+                </div>
+            </div>
+
+            <div class="card" id="walletInfoCard" style="display: none;">
+                <div class="card-header">
+                    <h3><i class="fas fa-wallet"></i> Informations du portefeuille</h3>
+                </div>
+                <div id="walletInfo" class="card-body"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-history"></i> Dernières transactions wallet</h3>
+                </div>
+                <div id="walletTransactions" class="card-body">
+                    <div class="loading">Chargement...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Services View -->
+        <div id="servicesView" style="display: none;">
+            <h1 class="page-title">Services</h1>
+            <p class="page-subtitle">Activation/désactivation des services</p>
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-gamepad"></i> Services disponibles</h3>
+                </div>
+                <div id="servicesList" class="card-body" style="padding:0;"></div>
+            </div>
+        </div>
+
+        <!-- Announcements View -->
+        <div id="announcementsView" style="display: none;">
+            <h1 class="page-title">Annonces</h1>
+            <p class="page-subtitle">Communication avec les clients</p>
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-plus"></i> Nouvelle annonce</h3>
+                </div>
+                <div class="card-body">
+                    <div class="input-group">
+                        <label class="input-label">Message</label>
+                        <textarea class="input-field" id="announcementMessage" rows="3" placeholder="Entrez votre message..."></textarea>
+                    </div>
+                    <button class="btn-primary" onclick="publishAnnouncement()" style="width: 100%;">
+                        <i class="fas fa-paper-plane"></i> Publier
+                    </button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3><i class="fas fa-history"></i> Historique</h3>
+                </div>
+                <div id="announcementsHistory" class="card-body">
+                    <div class="loading">Chargement...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat View -->
+        <div id="chatView" style="display: none;">
+            <h1 class="page-title">Support client</h1>
+            <p class="page-subtitle">Chat en direct</p>
+            <div class="card chat-container">
+                <div class="chat-users" id="chatUsersList">
+                    <div class="loading">Chargement des conversations...</div>
+                </div>
+                <div class="chat-window" id="chatWindow">
+                    <div class="chat-messages" id="chatMessages"></div>
+                    <div class="chat-input">
+                        <input type="text" class="input-field" placeholder="Votre message..." id="chatInput" style="margin-bottom: 0;">
+                        <button class="btn-primary" onclick="sendMessage()" style="width: auto; padding: 12px 20px;">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
                     </div>
                 </div>
-            </section>
-
-            <!-- MARKETING ADS -->
-            <section id="adsTab" class="admin-tab" style="display:none">
-                <div class="section-card" style="padding:20px;">
-                    <textarea id="adText" class="adm-input" rows="4" placeholder="Message défilant sur l'accueil..."></textarea>
-                    <button class="btn-elite btn-ok" onclick="pushAd()">Diffuser maintenant</button>
-                    <div id="adHistory" style="margin-top:20px;"></div>
-                </div>
-            </section>
-
+            </div>
         </div>
-    </div>
+    </main>
 
-    <!-- MODAL: FICHE VENTE -->
+    <!-- Order Detail Modal -->
     <div class="modal" id="orderModal">
-        <div class="modal-box">
-            <i class="fas fa-times close-modal" onclick="closeModal()"></i>
-            <h3 style="font-weight: 800; font-size: 1rem; color: var(--primary);">Vérification de Vente</h3>
-            <div class="detail-grid" id="orderFields"></div>
-            <div class="proof-frame" onclick="openImage()"><img id="orderImg"></div>
-            <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:20px;">
-                <label style="font-size:0.55rem; font-weight:800; color:var(--muted); text-transform:uppercase;">Coût fournisseur (HTG)</label>
-                <input type="number" id="purchaseCost" class="adm-input" placeholder="0.00">
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
-                    <button class="btn-elite btn-ok" onclick="processOrder('Validé')">Approuver</button>
-                    <button class="btn-elite btn-no" onclick="processOrder('Rejeté')">Rejeter</button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Détails de la commande</h3>
+                <div class="modal-close" onclick="closeOrderModal()">
+                    <i class="fas fa-times"></i>
                 </div>
             </div>
+            <div id="orderDetailContent" class="card-body"></div>
         </div>
     </div>
 
-    <!-- MODAL: FICHE PORTEFEUILLE -->
+    <!-- Wallet Management Modal -->
     <div class="modal" id="walletModal">
-        <div class="modal-box">
-            <i class="fas fa-times close-modal" onclick="closeModal()"></i>
-            <h3 style="font-weight: 800; font-size: 1rem; color: var(--primary);">Demande Portefeuille</h3>
-            <div class="detail-grid" id="walletFields"></div>
-            <div class="proof-frame" id="walletProofArea" onclick="openImage()"><img id="walletImg"></div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:25px;">
-                <button class="btn-elite btn-ok" onclick="processWallet('valide')">Confirmer</button>
-                <button class="btn-elite btn-no" onclick="processWallet('rejete')">Refuser</button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Gestion du portefeuille</h3>
+                <div class="modal-close" onclick="closeWalletModal()">
+                    <i class="fas fa-times"></i>
+                </div>
             </div>
+            <div id="walletModalContent" class="card-body"></div>
         </div>
     </div>
 
     <script>
         // ==========================================================================
-        // 11. MOTEUR LOGIQUE INTÉGRAL (ZÉRO SIMULATION)
+        // CONFIGURATION FIREBASE
         // ==========================================================================
-
-        const firebaseConfig = { 
-            apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg", 
-            authDomain: "pay-fusion-6dfaf.firebaseapp.com", 
-            projectId: "pay-fusion-6dfaf", 
-            storageBucket: "pay-fusion-6dfaf.firebasestorage.app", 
-            messagingSenderId: "945593776812", 
-            appId: "1:945593776812:web:4475e1085fdfa31690fd09", 
-            measurementId: "G-8FEQG6B7ZY" 
+        const firebaseConfig = {
+            apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg",
+            authDomain: "pay-fusion-6dfaf.firebaseapp.com",
+            projectId: "pay-fusion-6dfaf",
+            storageBucket: "pay-fusion-6dfaf.firebasestorage.app",
+            messagingSenderId: "945593776812",
+            appId: "1:945593776812:web:4475e1085fdfa31690fd09"
         };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore(), auth = firebase.auth();
-        
-        let ordersData = [], walletData = [], usersData = [], activeID = null, activeChatUID = null;
 
-        // AUTH & BOOT
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // ==========================================================================
+        // VARIABLES GLOBALES
+        // ==========================================================================
+        let currentUser = null;
+        let currentOrderId = null;
+        let currentChatUser = null;
+        let currentWalletUser = null;
+        let unsubscribeChat = null;
+
+        // ==========================================================================
+        // AUTHENTIFICATION ADMIN
+        // ==========================================================================
         auth.onAuthStateChanged(user => {
-            if(!user || user.email !== "bmarcco4412@gmail.com") window.location.href = "/login.html";
-            else launchEngines();
+            if (!user || user.email !== 'bmarcco4412@gmail.com') {
+                window.location.href = '/login.html';
+            } else {
+                currentUser = user;
+                loadDashboard();
+                setupRealtimeListeners();
+            }
         });
 
-        function toggleSidebar() { 
-            document.getElementById('sidebar').classList.toggle('active'); 
-            document.getElementById('sidebarOverlay').classList.toggle('active'); 
-        }
-
-        function switchTab(id, el) {
-            document.querySelectorAll('.admin-tab').forEach(t => t.style.display = 'none');
-            document.querySelectorAll('.nav-link, .nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id + 'Tab').style.display = 'block';
-            el.classList.add('active'); 
-            document.getElementById('headerTitle').textContent = el.textContent.trim();
-            if(window.innerWidth < 1025) toggleSidebar();
-        }
-
-        function launchEngines() {
-            // Moteur Ventes
-            db.collection("orders").orderBy("createdAt", "desc").onSnapshot(snap => {
-                const list = document.getElementById('ordersList'); list.innerHTML = '';
-                let rev = 0, prof = 0, wait = 0; ordersData = [];
-                snap.forEach(doc => {
-                    const o = doc.data(); const id = doc.id; ordersData.push({id, ...o});
-                    if(o.status === 'en-attente') wait++;
-                    if(o.status === 'Validé') { 
-                        rev += o.service.price; 
-                        prof += (o.service.price - (o.purchaseCost || 0)); 
-                    }
-                    list.innerHTML += `<div class="list-row"><div class="row-info"><h5>#${o.orderId}</h5><p>${o.service.name} ● ${o.service.product}</p></div><div style="text-align:right"><span class="badge ${o.status==='en-attente'?'st-pending':'st-valide'}">${o.status}</span><br><button class="btn-manage" style="margin-top:5px" onclick="openOrderModal('${id}')">GÉRER</button></div></div>`;
-                });
-                document.getElementById('statRev').textContent = rev.toLocaleString() + " HTG";
-                document.getElementById('statProfit').textContent = prof.toLocaleString() + " HTG";
-                document.getElementById('statWait').textContent = wait;
+        // ==========================================================================
+        // SETUP ÉCOUTEURS TEMPS RÉEL
+        // ==========================================================================
+        function setupRealtimeListeners() {
+            db.collection('orders').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+                updateKPIs(snapshot);
+                updateOrdersList(snapshot);
+                updateRecentOrders(snapshot);
             });
 
-            // Moteur Wallet
-            db.collection("wallet_transactions").orderBy("createdAt", "desc").onSnapshot(snap => {
-                const list = document.getElementById('walletList'); list.innerHTML = ''; walletData = [];
-                snap.forEach(doc => {
-                    const t = doc.data(); const id = doc.id; walletData.push({id, ...t});
-                    list.innerHTML += `<div class="list-row"><div class="row-info"><h5>${t.type.toUpperCase()}</h5><p>${t.amount} HTG ● ${t.userEmail}</p></div><div style="text-align:right"><span class="badge ${t.status==='en-attente'?'st-pending':'st-valide'}">${t.status}</span><br><button class="btn-manage" style="margin-top:5px" onclick="openWalletModal('${id}')">GÉRER</button></div></div>`;
-                });
+            db.collection('users').onSnapshot(snapshot => {
+                updateUsersList(snapshot);
+                document.getElementById('totalUsers').textContent = snapshot.size;
             });
 
-            // Moteur Utilisateurs
-            db.collection("users").onSnapshot(snap => {
-                const list = document.getElementById('usersList'); list.innerHTML = ''; usersData = [];
-                document.getElementById('userTotal').textContent = snap.size;
-                snap.forEach(doc => {
-                    const u = doc.data(); const id = doc.id; usersData.push({id, ...u});
-                    const isBanned = u.status === 'Banni';
-                    list.innerHTML += `<div class="list-row"><div class="row-info"><h5>${u.personalInfo?.fullName || 'Membre'}</h5><p>${u.personalInfo?.email} ● Solde: ${u.wallet_balance || 0} HTG</p></div><button class="btn-manage" style="background:${isBanned?var(--success):var(--error)}" onclick="toggleBan('${id}', '${u.status}')">${isBanned?'ACTIVER':'BANNIR'}</button></div>`;
-                });
+            db.collection('announcements').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+                updateAnnouncementsList(snapshot);
             });
 
-            // Moteur CMS
-            const svcs = ['Free Fire', 'FC Mobile', 'eFootball', 'PUBG Mobile', 'Blood Strike', 'Roblox', 'DLS 24', 'Minecraft', 'Flex City', 'Netflix', 'Disney+', 'Prime Video', 'Crunchyroll', 'PayPal', 'Wise', 'USDT', 'TRONX', 'MERU', 'Telegram Prem.', 'TikTok Coins'];
-            db.collection("cms_services").onSnapshot(snap => {
-                const grid = document.getElementById('cmsGrid'); grid.innerHTML = '';
-                const states = {}; snap.forEach(d => states[d.id] = d.data().active);
-                svcs.forEach(s => {
-                    const active = states[s] !== false;
-                    grid.innerHTML += `<div class="kpi-card" style="display:flex; justify-content:space-between; align-items:center; padding:15px 20px;"><div><span>CANAL</span><h4 style="font-size:0.75rem">${s}</h4></div><label class="switch"><input type="checkbox" ${active?'checked':''} onchange="setCMS('${s}', this.checked)"><span class="slider"></span></label></div>`;
-                });
+            db.collection('chats').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
+                updateChatUsersList(snapshot);
             });
 
-            // Moteur CRM Chat
-            db.collection("chats").orderBy("timestamp", "desc").onSnapshot(snap => {
-                const list = document.getElementById('chatUserList'); list.innerHTML = ''; const grouped = {};
-                snap.forEach(doc => { const c = doc.data(); if(!grouped[c.userUID]) { grouped[c.userUID] = true; list.innerHTML += `<div class="list-row" style="cursor:pointer;" onclick="loadChat('${c.userUID}', '${c.userName}')"><h5>${c.userName.split('@')[0]}</h5></div>`; } });
+            db.collection('wallet_transactions').orderBy('createdAt', 'desc').limit(20).onSnapshot(snapshot => {
+                updateWalletTransactions(snapshot);
             });
         }
 
-        // --- HANDLERS MODAUX ---
-        function openOrderModal(id) {
-            activeID = id; const o = ordersData.find(x => x.id === id);
-            const grid = document.getElementById('orderFields'); grid.innerHTML = '';
-            const d = { "Service": o.service.product, "WhatsApp": o.customerInfo.whatsapp, "Identifiant": o.customerInfo.gameId || o.customerInfo.email, "Paiement": o.payment.method.toUpperCase(), "Emetteur": o.payment.senderName };
-            for(let [l,v] of Object.entries(d)) grid.innerHTML += `<div class="detail-cell"><label>${l}</label><p>${v}</p></div>`;
-            document.getElementById('orderImg').src = o.payment.proof;
-            document.getElementById('purchaseCost').value = o.purchaseCost || '';
-            document.getElementById('orderModal').style.display = 'flex';
+        // ==========================================================================
+        // KPI
+        // ==========================================================================
+        function updateKPIs(snapshot) {
+            let revenue = 0;
+            let pending = 0;
+
+            snapshot.forEach(doc => {
+                const order = doc.data();
+                if (order.status === 'Validé' && order.service?.price) {
+                    revenue += parseFloat(order.service.price);
+                }
+                if (order.status === 'en-attente') {
+                    pending++;
+                }
+            });
+
+            document.getElementById('totalRevenue').textContent = revenue.toLocaleString() + ' HTG';
+            document.getElementById('totalOrders').textContent = snapshot.size;
+            document.getElementById('pendingOrders').textContent = pending;
         }
 
-        function openWalletModal(id) {
-            activeID = id; const t = walletData.find(x => x.id === id);
-            const grid = document.getElementById('walletFields'); grid.innerHTML = '';
-            const d = { "Type": t.type.toUpperCase(), "Client": t.userEmail, "Montant": t.amount + " HTG", "Méthode": t.method, "Expéditeur": t.senderName };
-            for(let [l,v] of Object.entries(d)) grid.innerHTML += `<div class="detail-cell"><label>${l}</label><p>${v}</p></div>`;
-            if(t.proof) { document.getElementById('walletImg').src = t.proof; document.getElementById('walletProofArea').style.display = 'block'; }
-            else document.getElementById('walletProofArea').style.display = 'none';
-            document.getElementById('walletModal').style.display = 'flex';
+        // ==========================================================================
+        // ORDRES
+        // ==========================================================================
+        function updateOrdersList(snapshot) {
+            const container = document.getElementById('allOrders');
+            if (!container) return;
+            renderOrders(snapshot, container);
         }
 
-        // --- ACTIONS FIREBASE ---
-        async function processOrder(s) {
-            const cost = parseFloat(document.getElementById('purchaseCost').value) || 0;
-            await db.collection("orders").doc(activeID).update({ status: s, purchaseCost: cost, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
-            closeModal(); toast("Vente traitée");
+        function updateRecentOrders(snapshot) {
+            const container = document.getElementById('recentOrders');
+            if (!container) return;
+            // Limiter aux 10 premières
+            const limitedSnapshot = { ...snapshot, forEach: (cb) => { let count = 0; snapshot.forEach(doc => { if (count < 10) { cb(doc); count++; } }); } };
+            renderOrders(limitedSnapshot, container);
         }
 
-        async function processWallet(s) {
-            const t = walletData.find(x => x.id === activeID);
-            if(s === 'valide') {
-                const change = t.type === 'depot' ? t.amount : -t.amount;
-                await db.collection("users").doc(t.userId).update({ wallet_balance: firebase.firestore.FieldValue.increment(change) });
+        function renderOrders(snapshot, container) {
+            let html = '';
+            snapshot.forEach(doc => {
+                const order = doc.data();
+                const orderId = doc.id;
+                
+                const statusClass = order.status === 'en-attente' ? 'badge-pending' :
+                                   order.status === 'Validé' ? 'badge-success' :
+                                   order.status === 'Rejeté' ? 'badge-error' : '';
+                
+                const statusText = order.status === 'en-attente' ? 'En attente' :
+                                  order.status === 'Validé' ? 'Validé' :
+                                  order.status === 'Rejeté' ? 'Rejeté' : order.status;
+
+                const actionButton = order.payment?.method === 'fox_balance' 
+                    ? `<button class="btn-icon" style="background: var(--success); color: white; border: none;" onclick="creditUserFromOrder('${order.userId}', ${order.service?.price})">
+                        <i class="fas fa-coins"></i> Déjà payé
+                       </button>`
+                    : `<button class="btn-icon" onclick="openOrderModal('${orderId}')">
+                        <i class="fas fa-chevron-right"></i>
+                       </button>`;
+
+                html += `
+                    <div class="list-item">
+                        <div class="item-info">
+                            <div class="item-title">${order.service?.name || 'Service'} - ${order.service?.product || ''}</div>
+                            <div class="item-subtitle">
+                                <span>#${order.orderId || orderId.slice(0,8)}</span>
+                                <i class="fas fa-circle"></i>
+                                <span>${order.userEmail || 'N/A'}</span>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="item-amount">${order.service?.price || 0} HTG</div>
+                            <span class="badge ${statusClass}" style="margin-top: 4px; display: inline-block;">${statusText}</span>
+                        </div>
+                        ${actionButton}
+                    </div>
+                `;
+            });
+
+            if (html === '') {
+                html = '<div class="empty-state">Aucune commande</div>';
             }
-            await db.collection("wallet_transactions").doc(activeID).update({ status: s });
-            closeModal(); toast("Portefeuille mis à jour");
+            container.innerHTML = html;
         }
 
-        function loadChat(uid, name) {
-            activeChatUID = uid; document.getElementById('chatWin').style.display = 'flex';
-            db.collection("chats").where("userUID", "==", uid).orderBy("timestamp", "asc").onSnapshot(snap => {
-                const flow = document.getElementById('chatFlow'); flow.innerHTML = '';
-                snap.forEach(doc => { const m = doc.data(); const adm = m.sender === 'admin'; flow.innerHTML += `<div class="m ${adm?'m-adm':'m-user'}">${m.text}</div>`; });
-                flow.scrollTop = flow.scrollHeight;
+        async function creditUserFromOrder(userId, amount) {
+            if (!confirm(`Confirmer le crédit de ${amount} HTG sur le compte utilisateur ?`)) return;
+            
+            showToast('Traitement...');
+            
+            try {
+                const walletRef = db.collection('wallets').doc(userId);
+                const walletDoc = await walletRef.get();
+                
+                if (!walletDoc.exists) {
+                    await walletRef.set({
+                        balance: amount,
+                        userId: userId,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } else {
+                    await walletRef.update({
+                        balance: firebase.firestore.FieldValue.increment(amount)
+                    });
+                }
+
+                await db.collection('wallet_transactions').add({
+                    userId: userId,
+                    type: 'credit',
+                    amount: amount,
+                    description: 'Crédit depuis commande',
+                    status: 'complété',
+                    adminId: currentUser.uid,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                showToast(`${amount} HTG crédités avec succès`, 'success');
+            } catch (error) {
+                console.error(error);
+                showToast('Erreur lors du crédit', 'error');
+            }
+        }
+
+        // ==========================================================================
+        // UTILISATEURS
+        // ==========================================================================
+        function updateUsersList(snapshot) {
+            const container = document.getElementById('usersList');
+            if (!container) return;
+
+            let html = '';
+            snapshot.forEach(doc => {
+                const user = doc.data();
+                const fullName = user.personalInfo ? 
+                    `${user.personalInfo.firstName || ''} ${user.personalInfo.lastName || ''}`.trim() : 
+                    'Anonyme';
+                
+                const isBanned = user.status === 'Banni';
+
+                html += `
+                    <div class="list-item" data-userid="${doc.id}">
+                        <div class="item-info">
+                            <div class="item-title">${fullName || 'Anonyme'}</div>
+                            <div class="item-subtitle">
+                                <span>${user.personalInfo?.email || 'Email inconnu'}</span>
+                                ${user.personalInfo?.phone ? `<i class="fas fa-circle"></i><span>${user.personalInfo.phone}</span>` : ''}
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-icon" onclick="openWalletModal('${doc.id}', '${fullName}', '${user.personalInfo?.email || ''}')" title="Gérer le portefeuille">
+                                <i class="fas fa-wallet"></i>
+                            </button>
+                            <button class="btn-icon ${isBanned ? '' : 'btn-primary'}" onclick="toggleUserStatus('${doc.id}', '${user.status || 'Actif'}')">
+                                ${isBanned ? 'Débloquer' : 'Bloquer'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (html === '') {
+                html = '<div class="empty-state">Aucun utilisateur</div>';
+            }
+            container.innerHTML = html;
+        }
+
+        function searchUsers() {
+            const search = document.getElementById('userSearch').value.toLowerCase();
+            const items = document.querySelectorAll('#usersList .list-item');
+
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(search) ? 'flex' : 'none';
             });
         }
 
-        document.getElementById('adminReplyForm').onsubmit = async (e) => {
-            e.preventDefault(); const msg = document.getElementById('adminMsg').value; if(!msg) return;
-            await db.collection("chats").add({ userUID: activeChatUID, text: msg, sender: "admin", timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-            document.getElementById('adminMsg').value = '';
-        };
+        async function toggleUserStatus(userId, currentStatus) {
+            const newStatus = currentStatus === 'Banni' ? 'Actif' : 'Banni';
+            await db.collection('users').doc(userId).update({ status: newStatus });
+            showToast(`Utilisateur ${newStatus === 'Banni' ? 'bloqué' : 'débloqué'}`);
+        }
 
-        function toggleBan(id, s) { db.collection("users").doc(id).update({ status: s === 'Banni' ? 'Actif' : 'Banni' }); }
-        function setCMS(id, val) { db.collection("cms_services").doc(id).set({ active: val }, { merge: true }); }
-        function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
-        function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('active'); setTimeout(() => t.classList.remove('active'), 3000); }
-        function openImage() { window.open(document.getElementById('orderImg').src || document.getElementById('walletImg').src); }
-        async function pushAd() { const val = document.getElementById('adText').value; if(val) { await db.collection("announcements").add({ message: val, createdAt: firebase.firestore.FieldValue.serverTimestamp() }); document.getElementById('adText').value = ''; toast("Annonce en ligne"); } }
+        // ==========================================================================
+        // PORTEFEUILLES
+        // ==========================================================================
+        let searchTimeout;
+        document.getElementById('walletUserSearch')?.addEventListener('input', function(e) {
+            clearTimeout(searchTimeout);
+            const query = e.target.value.trim();
+            
+            if (query.length < 3) {
+                document.getElementById('walletSearchResults').classList.remove('active');
+                return;
+            }
+
+            searchTimeout = setTimeout(() => {
+                searchWalletUsers(query);
+            }, 500);
+        });
+
+        async function searchWalletUsers(query) {
+            const resultsDiv = document.getElementById('walletSearchResults');
+            resultsDiv.innerHTML = '';
+            
+            try {
+                const emailQuery = await db.collection('users')
+                    .where('personalInfo.email', '>=', query)
+                    .where('personalInfo.email', '<=', query + '\uf8ff')
+                    .limit(5)
+                    .get();
+
+                if (emailQuery.empty) {
+                    resultsDiv.innerHTML = '<div class="search-result-item">Aucun utilisateur trouvé</div>';
+                } else {
+                    emailQuery.forEach(doc => {
+                        const user = doc.data();
+                        const fullName = user.personalInfo?.fullName || 
+                            `${user.personalInfo?.firstName || ''} ${user.personalInfo?.lastName || ''}`.trim() || 
+                            'Utilisateur';
+                        
+                        resultsDiv.innerHTML += `
+                            <div class="search-result-item" onclick="selectWalletUser('${doc.id}', '${fullName.replace(/'/g, "\\'")}', '${user.personalInfo?.email || ''}')">
+                                <div class="search-result-name">${fullName}</div>
+                                <div class="search-result-email">${user.personalInfo?.email || ''}</div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                resultsDiv.classList.add('active');
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        function selectWalletUser(userId, fullName, email) {
+            document.getElementById('walletUserSearch').value = email;
+            document.getElementById('walletSearchResults').classList.remove('active');
+            loadWalletInfo(userId, fullName, email);
+        }
+
+        async function searchWalletUser() {
+            const email = document.getElementById('walletUserSearch').value.trim();
+            if (!email) return;
+
+            const snapshot = await db.collection('users')
+                .where('personalInfo.email', '==', email)
+                .limit(1)
+                .get();
+
+            if (snapshot.empty) {
+                showToast('Utilisateur non trouvé', 'error');
+                return;
+            }
+
+            const doc = snapshot.docs[0];
+            const user = doc.data();
+            const fullName = user.personalInfo?.fullName || 
+                `${user.personalInfo?.firstName || ''} ${user.personalInfo?.lastName || ''}`.trim() || 
+                'Utilisateur';
+
+            loadWalletInfo(doc.id, fullName, email);
+        }
+
+        async function loadWalletInfo(userId, fullName, email) {
+            currentWalletUser = { id: userId, name: fullName, email: email };
+            
+            const walletDoc = await db.collection('wallets').doc(userId).get();
+            const balance = walletDoc.exists ? walletDoc.data().balance || 0 : 0;
+
+            const transactionsSnapshot = await db.collection('wallet_transactions')
+                .where('userId', '==', userId)
+                .orderBy('createdAt', 'desc')
+                .limit(10)
+                .get();
+
+            let transactionsHtml = '';
+            transactionsSnapshot.forEach(doc => {
+                const tx = doc.data();
+                const date = tx.createdAt ? new Date(tx.createdAt.toDate()).toLocaleString('fr-FR') : 'Date inconnue';
+                const iconClass = tx.type === 'credit' || tx.type === 'depot' ? 'credit' : 'debit';
+                const icon = tx.type === 'credit' || tx.type === 'depot' ? 'fa-arrow-down' : 'fa-arrow-up';
+                const amountClass = tx.type === 'credit' || tx.type === 'depot' ? 'credit' : 'debit';
+                const amountSign = tx.type === 'credit' || tx.type === 'depot' ? '+' : '-';
+
+                transactionsHtml += `
+                    <div class="transaction-item">
+                        <div class="transaction-icon ${iconClass}">
+                            <i class="fas ${icon}"></i>
+                        </div>
+                        <div class="transaction-details">
+                            <div class="transaction-title">${tx.description || tx.type}</div>
+                            <div class="transaction-meta">${date}</div>
+                        </div>
+                        <div class="transaction-amount ${amountClass}">
+                            ${amountSign}${tx.amount.toLocaleString()} HTG
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (transactionsHtml === '') {
+                transactionsHtml = '<div class="empty-state">Aucune transaction</div>';
+            }
+
+            document.getElementById('walletInfo').innerHTML = `
+                <div class="user-info-card">
+                    <div class="user-avatar">${fullName.charAt(0).toUpperCase()}</div>
+                    <div class="user-details">
+                        <h4>${fullName}</h4>
+                        <p>${email}</p>
+                    </div>
+                </div>
+
+                <div class="balance-display">
+                    <span class="balance-label">Solde actuel</span>
+                    <span class="balance-value">${balance.toLocaleString()} HTG</span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px;">
+                    <button class="btn-primary btn-success" onclick="openWalletModal('${userId}', '${fullName}', '${email}', 'credit')">
+                        <i class="fas fa-plus"></i> Créditer
+                    </button>
+                    <button class="btn-primary btn-warning" onclick="openWalletModal('${userId}', '${fullName}', '${email}', 'debit')">
+                        <i class="fas fa-minus"></i> Débiter
+                    </button>
+                </div>
+
+                <h4 style="margin: 16px 0 8px; font-size: 0.9rem;">Dernières transactions</h4>
+                ${transactionsHtml}
+            `;
+
+            document.getElementById('walletInfoCard').style.display = 'block';
+        }
+
+        function openWalletModal(userId, fullName, email, action = 'credit') {
+            const modal = document.getElementById('walletModal');
+            const content = document.getElementById('walletModalContent');
+            
+            content.innerHTML = `
+                <div class="user-info-card">
+                    <div class="user-avatar">${fullName.charAt(0).toUpperCase()}</div>
+                    <div class="user-details">
+                        <h4>${fullName}</h4>
+                        <p>${email}</p>
+                    </div>
+                </div>
+
+                <div class="reason-selector">
+                    <button class="reason-btn ${action === 'credit' ? 'selected' : ''}" onclick="setWalletAction('credit')" id="creditBtn">
+                        <i class="fas fa-plus"></i> Créditer
+                    </button>
+                    <button class="reason-btn ${action === 'debit' ? 'selected' : ''}" onclick="setWalletAction('debit')" id="debitBtn">
+                        <i class="fas fa-minus"></i> Débiter
+                    </button>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Montant (HTG)</label>
+                    <input type="number" class="input-field" id="walletAmount" placeholder="Ex: 1000" min="1">
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Raison / Description</label>
+                    <select class="input-field" id="walletReason">
+                        <option value="Ajustement manuel">Ajustement manuel</option>
+                        <option value="Remboursement">Remboursement</option>
+                        <option value="Bonus">Bonus / Cadeau</option>
+                        <option value="Correction erreur">Correction d'erreur</option>
+                        <option value="Frais">Frais</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">Note (optionnelle)</label>
+                    <input type="text" class="input-field" id="walletNote" placeholder="Détails supplémentaires...">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 20px;">
+                    <button class="btn-primary" onclick="closeWalletModal()">Annuler</button>
+                    <button class="btn-primary ${action === 'credit' ? 'btn-success' : 'btn-warning'}" onclick="processWalletTransaction()">
+                        ${action === 'credit' ? 'Créditer' : 'Débiter'}
+                    </button>
+                </div>
+            `;
+
+            modal.classList.add('active');
+        }
+
+        function setWalletAction(action) {
+            document.getElementById('creditBtn').classList.toggle('selected', action === 'credit');
+            document.getElementById('debitBtn').classList.toggle('selected', action === 'debit');
+        }
+
+        async function processWalletTransaction() {
+            if (!currentWalletUser) return;
+
+            const amount = parseFloat(document.getElementById('walletAmount')?.value);
+            if (!amount || amount <= 0) {
+                showToast('Montant invalide', 'error');
+                return;
+            }
+
+            const isCredit = document.getElementById('creditBtn').classList.contains('selected');
+            const reason = document.getElementById('walletReason').value;
+            const note = document.getElementById('walletNote').value;
+
+            showToast('Traitement en cours...');
+
+            try {
+                const walletRef = db.collection('wallets').doc(currentWalletUser.id);
+                const walletDoc = await walletRef.get();
+
+                if (!walletDoc.exists) {
+                    await walletRef.set({
+                        balance: isCredit ? amount : 0,
+                        userId: currentWalletUser.id,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } else {
+                    const currentBalance = walletDoc.data().balance || 0;
+                    
+                    if (!isCredit && currentBalance < amount) {
+                        showToast('Solde insuffisant pour le débit', 'error');
+                        return;
+                    }
+
+                    await walletRef.update({
+                        balance: firebase.firestore.FieldValue.increment(isCredit ? amount : -amount)
+                    });
+                }
+
+                await db.collection('wallet_transactions').add({
+                    userId: currentWalletUser.id,
+                    userEmail: currentWalletUser.email,
+                    type: isCredit ? 'credit' : 'debit',
+                    amount: amount,
+                    description: reason + (note ? ` - ${note}` : ''),
+                    status: 'complété',
+                    adminId: currentUser.uid,
+                    adminEmail: currentUser.email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                showToast(`${isCredit ? 'Crédit' : 'Débit'} de ${amount} HTG effectué`, 'success');
+                closeWalletModal();
+                
+                // Recharger les infos
+                loadWalletInfo(currentWalletUser.id, currentWalletUser.name, currentWalletUser.email);
+            } catch (error) {
+                console.error(error);
+                showToast('Erreur lors de la transaction', 'error');
+            }
+        }
+
+        function closeWalletModal() {
+            document.getElementById('walletModal').classList.remove('active');
+        }
+
+        function updateWalletTransactions(snapshot) {
+            const container = document.getElementById('walletTransactions');
+            if (!container) return;
+
+            let html = '';
+            snapshot.forEach(doc => {
+                const tx = doc.data();
+                const date = tx.createdAt ? new Date(tx.createdAt.toDate()).toLocaleString('fr-FR') : 'Date inconnue';
+                const iconClass = tx.type === 'credit' || tx.type === 'depot' ? 'credit' : 'debit';
+                const icon = tx.type === 'credit' || tx.type === 'depot' ? 'fa-arrow-down' : 'fa-arrow-up';
+                const amountClass = tx.type === 'credit' || tx.type === 'depot' ? 'credit' : 'debit';
+                const amountSign = tx.type === 'credit' || tx.type === 'depot' ? '+' : '-';
+
+                html += `
+                    <div class="transaction-item">
+                        <div class="transaction-icon ${iconClass}">
+                            <i class="fas ${icon}"></i>
+                        </div>
+                        <div class="transaction-details">
+                            <div class="transaction-title">${tx.description || tx.type}</div>
+                            <div class="transaction-meta">${tx.userEmail || 'Utilisateur'} • ${date}</div>
+                        </div>
+                        <div class="transaction-amount ${amountClass}">
+                            ${amountSign}${tx.amount.toLocaleString()} HTG
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (html === '') {
+                html = '<div class="empty-state">Aucune transaction</div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        // ==========================================================================
+        // SERVICES
+        // ==========================================================================
+        function updateServicesList() {
+            const services = [
+                'Free Fire', 'FC Mobile', 'eFootball', 'PUBG Mobile', 'Blood Strike',
+                'Roblox', 'DLS 26', 'Minecraft', 'Flex City', 'Netflix', 'Disney+',
+                'Prime Video', 'Crunchyroll', 'PayPal', 'Wise', 'USDT', 'TRONX',
+                'Telegram', 'TikTok', 'MERU'
+            ];
+
+            const container = document.getElementById('servicesList');
+            if (!container) return;
+
+            db.collection('cms_services').get().then(snapshot => {
+                const statusMap = {};
+                snapshot.forEach(doc => statusMap[doc.id] = doc.data().active);
+
+                let html = '';
+                services.forEach(service => {
+                    const active = statusMap[service] !== false;
+                    html += `
+                        <div class="list-item">
+                            <div class="item-info">
+                                <div class="item-title">${service}</div>
+                            </div>
+                            <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                                <input type="checkbox" ${active ? 'checked' : ''} onchange="toggleService('${service}', this.checked)" style="opacity:0; width:0; height:0;">
+                                <span style="position: absolute; cursor: pointer; top:0; left:0; right:0; bottom:0; background-color: ${active ? 'var(--primary)' : 'var(--gray-300)'}; transition: .2s; border-radius: 24px;"></span>
+                                <span style="position: absolute; content: ''; height: 20px; width: 20px; left: ${active ? '22px' : '2px'}; bottom: 2px; background-color: white; transition: .2s; border-radius: 50%;"></span>
+                            </label>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            });
+        }
+
+        async function toggleService(serviceName, isActive) {
+            await db.collection('cms_services').doc(serviceName).set({ active: isActive }, { merge: true });
+            showToast(`${serviceName} ${isActive ? 'activé' : 'désactivé'}`);
+        }
+
+        // ==========================================================================
+        // ANNONCES
+        // ==========================================================================
+        async function publishAnnouncement() {
+            const message = document.getElementById('announcementMessage').value.trim();
+            if (!message) {
+                showToast('Veuillez entrer un message');
+                return;
+            }
+
+            await db.collection('announcements').add({
+                message: message,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            document.getElementById('announcementMessage').value = '';
+            showToast('Annonce publiée');
+        }
+
+        function updateAnnouncementsList(snapshot) {
+            const container = document.getElementById('announcementsHistory');
+            if (!container) return;
+
+            let html = '';
+            snapshot.forEach(doc => {
+                const ann = doc.data();
+                const date = ann.createdAt ? new Date(ann.createdAt.toDate()).toLocaleDateString('fr-FR') : 'Date inconnue';
+                
+                html += `
+                    <div class="list-item">
+                        <div class="item-info">
+                            <div class="item-title">${ann.message}</div>
+                            <div class="item-subtitle">Publié le ${date}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (html === '') {
+                html = '<div class="empty-state">Aucune annonce</div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        // ==========================================================================
+        // CHAT
+        // ==========================================================================
+        function updateChatUsersList(snapshot) {
+            const container = document.getElementById('chatUsersList');
+            if (!container) return;
+
+            const users = new Map();
+            
+            snapshot.forEach(doc => {
+                const chat = doc.data();
+                if (chat.userUID && !users.has(chat.userUID)) {
+                    users.set(chat.userUID, {
+                        uid: chat.userUID,
+                        name: chat.userName || chat.userUID.slice(0,8),
+                        lastMessage: chat.text
+                    });
+                }
+            });
+
+            let html = '';
+            users.forEach(user => {
+                const isActive = currentChatUser === user.uid;
+                html += `
+                    <div class="chat-user-item ${isActive ? 'active' : ''}" onclick="selectChatUser('${user.uid}', '${user.name}')">
+                        <i class="fas fa-user-circle" style="font-size: 1.5rem; color: ${isActive ? 'white' : 'var(--gray-400)'};"></i>
+                        <div>
+                            <div style="font-weight: 600; font-size: 0.9rem;">${user.name}</div>
+                            <div style="font-size: 0.75rem; opacity: 0.7;">${user.lastMessage?.substring(0,30)}...</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (html === '') {
+                html = '<div class="empty-state">Aucune conversation</div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        function selectChatUser(userId, userName) {
+            currentChatUser = userId;
+
+            document.querySelectorAll('.chat-user-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            document.getElementById('chatWindow').style.display = 'flex';
+
+            if (unsubscribeChat) unsubscribeChat();
+            
+            unsubscribeChat = db.collection('chats')
+                .where('userUID', '==', userId)
+                .orderBy('timestamp', 'asc')
+                .onSnapshot(snapshot => {
+                    const messagesContainer = document.getElementById('chatMessages');
+                    let html = '';
+
+                    snapshot.forEach(doc => {
+                        const msg = doc.data();
+                        const isAdmin = msg.sender === 'admin';
+                        html += `
+                            <div class="message ${isAdmin ? 'message-admin' : 'message-user'}">
+                                ${msg.text}
+                            </div>
+                        `;
+                    });
+
+                    messagesContainer.innerHTML = html;
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                });
+        }
+
+        async function sendMessage() {
+            if (!currentChatUser) {
+                showToast('Sélectionnez un utilisateur');
+                return;
+            }
+
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            await db.collection('chats').add({
+                userUID: currentChatUser,
+                text: message,
+                sender: 'admin',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            input.value = '';
+        }
+
+        // ==========================================================================
+        // MODAL COMMANDE
+        // ==========================================================================
+        function openOrderModal(orderId) {
+            currentOrderId = orderId;
+            
+            db.collection('orders').doc(orderId).get().then(doc => {
+                if (!doc.exists) return;
+                
+                const order = doc.data();
+                const modal = document.getElementById('orderDetailContent');
+                
+                const statusClass = order.status === 'en-attente' ? 'badge-pending' :
+                                   order.status === 'Validé' ? 'badge-success' :
+                                   order.status === 'Rejeté' ? 'badge-error' : '';
+
+                const proofHtml = order.payment?.proof ? 
+                    `<img src="${order.payment.proof}" class="proof-image" style="max-width:100%; border-radius:var(--radius-md); border:1px solid var(--border); margin:10px 0; cursor:pointer;" onclick="window.open('${order.payment.proof}', '_blank')">` : 
+                    '<p style="color: var(--gray-400);">Aucune preuve fournie</p>';
+
+                const creditButton = order.status === 'Validé' ? `
+                    <button class="btn-primary btn-success" onclick="creditUserFromOrder('${order.userId}', ${order.service?.price})" style="width: 100%; margin-bottom: 10px;">
+                        <i class="fas fa-coins"></i> Créditer le client (${order.service?.price} HTG)
+                    </button>
+                ` : '';
+
+                modal.innerHTML = `
+                    <div style="margin-bottom: 16px;">
+                        <span class="badge ${statusClass}">${order.status || 'Statut inconnu'}</span>
+                    </div>
+                    
+                    ${creditButton}
+
+                    <div class="detail-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="detail-item">
+                            <label class="input-label">Service</label>
+                            <p>${order.service?.name || 'N/A'}</p>
+                        </div>
+                        <div class="detail-item">
+                            <label class="input-label">Produit</label>
+                            <p>${order.service?.product || 'N/A'}</p>
+                        </div>
+                        <div class="detail-item">
+                            <label class="input-label">Prix</label>
+                            <p>${order.service?.price || 0} HTG</p>
+                        </div>
+                        <div class="detail-item">
+                            <label class="input-label">Méthode</label>
+                            <p>${order.payment?.method || 'N/A'}</p>
+                        </div>
+                        <div class="detail-item">
+                            <label class="input-label">Client</label>
+                            <p>${order.userEmail || 'N/A'}</p>
+                        </div>
+                        <div class="detail-item">
+                            <label class="input-label">WhatsApp</label>
+                            <p>${order.customerInfo?.whatsapp || 'N/A'}</p>
+                        </div>
+                    </div>
+
+                    <div style="margin: 20px 0;">
+                        <label class="input-label">Preuve de paiement</label>
+                        ${proofHtml}
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Coût d'achat (pour calcul du profit)</label>
+                        <input type="number" class="input-field" id="purchaseCost" value="${order.purchaseCost || ''}" placeholder="0.00">
+                    </div>
+
+                    <div class="action-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;">
+                        <button class="btn-primary btn-success" onclick="updateOrderStatus('Validé')">Valider</button>
+                        <button class="btn-primary btn-danger" onclick="updateOrderStatus('Rejeté')">Rejeter</button>
+                    </div>
+                `;
+
+                document.getElementById('orderModal').classList.add('active');
+            });
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').classList.remove('active');
+            currentOrderId = null;
+        }
+
+        async function updateOrderStatus(status) {
+            if (!currentOrderId) return;
+
+            const purchaseCost = parseFloat(document.getElementById('purchaseCost')?.value) || 0;
+
+            await db.collection('orders').doc(currentOrderId).update({
+                status: status,
+                purchaseCost: purchaseCost,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            closeOrderModal();
+            showToast(`Commande ${status === 'Validé' ? 'validée' : 'rejetée'}`);
+        }
+
+        // ==========================================================================
+        // NAVIGATION
+        // ==========================================================================
+        function switchTab(tabName, element) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+
+            document.getElementById('dashboardView').style.display = 'none';
+            document.getElementById('ordersView').style.display = 'none';
+            document.getElementById('usersView').style.display = 'none';
+            document.getElementById('walletsView').style.display = 'none';
+            document.getElementById('servicesView').style.display = 'none';
+            document.getElementById('announcementsView').style.display = 'none';
+            document.getElementById('chatView').style.display = 'none';
+
+            document.getElementById(tabName + 'View').style.display = 'block';
+
+            if (tabName === 'services') {
+                updateServicesList();
+            }
+
+            if (window.innerWidth < 1024) {
+                toggleSidebar();
+            }
+        }
+
+        function loadDashboard() {
+            // Les données sont chargées via les listeners
+        }
+
+        // ==========================================================================
+        // SIDEBAR
+        // ==========================================================================
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        }
+
+        // ==========================================================================
+        // TOAST
+        // ==========================================================================
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // ==========================================================================
+        // ÉVÉNEMENTS GLOBAUX
+        // ==========================================================================
+        document.getElementById('sidebarOverlay').onclick = toggleSidebar;
+
+        window.onresize = () => {
+            if (window.innerWidth >= 1024) {
+                document.getElementById('sidebar').classList.remove('active');
+                document.getElementById('sidebarOverlay').classList.remove('active');
+            }
+        };
     </script>
 </body>
 </html>
