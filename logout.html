@@ -2,23 +2,177 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Fox Store - Déconnexion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Fox Store – Déconnexion</title>
+    
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-deep: #06070a;
+            --bg-card: #0f121a;
+            --bg-surface: #151a22;
+            --accent: #00d1ff;
+            --text-main: #ffffff;
+            --text-muted: #8e95a2;
+            --text-tertiary: #5f6b7a;
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .logout-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 32px 24px;
+            max-width: 360px;
+            width: 100%;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(10px);
+        }
+
+        .logout-card .icon-wrapper {
+            width: 72px;
+            height: 72px;
+            background: rgba(0, 209, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            border: 1px solid rgba(0, 209, 255, 0.2);
+        }
+
+        .logout-card .icon-wrapper i {
+            font-size: 32px;
+            color: var(--accent);
+        }
+
+        .logout-card h1 {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .logout-card p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .logout-card .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            border: 1.5px solid transparent;
+            cursor: pointer;
+            background: var(--accent);
+            color: var(--bg-deep);
+            box-shadow: 0 8px 20px rgba(0, 209, 255, 0.3);
+            width: 100%;
+            max-width: 200px;
+            margin: 0 auto;
+        }
+
+        .logout-card .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(0, 209, 255, 0.5);
+        }
+
+        .logout-card .btn i {
+            font-size: 14px;
+        }
+
+        .logout-card .redirection-message {
+            margin-top: 16px;
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+    </style>
 </head>
-<body style="background:#f8fafc; font-family:'Plus Jakarta Sans', sans-serif; display:flex; align-items:center; justify-content:center; height:100vh; margin:0;">
-    <div style="text-align:center;">
-        <div style="color:#0056b3; font-size:2rem; margin-bottom:20px;"><i class="fas fa-circle-notch fa-spin"></i></div>
-        <p style="color:#1e293b; font-weight:700;">Déconnexion sécurisée en cours...</p>
+<body>
+    <div class="logout-card">
+        <div class="icon-wrapper">
+            <i class="fas fa-sign-out-alt"></i>
+        </div>
+        <h1>Déconnexion</h1>
+        <p>Vous êtes en train de quitter votre session. Vous serez redirigé vers la page d'accueil dans un instant.</p>
+        <button class="btn" id="redirectBtn">
+            <i class="fas fa-home"></i> Retour à l'accueil
+        </button>
+        <div class="redirection-message" id="countdownMessage">Redirection automatique dans 2 secondes...</div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+
     <script>
-        const firebaseConfig = { apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg", authDomain: "pay-fusion-6dfaf.firebaseapp.com", projectId: "pay-fusion-6dfaf", storageBucket: "pay-fusion-6dfaf.firebasestorage.app", messagingSenderId: "945593776812", appId: "1:945593776812:web:4475e1085fdfa31690fd09", measurementId: "G-8FEQG6B7ZY" };
+        const firebaseConfig = {
+            apiKey: "AIzaSyA0n2m2R9q07HQ94V58CdbNTlxnKztdmQo",
+            authDomain: "fox-storeht.firebaseapp.com",
+            projectId: "fox-storeht",
+            storageBucket: "fox-storeht.firebasestorage.app",
+            messagingSenderId: "589792388283",
+            appId: "1:589792388283:web:c372bd886f0a98e82db59e",
+            measurementId: "G-WN9M206F4M"
+        };
         firebase.initializeApp(firebaseConfig);
-        firebase.auth().signOut().then(() => {
-            localStorage.clear(); // Nettoie le panier et les sessions locales
-            setTimeout(() => { window.location.href = "/index.html"; }, 1500);
+        const auth = firebase.auth();
+
+        // Déconnexion immédiate
+        auth.signOut().catch(console.error);
+
+        // Compte à rebours et redirection
+        let seconds = 2;
+        const countdownEl = document.getElementById('countdownMessage');
+        const interval = setInterval(() => {
+            seconds--;
+            if (seconds <= 0) {
+                clearInterval(interval);
+                window.location.href = '/';
+            } else {
+                countdownEl.textContent = `Redirection automatique dans ${seconds} seconde${seconds > 1 ? 's' : ''}...`;
+            }
+        }, 1000);
+
+        // Bouton manuel
+        document.getElementById('redirectBtn').addEventListener('click', () => {
+            clearInterval(interval);
+            window.location.href = '/';
         });
     </script>
 </body>
