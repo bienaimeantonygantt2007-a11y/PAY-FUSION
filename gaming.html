@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Fox Store – Gaming</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-deep: #06070a;
+            --bg-card: #0f121a;
+            --bg-surface: #151a22;
+            --accent: #00d1ff;
+            --text-main: #ffffff;
+            --text-muted: #8e95a2;
+            --text-tertiary: #5f6b7a;
+            --glass-border: rgba(255,255,255,0.05);
+            --border-accent: rgba(0,209,255,0.3);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.4);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 12px 20px;
+            background: rgba(6,7,10,0.8);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-family: 'Clash Display', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .logo i {
+            font-size: 20px;
+            color: var(--accent);
+            transition: var(--transition);
+        }
+
+        .logo:hover i {
+            transform: scale(1.1);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-greeting {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .user-greeting span {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 5px 12px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            border: 1.5px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            background: transparent;
+            color: var(--text-main);
+        }
+
+        .btn-outline {
+            border-color: var(--glass-border);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--accent);
+            background: rgba(0,209,255,0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg-deep);
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(0,209,255,0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(0,209,255,0.5);
+        }
+
+        /* Menu burger */
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            font-size: 18px;
+            padding: 6px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .menu-toggle:hover {
+            border-color: var(--accent);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 70px;
+            left: -280px;
+            width: 260px;
+            bottom: 0;
+            background: rgba(15,18,26,0.98);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid var(--glass-border);
+            padding: 20px 12px;
+            overflow-y: auto;
+            transition: left 0.3s ease;
+            z-index: 99;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar.open {
+            left: 0;
+        }
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 98;
+            display: none;
+        }
+        .sidebar-overlay.active {
+            display: block;
+        }
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 12px;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 16px;
+        }
+        .avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--bg-deep);
+            font-weight: 700;
+            font-size: 20px;
+            text-transform: uppercase;
+        }
+        .user-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .user-info p {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        .sidebar-section {
+            margin-bottom: 20px;
+        }
+        .sidebar-section-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-tertiary);
+            padding: 0 12px 8px;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            color: var(--text-muted);
+            transition: var(--transition);
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .sidebar-link i {
+            width: 20px;
+            color: var(--accent);
+            font-size: 14px;
+        }
+        .sidebar-link:hover {
+            background: rgba(255,255,255,0.03);
+            color: var(--text-main);
+            border: 1px solid var(--border-accent);
+        }
+        .sidebar-link.logout {
+            margin-top: auto;
+            border-top: 1px solid var(--glass-border);
+            padding-top: 16px;
+        }
+
+        @media (max-width:768px) {
+            .nav-links { display: none; }
+            .menu-toggle { display: inline-block; }
+        }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            width: 100%;
+        }
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        .breadcrumb a {
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            color: var(--accent);
+        }
+        .page-header {
+            margin-bottom: 30px;
+        }
+        .page-header h1 {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .page-header p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        /* Grille des jeux */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
+        .game-card {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 24px 20px;
+            transition: var(--transition);
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .game-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            background: var(--bg-surface);
+        }
+        .game-card img {
+            height: 100px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            margin-bottom: 16px;
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.5));
+        }
+        .game-card h3 {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .game-card .pricing {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 16px;
+        }
+        .game-card .btn-small {
+            padding: 8px 20px;
+            border-radius: 40px;
+            background: transparent;
+            border: 1.5px solid var(--accent);
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 13px;
+            transition: var(--transition);
+        }
+        .game-card:hover .btn-small {
+            background: var(--accent);
+            color: var(--bg-deep);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-deep);
+            padding: 25px 20px;
+            border-top: 1px solid var(--glass-border);
+        }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-tertiary);
+            font-size: 11px;
+        }
+        @media (max-width:768px) {
+            .footer-content { flex-direction: column; gap:8px; text-align:center; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo"><i class="fas fa-fox"></i><span>FOX STORE</span></a>
+            <div class="nav-links">
+                <a href="/gaming.html" class="active">Gaming</a>
+                <a href="/streaming.html">Streaming</a>
+                <a href="/finance.html">Finance</a>
+                <a href="/wallet/dashboard.html">Wallet</a>
+                <a href="/orders.html">Commandes</a>
+            </div>
+            <div class="user-menu">
+                <span class="user-greeting" id="userGreeting">Bonjour, <span>Chargement...</span></span>
+                <button class="btn btn-outline" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span>Déconnexion</span></button>
+                <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="user-profile" id="userProfile">
+            <div class="avatar" id="userAvatar">F</div>
+            <div class="user-info"><h4 id="sidebarUserName">Chargement...</h4><p id="sidebarUserEmail">...</p></div>
+        </div>
+        <div class="sidebar-section"><div class="sidebar-section-title">ACCUEIL</div><a href="/home.html" class="sidebar-link"><i class="fas fa-home"></i> Accueil</a></div>
+        <div class="sidebar-section"><div class="sidebar-section-title">BOUTIQUE</div>
+            <a href="/gaming.html" class="sidebar-link"><i class="fas fa-gamepad"></i> Gaming</a>
+            <a href="/streaming.html" class="sidebar-link"><i class="fas fa-film"></i> Streaming</a>
+            <a href="/finance.html" class="sidebar-link"><i class="fas fa-coins"></i> Finance</a>
+        </div>
+        <div class="sidebar-section"><div class="sidebar-section-title">PORTEFEUILLE</div>
+            <a href="/wallet/dashboard.html" class="sidebar-link"><i class="fas fa-chart-pie"></i> Tableau de bord</a>
+            <a href="/wallet/deposit.html" class="sidebar-link"><i class="fas fa-arrow-down"></i> Recharger</a>
+            <a href="/wallet/withdraw.html" class="sidebar-link"><i class="fas fa-arrow-up"></i> Retrait</a>
+            <a href="/wallet/transfer.html" class="sidebar-link"><i class="fas fa-exchange-alt"></i> Transfert</a>
+            <a href="/wallet/history.html" class="sidebar-link"><i class="fas fa-history"></i> Historique</a>
+        </div>
+        <div class="sidebar-section"><div class="sidebar-section-title">MON COMPTE</div>
+            <a href="/orders.html" class="sidebar-link"><i class="fas fa-shopping-bag"></i> Mes commandes</a>
+            <a href="/user/account.html" class="sidebar-link"><i class="fas fa-user"></i> Profil</a>
+            <a href="/user/settings.html" class="sidebar-link"><i class="fas fa-cog"></i> Paramètres</a>
+            <a href="/user/notifications.html" class="sidebar-link"><i class="fas fa-bell"></i> Notifications</a>
+        </div>
+        <div class="sidebar-section"><div class="sidebar-section-title">SUPPORT</div>
+            <a href="/user/supports.html" class="sidebar-link"><i class="fas fa-headset"></i> Support</a>
+        </div>
+        <div class="sidebar-link logout" id="sidebarLogout"><i class="fas fa-sign-out-alt"></i> Se déconnecter</div>
+    </div>
+
+    <div class="main-content">
+        <div class="breadcrumb">
+            <a href="/home.html">Accueil</a> <i class="fas fa-chevron-right"></i> <span>Gaming</span>
+        </div>
+        <div class="page-header">
+            <h1>Gaming Elite</h1>
+            <p>Diamants, UC, Robux et plus pour vos jeux préférés</p>
+        </div>
+        <div class="games-grid" id="gamesGrid">
+            <!-- Rempli dynamiquement -->
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content"><p>© 2025 Fox Store. Tous droits réservés.</p><p>Design élite - Performance absolue</p></div>
+    </footer>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyA0n2m2R9q07HQ94V58CdbNTlxnKztdmQo",
+            authDomain: "fox-storeht.firebaseapp.com",
+            projectId: "fox-storeht",
+            storageBucket: "fox-storeht.firebasestorage.app",
+            messagingSenderId: "589792388283",
+            appId: "1:589792388283:web:c372bd886f0a98e82db59e",
+            measurementId: "G-WN9M206F4M"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        const userGreetingSpan = document.querySelector('#userGreeting span');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const sidebarLogout = document.getElementById('sidebarLogout');
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        const sidebarUserName = document.getElementById('sidebarUserName');
+        const sidebarUserEmail = document.getElementById('sidebarUserEmail');
+        const userAvatar = document.getElementById('userAvatar');
+        const gamesGrid = document.getElementById('gamesGrid');
+
+        function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('active'); }
+        menuToggle.addEventListener('click', (e) => { e.stopPropagation(); sidebar.classList.toggle('open'); overlay.classList.toggle('active'); });
+        overlay.addEventListener('click', closeSidebar);
+
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) { window.location.href = '/login.html'; return; }
+            const displayName = user.displayName || user.email.split('@')[0] || 'Utilisateur';
+            const initial = displayName.charAt(0).toUpperCase();
+            userGreetingSpan.textContent = displayName;
+            sidebarUserName.textContent = displayName;
+            sidebarUserEmail.textContent = user.email;
+            userAvatar.textContent = initial;
+
+            try {
+                const productsSnap = await db.collection('products').where('category', '==', 'gaming').where('active', '==', true).get();
+                if (!productsSnap.empty) {
+                    gamesGrid.innerHTML = '';
+                    productsSnap.forEach(doc => {
+                        const p = doc.data();
+                        const link = p.pageUrl || `/pages/products/${p.id || p.game || p.name.toLowerCase().replace(/\s+/g, '')}.html`;
+                        const card = document.createElement('a');
+                        card.href = link;
+                        card.className = 'game-card';
+                        card.innerHTML = `
+                            <img src="/assets/logos/${p.logo || 'placeholder.png'}" alt="${p.name}" loading="lazy" onerror="this.src='/assets/logos/placeholder.png'">
+                            <h3>${p.name}</h3>
+                            <div class="pricing">À partir de ${p.priceMin || p.price || '?'} HTG</div>
+                            <div class="btn-small">Voir les offres</div>
+                        `;
+                        gamesGrid.appendChild(card);
+                    });
+                } else {
+                    // Fallback basé sur la documentation
+                    const fallback = [
+                        { name: 'Free Fire', logo: 'freefire-logo.png', price: '157' },
+                        { name: 'FC Mobile', logo: 'fcmobile-logo.png', price: '95' },
+                        { name: 'E-Football', logo: 'efootball-logo.png', price: '220' },
+                        { name: 'PUBG Mobile', logo: 'pubgmobile-logo.png', price: '180' },
+                        { name: 'Blood Strike', logo: 'bloodstrike-logo.png', price: '80' },
+                        { name: 'Roblox', logo: 'roblox-logo.png', price: '750' },
+                        { name: 'DLS', logo: 'dls-logo.png', price: '400' },
+                        { name: 'Minecraft', logo: 'minecraft-logo.png', price: '316' },
+                        { name: 'Flex City', logo: 'flexcity-logo.png', price: '215' }
+                    ];
+                    gamesGrid.innerHTML = '';
+                    fallback.forEach(g => {
+                        const card = document.createElement('a');
+                        card.href = `/pages/products/${g.name.toLowerCase().replace(/\s+/g, '')}.html`;
+                        card.className = 'game-card';
+                        card.innerHTML = `
+                            <img src="/assets/logos/${g.logo}" alt="${g.name}" loading="lazy" onerror="this.src='/assets/logos/placeholder.png'">
+                            <h3>${g.name}</h3>
+                            <div class="pricing">À partir de ${g.price} HTG</div>
+                            <div class="btn-small">Voir les offres</div>
+                        `;
+                        gamesGrid.appendChild(card);
+                    });
+                }
+            } catch (error) {
+                console.error('Erreur chargement gaming', error);
+            }
+        });
+
+        async function handleLogout() { await auth.signOut(); window.location.href = '/'; }
+        logoutBtn.addEventListener('click', handleLogout);
+        sidebarLogout.addEventListener('click', handleLogout);
+    </script>
+</body>
+</html>
