@@ -2,402 +2,1038 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fox Store — Excellence en Services Digitaux & Gaming</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Fox Store – L'expérience digitale premium</title>
     
-    <!-- 
-        FOX STORE ARCHITECTURE v4.0 
-        INDEX ELITE - CONÇU POUR LA CONVERSION ET LE PROFESSIONNALISME
-        DESIGN: SAAS PREMIUM ROYAL BLUE
-    -->
-
-    <!-- Firebase SDK (Mode Compat) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     
-    <!-- Font Awesome 6 Pro -->
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- Premium Typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
+    <!-- Google Fonts -->
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* ==========================================================================
-           1. SYSTÈME DE DESIGN
-           ========================================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         :root {
-            --primary: #0056b3;
-            --primary-light: #00d1ff;
-            --secondary: #001e62;
+            --bg-deep: #06070a;
+            --bg-card: #0f121a;
+            --bg-surface: #151a22;
             --accent: #00d1ff;
-            --white: #ffffff;
-            --bg-body: #fcfdfe;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --success: #10b981;
-            --border: rgba(0, 86, 179, 0.08);
-            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            --shadow-elite: 0 20px 50px rgba(0, 45, 94, 0.05);
-            --radius-xl: 35px;
-            --radius-lg: 20px;
+            --text-main: #ffffff;
+            --text-muted: #8e95a2;
+            --text-tertiary: #5f6b7a;
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* ==========================================================================
-           2. GLOBAL RESET
-           ========================================================================== */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        
-        html { scroll-behavior: smooth; }
-        body { background-color: var(--bg-body); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
-
-        section { padding: 80px 5%; }
-
-        /* ==========================================================================
-           3. NAVIGATION (HEADER)
-           ========================================================================== */
-        nav {
-            height: 75px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px);
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 5%; position: fixed; width: 100%; top: 0; z-index: 2000;
-            border-bottom: 1px solid var(--border);
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-main);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-        .logo img { height: 42px; }
-        .logo span { font-weight: 800; font-size: 1.2rem; color: var(--secondary); letter-spacing: -1px; }
-
-        .nav-actions { display: flex; align-items: center; gap: 15px; }
-
-        .btn-nav {
-            padding: 10px 20px; border-radius: 12px; font-weight: 700; font-size: 0.85rem;
-            text-decoration: none; transition: var(--transition); display: flex; align-items: center; gap: 8px;
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 14px 20px;
+            background: rgba(6, 7, 10, 0.8);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--glass-border);
         }
-        .btn-login { color: var(--primary); background: transparent; }
-        .btn-register { color: var(--white); background: var(--primary); box-shadow: 0 8px 20px rgba(0, 86, 179, 0.2); }
-        .btn-register:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(0, 86, 179, 0.3); }
 
-        /* ==========================================================================
-           4. HERO SECTION
-           ========================================================================== */
+        .nav-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-family: 'Clash Display', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        .logo i {
+            font-size: 22px;
+            color: var(--accent);
+            transition: var(--transition);
+        }
+
+        .logo:hover i {
+            transform: scale(1.1);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            border: 1.5px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border-color: var(--glass-border);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--accent);
+            background: rgba(0, 209, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg-deep);
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(0, 209, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(0, 209, 255, 0.5);
+        }
+
+        /* Hero */
         .hero {
-            padding-top: 160px; padding-bottom: 100px; text-align: center;
-            background: radial-gradient(circle at top, rgba(0, 209, 255, 0.04) 0%, transparent 70%);
+            padding: 110px 20px 60px;
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
         }
 
-        .badge-elite {
-            display: inline-flex; align-items: center; gap: 8px; background: #f0f7ff; color: var(--primary);
-            padding: 8px 20px; border-radius: 50px; font-size: 0.75rem; font-weight: 800;
-            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 25px; border: 1px solid rgba(0, 86, 179, 0.1);
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(0, 209, 255, 0.12) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 60%, rgba(0, 209, 255, 0.08) 0%, transparent 50%);
+            pointer-events: none;
         }
 
-        .hero h1 { font-size: 3.5rem; font-weight: 800; color: var(--secondary); line-height: 1.1; margin-bottom: 25px; letter-spacing: -2px; }
-        .hero h1 span { color: var(--primary); }
-
-        .hero p { font-size: 1.1rem; color: var(--text-muted); max-width: 650px; margin: 0 auto 40px; font-weight: 500; }
-
-        .hero-btns { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
-        .btn-hero { padding: 20px 40px; border-radius: 18px; font-weight: 800; font-size: 1rem; text-decoration: none; transition: var(--transition); display: flex; align-items: center; gap: 12px; }
-        .btn-main { background: var(--primary); color: white; box-shadow: 0 15px 35px rgba(0, 86, 179, 0.25); }
-        .btn-main:hover { transform: translateY(-5px); box-shadow: 0 20px 45px rgba(0, 86, 179, 0.35); }
-        .btn-sec { background: var(--white); color: var(--secondary); border: 1px solid var(--border); }
-        .btn-sec:hover { background: var(--bg-body); border-color: var(--primary); }
-
-        /* ==========================================================================
-           5. TRUST FEATURES (PRO BAR)
-           ========================================================================== */
-        .trust-bar {
-            background: var(--white); border: 1px solid var(--border); margin: 0 5%;
-            border-radius: var(--radius-lg); display: grid; grid-template-columns: repeat(3, 1fr);
-            padding: 30px; gap: 20px; box-shadow: var(--shadow-elite); margin-top: -50px;
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 650px;
+            margin: 0 auto;
         }
 
-        .trust-item { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .trust-item i { width: 50px; height: 50px; background: #f0f7ff; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.3rem; }
-        .trust-item h4 { font-weight: 800; font-size: 0.95rem; color: var(--secondary); }
-        .trust-item p { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 209, 255, 0.08);
+            padding: 5px 12px;
+            border-radius: 40px;
+            border: 1px solid rgba(0, 209, 255, 0.2);
+            margin-bottom: 20px;
+        }
 
-        /* ==========================================================================
-           6. SERVICES SECTION
-           ========================================================================== */
-        .section-head { text-align: center; margin-bottom: 60px; }
-        .section-head h2 { font-size: 2.2rem; font-weight: 800; color: var(--secondary); margin-bottom: 15px; letter-spacing: -1px; }
-        .section-head p { color: var(--text-muted); font-weight: 500; font-size: 1rem; }
+        .hero-tag span {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
 
-        .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
-        
+        .hero h1 {
+            font-family: 'Clash Display', sans-serif;
+            font-size: clamp(32px, 6vw, 52px);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 14px;
+            letter-spacing: -1.5px;
+        }
+
+        .hero h1 span {
+            color: var(--accent);
+            position: relative;
+        }
+
+        .hero h1 span::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: var(--accent);
+            opacity: 0.2;
+            filter: blur(6px);
+        }
+
+        .hero p {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 35px;
+            flex-wrap: wrap;
+        }
+
+        .hero-buttons .btn {
+            padding: 10px 24px;
+            font-size: 14px;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-number {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Paiements : deux lignes distinctes */
+        .payments {
+            padding: 50px 20px;
+            background: var(--bg-card);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .section-header h2 {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .payments-grid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .payment-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px 60px;
+        }
+
+        .payment-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: var(--transition);
+            min-width: 120px;
+        }
+
+        .payment-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .payment-item img {
+            height: 70px;
+            width: auto;
+            max-width: 140px;
+            object-fit: contain;
+            filter: brightness(0.95);
+            transition: var(--transition);
+            margin-bottom: 10px;
+        }
+
+        .payment-item:hover img {
+            filter: brightness(1.1);
+        }
+
+        .payment-item span {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        /* Services */
+        .services {
+            padding: 60px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
         .service-card {
-            background: var(--white); border-radius: var(--radius-lg); padding: 40px;
-            border: 1px solid var(--border); transition: var(--transition);
-            box-shadow: var(--shadow-elite); position: relative;
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 24px 20px;
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+            text-decoration: none;
+            color: inherit;
+            display: block;
         }
-        .service-card:hover { transform: translateY(-10px); border-color: var(--primary); box-shadow: 0 30px 60px rgba(0, 45, 94, 0.08); }
-        
-        .service-card i { font-size: 2.5rem; color: var(--primary); margin-bottom: 25px; display: block; }
-        .service-card h3 { font-size: 1.5rem; font-weight: 800; color: var(--secondary); margin-bottom: 15px; }
-        .service-card p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 25px; line-height: 1.7; }
-        
-        .service-link { font-weight: 800; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
-        .service-link i { font-size: 0.8rem; margin: 0; }
 
-        /* ==========================================================================
-           7. PAIEMENT BARRE (MÉTHODES)
-           ========================================================================== */
-        .payment-methods { background: #f1f5f9; padding: 40px 5%; text-align: center; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
-        .payment-methods span { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 2px; display: block; margin-bottom: 30px; }
-        
-        .methods-flex { display: flex; justify-content: center; align-items: center; gap: 40px; flex-wrap: wrap; opacity: 0.6; filter: grayscale(1); transition: 0.3s; }
-        .methods-flex:hover { opacity: 1; filter: grayscale(0); }
-        .methods-flex img { height: 35px; }
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
 
-        /* ==========================================================================
-           8. FAQ SECTION
-           ========================================================================== */
-        .faq-container { max-width: 800px; margin: 0 auto; }
-        .faq-item { background: var(--white); border: 1px solid var(--border); border-radius: 18px; padding: 20px 25px; margin-bottom: 15px; cursor: pointer; transition: 0.3s; }
-        .faq-item:hover { border-color: var(--primary); }
-        .faq-question { display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: var(--secondary); font-size: 0.95rem; }
-        .faq-answer { font-size: 0.85rem; color: var(--text-muted); margin-top: 12px; display: none; line-height: 1.6; }
-        .faq-item.active .faq-answer { display: block; }
-        .faq-item.active i { transform: rotate(180deg); color: var(--primary); }
+        .service-icon {
+            width: 52px;
+            height: 52px;
+            background: var(--bg-surface);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 18px;
+            border: 1px solid var(--glass-border);
+        }
 
-        /* ==========================================================================
-           9. FOOTER
-           ========================================================================== */
-        footer { background: var(--white); border-top: 1px solid var(--border); padding: 80px 5% 40px; }
-        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 50px; margin-bottom: 60px; }
+        .service-icon i {
+            font-size: 24px;
+            color: var(--accent);
+        }
 
-        .footer-brand h2 { font-weight: 800; font-size: 1.5rem; color: var(--secondary); margin-bottom: 20px; }
-        .footer-brand p { color: var(--text-muted); font-size: 0.9rem; max-width: 300px; margin-bottom: 25px; }
+        .service-card h3 {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
 
-        .footer-links h4 { font-weight: 800; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 25px; }
-        .footer-links a { display: block; text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.9rem; margin-bottom: 15px; transition: 0.3s; }
-        .footer-links a:hover { color: var(--primary); padding-left: 5px; }
+        .service-card p {
+            color: var(--text-muted);
+            margin-bottom: 18px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
 
-        .footer-bottom { border-top: 1px solid #f1f5f9; padding-top: 40px; display: flex; justify-content: space-between; align-items: center; }
-        .footer-bottom p { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
-        .secure-label { display: flex; align-items: center; gap: 8px; color: var(--success); font-weight: 800; font-size: 0.75rem; }
+        .service-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 13px;
+        }
 
-        /* ==========================================================================
-           10. RESPONSIVE MOBILE FIXES
-           ========================================================================== */
-        @media (max-width: 1024px) {
-            .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
-            .hero h1 { font-size: 2.5rem; }
+        .service-link i {
+            transition: var(--transition);
+        }
+
+        .service-card:hover .service-link i {
+            transform: translateX(4px);
+        }
+
+        /* Produits populaires : 3 produits, logos très grands */
+        .products {
+            padding: 50px 20px;
+            background: var(--bg-card);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 900px;
+            margin: 30px auto 0;
+        }
+
+        .product-card {
+            background: rgba(15, 18, 26, 0.6);
+            backdrop-filter: blur(4px);
+            border-radius: 28px;
+            padding: 30px 20px 25px;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent);
+            background: rgba(15, 18, 26, 0.8);
+        }
+
+        .product-card img {
+            height: 180px;        /* très grand */
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.7));
+            transition: var(--transition);
+            border-radius: 20px;   /* bords arrondis pour un style plus doux */
+            background: rgba(255,255,255,0.02); /* très léger fond pour détacher */
+            padding: 10px;
+        }
+
+        .product-card:hover img {
+            filter: drop-shadow(0 12px 24px rgba(0,209,255,0.3));
+            transform: scale(1.02);
+        }
+
+        .product-card h4 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .product-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        /* Features */
+        .features {
+            padding: 60px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .feature-item {
+            text-align: center;
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--bg-card);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+            border: 1px solid var(--glass-border);
+            font-size: 24px;
+            color: var(--accent);
+        }
+
+        .feature-item h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .feature-item p {
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+
+        /* CTA */
+        .cta {
+            padding: 60px 20px;
+            background: var(--bg-card);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-content {
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta h2 {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .cta p {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .cta .btn {
+            padding: 12px 32px;
+            font-size: 14px;
+        }
+
+        .cta-background {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 209, 255, 0.1) 0%, transparent 30%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-deep);
+            padding: 45px 20px 20px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .footer-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-col:first-child p {
+            color: var(--text-muted);
+            margin: 14px 0;
+            line-height: 1.6;
+            font-size: 12px;
+        }
+
+        .footer-col .logo {
+            font-size: 18px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .footer-col .logo i {
+            font-size: 20px;
+            color: var(--accent);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .social-links a {
+            width: 38px;
+            height: 38px;
+            background: var(--bg-surface);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 16px;
+        }
+
+        .social-links a:hover {
+            background: var(--accent);
+            color: var(--bg-deep);
+            transform: translateY(-3px);
+            border-color: var(--accent);
+        }
+
+        .footer-col h4 {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            color: var(--text-main);
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 8px;
+        }
+
+        .footer-col ul li a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 12px;
+        }
+
+        .footer-col ul li a:hover {
+            color: var(--accent);
+            padding-left: 4px;
+        }
+
+        .footer-bottom {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-tertiary);
+            font-size: 11px;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         @media (max-width: 768px) {
-            .trust-bar { grid-template-columns: 1fr; padding: 20px; margin-top: -30px; }
-            .hero { padding-top: 120px; padding-bottom: 80px; }
-            .hero h1 { font-size: 2.2rem; }
-            .btn-hero { width: 100%; justify-content: center; }
-            .footer-grid { grid-template-columns: 1fr; gap: 30px; }
-            .footer-bottom { flex-direction: column; gap: 20px; text-align: center; }
-            .logo span { font-size: 1rem; }
-            .btn-nav span { display: none; } /* Hide text on mobile nav btns */
-            .btn-nav { padding: 10px; border-radius: 10px; }
+            .navbar {
+                padding: 10px 16px;
+            }
+            .hero {
+                padding: 90px 16px 50px;
+            }
+            .hero h1 {
+                font-size: 30px;
+            }
+            .hero-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .hero-buttons .btn {
+                text-align: center;
+                justify-content: center;
+            }
+            .products-grid {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+            .product-card img {
+                height: 150px;
+            }
+            .payment-row {
+                gap: 20px 30px;
+            }
+            .payment-item img {
+                height: 60px;
+            }
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
+        @media (max-width: 480px) {
+            .logo span {
+                font-size: 16px;
+            }
+            .logo i {
+                font-size: 18px;
+            }
+            .nav-buttons .btn-outline span {
+                display: none;
+            }
+            .nav-buttons .btn-outline i {
+                margin: 0;
+            }
+            .products-grid {
+                max-width: 300px;
+            }
+            .product-card img {
+                height: 130px;
+            }
+            .payment-row {
+                gap: 15px 20px;
+            }
+            .payment-item {
+                min-width: 100px;
+            }
+            .payment-item img {
+                height: 50px;
+            }
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            .footer-bottom {
+                flex-direction: column;
+                gap: 6px;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <i class="fas fa-fox"></i>
+                <span>FOX STORE</span>
+            </a>
 
-    <!-- Header Navigation -->
-    <nav>
-        <a href="/index.html" class="logo">
-            <img src="/assets/logos/payfusion-logo.png" alt="Fox Store Logo">
-            <span>FOX STORE</span>
-        </a>
-        <div class="nav-actions">
-            <a href="/login.html" class="btn-nav btn-login">
-                <i class="fas fa-sign-in-alt"></i> <span>Connexion</span>
-            </a>
-            <a href="/register.html" class="btn-nav btn-register">
-                <i class="fas fa-user-plus"></i> <span>Rejoindre</span>
-            </a>
+            <div class="nav-buttons">
+                <a href="/login.html" class="btn btn-outline">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Connexion</span>
+                </a>
+                <a href="/register.html" class="btn btn-primary">
+                    <span>S'inscrire</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <header class="hero">
-        <div class="badge-elite">
-            <i class="fas fa-award"></i> Leader Digital en Haïti
-        </div>
-        <h1>Dominez votre Univers <span>Numérique</span></h1>
-        <p>La plateforme d'excellence pour vos recharges gaming, abonnements de streaming premium et solutions financières internationales.</p>
-        <div class="hero-btns">
-            <a href="/register.html" class="btn-hero btn-main">Commencer l'Expérience <i class="fas fa-rocket"></i></a>
-            <a href="#services" class="btn-hero btn-sec">Découvrir nos offres</a>
-        </div>
-    </header>
-
-    <!-- Trust Features Bar -->
-    <div class="trust-bar">
-        <div class="trust-item">
-            <i class="fas fa-bolt"></i>
-            <h4>Rapidité Chirurgicale</h4>
-            <p>Livraison en moins de 15 min.</p>
-        </div>
-        <div class="trust-item">
-            <i class="fas fa-shield-check"></i>
-            <h4>Sécurité Totale</h4>
-            <p>Transactions cryptées SSL.</p>
-        </div>
-        <div class="trust-item">
-            <i class="fas fa-headset"></i>
-            <h4>Support Elite</h4>
-            <p>Assistance humaine 7j/7.</p>
-        </div>
-    </div>
-
-    <!-- Services Section -->
-    <section id="services">
-        <div class="section-head">
-            <h2>Nos Domaines d'Excellence</h2>
-            <p>Des services triés sur le volet pour les utilisateurs les plus exigeants.</p>
-        </div>
-
-        <div class="service-grid">
-            <!-- Gaming -->
-            <div class="service-card">
-                <i class="fas fa-gamepad-modern"></i>
-                <h3>Gaming Pro</h3>
-                <p>Recharges diamants Free Fire, UC PUBG, et points FC Mobile. Nous sommes le partenaire officiel de vos victoires.</p>
-                <a href="/register.html" class="service-link">Voir le catalogue <i class="fas fa-chevron-right"></i></a>
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-content">
+            <div class="hero-tag">
+                <i class="fas fa-bolt"></i>
+                <span>L'ÉLITE DU SERVICE DIGITAL</span>
+            </div>
+            <h1>Bienvenue dans <span>l'ère</span> du digital</h1>
+            <p>Gaming, Streaming et Services Financiers. Une plateforme unique pour tous vos besoins numériques.</p>
+            
+            <div class="hero-buttons">
+                <a href="/register.html" class="btn btn-primary">
+                    Créer un compte
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <a href="#services" class="btn btn-outline">
+                    Découvrir nos services
+                </a>
             </div>
 
-            <!-- Streaming -->
-            <div class="service-card">
-                <i class="fas fa-play-circle"></i>
-                <h3>Streaming Premium</h3>
-                <p>Netflix 4K, Disney+, et Prime Video. Accédez à vos films et séries préférés sans aucune restriction géographique.</p>
-                <a href="/register.html" class="service-link">Explorer les abonnements <i class="fas fa-chevron-right"></i></a>
-            </div>
-
-            <!-- Finance -->
-            <div class="service-card">
-                <i class="fas fa-wallet"></i>
-                <h3>Finance Mondiale</h3>
-                <p>Recharges Wise, PayPal et USDT. Brisez les barrières bancaires et accédez aux marchés internationaux.</p>
-                <a href="/register.html" class="service-link">Recharger mon compte <i class="fas fa-chevron-right"></i></a>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">15k+</span>
+                    <span class="stat-label">Clients</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">50k+</span>
+                    <span class="stat-label">Transactions</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">99.9%</span>
+                    <span class="stat-label">Satisfaction</span>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Payment Methods Bar -->
-    <div class="payment-methods">
-        <span>Nous acceptons les paiements via</span>
-        <div class="methods-flex">
-            <img src="/assets/logos/moncash-logo.png" alt="Moncash">
-            <img src="/assets/logos/natcash-logo.png" alt="Natcash">
-            <img src="/assets/logos/usdt-logo.png" alt="USDT">
-            <img src="/assets/logos/wise-logo.png" alt="Wise">
-            <img src="/assets/logos/paypal-logo.png" alt="PayPal">
-        </div>
-    </div>
-
-    <!-- FAQ Section -->
-    <section>
-        <div class="section-head">
-            <h2>Questions Fréquentes</h2>
-            <p>Tout ce que vous devez savoir pour démarrer sereinement.</p>
+    <!-- Paiements : deux lignes horizontales distinctes -->
+    <section class="payments">
+        <div class="section-header">
+            <h2>Paiements sécurisés</h2>
+            <p>Nous acceptons toutes les méthodes populaires en Haïti</p>
         </div>
 
-        <div class="faq-container">
-            <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-question">Quels sont les délais de livraison ? <i class="fas fa-chevron-down"></i></div>
-                <div class="faq-answer">La majorité de nos services sont livrés entre 5 et 15 minutes après la validation de votre paiement par nos administrateurs.</div>
+        <div class="payments-grid">
+            <!-- Première ligne : 3 premiers -->
+            <div class="payment-row">
+                <div class="payment-item">
+                    <img src="/assets/logos/moncash-logo.png" alt="Moncash">
+                    <span>Moncash</span>
+                </div>
+                <div class="payment-item">
+                    <img src="/assets/logos/natcash-logo.png" alt="Natcash">
+                    <span>Natcash</span>
+                </div>
+                <div class="payment-item">
+                    <img src="/assets/logos/wise-logo.png" alt="Wise">
+                    <span>Wise</span>
+                </div>
             </div>
-            <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-question">Comment puis-je payer ? <i class="fas fa-chevron-down"></i></div>
-                <div class="faq-answer">Nous acceptons Moncash, Natcash, Wise, PayPal, et les crypto-monnaies (USDT/TRX) pour une flexibilité maximale.</div>
+            <!-- Deuxième ligne : 3 suivants -->
+            <div class="payment-row">
+                <div class="payment-item">
+                    <img src="/assets/logos/paypal-logo.png" alt="PayPal">
+                    <span>PayPal</span>
+                </div>
+                <div class="payment-item">
+                    <img src="/assets/logos/usdt-logo.png" alt="USDT">
+                    <span>USDT</span>
+                </div>
+                <div class="payment-item">
+                    <img src="/assets/logos/tronx-logo.png" alt="TRONX">
+                    <span>TRONX</span>
+                </div>
             </div>
-            <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-question">Mes données sont-elles sécurisées ? <i class="fas fa-chevron-down"></i></div>
-                <div class="faq-answer">Absolument. Nous utilisons l'infrastructure Firebase de Google pour l'authentification et le stockage de vos données, garantissant un niveau de sécurité bancaire.</div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section class="services" id="services">
+        <div class="section-header">
+            <h2>Nos services premium</h2>
+            <p>Des solutions adaptées à tous vos besoins</p>
+        </div>
+
+        <div class="services-grid">
+            <a href="/gaming.html" class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <h3>Gaming Elite</h3>
+                <p>Free Fire, PUBG, Roblox, FC Mobile, Blood Strike et plus. Diamants, UC, Robux en stock permanent.</p>
+                <div class="service-link">
+                    Explorer <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="/streaming.html" class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-film"></i>
+                </div>
+                <h3>Streaming 4K</h3>
+                <p>Netflix, Disney+, Prime Video, Crunchyroll. Comptes Premium avec garantie et support prioritaire.</p>
+                <div class="service-link">
+                    Explorer <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a href="/finance.html" class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <h3>Finance Digitale</h3>
+                <p>Wise, PayPal, USDT, TRONX. Recharges instantanées aux meilleurs taux du marché.</p>
+                <div class="service-link">
+                    Explorer <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Produits populaires : 3 produits, logos très grands et soignés -->
+    <section class="products">
+        <div class="section-header">
+            <h2>Les plus populaires</h2>
+            <p>Découvrez ce que nos clients préfèrent</p>
+        </div>
+
+        <div class="products-grid">
+            <a href="/pages/products/freefire.html" class="product-card">
+                <img src="/assets/logos/freefire-logo.png" alt="Free Fire">
+                <h4>Free Fire</h4>
+                <div class="product-price">157 HTG</div>
+            </a>
+            <a href="/pages/products/netflix.html" class="product-card">
+                <img src="/assets/logos/netflix-logo.png" alt="Netflix">
+                <h4>Netflix</h4>
+                <div class="product-price">400 HTG</div>
+            </a>
+            <a href="/pages/products/wise.html" class="product-card">
+                <img src="/assets/logos/wise-logo.png" alt="Wise">
+                <h4>Wise</h4>
+                <div class="product-price">150/$</div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h4>Livraison instantanée</h4>
+                <p>Moins de 60 secondes après validation</p>
             </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h4>Sécurité maximale</h4>
+                <p>Données cryptées, authentification Firebase</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h4>Support 24/7</h4>
+                <p>Une équipe toujours disponible</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <h4>Portefeuille intégré</h4>
+                <p>Gérez votre solde en toute simplicité</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="cta-background"></div>
+        <div class="cta-content">
+            <h2>Prêt à rejoindre l'élite ?</h2>
+            <p>Créez votre compte gratuitement et accédez à tous nos services</p>
+            <a href="/register.html" class="btn btn-primary">
+                Commencer maintenant
+                <i class="fas fa-arrow-right"></i>
+            </a>
         </div>
     </section>
 
     <!-- Footer -->
     <footer>
-        <div class="footer-grid">
-            <div class="footer-brand">
-                <h2>FOX STORE</h2>
-                <p>Votre pont technologique vers les services digitaux mondiaux depuis Haïti. Rapidité, Fiabilité, Sécurité.</p>
-                <div class="secure-label">
-                    <i class="fas fa-shield-check"></i> PROTECTION SSL SÉCURISÉE
+        <div class="footer-content">
+            <div class="footer-col">
+                <div class="logo">
+                    <i class="fas fa-fox"></i>
+                    <span>FOX STORE</span>
+                </div>
+                <p>L'élite du service digital en Haïti et dans la Caraïbe. Plus de 50 000 transactions réussies.</p>
+                <div class="social-links">
+                    <a href="https://www.tiktok.com/@foxstore_haitii" target="_blank"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://www.instagram.com/foxstore_haitii" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://facebook.com/foxstorehaiti" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://wa.me/50936535649" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://t.me/foxstore_haitii" target="_blank"><i class="fab fa-telegram"></i></a>
                 </div>
             </div>
-
-            <div class="footer-links">
-                <h4>Navigation</h4>
-                <a href="/login.html">Connexion</a>
-                <a href="/register.html">Inscription</a>
-                <a href="#services">Nos Services</a>
+            <div class="footer-col">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="/gaming.html">Gaming</a></li>
+                    <li><a href="/streaming.html">Streaming</a></li>
+                    <li><a href="/finance.html">Finance</a></li>
+                    <li><a href="/wallet/dashboard.html">Wallet</a></li>
+                </ul>
             </div>
-
-            <div class="footer-links">
-                <h4>Assistance</h4>
-                <a href="/user/supports.html">Centre d'aide</a>
-                <a href="/user/supports.html">Contact WhatsApp</a>
-                <a href="/user/settings.html">Légal & CGU</a>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="/user/supports.html">Centre d'aide</a></li>
+                    <li><a href="/orders.html">Mes commandes</a></li>
+                    <li><a href="/user/account.html">Mon compte</a></li>
+                    <li><a href="/user/notifications.html">Notifications</a></li>
+                </ul>
             </div>
-
-            <div class="footer-links">
-                <h4>Réseaux</h4>
-                <a href="#"><i class="fab fa-facebook-f" style="width: 20px;"></i> Facebook</a>
-                <a href="#"><i class="fab fa-instagram" style="width: 20px;"></i> Instagram</a>
-                <a href="#"><i class="fab fa-tiktok" style="width: 20px;"></i> TikTok</a>
+            <div class="footer-col">
+                <h4>Légal</h4>
+                <ul>
+                    <li><a href="#">Conditions d'utilisation</a></li>
+                    <li><a href="#">Politique de confidentialité</a></li>
+                    <li><a href="#">Mentions légales</a></li>
+                </ul>
             </div>
         </div>
-
         <div class="footer-bottom">
-            <p>&copy; 2026 Fox Store Elite. Développé pour l'excellence.</p>
-            <div class="secure-label" style="color: var(--text-muted);">
-                VERSION 4.0.2
-            </div>
+            <p>© 2025 Fox Store. Tous droits réservés.</p>
+            <p>Design élite - Performance absolue</p>
         </div>
     </footer>
 
     <script>
-        /* --- FIREBASE CONFIG --- */
+        // Configuration Firebase (projet fox-storeht)
         const firebaseConfig = {
-            apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg",
-            authDomain: "pay-fusion-6dfaf.firebaseapp.com",
-            projectId: "pay-fusion-6dfaf",
-            storageBucket: "pay-fusion-6dfaf.firebasestorage.app",
-            messagingSenderId: "945593776812",
-            appId: "1:945593776812:web:4475e1085fdfa31690fd09",
-            measurementId: "G-8FEQG6B7ZY"
+            apiKey: "AIzaSyA0n2m2R9q07HQ94V58CdbNTlxnKztdmQo",
+            authDomain: "fox-storeht.firebaseapp.com",
+            projectId: "fox-storeht",
+            storageBucket: "fox-storeht.firebasestorage.app",
+            messagingSenderId: "589792388283",
+            appId: "1:589792388283:web:c372bd886f0a98e82db59e",
+            measurementId: "G-WN9M206F4M"
         };
         
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-
-        // Redirect if already logged in
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                window.location.href = "/home.html";
-            }
-        });
-
-        // FAQ Toggle Logic
-        function toggleFaq(el) {
-            document.querySelectorAll('.faq-item').forEach(item => {
-                if(item !== el) item.classList.remove('active');
-            });
-            el.classList.toggle('active');
-        }
-
-        // Smooth reveal on scroll (optional elite touch)
-        window.addEventListener('scroll', () => {
-            const nav = document.querySelector('nav');
-            if (window.scrollY > 50) {
-                nav.style.boxShadow = "0 10px 30px rgba(0,0,0,0.05)";
-            } else {
-                nav.style.boxShadow = "none";
-            }
-        });
     </script>
 </body>
 </html>
