@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -24,8 +24,8 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #f8fafc;
-            color: #0a0c10;
+            background: #f5f7fb;
+            color: #1a1f36;
             line-height: 1.5;
             min-height: 100vh;
             display: flex;
@@ -40,9 +40,10 @@
             width: 100%;
             z-index: 1000;
             padding: 12px 24px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
         }
 
         .nav-container {
@@ -56,42 +57,42 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             text-decoration: none;
             font-weight: 700;
-            font-size: 18px;
-            color: #0a0c10;
+            font-size: 20px;
+            color: #1a1f36;
             letter-spacing: -0.3px;
         }
 
         .logo i {
-            font-size: 20px;
+            font-size: 22px;
             color: #00d1ff;
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
 
         .logo:hover i {
-            transform: scale(1.05);
+            transform: scale(1.02);
         }
 
-        /* Menu burger */
-        .burger-menu {
+        /* Burger button */
+        .burger-btn {
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 24px;
-            color: #0a0c10;
-            transition: all 0.3s;
+            font-size: 22px;
+            color: #1a1f36;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
             width: 40px;
             height: 40px;
-            border-radius: 50%;
+            border-radius: 12px;
         }
 
-        .burger-menu:hover {
-            background: rgba(0, 0, 0, 0.05);
+        .burger-btn:hover {
+            background: rgba(0, 0, 0, 0.04);
             color: #00d1ff;
         }
 
@@ -99,17 +100,16 @@
         .drawer {
             position: fixed;
             top: 0;
-            right: -300px;
-            width: 280px;
+            right: -280px;
+            width: 260px;
             height: 100%;
             background: #ffffff;
-            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+            box-shadow: -4px 0 24px rgba(0, 0, 0, 0.08);
             z-index: 2000;
-            transition: right 0.3s ease;
+            transition: right 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
             display: flex;
             flex-direction: column;
-            padding: 24px 20px;
-            border-left: 1px solid rgba(0, 0, 0, 0.06);
+            border-left: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .drawer.open {
@@ -120,9 +120,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 32px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            padding: 20px 20px 16px;
+            border-bottom: 1px solid #edf2f7;
         }
 
         .drawer-header .logo {
@@ -132,15 +131,24 @@
         .close-drawer {
             background: none;
             border: none;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
-            color: #4a5568;
+            color: #6b7280;
+            padding: 6px;
+            border-radius: 8px;
+        }
+
+        .close-drawer:hover {
+            background: #f3f4f6;
+            color: #1a1f36;
         }
 
         .drawer-nav {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            padding: 20px 12px;
+            gap: 8px;
         }
 
         .drawer-nav a, .drawer-nav button {
@@ -150,7 +158,7 @@
             padding: 10px 12px;
             border-radius: 12px;
             text-decoration: none;
-            color: #0a0c10;
+            color: #1f2937;
             font-size: 14px;
             font-weight: 500;
             transition: all 0.2s;
@@ -162,12 +170,17 @@
         }
 
         .drawer-nav a i, .drawer-nav button i {
-            width: 20px;
-            color: #00d1ff;
+            width: 22px;
+            font-size: 16px;
+            color: #6b7280;
         }
 
         .drawer-nav a:hover, .drawer-nav button:hover {
-            background: #f1f5f9;
+            background: #f3f4f6;
+        }
+
+        .drawer-nav a:hover i, .drawer-nav button:hover i {
+            color: #00d1ff;
         }
 
         .drawer-overlay {
@@ -176,9 +189,10 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.3);
             z-index: 1999;
             display: none;
+            backdrop-filter: blur(2px);
         }
 
         .drawer-overlay.active {
@@ -188,35 +202,36 @@
         /* Main content */
         .main-content {
             flex: 1;
-            padding: 90px 24px 48px;
+            padding: 90px 24px 60px;
             max-width: 1200px;
             margin: 0 auto;
             width: 100%;
         }
 
-        /* Welcome section */
-        .welcome-section {
-            background: #ffffff;
-            border-radius: 24px;
+        /* Welcome card */
+        .welcome-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 28px;
             padding: 28px 32px;
             margin-bottom: 32px;
-            border: 1px solid rgba(0, 0, 0, 0.06);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
         }
 
-        .welcome-section h1 {
-            font-size: 22px;
+        .welcome-card h1 {
+            font-size: 24px;
             font-weight: 600;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
         }
 
-        .welcome-section h1 span {
+        .welcome-card h1 span {
             color: #00d1ff;
         }
 
-        .welcome-section p {
-            color: #4a5568;
-            font-size: 13px;
+        .welcome-card p {
+            color: #4b5563;
+            font-size: 14px;
         }
 
         .admin-badge {
@@ -225,20 +240,21 @@
             color: #00d1ff;
             font-size: 11px;
             font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 20px;
+            padding: 3px 10px;
+            border-radius: 30px;
             margin-left: 10px;
             border: 1px solid #00d1ff20;
+            vertical-align: middle;
         }
 
-        /* Section titles */
+        /* Section title */
         .section-title {
             font-size: 18px;
             font-weight: 600;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .section-title i {
@@ -249,188 +265,190 @@
         /* Services grid */
         .services-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
         }
 
         .service-card {
             background: #ffffff;
-            border-radius: 20px;
-            padding: 20px;
+            border-radius: 24px;
+            padding: 24px 20px;
             text-align: center;
             text-decoration: none;
             color: inherit;
-            border: 1px solid rgba(0, 0, 0, 0.06);
-            transition: all 0.3s;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            border: 1px solid #edf2f7;
+            transition: all 0.25s;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
         }
 
         .service-card:hover {
             transform: translateY(-3px);
-            border-color: #00d1ff;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            border-color: #e2e8f0;
+            box-shadow: 0 12px 20px -12px rgba(0, 0, 0, 0.08);
         }
 
         .service-icon {
-            width: 56px;
-            height: 56px;
+            width: 64px;
+            height: 64px;
             background: #f1f5f9;
-            border-radius: 16px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 16px;
-            border: 1px solid rgba(0, 0, 0, 0.04);
+            margin: 0 auto 18px;
         }
 
         .service-icon i {
-            font-size: 26px;
+            font-size: 28px;
             color: #00d1ff;
         }
 
         .service-card h3 {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
         .service-card p {
-            color: #4a5568;
-            font-size: 12px;
-            margin-bottom: 14px;
+            color: #4b5563;
+            font-size: 13px;
+            margin-bottom: 16px;
             line-height: 1.4;
         }
 
         .service-link {
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             color: #00d1ff;
             font-weight: 500;
-            font-size: 12px;
+            font-size: 13px;
         }
 
-        /* Actions grid */
+        /* Quick actions */
         .actions-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 48px;
         }
 
         .action-card {
             background: #ffffff;
-            border-radius: 16px;
-            padding: 16px;
+            border-radius: 20px;
+            padding: 20px;
             text-align: center;
             text-decoration: none;
             color: inherit;
-            border: 1px solid rgba(0, 0, 0, 0.06);
-            transition: all 0.3s;
+            border: 1px solid #edf2f7;
+            transition: all 0.2s;
         }
 
         .action-card:hover {
-            border-color: #00d1ff;
+            border-color: #cbd5e1;
             transform: translateY(-2px);
         }
 
         .action-card i {
-            font-size: 24px;
+            font-size: 28px;
             color: #00d1ff;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .action-card h4 {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             margin-bottom: 4px;
         }
 
         .action-card p {
-            font-size: 11px;
-            color: #6c757d;
+            font-size: 12px;
+            color: #6b7280;
         }
 
         /* Stats */
-        .stats {
+        .stats-grid {
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             flex-wrap: wrap;
-            gap: 16px;
+            gap: 20px;
             background: #ffffff;
-            border-radius: 20px;
-            padding: 24px 20px;
-            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 24px;
+            padding: 24px 28px;
+            border: 1px solid #edf2f7;
             margin-bottom: 40px;
         }
 
         .stat-item {
             text-align: center;
+            flex: 1;
+            min-width: 100px;
         }
 
         .stat-number {
-            font-size: 22px;
+            font-size: 28px;
             font-weight: 700;
             color: #00d1ff;
+            margin-bottom: 4px;
         }
 
         .stat-label {
-            font-size: 11px;
-            color: #4a5568;
+            font-size: 12px;
+            color: #6b7280;
             text-transform: uppercase;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.5px;
         }
 
         /* Footer */
         footer {
-            background: #ffffff;
-            border-top: 1px solid rgba(0, 0, 0, 0.06);
+            background: transparent;
+            border-top: 1px solid #e2e8f0;
             padding: 20px;
             text-align: center;
-            color: #6c757d;
-            font-size: 11px;
+            color: #6b7280;
+            font-size: 12px;
         }
 
-        /* WhatsApp flottant */
+        /* WhatsApp float */
         .whatsapp-float {
             position: fixed;
             bottom: 24px;
             right: 24px;
-            background-color: #25D366;
+            background: #25D366;
             color: white;
-            width: 56px;
-            height: 56px;
+            width: 54px;
+            height: 54px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 28px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s;
+            transition: all 0.2s;
             z-index: 1000;
             text-decoration: none;
         }
 
         .whatsapp-float:hover {
-            transform: scale(1.08);
-            background-color: #20b859;
+            transform: scale(1.05);
+            background: #20b859;
         }
 
         @media (max-width: 768px) {
             .main-content {
-                padding: 80px 16px 32px;
+                padding: 80px 16px 40px;
             }
-            .welcome-section {
+            .welcome-card {
                 padding: 20px;
             }
-            .welcome-section h1 {
+            .welcome-card h1 {
                 font-size: 20px;
             }
             .services-grid {
                 grid-template-columns: 1fr;
             }
-            .stats {
+            .stats-grid {
                 flex-direction: column;
                 align-items: center;
             }
@@ -453,28 +471,28 @@
                 <i class="fas fa-fox"></i>
                 <span>FOX STORE</span>
             </a>
-            <button class="burger-menu" id="burgerBtn">
+            <button class="burger-btn" id="burgerBtn" aria-label="Menu">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
     </nav>
 
-    <!-- Drawer overlay -->
+    <!-- Overlay pour fermer le drawer -->
     <div class="drawer-overlay" id="drawerOverlay"></div>
 
-    <!-- Drawer menu -->
+    <!-- Drawer (menu latéral) -->
     <div class="drawer" id="drawer">
         <div class="drawer-header">
             <div class="logo">
                 <i class="fas fa-fox"></i>
-                <span>FOX STORE</span>
+                <span>Menu</span>
             </div>
-            <button class="close-drawer" id="closeDrawerBtn">
+            <button class="close-drawer" id="closeDrawerBtn" aria-label="Fermer">
                 <i class="fas fa-times"></i>
             </button>
         </div>
         <div class="drawer-nav" id="drawerNav">
-            <!-- Les liens seront injectés dynamiquement -->
+            <!-- Liens injectés par JavaScript -->
         </div>
     </div>
 
@@ -483,14 +501,13 @@
         <i class="fab fa-whatsapp"></i>
     </a>
 
-    <!-- Main content -->
+    <!-- Contenu principal -->
     <div class="main-content">
-        <div class="welcome-section" id="welcomeSection">
+        <div class="welcome-card">
             <h1>Bonjour, <span id="userName">Utilisateur</span><span id="adminBadge" style="display: none;" class="admin-badge">Administrateur</span></h1>
-            <p>Bienvenue sur votre espace Fox Store. Gérez vos commandes, services et paramètres.</p>
+            <p>Accédez rapidement à vos services, commandes et paramètres.</p>
         </div>
 
-        <!-- Services principaux -->
         <div class="section-title">
             <i class="fas fa-crown"></i>
             <h2>Services premium</h2>
@@ -499,7 +516,7 @@
             <a href="/pages/products/freefire.html" class="service-card">
                 <div class="service-icon"><i class="fas fa-gamepad"></i></div>
                 <h3>Gaming</h3>
-                <p>Free Fire, PUBG, Roblox, FC Mobile, Diamants, UC et plus.</p>
+                <p>Free Fire, PUBG, Roblox, FC Mobile, Diamants, UC.</p>
                 <span class="service-link">Explorer <i class="fas fa-arrow-right"></i></span>
             </a>
             <a href="/pages/products/netflix.html" class="service-card">
@@ -511,12 +528,11 @@
             <a href="/pages/products/wise.html" class="service-card">
                 <div class="service-icon"><i class="fas fa-coins"></i></div>
                 <h3>Finance</h3>
-                <p>Wise, PayPal, USDT, TRONX. Recharges aux meilleurs taux.</p>
+                <p>Wise, PayPal, USDT, TRONX. Recharges instantanées.</p>
                 <span class="service-link">Explorer <i class="fas fa-arrow-right"></i></span>
             </a>
         </div>
 
-        <!-- Actions rapides -->
         <div class="section-title">
             <i class="fas fa-bolt"></i>
             <h2>Accès rapide</h2>
@@ -525,7 +541,7 @@
             <a href="/orders.html" class="action-card">
                 <i class="fas fa-shopping-cart"></i>
                 <h4>Mes commandes</h4>
-                <p>Suivez vos achats</p>
+                <p>Suivi et historique</p>
             </a>
             <a href="/user/account.html" class="action-card">
                 <i class="fas fa-user-circle"></i>
@@ -540,12 +556,11 @@
             <a href="/user/supports.html" class="action-card">
                 <i class="fas fa-headset"></i>
                 <h4>Support</h4>
-                <p>Aide et assistance</p>
+                <p>Aide 24/7</p>
             </a>
         </div>
 
-        <!-- Statistiques -->
-        <div class="stats">
+        <div class="stats-grid">
             <div class="stat-item">
                 <div class="stat-number">15k+</div>
                 <div class="stat-label">Clients</div>
@@ -570,7 +585,7 @@
     </footer>
 
     <script>
-        // Configuration Firebase
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDSyFdTHBNULuUiacHM6nmEvPb7YpY24UE",
             authDomain: "foxstoreht.firebaseapp.com",
@@ -584,6 +599,7 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
 
+        // DOM elements
         const userNameSpan = document.getElementById('userName');
         const adminBadge = document.getElementById('adminBadge');
         const drawerNav = document.getElementById('drawerNav');
@@ -594,6 +610,7 @@
 
         const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
 
+        // Drawer controls
         function closeDrawer() {
             drawer.classList.remove('open');
             drawerOverlay.classList.remove('active');
@@ -608,9 +625,10 @@
         closeDrawerBtn.addEventListener('click', closeDrawer);
         drawerOverlay.addEventListener('click', closeDrawer);
 
+        // Update UI based on auth state
         function updateUserDisplay(user) {
             if (user) {
-                const displayName = user.displayName || user.email || 'Utilisateur';
+                const displayName = user.displayName || user.email || 'Client';
                 userNameSpan.textContent = displayName;
 
                 const isAdmin = (user.email === ADMIN_EMAIL);
@@ -620,8 +638,8 @@
                     adminBadge.style.display = 'none';
                 }
 
-                // Construire le menu drawer
-                let drawerHtml = `
+                // Build drawer menu
+                let menuHtml = `
                     <a href="/home.html"><i class="fas fa-home"></i> Accueil</a>
                     <a href="/orders.html"><i class="fas fa-shopping-cart"></i> Mes commandes</a>
                     <a href="/user/account.html"><i class="fas fa-user"></i> Mon compte</a>
@@ -629,10 +647,10 @@
                     <a href="/user/supports.html"><i class="fas fa-headset"></i> Support</a>
                 `;
                 if (isAdmin) {
-                    drawerHtml += `<a href="/admin.html"><i class="fas fa-shield-alt"></i> Administration</a>`;
+                    menuHtml += `<a href="/admin.html"><i class="fas fa-shield-alt"></i> Administration</a>`;
                 }
-                drawerHtml += `<button id="drawerLogoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>`;
-                drawerNav.innerHTML = drawerHtml;
+                menuHtml += `<button id="drawerLogoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>`;
+                drawerNav.innerHTML = menuHtml;
 
                 const logoutBtn = document.getElementById('drawerLogoutBtn');
                 if (logoutBtn) {
@@ -642,6 +660,7 @@
                     });
                 }
             } else {
+                // Not logged in, redirect to login
                 window.location.href = '/login.html';
             }
         }
@@ -650,6 +669,7 @@
             updateUserDisplay(user);
         });
 
+        // Handle potential redirect result (for Google sign-in)
         auth.getRedirectResult().catch(console.error);
     </script>
 </body>
