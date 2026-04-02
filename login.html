@@ -5,47 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Fox Store – Connexion</title>
     
-    <!-- Supabase SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <!-- Google Fonts -->
-    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* Mêmes styles que register.html (thème clair) */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --bg-deep: #f8fafc;
-            --bg-card: #ffffff;
-            --bg-surface: #f1f5f9;
-            --accent: #00d1ff;
-            --text-main: #0a0c10;
-            --text-muted: #4a5568;
-            --text-tertiary: #6c757d;
-            --glass-border: rgba(0, 0, 0, 0.08);
-            --error: #ff4444;
-            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--bg-deep);
-            color: var(--text-main);
+            background: #f8fafc;
+            color: #0a0c10;
+            line-height: 1.5;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
+        /* Navigation */
         .navbar {
             position: fixed;
             top: 0;
@@ -54,7 +41,7 @@
             padding: 14px 20px;
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--glass-border);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
         }
 
         .nav-container {
@@ -70,61 +57,43 @@
             align-items: center;
             gap: 8px;
             text-decoration: none;
-            color: var(--text-main);
-            font-family: 'Clash Display', sans-serif;
             font-weight: 700;
             font-size: 20px;
-            letter-spacing: -0.5px;
+            color: #0a0c10;
         }
 
         .logo i {
             font-size: 22px;
-            color: var(--accent);
-            transition: var(--transition);
+            color: #00d1ff;
+            transition: all 0.3s;
         }
 
         .logo:hover i {
             transform: scale(1.1);
         }
 
-        .btn {
+        .btn-nav {
             padding: 6px 14px;
             border-radius: 40px;
             font-size: 12px;
             font-weight: 600;
             text-decoration: none;
-            transition: var(--transition);
-            border: 1.5px solid transparent;
+            transition: all 0.3s;
+            border: 1.5px solid rgba(0, 0, 0, 0.08);
+            background: transparent;
+            color: #0a0c10;
             display: inline-flex;
             align-items: center;
             gap: 5px;
-            cursor: pointer;
-            background: transparent;
-            color: var(--text-main);
         }
 
-        .btn-outline {
-            border-color: var(--glass-border);
-        }
-
-        .btn-outline:hover {
-            border-color: var(--accent);
+        .btn-nav:hover {
+            border-color: #00d1ff;
             background: rgba(0, 209, 255, 0.1);
             transform: translateY(-2px);
         }
 
-        .btn-primary {
-            background: var(--accent);
-            color: #0a0c10;
-            font-weight: 700;
-            box-shadow: 0 8px 20px rgba(0, 209, 255, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 28px rgba(0, 209, 255, 0.5);
-        }
-
+        /* Main content */
         .main-content {
             flex: 1;
             display: flex;
@@ -134,13 +103,13 @@
         }
 
         .login-card {
-            background: var(--bg-card);
-            border: 1px solid var(--glass-border);
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
             border-radius: 32px;
             padding: 40px 32px;
             max-width: 440px;
             width: 100%;
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
         }
 
         .login-header {
@@ -149,14 +118,13 @@
         }
 
         .login-header h1 {
-            font-family: 'Clash Display', sans-serif;
             font-size: 28px;
             font-weight: 700;
             margin-bottom: 8px;
         }
 
         .login-header p {
-            color: var(--text-muted);
+            color: #4a5568;
             font-size: 14px;
         }
 
@@ -170,7 +138,7 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: var(--text-muted);
+            color: #4a5568;
             margin-bottom: 8px;
         }
 
@@ -183,99 +151,129 @@
         .input-wrapper i {
             position: absolute;
             left: 16px;
-            color: var(--text-tertiary);
+            color: #6c757d;
             font-size: 16px;
+            pointer-events: none;
         }
 
         .input-wrapper input {
             width: 100%;
-            background: var(--bg-surface);
-            border: 1px solid var(--glass-border);
+            background: #f1f5f9;
+            border: 1px solid rgba(0, 0, 0, 0.08);
             border-radius: 40px;
             padding: 14px 20px 14px 48px;
-            color: var(--text-main);
             font-size: 14px;
-            transition: var(--transition);
+            transition: all 0.3s;
             outline: none;
         }
 
         .input-wrapper input:focus {
-            border-color: var(--accent);
+            border-color: #00d1ff;
             box-shadow: 0 0 0 2px rgba(0, 209, 255, 0.2);
         }
 
-        .btn-login {
+        .btn-primary {
             width: 100%;
-            padding: 14px;
+            background: #00d1ff;
+            border: none;
             border-radius: 40px;
+            padding: 14px;
             font-size: 15px;
             font-weight: 700;
+            color: #0a0c10;
+            display: flex;
+            align-items: center;
             justify-content: center;
-            margin-bottom: 20px;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 209, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 209, 255, 0.4);
         }
 
         .separator {
             display: flex;
             align-items: center;
             gap: 16px;
-            color: var(--text-tertiary);
+            margin: 24px 0;
+            color: #6c757d;
             font-size: 12px;
-            margin: 20px 0;
         }
 
         .separator-line {
             flex: 1;
             height: 1px;
-            background: var(--glass-border);
+            background: rgba(0, 0, 0, 0.08);
         }
 
         .btn-google {
             width: 100%;
-            padding: 12px;
-            border-radius: 40px;
             background: transparent;
-            border: 1.5px solid var(--glass-border);
-            color: var(--text-main);
+            border: 1.5px solid rgba(0, 0, 0, 0.08);
+            border-radius: 40px;
+            padding: 12px;
+            font-size: 14px;
             font-weight: 600;
+            color: #0a0c10;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            transition: var(--transition);
             cursor: pointer;
-        }
-
-        .btn-google:hover {
-            border-color: var(--accent);
-            background: rgba(0, 209, 255, 0.05);
-            transform: translateY(-2px);
+            transition: all 0.3s;
         }
 
         .btn-google i {
-            color: var(--accent);
+            color: #ea4335;
             font-size: 18px;
+        }
+
+        .btn-google:hover {
+            border-color: #00d1ff;
+            background: rgba(0, 209, 255, 0.04);
+            transform: translateY(-2px);
         }
 
         .register-link {
             text-align: center;
             margin-top: 24px;
             font-size: 13px;
-            color: var(--text-muted);
+            color: #4a5568;
         }
 
         .register-link a {
-            color: var(--accent);
+            color: #00d1ff;
             text-decoration: none;
             font-weight: 600;
             margin-left: 6px;
         }
 
-        .error-message {
-            background: rgba(255, 68, 68, 0.1);
-            border: 1px solid rgba(255, 68, 68, 0.3);
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password a {
+            color: #6c757d;
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        .forgot-password a:hover {
+            color: #00d1ff;
+        }
+
+        .message {
             border-radius: 40px;
             padding: 10px 16px;
-            color: var(--error);
             font-size: 13px;
             margin-bottom: 20px;
             display: none;
@@ -283,36 +281,36 @@
             gap: 8px;
         }
 
-        .forgot-password {
-            text-align: right;
-            margin-bottom: 20px;
+        .error-message {
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid rgba(255, 68, 68, 0.3);
+            color: #ff4444;
         }
-        .forgot-password a {
-            color: var(--text-muted);
-            font-size: 12px;
-            text-decoration: none;
-        }
-        .forgot-password a:hover {
-            color: var(--accent);
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 30px 20px;
+            }
         }
     </style>
 </head>
 <body>
+
+    <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="/" class="logo">
                 <i class="fas fa-fox"></i>
                 <span>FOX STORE</span>
             </a>
-            <div class="nav-buttons">
-                <a href="/register.html" class="btn btn-outline">
-                    <span>Inscription</span>
-                    <i class="fas fa-user-plus"></i>
-                </a>
-            </div>
+            <a href="/register.html" class="btn-nav">
+                <span>Inscription</span>
+                <i class="fas fa-user-plus"></i>
+            </a>
         </div>
     </nav>
 
+    <!-- Main content -->
     <div class="main-content">
         <div class="login-card">
             <div class="login-header">
@@ -320,21 +318,21 @@
                 <p>Accédez à votre compte Fox Store</p>
             </div>
 
-            <div id="errorMessage" class="error-message">
+            <div id="errorMessage" class="message error-message">
                 <i class="fas fa-exclamation-circle"></i>
                 <span></span>
             </div>
 
             <form id="loginForm">
                 <div class="form-group">
-                    <label for="email">Adresse email</label>
+                    <label>Email</label>
                     <div class="input-wrapper">
                         <i class="far fa-envelope"></i>
                         <input type="email" id="email" placeholder="exemple@email.com" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="password">Mot de passe</label>
+                    <label>Mot de passe</label>
                     <div class="input-wrapper">
                         <i class="fas fa-lock"></i>
                         <input type="password" id="password" placeholder="••••••••" required>
@@ -343,7 +341,7 @@
                 <div class="forgot-password">
                     <a href="#">Mot de passe oublié ?</a>
                 </div>
-                <button type="submit" class="btn btn-primary btn-login">
+                <button type="submit" class="btn-primary">
                     <span>Se connecter</span>
                     <i class="fas fa-arrow-right"></i>
                 </button>
@@ -361,22 +359,35 @@
             </button>
 
             <div class="register-link">
-                Pas encore de compte ?<a href="/register.html">S'inscrire</a>
+                Pas encore de compte ? <a href="/register.html">S'inscrire</a>
             </div>
         </div>
     </div>
 
     <script>
-        const supabaseUrl = 'https://gjnnsfbsfaxmfjmkgoyw.supabase.co';
-        const supabaseAnonKey = 'sb_publishable_dlZEgaJnsbzwe_mOyIVJoQ_dLao6nju';
-        const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
+        // Configuration Firebase (identique à register.html)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDSyFdTHBNULuUiacHM6nmEvPb7YpY24UE",
+            authDomain: "foxstoreht.firebaseapp.com",
+            projectId: "foxstoreht",
+            storageBucket: "foxstoreht.firebasestorage.app",
+            messagingSenderId: "72533137445",
+            appId: "1:72533137445:web:3ba7634bc34da6115b47cc",
+            measurementId: "G-X1Q7Q79BRD"
+        };
 
+        // Initialiser Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Éléments DOM
         const loginForm = document.getElementById('loginForm');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
         const errorDiv = document.getElementById('errorMessage');
         const googleBtn = document.getElementById('googleLoginBtn');
 
+        // Afficher erreur
         function showError(message) {
             errorDiv.style.display = 'flex';
             errorDiv.querySelector('span').textContent = message;
@@ -385,6 +396,7 @@
             }, 5000);
         }
 
+        // Connexion email / mot de passe
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = emailInput.value.trim();
@@ -396,31 +408,56 @@
             }
 
             try {
-                const { error } = await supabase.auth.signInWithPassword({ email, password });
-                if (error) throw error;
+                await auth.signInWithEmailAndPassword(email, password);
+                // Redirection vers home après connexion
                 window.location.href = '/home.html';
             } catch (error) {
                 console.error(error);
-                showError('Email ou mot de passe incorrect.');
+                let message = 'Email ou mot de passe incorrect.';
+                if (error.code === 'auth/user-not-found') message = 'Aucun compte associé à cet email.';
+                else if (error.code === 'auth/wrong-password') message = 'Mot de passe incorrect.';
+                else if (error.code === 'auth/too-many-requests') message = 'Trop de tentatives. Réessayez plus tard.';
+                showError(message);
             }
         });
 
-        googleBtn.addEventListener('click', async () => {
-            try {
-                const { error } = await supabase.auth.signInWithOAuth({
-                    provider: 'google',
-                    options: {
-                        redirectTo: window.location.origin + '/home.html'
+        // Connexion avec Google
+        if (googleBtn) {
+            googleBtn.addEventListener('click', async () => {
+                googleBtn.disabled = true;
+                const originalText = googleBtn.innerHTML;
+                googleBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Redirection...';
+
+                try {
+                    const provider = new firebase.auth.GoogleAuthProvider();
+                    provider.setCustomParameters({ prompt: 'select_account' });
+                    await auth.signInWithPopup(provider);
+                    // Redirection après succès
+                    window.location.href = '/home.html';
+                } catch (error) {
+                    console.error('Google login error:', error);
+                    let message = 'Connexion Google échouée.';
+                    if (error.code === 'auth/popup-blocked') {
+                        message = 'Popup bloquée. Autorisez les popups pour ce site.';
+                    } else if (error.code === 'auth/cancelled-popup-request') {
+                        message = 'Fenêtre fermée avant validation.';
+                    } else if (error.code === 'auth/unauthorized-domain') {
+                        message = 'Domaine non autorisé. Ajoutez votre domaine dans Firebase Console (Authentication > Settings > Authorized domains).';
+                    } else if (error.code === 'auth/operation-not-allowed') {
+                        message = 'Google Sign-in non activé dans Firebase Console.';
+                    } else {
+                        message += ' ' + (error.message || 'Erreur inconnue.');
                     }
-                });
-                if (error) throw error;
-            } catch (error) {
-                showError('Erreur lors de la connexion avec Google.');
-            }
-        });
+                    showError(message);
+                    googleBtn.disabled = false;
+                    googleBtn.innerHTML = originalText;
+                }
+            });
+        }
 
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            if (session) {
+        // Redirection si déjà connecté
+        auth.onAuthStateChanged(user => {
+            if (user) {
                 window.location.href = '/home.html';
             }
         });
