@@ -613,32 +613,45 @@
             }
         });
 
-        // Google Sign-Up
-        if (googleBtn) {
-            googleBtn.addEventListener('click', async () => {
-                googleBtn.disabled = true;
-                const originalText = googleBtn.innerHTML;
-                googleBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Redirection...';
-                try {
-                    const provider = new firebase.auth.GoogleAuthProvider();
-                    const result = await auth.signInWithPopup(provider);
-                    // Si c'est la première connexion, on peut ajouter des données si nécessaire
-                    showSuccess('Connexion avec Google réussie ! Redirection...');
-                    setTimeout(() => {
-                        window.location.href = '/home.html';
-                    }, 1500);
-                } catch (err) {
-                    console.error('Google error:', err);
-                    let message = 'Connexion Google échouée.';
-                    if (err.code === 'auth/popup-blocked') message = 'Popup bloquée. Autorisez les popups.';
-                    else if (err.code === 'auth/cancelled-popup-request') message = 'Fenêtre fermée.';
-                    showError(message);
-                    googleBtn.disabled = false;
-                    googleBtn.innerHTML = originalText;
-                }
-            });
-        }
+ // Google Sign-Up (version améliorée)
+if (googleBtn) {
+    googleBtn.addEventListener('click', async () => {
+        googleBtn.disabled = true;
+        const originalText = googleBtn.innerHTML;
+        googleBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Redirection...';
 
+        try {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            // Optionnel : ajouter des paramètres personnalisés
+            provider.setCustomParameters({
+                prompt: 'select_account'
+            });
+            const result = await auth.signInWithPopup(provider);
+            console.log('Utilisateur Google :', result.user);
+            showSuccess('Connexion Google réussie ! Redirection...');
+            setTimeout(() => {
+                window.location.href = '/home.html';
+            }, 1500);
+        } catch (err) {
+            console.error('Erreur détaillée Google :', err);
+            let message = 'Connexion Google échouée.';
+            if (err.code === 'auth/popup-blocked') {
+                message = 'Popup bloquée. Autorisez les popups pour ce site.';
+            } else if (err.code === 'auth/cancelled-popup-request') {
+                message = 'Fenêtre fermée avant validation.';
+            } else if (err.code === 'auth/unauthorized-domain') {
+                message = 'Domaine non autorisé. Ajoutez votre domaine dans Firebase Console (Authentication > Settings > Authorized domains).';
+            } else if (err.code === 'auth/operation-not-allowed') {
+                message = 'Google Sign-in non activé dans Firebase Console.';
+            } else {
+                message += ' ' + (err.message || 'Erreur inconnue.');
+            }
+            showError(message);
+            googleBtn.disabled = false;
+            googleBtn.innerHTML = originalText;
+        }
+    });
+}
         // Redirection si déjà connecté
         auth.onAuthStateChanged(user => {
             if (user) {
