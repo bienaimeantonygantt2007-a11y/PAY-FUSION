@@ -5,16 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Fox Store – Accueil</title>
     
-    <!-- Firebase SDK -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <!-- Google Fonts -->
-    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -24,26 +22,11 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --bg-deep: #06070a;
-            --bg-card: #0f121a;
-            --bg-surface: #151a22;
-            --accent: #00d1ff;
-            --text-main: #ffffff;
-            --text-muted: #8e95a2;
-            --text-tertiary: #5f6b7a;
-            --glass-border: rgba(255, 255, 255, 0.05);
-            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--bg-deep);
-            color: var(--text-main);
+            background: #f8fafc;
+            color: #0a0c10;
             line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -51,14 +34,14 @@
 
         /* Navigation */
         .navbar {
-            position: sticky;
+            position: fixed;
             top: 0;
             width: 100%;
             z-index: 1000;
-            padding: 12px 20px;
-            background: rgba(6, 7, 10, 0.8);
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--glass-border);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
         }
 
         .nav-container {
@@ -74,1031 +57,407 @@
             align-items: center;
             gap: 8px;
             text-decoration: none;
-            color: var(--text-main);
-            font-family: 'Clash Display', sans-serif;
             font-weight: 700;
-            font-size: 18px;
-            letter-spacing: -0.5px;
+            font-size: 20px;
+            color: #0a0c10;
         }
 
         .logo i {
-            font-size: 20px;
-            color: var(--accent);
-            transition: var(--transition);
+            font-size: 22px;
+            color: #00d1ff;
+            transition: all 0.3s;
         }
 
         .logo:hover i {
             transform: scale(1.1);
         }
 
-        .nav-links {
+        .nav-buttons {
             display: flex;
-            align-items: center;
-            gap: 20px;
+            gap: 10px;
         }
 
-        .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            transition: var(--transition);
-        }
-
-        .nav-links a:hover {
-            color: var(--accent);
-        }
-
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .user-greeting {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        .user-greeting span {
-            color: var(--accent);
-            font-weight: 600;
-        }
-
-        .btn {
-            padding: 5px 12px;
+        .btn-nav {
+            padding: 6px 14px;
             border-radius: 40px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
             text-decoration: none;
-            transition: var(--transition);
-            border: 1.5px solid transparent;
+            transition: all 0.3s;
+            border: 1.5px solid rgba(0, 0, 0, 0.08);
+            background: transparent;
+            color: #0a0c10;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
             cursor: pointer;
-            background: transparent;
-            color: var(--text-main);
         }
 
-        .btn-outline {
-            border-color: var(--glass-border);
-        }
-
-        .btn-outline:hover {
-            border-color: var(--accent);
+        .btn-nav:hover {
+            border-color: #00d1ff;
             background: rgba(0, 209, 255, 0.1);
             transform: translateY(-2px);
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            color: var(--bg-deep);
-            font-weight: 700;
-            box-shadow: 0 8px 20px rgba(0, 209, 255, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 28px rgba(0, 209, 255, 0.5);
-        }
-
-        /* Menu burger */
-        .menu-toggle {
-            display: none;
-            background: transparent;
-            border: 1px solid var(--glass-border);
-            color: var(--text-main);
-            font-size: 18px;
-            padding: 6px 12px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .menu-toggle:hover {
-            border-color: var(--accent);
-        }
-
-        /* Sidebar */
-        .sidebar {
-            position: fixed;
-            top: 70px;
-            left: -280px;
-            width: 260px;
-            bottom: 0;
-            background: rgba(15, 18, 26, 0.98);
-            backdrop-filter: blur(15px);
-            border-right: 1px solid var(--glass-border);
-            padding: 20px 12px;
-            overflow-y: auto;
-            transition: left 0.3s ease;
-            z-index: 99;
-            display: flex;
-            flex-direction: column;
-        }
-        .sidebar.open {
-            left: 0;
-        }
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            z-index: 98;
-            display: none;
-        }
-        .sidebar-overlay.active {
-            display: block;
-        }
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px 12px;
-            border-bottom: 1px solid var(--glass-border);
-            margin-bottom: 16px;
-        }
-        .avatar {
-            width: 48px;
-            height: 48px;
-            background: var(--accent);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--bg-deep);
-            font-weight: 700;
-            font-size: 20px;
-            text-transform: uppercase;
-        }
-        .user-info h4 {
-            font-size: 14px;
-            font-weight: 600;
-        }
-        .user-info p {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-        .sidebar-section {
-            margin-bottom: 20px;
-        }
-        .sidebar-section-title {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-tertiary);
-            padding: 0 12px 8px;
-        }
-        .sidebar-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
-            border-radius: 12px;
-            color: var(--text-muted);
-            transition: var(--transition);
-            text-decoration: none;
-            font-size: 13px;
-            margin-bottom: 2px;
-        }
-        .sidebar-link i {
-            width: 20px;
-            color: var(--accent);
-            font-size: 14px;
-        }
-        .sidebar-link:hover {
-            background: rgba(255,255,255,0.03);
-            color: var(--text-main);
-            border: 1px solid var(--border-accent);
-        }
-        .sidebar-link.logout {
-            margin-top: auto;
-            border-top: 1px solid var(--glass-border);
-            padding-top: 16px;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-            .menu-toggle {
-                display: inline-block;
-            }
         }
 
         /* Main content */
         .main-content {
             flex: 1;
+            padding: 100px 20px 60px;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 30px 20px;
             width: 100%;
         }
 
-        /* Hero section */
-        .hero {
-            background: linear-gradient(135deg, rgba(0,209,255,0.08) 0%, transparent 100%);
-            border-radius: 24px;
-            padding: 30px;
-            margin-bottom: 30px;
-            border: 1px solid var(--glass-border);
-            position: relative;
-            overflow: hidden;
+        /* Hero section bienvenue */
+        .welcome-section {
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            border-radius: 32px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
         }
 
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(0,209,255,0.05) 0%, transparent 30%);
-            animation: rotate 20s linear infinite;
-            z-index: 0;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero h1 {
-            font-family: 'Clash Display', sans-serif;
-            font-size: 28px;
+        .welcome-section h1 {
+            font-size: 32px;
             font-weight: 700;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
 
-        .hero p {
-            color: var(--text-muted);
-            font-size: 14px;
-            max-width: 600px;
+        .welcome-section h1 span {
+            color: #00d1ff;
         }
 
-        /* Stats grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-bottom: 30px;
+        .welcome-section p {
+            color: #4a5568;
+            font-size: 16px;
         }
 
-        .stat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 18px;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-3px);
-            border-color: var(--accent);
-        }
-
-        .stat-icon {
-            width: 44px;
-            height: 44px;
-            background: var(--bg-surface);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid var(--glass-border);
-        }
-
-        .stat-icon i {
-            font-size: 22px;
-            color: var(--accent);
-        }
-
-        .stat-info h3 {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 2px;
-        }
-
-        .stat-info p {
-            color: var(--text-muted);
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-
-        /* Section title */
+        /* Grille des services */
         .section-title {
-            font-family: 'Clash Display', sans-serif;
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 18px;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 10px;
         }
 
         .section-title i {
-            color: var(--accent);
-            font-size: 18px;
+            color: #00d1ff;
+            font-size: 28px;
         }
 
-        /* Categories grid */
-        .categories-grid {
+        .services-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
         }
 
-        .category-card {
-            background: var(--bg-card);
-            border: 1px solid var(--glass-border);
-            border-radius: 22px;
-            padding: 22px 18px;
-            transition: var(--transition);
+        .service-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 28px 20px;
+            text-align: center;
             text-decoration: none;
             color: inherit;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
 
-        .category-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent);
-            background: var(--bg-surface);
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: #00d1ff;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
         }
 
-        .category-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--bg-surface);
-            border-radius: 16px;
+        .service-icon {
+            width: 70px;
+            height: 70px;
+            background: #f1f5f9;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin: 0 auto 20px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .service-icon i {
+            font-size: 32px;
+            color: #00d1ff;
+        }
+
+        .service-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .service-card p {
+            color: #4a5568;
+            font-size: 14px;
             margin-bottom: 16px;
-            border: 1px solid var(--glass-border);
         }
 
-        .category-icon i {
-            font-size: 24px;
-            color: var(--accent);
-        }
-
-        .category-card h3 {
-            font-family: 'Clash Display', sans-serif;
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        .category-card p {
-            color: var(--text-muted);
-            font-size: 12px;
-            margin-bottom: 16px;
-            line-height: 1.4;
-        }
-
-        .category-link {
+        .service-link {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            color: var(--accent);
+            gap: 6px;
+            color: #00d1ff;
             font-weight: 600;
-            font-size: 12px;
-            margin-top: auto;
+            font-size: 13px;
         }
 
-        .category-link i {
-            font-size: 10px;
-            transition: var(--transition);
-        }
-
-        .category-card:hover .category-link i {
-            transform: translateX(3px);
-        }
-
-        /* Popular products */
-        .popular-grid {
+        /* Actions rapides */
+        .actions-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 48px;
         }
 
-        .popular-card {
-            background: var(--bg-card);
-            border: 1px solid var(--glass-border);
-            border-radius: 18px;
-            padding: 16px 12px;
+        .action-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 20px;
             text-align: center;
-            transition: var(--transition);
             text-decoration: none;
             color: inherit;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
         }
 
-        .popular-card:hover {
+        .action-card:hover {
+            border-color: #00d1ff;
             transform: translateY(-3px);
-            border-color: var(--accent);
         }
 
-        .popular-card img {
-            height: 60px;
-            width: auto;
-            max-width: 100%;
-            object-fit: contain;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+        .action-card i {
+            font-size: 28px;
+            color: #00d1ff;
+            margin-bottom: 12px;
         }
 
-        .popular-card h4 {
-            font-size: 12px;
+        .action-card h4 {
+            font-size: 16px;
             font-weight: 600;
             margin-bottom: 4px;
         }
 
-        .popular-price {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        /* Recent orders */
-        .recent-orders {
-            background: var(--bg-card);
-            border: 1px solid var(--glass-border);
-            border-radius: 22px;
-            padding: 22px;
-        }
-
-        .orders-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .orders-header h3 {
-            font-family: 'Clash Display', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .view-all {
-            color: var(--accent);
-            text-decoration: none;
+        .action-card p {
             font-size: 12px;
-            font-weight: 600;
+            color: #6c757d;
+        }
+
+        /* Statistiques */
+        .stats {
             display: flex;
-            align-items: center;
-            gap: 4px;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 30px 20px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            margin-bottom: 40px;
         }
 
-        .orders-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .order-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            background: var(--bg-surface);
-            border-radius: 16px;
-            border: 1px solid var(--glass-border);
-            transition: var(--transition);
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .order-item:hover {
-            border-color: var(--accent);
-        }
-
-        .order-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .order-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--bg-card);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .order-icon i {
-            font-size: 20px;
-            color: var(--accent);
-        }
-
-        .order-details h4 {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 2px;
-        }
-
-        .order-details p {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        .order-status {
-            padding: 3px 10px;
-            border-radius: 40px;
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .status-pending {
-            background: rgba(255, 187, 51, 0.1);
-            color: #ffbb33;
-            border: 1px solid rgba(255, 187, 51, 0.3);
-        }
-
-        .status-completed {
-            background: rgba(0, 255, 136, 0.1);
-            color: #00ff88;
-            border: 1px solid rgba(0, 255, 136, 0.3);
-        }
-
-        .status-processing {
-            background: rgba(0, 209, 255, 0.1);
-            color: var(--accent);
-            border: 1px solid rgba(0, 209, 255, 0.3);
-        }
-
-        .empty-orders {
+        .stat-item {
             text-align: center;
-            padding: 30px;
-            color: var(--text-muted);
         }
 
-        .empty-orders i {
-            font-size: 40px;
-            margin-bottom: 12px;
-            opacity: 0.5;
+        .stat-number {
+            font-size: 28px;
+            font-weight: 800;
+            color: #00d1ff;
         }
 
-        .empty-orders p {
-            font-size: 13px;
+        .stat-label {
+            font-size: 12px;
+            color: #4a5568;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         /* Footer */
         footer {
-            background: var(--bg-deep);
-            padding: 25px 20px;
-            border-top: 1px solid var(--glass-border);
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: var(--text-tertiary);
-            font-size: 11px;
-        }
-
-        /* Responsive */
-        @media (max-width: 900px) {
-            .categories-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .popular-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
+            background: #ffffff;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 30px 20px;
+            text-align: center;
+            color: #6c757d;
+            font-size: 12px;
         }
 
         @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
+            .welcome-section {
+                padding: 30px 20px;
             }
-            .categories-grid {
-                grid-template-columns: 1fr;
-            }
-            .popular-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .footer-content {
-                flex-direction: column;
-                gap: 8px;
-                text-align: center;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero h1 {
+            .welcome-section h1 {
                 font-size: 24px;
             }
-            .hero p {
-                font-size: 13px;
-            }
-            .popular-grid {
+            .services-grid {
                 grid-template-columns: 1fr;
             }
-            .order-item {
+            .stats {
                 flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            .order-status {
-                align-self: flex-end;
+                align-items: center;
             }
         }
     </style>
 </head>
 <body>
+
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="/" class="logo">
+            <a href="/home.html" class="logo">
                 <i class="fas fa-fox"></i>
                 <span>FOX STORE</span>
             </a>
-
-            <div class="nav-links">
-                <a href="/gaming.html">Gaming</a>
-                <a href="/streaming.html">Streaming</a>
-                <a href="/finance.html">Finance</a>
-                <a href="/wallet/dashboard.html">Wallet</a>
-                <a href="/orders.html">Commandes</a>
-            </div>
-
-            <div class="user-menu">
-                <span class="user-greeting" id="userGreeting">Bonjour, <span>Chargement...</span></span>
-                <button class="btn btn-outline" id="logoutBtn">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Déconnexion</span>
-                </button>
-                <button class="menu-toggle" id="menuToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
+            <div class="nav-buttons" id="navButtons">
+                <!-- Sera rempli dynamiquement -->
             </div>
         </div>
     </nav>
 
-    <!-- Sidebar overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <!-- Sidebar (drawer) -->
-    <div class="sidebar" id="sidebar">
-        <div class="user-profile" id="userProfile">
-            <div class="avatar" id="userAvatar">F</div>
-            <div class="user-info">
-                <h4 id="sidebarUserName">Chargement...</h4>
-                <p id="sidebarUserEmail">...</p>
-            </div>
-        </div>
-
-        <div class="sidebar-section">
-            <div class="sidebar-section-title">ACCUEIL</div>
-            <a href="/home.html" class="sidebar-link"><i class="fas fa-home"></i> Accueil</a>
-        </div>
-
-        <div class="sidebar-section">
-            <div class="sidebar-section-title">BOUTIQUE</div>
-            <a href="/gaming.html" class="sidebar-link"><i class="fas fa-gamepad"></i> Gaming</a>
-            <a href="/streaming.html" class="sidebar-link"><i class="fas fa-film"></i> Streaming</a>
-            <a href="/finance.html" class="sidebar-link"><i class="fas fa-coins"></i> Finance</a>
-        </div>
-
-        <div class="sidebar-section">
-            <div class="sidebar-section-title">PORTEFEUILLE</div>
-            <a href="/wallet/dashboard.html" class="sidebar-link"><i class="fas fa-chart-pie"></i> Tableau de bord</a>
-            <a href="/wallet/deposit.html" class="sidebar-link"><i class="fas fa-arrow-down"></i> Recharger</a>
-            <a href="/wallet/withdraw.html" class="sidebar-link"><i class="fas fa-arrow-up"></i> Retrait</a>
-            <a href="/wallet/transfer.html" class="sidebar-link"><i class="fas fa-exchange-alt"></i> Transfert</a>
-            <a href="/wallet/history.html" class="sidebar-link"><i class="fas fa-history"></i> Historique</a>
-        </div>
-
-        <div class="sidebar-section">
-            <div class="sidebar-section-title">MON COMPTE</div>
-            <a href="/orders.html" class="sidebar-link"><i class="fas fa-shopping-bag"></i> Mes commandes</a>
-            <a href="/user/account.html" class="sidebar-link"><i class="fas fa-user"></i> Profil</a>
-            <a href="/user/settings.html" class="sidebar-link"><i class="fas fa-cog"></i> Paramètres</a>
-            <a href="/user/notifications.html" class="sidebar-link"><i class="fas fa-bell"></i> Notifications</a>
-        </div>
-
-        <div class="sidebar-section">
-            <div class="sidebar-section-title">SUPPORT</div>
-            <a href="/user/supports.html" class="sidebar-link"><i class="fas fa-headset"></i> Support</a>
-        </div>
-
-        <div class="sidebar-link logout" id="sidebarLogout">
-            <i class="fas fa-sign-out-alt"></i> Se déconnecter
-        </div>
-    </div>
-
-    <!-- Main Content -->
+    <!-- Main content -->
     <div class="main-content">
-        <!-- Hero section -->
-        <div class="hero">
-            <div class="hero-content">
-                <h1 id="welcomeMessage">Bienvenue sur Fox Store</h1>
-                <p>Votre plateforme de services digitaux premium. Gérez vos achats et suivez vos commandes en toute simplicité.</p>
-            </div>
+        <div class="welcome-section">
+            <h1>Bonjour, <span id="userName">Utilisateur</span> !</h1>
+            <p>Bienvenue sur votre espace Fox Store. Découvrez nos services et gérez vos commandes.</p>
         </div>
 
-        <!-- Stats cards -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-shopping-bag"></i>
-                </div>
-                <div class="stat-info">
-                    <h3 id="ordersCount">0</h3>
-                    <p>Commandes</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-wallet"></i>
-                </div>
-                <div class="stat-info">
-                    <h3 id="walletBalance">0 HTG</h3>
-                    <p>Solde wallet</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Categories -->
+        <!-- Services principaux -->
         <div class="section-title">
-            <i class="fas fa-compass"></i>
-            <h2>Nos catégories</h2>
+            <i class="fas fa-crown"></i>
+            <h2>Nos services premium</h2>
         </div>
-        <div class="categories-grid">
-            <a href="/gaming.html" class="category-card">
-                <div class="category-icon">
-                    <i class="fas fa-gamepad"></i>
-                </div>
+        <div class="services-grid">
+            <a href="/pages/products/freefire.html" class="service-card">
+                <div class="service-icon"><i class="fas fa-gamepad"></i></div>
                 <h3>Gaming</h3>
-                <p>Diamants Free Fire, UC PUBG, Robux et plus pour vos jeux préférés.</p>
-                <div class="category-link">
-                    Explorer <i class="fas fa-arrow-right"></i>
-                </div>
+                <p>Free Fire, PUBG, Roblox, FC Mobile, Diamants, UC et plus.</p>
+                <span class="service-link">Explorer <i class="fas fa-arrow-right"></i></span>
             </a>
-            <a href="/streaming.html" class="category-card">
-                <div class="category-icon">
-                    <i class="fas fa-film"></i>
-                </div>
+            <a href="/pages/products/netflix.html" class="service-card">
+                <div class="service-icon"><i class="fas fa-film"></i></div>
                 <h3>Streaming</h3>
-                <p>Netflix, Disney+, Prime Video, Crunchyroll. Comptes Premium garantis.</p>
-                <div class="category-link">
-                    Explorer <i class="fas fa-arrow-right"></i>
-                </div>
+                <p>Netflix, Disney+, Prime Video, Crunchyroll. Comptes Premium.</p>
+                <span class="service-link">Explorer <i class="fas fa-arrow-right"></i></span>
             </a>
-            <a href="/finance.html" class="category-card">
-                <div class="category-icon">
-                    <i class="fas fa-coins"></i>
-                </div>
-                <h3>Finance</h3>
-                <p>Wise, PayPal, USDT, TRONX. Recharges instantanées aux meilleurs taux.</p>
-                <div class="category-link">
-                    Explorer <i class="fas fa-arrow-right"></i>
-                </div>
+            <a href="/pages/products/wise.html" class="service-card">
+                <div class="service-icon"><i class="fas fa-coins"></i></div>
+                <h3>Finance Digitale</h3>
+                <p>Wise, PayPal, USDT, TRONX. Recharges aux meilleurs taux.</p>
+                <span class="service-link">Explorer <i class="fas fa-arrow-right"></i></span>
             </a>
         </div>
 
-        <!-- Popular products (données réelles du catalogue) -->
+        <!-- Actions rapides -->
         <div class="section-title">
-            <i class="fas fa-fire"></i>
-            <h2>Les plus populaires</h2>
+            <i class="fas fa-bolt"></i>
+            <h2>Accès rapide</h2>
         </div>
-        <div class="popular-grid" id="popularGrid">
-            <!-- Dynamiquement peuplé via Firestore -->
+        <div class="actions-grid">
+            <a href="/orders.html" class="action-card">
+                <i class="fas fa-shopping-cart"></i>
+                <h4>Mes commandes</h4>
+                <p>Suivez vos achats</p>
+            </a>
+            <a href="/user/account.html" class="action-card">
+                <i class="fas fa-user-circle"></i>
+                <h4>Mon compte</h4>
+                <p>Informations personnelles</p>
+            </a>
+            <a href="/user/settings.html" class="action-card">
+                <i class="fas fa-sliders-h"></i>
+                <h4>Paramètres</h4>
+                <p>Préférences</p>
+            </a>
+            <a href="/user/supports.html" class="action-card">
+                <i class="fas fa-headset"></i>
+                <h4>Support</h4>
+                <p>Aide et assistance</p>
+            </a>
         </div>
 
-        <!-- Recent orders (données réelles) -->
-        <div class="recent-orders">
-            <div class="orders-header">
-                <h3>Commandes récentes</h3>
-                <a href="/orders.html" class="view-all">
-                    Voir tout <i class="fas fa-arrow-right"></i>
-                </a>
+        <!-- Statistiques factices (à connecter avec Firestore plus tard) -->
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number">15k+</div>
+                <div class="stat-label">Clients satisfaits</div>
             </div>
-            <div id="recentOrdersList" class="orders-list">
-                <div class="empty-orders">
-                    <i class="fas fa-box-open"></i>
-                    <p>Aucune commande récente</p>
-                </div>
+            <div class="stat-item">
+                <div class="stat-number">50k+</div>
+                <div class="stat-label">Transactions</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">99.9%</div>
+                <div class="stat-label">Taux de satisfaction</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Support</div>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
     <footer>
-        <div class="footer-content">
-            <p>© 2025 Fox Store. Tous droits réservés.</p>
-            <p>Design élite - Performance absolue</p>
-        </div>
+        <p>© 2025 Fox Store. Tous droits réservés. | L'élite du service digital</p>
     </footer>
 
     <script>
-        // Firebase configuration
+        // Configuration Firebase (identique)
         const firebaseConfig = {
-            apiKey: "AIzaSyA0n2m2R9q07HQ94V58CdbNTlxnKztdmQo",
-            authDomain: "fox-storeht.firebaseapp.com",
-            projectId: "fox-storeht",
-            storageBucket: "fox-storeht.firebasestorage.app",
-            messagingSenderId: "589792388283",
-            appId: "1:589792388283:web:c372bd886f0a98e82db59e",
-            measurementId: "G-WN9M206F4M"
+            apiKey: "AIzaSyDSyFdTHBNULuUiacHM6nmEvPb7YpY24UE",
+            authDomain: "foxstoreht.firebaseapp.com",
+            projectId: "foxstoreht",
+            storageBucket: "foxstoreht.firebasestorage.app",
+            messagingSenderId: "72533137445",
+            appId: "1:72533137445:web:3ba7634bc34da6115b47cc",
+            measurementId: "G-X1Q7Q79BRD"
         };
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const db = firebase.firestore();
 
-        // DOM elements
-        const userGreetingSpan = document.querySelector('#userGreeting span');
-        const welcomeMessage = document.getElementById('welcomeMessage');
-        const ordersCountEl = document.getElementById('ordersCount');
-        const walletBalanceEl = document.getElementById('walletBalance');
-        const recentOrdersList = document.getElementById('recentOrdersList');
-        const popularGrid = document.getElementById('popularGrid');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const sidebarLogout = document.getElementById('sidebarLogout');
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        const sidebarUserName = document.getElementById('sidebarUserName');
-        const sidebarUserEmail = document.getElementById('sidebarUserEmail');
-        const userAvatar = document.getElementById('userAvatar');
+        const navButtons = document.getElementById('navButtons');
+        const userNameSpan = document.getElementById('userName');
 
-        // Sidebar controls
-        function closeSidebar() {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('active');
-        }
-        menuToggle.addEventListener('click', (e) => {
-            e.stopPropagation();
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('active');
-        });
-        overlay.addEventListener('click', closeSidebar);
-
-        // Check authentication
-        auth.onAuthStateChanged(async (user) => {
-            if (!user) {
+        // Mettre à jour l'affichage du nom
+        function updateUserDisplay(user) {
+            if (user) {
+                const displayName = user.displayName || user.email || 'Utilisateur';
+                userNameSpan.textContent = displayName;
+                // Afficher les boutons de navigation pour utilisateur connecté
+                navButtons.innerHTML = `
+                    <a href="/orders.html" class="btn-nav"><i class="fas fa-shopping-cart"></i><span>Commandes</span></a>
+                    <button id="logoutBtn" class="btn-nav"><i class="fas fa-sign-out-alt"></i><span>Déconnexion</span></button>
+                `;
+                const logoutBtn = document.getElementById('logoutBtn');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', async () => {
+                        await auth.signOut();
+                        window.location.href = '/login.html';
+                    });
+                }
+            } else {
+                // Non connecté, rediriger vers login
                 window.location.href = '/login.html';
-                return;
-            }
-
-            // Update UI with user info
-            const displayName = user.displayName || user.email.split('@')[0] || 'Utilisateur';
-            const initial = displayName.charAt(0).toUpperCase();
-            userGreetingSpan.textContent = displayName;
-            sidebarUserName.textContent = displayName;
-            sidebarUserEmail.textContent = user.email;
-            userAvatar.textContent = initial;
-            welcomeMessage.textContent = `Bon retour parmi nous, ${displayName} !`;
-
-            // Load user data from Firestore
-            try {
-                const userDoc = await db.collection('users').doc(user.uid).get();
-                if (userDoc.exists) {
-                    const data = userDoc.data();
-                    ordersCountEl.textContent = data.stats?.ordersCount || 0;
-                    walletBalanceEl.textContent = (data.wallet?.balance || 0) + ' HTG';
-                } else {
-                    // Create user document if not exists
-                    await db.collection('users').doc(user.uid).set({
-                        personalInfo: {
-                            email: user.email,
-                            displayName: displayName,
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                        },
-                        stats: { ordersCount: 0, totalSpent: 0 },
-                        wallet: { balance: 0, currency: 'HTG' }
-                    });
-                }
-            } catch (error) {
-                console.error('Error loading user data:', error);
-            }
-
-            // Load popular products from Firestore (collection 'products')
-            try {
-                const productsSnap = await db.collection('products').where('active', '==', true).limit(8).get();
-                if (!productsSnap.empty) {
-                    popularGrid.innerHTML = '';
-                    productsSnap.forEach(doc => {
-                        const p = doc.data();
-                        const card = document.createElement('a');
-                        card.href = `/pages/products/${p.id || p.game}.html`; // à adapter selon votre structure
-                        card.className = 'popular-card';
-                        card.innerHTML = `
-                            <img src="/assets/logos/${p.logo || 'placeholder.png'}" alt="${p.name}" loading="lazy" onerror="this.src='/assets/logos/placeholder.png'">
-                            <h4>${p.name}</h4>
-                            <div class="popular-price">${p.price} HTG</div>
-                        `;
-                        popularGrid.appendChild(card);
-                    });
-                } else {
-                    // Fallback sur la liste statique de la documentation
-                    const fallbackProducts = [
-                        { name: 'Free Fire', price: '157 HTG', link: '/pages/products/freefire.html', logo: 'freefire-logo.png' },
-                        { name: 'Netflix', price: '400 HTG', link: '/pages/products/netflix.html', logo: 'netflix-logo.png' },
-                        { name: 'Roblox', price: '750 HTG', link: '/pages/products/roblox.html', logo: 'roblox-logo.png' },
-                        { name: 'Wise', price: '150/$', link: '/pages/products/wise.html', logo: 'wise-logo.png' }
-                    ];
-                    popularGrid.innerHTML = '';
-                    fallbackProducts.forEach(product => {
-                        const card = document.createElement('a');
-                        card.href = product.link;
-                        card.className = 'popular-card';
-                        card.innerHTML = `
-                            <img src="/assets/logos/${product.logo}" alt="${product.name}" loading="lazy" onerror="this.src='/assets/logos/placeholder.png'">
-                            <h4>${product.name}</h4>
-                            <div class="popular-price">${product.price}</div>
-                        `;
-                        popularGrid.appendChild(card);
-                    });
-                }
-            } catch (error) {
-                console.error('Error loading products:', error);
-                // Fallback silencieux
-            }
-
-            // Load recent orders from Firestore
-            try {
-                const ordersQuery = await db.collection('orders')
-                    .where('userId', '==', user.uid)
-                    .orderBy('createdAt', 'desc')
-                    .limit(5)
-                    .get();
-
-                if (!ordersQuery.empty) {
-                    recentOrdersList.innerHTML = '';
-                    ordersQuery.forEach(doc => {
-                        const order = doc.data();
-                        const date = order.createdAt ? order.createdAt.toDate().toLocaleDateString('fr-FR') : 'Date inconnue';
-                        const status = order.status || 'en-attente';
-                        let statusClass = 'status-pending';
-                        let statusText = 'En attente';
-                        if (status === 'livré' || status === 'completed') {
-                            statusClass = 'status-completed';
-                            statusText = 'Livré';
-                        } else if (status === 'en-cours' || status === 'processing') {
-                            statusClass = 'status-processing';
-                            statusText = 'En cours';
-                        }
-
-                        const item = document.createElement('a');
-                        item.href = `/orders.html?id=${doc.id}`;
-                        item.className = 'order-item';
-                        item.innerHTML = `
-                            <div class="order-info">
-                                <div class="order-icon">
-                                    <i class="fas fa-${order.service?.category === 'gaming' ? 'gamepad' : order.service?.category === 'streaming' ? 'film' : 'coins'}"></i>
-                                </div>
-                                <div class="order-details">
-                                    <h4>${order.service?.name || 'Service'} - ${order.service?.product || ''}</h4>
-                                    <p>${date} • ${order.service?.price || 0} HTG</p>
-                                </div>
-                            </div>
-                            <span class="order-status ${statusClass}">${statusText}</span>
-                        `;
-                        recentOrdersList.appendChild(item);
-                    });
-                }
-            } catch (error) {
-                console.error('Error loading orders:', error);
-            }
-        });
-
-        // Logout function
-        async function handleLogout() {
-            try {
-                await auth.signOut();
-                window.location.href = '/';
-            } catch (error) {
-                console.error('Logout error', error);
             }
         }
-        logoutBtn.addEventListener('click', handleLogout);
-        sidebarLogout.addEventListener('click', handleLogout);
+
+        // Écouter les changements d'authentification
+        auth.onAuthStateChanged(user => {
+            updateUserDisplay(user);
+        });
+
+        // Vérifier immédiatement
+        auth.getRedirectResult().catch(console.error);
     </script>
 </body>
 </html>
