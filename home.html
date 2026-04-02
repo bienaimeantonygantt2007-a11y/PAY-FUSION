@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Fox Store – Tableau de bord</title>
+    <title>Fox Store – L'élite des services digitaux</title>
     
-    <!-- Firebase SDKs -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     
@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -24,13 +24,31 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: #f5f7fb;
+            background: #ffffff;
             color: #1a1f36;
             line-height: 1.5;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            font-size: 14px;
+            overflow-x: hidden;
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .animate-fade-up {
+            animation: fadeUp 0.7s ease-out forwards;
         }
 
         /* Navigation */
@@ -39,11 +57,11 @@
             top: 0;
             width: 100%;
             z-index: 1000;
-            padding: 12px 24px;
+            padding: 16px 24px;
             background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s;
         }
 
         .nav-container {
@@ -59,405 +77,516 @@
             align-items: center;
             gap: 10px;
             text-decoration: none;
-            font-weight: 700;
-            font-size: 20px;
+            font-weight: 800;
+            font-size: 22px;
             color: #1a1f36;
-            letter-spacing: -0.3px;
+            letter-spacing: -0.5px;
         }
 
         .logo i {
-            font-size: 22px;
+            font-size: 26px;
             color: #00d1ff;
             transition: all 0.2s;
         }
 
-        .logo:hover i {
-            transform: scale(1.02);
-        }
-
-        /* Burger button */
-        .burger-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 22px;
-            color: #1a1f36;
-            transition: all 0.2s;
+        .nav-links {
             display: flex;
+            gap: 32px;
             align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
         }
 
-        .burger-btn:hover {
-            background: rgba(0, 0, 0, 0.04);
-            color: #00d1ff;
-        }
-
-        /* Drawer (menu latéral) */
-        .drawer {
-            position: fixed;
-            top: 0;
-            right: -280px;
-            width: 260px;
-            height: 100%;
-            background: #ffffff;
-            box-shadow: -4px 0 24px rgba(0, 0, 0, 0.08);
-            z-index: 2000;
-            transition: right 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            display: flex;
-            flex-direction: column;
-            border-left: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .drawer.open {
-            right: 0;
-        }
-
-        .drawer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 20px 16px;
-            border-bottom: 1px solid #edf2f7;
-        }
-
-        .drawer-header .logo {
-            font-size: 18px;
-        }
-
-        .close-drawer {
-            background: none;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            color: #6b7280;
-            padding: 6px;
-            border-radius: 8px;
-        }
-
-        .close-drawer:hover {
-            background: #f3f4f6;
-            color: #1a1f36;
-        }
-
-        .drawer-nav {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 20px 12px;
-            gap: 8px;
-        }
-
-        .drawer-nav a, .drawer-nav button {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
-            border-radius: 12px;
+        .nav-links a {
             text-decoration: none;
-            color: #1f2937;
-            font-size: 14px;
+            color: #4b5563;
             font-weight: 500;
-            transition: all 0.2s;
-            background: none;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            text-align: left;
+            font-size: 15px;
+            transition: color 0.2s;
         }
 
-        .drawer-nav a i, .drawer-nav button i {
-            width: 22px;
-            font-size: 16px;
-            color: #6b7280;
-        }
-
-        .drawer-nav a:hover, .drawer-nav button:hover {
-            background: #f3f4f6;
-        }
-
-        .drawer-nav a:hover i, .drawer-nav button:hover i {
+        .nav-links a:hover {
             color: #00d1ff;
         }
 
-        .drawer-overlay {
+        .btn-nav {
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+            border: 1.5px solid transparent;
+            cursor: pointer;
+        }
+
+        .btn-login {
+            background: transparent;
+            border-color: #e2e8f0;
+            color: #1a1f36;
+        }
+
+        .btn-login:hover {
+            border-color: #00d1ff;
+            background: rgba(0, 209, 255, 0.05);
+        }
+
+        .btn-signup {
+            background: #00d1ff;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 209, 255, 0.2);
+        }
+
+        .btn-signup:hover {
+            background: #009ac7;
+            transform: translateY(-1px);
+        }
+
+        .btn-logout {
+            background: transparent;
+            border-color: #e2e8f0;
+            color: #4b5563;
+        }
+
+        .btn-logout:hover {
+            border-color: #ff4444;
+            color: #ff4444;
+        }
+
+        /* Burger menu (mobile) */
+        .burger {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #1a1f36;
+        }
+
+        .mobile-menu {
+            display: none;
             position: fixed;
-            top: 0;
+            top: 70px;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            z-index: 1999;
-            display: none;
-            backdrop-filter: blur(2px);
+            background: white;
+            padding: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            flex-direction: column;
+            gap: 16px;
+            border-bottom: 1px solid #e2e8f0;
         }
 
-        .drawer-overlay.active {
-            display: block;
+        .mobile-menu a {
+            text-decoration: none;
+            color: #1a1f36;
+            font-weight: 500;
+            padding: 8px 0;
         }
 
-        /* Main content */
-        .main-content {
-            flex: 1;
-            padding: 90px 24px 60px;
+        .mobile-menu .btn-nav {
+            display: inline-block;
+            text-align: center;
+        }
+
+        /* Hero section */
+        .hero {
+            padding: 140px 24px 80px;
             max-width: 1200px;
             margin: 0 auto;
-            width: 100%;
+            text-align: center;
         }
 
-        /* Welcome card */
-        .welcome-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border-radius: 28px;
-            padding: 28px 32px;
-            margin-bottom: 32px;
-            border: 1px solid rgba(0, 0, 0, 0.04);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-        }
-
-        .welcome-card h1 {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            letter-spacing: -0.3px;
-        }
-
-        .welcome-card h1 span {
-            color: #00d1ff;
-        }
-
-        .welcome-card p {
-            color: #4b5563;
-            font-size: 14px;
-        }
-
-        .admin-badge {
+        .hero-badge {
             display: inline-block;
-            background: #00d1ff10;
+            background: rgba(0, 209, 255, 0.1);
             color: #00d1ff;
-            font-size: 11px;
+            font-size: 13px;
             font-weight: 600;
-            padding: 3px 10px;
-            border-radius: 30px;
-            margin-left: 10px;
-            border: 1px solid #00d1ff20;
-            vertical-align: middle;
+            padding: 6px 14px;
+            border-radius: 40px;
+            margin-bottom: 24px;
         }
 
-        /* Section title */
-        .section-title {
-            font-size: 18px;
-            font-weight: 600;
+        .hero h1 {
+            font-size: 52px;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
             margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .section-title i {
+        .hero h1 span {
             color: #00d1ff;
-            font-size: 20px;
+            position: relative;
         }
 
-        /* Services grid */
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
+        .hero h1 span::after {
+            content: '';
+            position: absolute;
+            bottom: 8px;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: #00d1ff;
+            opacity: 0.15;
+            border-radius: 4px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #4b5563;
+            max-width: 600px;
+            margin: 0 auto 32px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-hero {
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 15px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-hero-primary {
+            background: #00d1ff;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 209, 255, 0.3);
+        }
+
+        .btn-hero-primary:hover {
+            background: #009ac7;
+            transform: translateY(-2px);
+        }
+
+        .btn-hero-secondary {
+            background: transparent;
+            border: 1.5px solid #e2e8f0;
+            color: #1a1f36;
+        }
+
+        .btn-hero-secondary:hover {
+            border-color: #00d1ff;
+            background: rgba(0, 209, 255, 0.05);
+        }
+
+        /* Services section */
+        .services {
+            padding: 80px 24px;
+            background: #f8fafc;
+        }
+
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
             margin-bottom: 48px;
         }
 
+        .section-title h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .section-title p {
+            color: #4b5563;
+            font-size: 16px;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
         .service-card {
-            background: #ffffff;
-            border-radius: 24px;
-            padding: 24px 20px;
+            background: white;
+            border-radius: 28px;
+            padding: 32px 24px;
             text-align: center;
             text-decoration: none;
             color: inherit;
-            border: 1px solid #edf2f7;
-            transition: all 0.25s;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
         }
 
         .service-card:hover {
-            transform: translateY(-3px);
-            border-color: #e2e8f0;
-            box-shadow: 0 12px 20px -12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-6px);
+            border-color: #00d1ff;
+            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.1);
         }
 
         .service-icon {
-            width: 64px;
-            height: 64px;
+            width: 72px;
+            height: 72px;
             background: #f1f5f9;
-            border-radius: 20px;
+            border-radius: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 18px;
+            margin: 0 auto 20px;
         }
 
         .service-icon i {
-            font-size: 28px;
+            font-size: 32px;
             color: #00d1ff;
         }
 
         .service-card h3 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 8px;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
         }
 
         .service-card p {
             color: #4b5563;
-            font-size: 13px;
-            margin-bottom: 16px;
-            line-height: 1.4;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
         }
 
         .service-link {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             color: #00d1ff;
-            font-weight: 500;
-            font-size: 13px;
+            font-weight: 600;
+            font-size: 14px;
         }
 
-        /* Quick actions */
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 48px;
+        /* Payment methods */
+        .payments {
+            padding: 80px 24px;
+            background: white;
         }
 
-        .action-card {
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 20px;
+        .payments-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px 60px;
+            margin-top: 40px;
+        }
+
+        .payment-item {
             text-align: center;
-            text-decoration: none;
-            color: inherit;
-            border: 1px solid #edf2f7;
+            transition: transform 0.2s;
+        }
+
+        .payment-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .payment-item img {
+            height: 60px;
+            width: auto;
+            object-fit: contain;
+            filter: grayscale(0%);
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .payment-item:hover img {
+            opacity: 1;
+        }
+
+        .payment-item span {
+            display: block;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 80px 24px;
+            background: #f8fafc;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: 24px;
+            padding: 28px;
+            border: 1px solid #e2e8f0;
             transition: all 0.2s;
         }
 
-        .action-card:hover {
-            border-color: #cbd5e1;
-            transform: translateY(-2px);
+        .testimonial-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px -12px rgba(0, 0, 0, 0.08);
         }
 
-        .action-card i {
-            font-size: 28px;
-            color: #00d1ff;
-            margin-bottom: 12px;
+        .testimonial-stars {
+            color: #fbbf24;
+            margin-bottom: 16px;
+            font-size: 14px;
         }
 
-        .action-card h4 {
+        .testimonial-text {
             font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 4px;
+            color: #1a1f36;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-style: italic;
         }
 
-        .action-card p {
+        .testimonial-author {
+            font-weight: 700;
+            font-size: 14px;
+            color: #1a1f36;
+        }
+
+        .testimonial-title {
             font-size: 12px;
             color: #6b7280;
         }
 
         /* Stats */
+        .stats {
+            padding: 80px 24px;
+            background: white;
+        }
+
         .stats-grid {
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 20px;
-            background: #ffffff;
-            border-radius: 24px;
-            padding: 24px 28px;
-            border: 1px solid #edf2f7;
-            margin-bottom: 40px;
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
         }
 
         .stat-item {
-            text-align: center;
             flex: 1;
-            min-width: 100px;
+            min-width: 150px;
         }
 
         .stat-number {
-            font-size: 28px;
-            font-weight: 700;
+            font-size: 42px;
+            font-weight: 800;
             color: #00d1ff;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
         }
 
         .stat-label {
-            font-size: 12px;
-            color: #6b7280;
+            font-size: 14px;
+            color: #4b5563;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
+        /* CTA */
+        .cta {
+            padding: 80px 24px;
+            background: linear-gradient(135deg, #00d1ff10 0%, #ffffff 100%);
+            text-align: center;
+        }
+
+        .cta h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .cta p {
+            color: #4b5563;
+            max-width: 500px;
+            margin: 0 auto 32px;
+        }
+
         /* Footer */
         footer {
-            background: transparent;
-            border-top: 1px solid #e2e8f0;
-            padding: 20px;
-            text-align: center;
-            color: #6b7280;
-            font-size: 12px;
+            background: #1a1f36;
+            color: #cbd5e1;
+            padding: 48px 24px 24px;
         }
 
-        /* WhatsApp float */
-        .whatsapp-float {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: #25D366;
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-col h4 {
             color: white;
-            width: 54px;
-            height: 54px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: all 0.2s;
-            z-index: 1000;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-col ul li a {
+            color: #cbd5e1;
             text-decoration: none;
+            font-size: 13px;
+            transition: color 0.2s;
         }
 
-        .whatsapp-float:hover {
-            transform: scale(1.05);
-            background: #20b859;
+        .footer-col ul li a:hover {
+            color: #00d1ff;
         }
 
+        .footer-bottom {
+            text-align: center;
+            padding-top: 40px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .main-content {
-                padding: 80px 16px 40px;
+            .nav-links {
+                display: none;
             }
-            .welcome-card {
-                padding: 20px;
+            .burger {
+                display: block;
             }
-            .welcome-card h1 {
-                font-size: 20px;
+            .hero h1 {
+                font-size: 36px;
             }
-            .services-grid {
-                grid-template-columns: 1fr;
+            .hero p {
+                font-size: 16px;
+            }
+            .section-title h2 {
+                font-size: 28px;
             }
             .stats-grid {
                 flex-direction: column;
                 align-items: center;
-            }
-            .whatsapp-float {
-                width: 48px;
-                height: 48px;
-                font-size: 24px;
-                bottom: 20px;
-                right: 20px;
             }
         }
     </style>
@@ -467,99 +596,143 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="/home.html" class="logo">
+            <a href="/" class="logo">
                 <i class="fas fa-fox"></i>
                 <span>FOX STORE</span>
             </a>
-            <button class="burger-btn" id="burgerBtn" aria-label="Menu">
+            <div class="nav-links" id="navLinks">
+                <a href="#services">Services</a>
+                <a href="#payments">Paiements</a>
+                <a href="#testimonials">Avis</a>
+                <div id="authButtons"></div>
+            </div>
+            <button class="burger" id="burgerBtn">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="#services">Services</a>
+            <a href="#payments">Paiements</a>
+            <a href="#testimonials">Avis</a>
+            <div id="mobileAuthButtons"></div>
+        </div>
     </nav>
 
-    <!-- Overlay pour fermer le drawer -->
-    <div class="drawer-overlay" id="drawerOverlay"></div>
+    <!-- Hero section -->
+    <section class="hero">
+        <div class="hero-badge">L'élite du service digital</div>
+        <h1>Bienvenue dans <span>l'ère</span> du digital</h1>
+        <p>Gaming, Streaming et Services Financiers. Une plateforme unique pour tous vos besoins numériques.</p>
+        <div class="hero-buttons">
+            <a href="/register.html" class="btn-hero btn-hero-primary">Créer un compte <i class="fas fa-arrow-right"></i></a>
+            <a href="#services" class="btn-hero btn-hero-secondary">Découvrir nos services</a>
+        </div>
+    </section>
 
-    <!-- Drawer (menu latéral) -->
-    <div class="drawer" id="drawer">
-        <div class="drawer-header">
-            <div class="logo">
-                <i class="fas fa-fox"></i>
-                <span>Menu</span>
+    <!-- Services section -->
+    <section class="services" id="services">
+        <div class="section-container">
+            <div class="section-title">
+                <h2>Nos services premium</h2>
+                <p>Des solutions adaptées à tous vos besoins</p>
             </div>
-            <button class="close-drawer" id="closeDrawerBtn" aria-label="Fermer">
-                <i class="fas fa-times"></i>
-            </button>
+            <div class="services-grid">
+                <a href="/pages/products/freefire.html" class="service-card">
+                    <div class="service-icon"><i class="fas fa-gamepad"></i></div>
+                    <h3>Gaming Elite</h3>
+                    <p>Free Fire, PUBG, Roblox, FC Mobile, Blood Strike. Diamants, UC, Robux en stock permanent.</p>
+                    <span class="service-link">Explorer <i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="/pages/products/netflix.html" class="service-card">
+                    <div class="service-icon"><i class="fas fa-film"></i></div>
+                    <h3>Streaming 4K</h3>
+                    <p>Netflix, Disney+, Prime Video, Crunchyroll. Comptes Premium avec garantie.</p>
+                    <span class="service-link">Explorer <i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="/pages/products/wise.html" class="service-card">
+                    <div class="service-icon"><i class="fas fa-coins"></i></div>
+                    <h3>Finance Digitale</h3>
+                    <p>Wise, PayPal, USDT, TRONX. Recharges instantanées aux meilleurs taux.</p>
+                    <span class="service-link">Explorer <i class="fas fa-arrow-right"></i></span>
+                </a>
+            </div>
         </div>
-        <div class="drawer-nav" id="drawerNav">
-            <!-- Liens injectés par JavaScript -->
-        </div>
-    </div>
+    </section>
 
-    <!-- WhatsApp flottant -->
-    <a href="https://wa.me/50937542954" class="whatsapp-float" target="_blank" rel="noopener noreferrer">
-        <i class="fab fa-whatsapp"></i>
-    </a>
+    <!-- Payment methods -->
+    <section class="payments" id="payments">
+        <div class="section-container">
+            <div class="section-title">
+                <h2>Paiements sécurisés</h2>
+                <p>Nous acceptons toutes les méthodes populaires en Haïti</p>
+            </div>
+            <div class="payments-grid">
+                <div class="payment-item">
+                    <img src="/assets/logos/moncash-logo.png" alt="Moncash">
+                    <span>Moncash</span>
+                </div>
+                <div class="payment-item">
+                    <img src="/assets/logos/natcash-logo.png" alt="Natcash">
+                    <span>Natcash</span>
+                </div>
+                <div class="payment-item">
+                    <img src="/assets/logos/wise-logo.png" alt="Wise">
+                    <span>Wise</span>
+                </div>
+                <div class="payment-item">
+                    <img src="/assets/logos/paypal-logo.png" alt="PayPal">
+                    <span>PayPal</span>
+                </div>
+                <div class="payment-item">
+                    <img src="/assets/logos/usdt-logo.png" alt="USDT">
+                    <span>USDT</span>
+                </div>
+                <div class="payment-item">
+                    <img src="/assets/logos/tronx-logo.png" alt="TRONX">
+                    <span>TRONX</span>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- Contenu principal -->
-    <div class="main-content">
-        <div class="welcome-card">
-            <h1>Bonjour, <span id="userName">Utilisateur</span><span id="adminBadge" style="display: none;" class="admin-badge">Administrateur</span></h1>
-            <p>Accédez rapidement à vos services, commandes et paramètres.</p>
+    <!-- Testimonials -->
+    <section class="testimonials" id="testimonials">
+        <div class="section-container">
+            <div class="section-title">
+                <h2>Ce que nos clients disent</h2>
+                <p>Des milliers de transactions réussies</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <div class="testimonial-text">"Service excellent ! J'ai rechargé mon compte PUBG en moins de 2 minutes. Je recommande vivement."</div>
+                    <div class="testimonial-author">Andjie Christi</div>
+                    <div class="testimonial-title">Client fidèle</div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <div class="testimonial-text">"Interface très intuitive, paiements sécurisés. Le meilleur site en Haïti pour les recharges."</div>
+                    <div class="testimonial-author">Woodley</div>
+                    <div class="testimonial-title">Gamer</div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    </div>
+                    <div class="testimonial-text">"Support client fantastique ! Prix très compétitifs et livraison ultra rapide."</div>
+                    <div class="testimonial-author">El Matad</div>
+                    <div class="testimonial-title">Client régulier</div>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <div class="section-title">
-            <i class="fas fa-crown"></i>
-            <h2>Services premium</h2>
-        </div>
-        <div class="services-grid">
-            <a href="/pages/products/freefire.html" class="service-card">
-                <div class="service-icon"><i class="fas fa-gamepad"></i></div>
-                <h3>Gaming</h3>
-                <p>Free Fire, PUBG, Roblox, FC Mobile, Diamants, UC.</p>
-                <span class="service-link">Explorer <i class="fas fa-arrow-right"></i></span>
-            </a>
-            <a href="/pages/products/netflix.html" class="service-card">
-                <div class="service-icon"><i class="fas fa-film"></i></div>
-                <h3>Streaming</h3>
-                <p>Netflix, Disney+, Prime Video, Crunchyroll. Comptes Premium.</p>
-                <span class="service-link">Explorer <i class="fas fa-arrow-right"></i></span>
-            </a>
-            <a href="/pages/products/wise.html" class="service-card">
-                <div class="service-icon"><i class="fas fa-coins"></i></div>
-                <h3>Finance</h3>
-                <p>Wise, PayPal, USDT, TRONX. Recharges instantanées.</p>
-                <span class="service-link">Explorer <i class="fas fa-arrow-right"></i></span>
-            </a>
-        </div>
-
-        <div class="section-title">
-            <i class="fas fa-bolt"></i>
-            <h2>Accès rapide</h2>
-        </div>
-        <div class="actions-grid">
-            <a href="/orders.html" class="action-card">
-                <i class="fas fa-shopping-cart"></i>
-                <h4>Mes commandes</h4>
-                <p>Suivi et historique</p>
-            </a>
-            <a href="/user/account.html" class="action-card">
-                <i class="fas fa-user-circle"></i>
-                <h4>Mon compte</h4>
-                <p>Informations personnelles</p>
-            </a>
-            <a href="/user/settings.html" class="action-card">
-                <i class="fas fa-sliders-h"></i>
-                <h4>Paramètres</h4>
-                <p>Préférences</p>
-            </a>
-            <a href="/user/supports.html" class="action-card">
-                <i class="fas fa-headset"></i>
-                <h4>Support</h4>
-                <p>Aide 24/7</p>
-            </a>
-        </div>
-
+    <!-- Stats -->
+    <section class="stats">
         <div class="stats-grid">
             <div class="stat-item">
                 <div class="stat-number">15k+</div>
@@ -578,14 +751,57 @@
                 <div class="stat-label">Support</div>
             </div>
         </div>
-    </div>
+    </section>
 
+    <!-- CTA -->
+    <section class="cta">
+        <h2>Prêt à rejoindre l'élite ?</h2>
+        <p>Créez votre compte gratuitement et accédez à tous nos services</p>
+        <a href="/register.html" class="btn-hero btn-hero-primary">Commencer maintenant <i class="fas fa-arrow-right"></i></a>
+    </section>
+
+    <!-- Footer -->
     <footer>
-        <p>© 2025 Fox Store – L'élite du service digital</p>
+        <div class="footer-container">
+            <div class="footer-col">
+                <h4>Fox Store</h4>
+                <ul>
+                    <li><a href="#">À propos</a></li>
+                    <li><a href="/pages/products/freefire.html">Gaming</a></li>
+                    <li><a href="/pages/products/netflix.html">Streaming</a></li>
+                    <li><a href="/pages/products/wise.html">Finance</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="/user/supports.html">Centre d'aide</a></li>
+                    <li><a href="/orders.html">Mes commandes</a></li>
+                    <li><a href="/user/account.html">Mon compte</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Légal</h4>
+                <ul>
+                    <li><a href="#">Conditions d'utilisation</a></li>
+                    <li><a href="#">Politique de confidentialité</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact</h4>
+                <ul>
+                    <li><a href="https://wa.me/50937542954" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp Support</a></li>
+                    <li><a href="mailto:support@foxstore.com">support@foxstore.com</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Fox Store – L'élite du service digital. Tous droits réservés.</p>
+        </div>
     </footer>
 
     <script>
-        // Firebase configuration
+        // Configuration Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDSyFdTHBNULuUiacHM6nmEvPb7YpY24UE",
             authDomain: "foxstoreht.firebaseapp.com",
@@ -600,77 +816,52 @@
         const auth = firebase.auth();
 
         // DOM elements
-        const userNameSpan = document.getElementById('userName');
-        const adminBadge = document.getElementById('adminBadge');
-        const drawerNav = document.getElementById('drawerNav');
-        const burgerBtn = document.getElementById('burgerBtn');
-        const drawer = document.getElementById('drawer');
-        const drawerOverlay = document.getElementById('drawerOverlay');
-        const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+        const authButtons = document.getElementById('authButtons');
+        const mobileAuthButtons = document.getElementById('mobileAuthButtons');
 
-        const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
-
-        // Drawer controls
-        function closeDrawer() {
-            drawer.classList.remove('open');
-            drawerOverlay.classList.remove('active');
-        }
-
-        function openDrawer() {
-            drawer.classList.add('open');
-            drawerOverlay.classList.add('active');
-        }
-
-        burgerBtn.addEventListener('click', openDrawer);
-        closeDrawerBtn.addEventListener('click', closeDrawer);
-        drawerOverlay.addEventListener('click', closeDrawer);
-
-        // Update UI based on auth state
-        function updateUserDisplay(user) {
+        function updateAuthUI(user) {
             if (user) {
-                const displayName = user.displayName || user.email || 'Client';
-                userNameSpan.textContent = displayName;
-
-                const isAdmin = (user.email === ADMIN_EMAIL);
-                if (isAdmin) {
-                    adminBadge.style.display = 'inline-block';
-                } else {
-                    adminBadge.style.display = 'none';
-                }
-
-                // Build drawer menu
-                let menuHtml = `
-                    <a href="/home.html"><i class="fas fa-home"></i> Accueil</a>
-                    <a href="/orders.html"><i class="fas fa-shopping-cart"></i> Mes commandes</a>
-                    <a href="/user/account.html"><i class="fas fa-user"></i> Mon compte</a>
-                    <a href="/user/settings.html"><i class="fas fa-sliders-h"></i> Paramètres</a>
-                    <a href="/user/supports.html"><i class="fas fa-headset"></i> Support</a>
+                // Connecté
+                authButtons.innerHTML = `
+                    <a href="/home.html" class="btn-nav btn-login"><i class="fas fa-home"></i> Accueil</a>
+                    <button id="logoutBtn" class="btn-nav btn-logout"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
                 `;
-                if (isAdmin) {
-                    menuHtml += `<a href="/admin.html"><i class="fas fa-shield-alt"></i> Administration</a>`;
-                }
-                menuHtml += `<button id="drawerLogoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>`;
-                drawerNav.innerHTML = menuHtml;
-
-                const logoutBtn = document.getElementById('drawerLogoutBtn');
-                if (logoutBtn) {
-                    logoutBtn.addEventListener('click', async () => {
-                        await auth.signOut();
-                        window.location.href = '/login.html';
-                    });
-                }
+                mobileAuthButtons.innerHTML = `
+                    <a href="/home.html" class="btn-nav btn-login">Accueil</a>
+                    <button id="mobileLogoutBtn" class="btn-nav btn-logout">Déconnexion</button>
+                `;
+                const logoutBtn = document.getElementById('logoutBtn');
+                const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+                if (logoutBtn) logoutBtn.onclick = () => auth.signOut().then(() => location.reload());
+                if (mobileLogoutBtn) mobileLogoutBtn.onclick = () => auth.signOut().then(() => location.reload());
             } else {
-                // Not logged in, redirect to login
-                window.location.href = '/login.html';
+                // Non connecté
+                authButtons.innerHTML = `
+                    <a href="/login.html" class="btn-nav btn-login">Connexion</a>
+                    <a href="/register.html" class="btn-nav btn-signup">Inscription</a>
+                `;
+                mobileAuthButtons.innerHTML = `
+                    <a href="/login.html" class="btn-nav btn-login">Connexion</a>
+                    <a href="/register.html" class="btn-nav btn-signup">Inscription</a>
+                `;
             }
         }
 
         auth.onAuthStateChanged(user => {
-            updateUserDisplay(user);
+            updateAuthUI(user);
         });
 
-        // Handle potential redirect result (for Google sign-in)
-        auth.getRedirectResult().catch(console.error);
+        // Burger menu
+        const burger = document.getElementById('burgerBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        burger.addEventListener('click', () => {
+            mobileMenu.style.display = mobileMenu.style.display === 'flex' ? 'none' : 'flex';
+        });
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                mobileMenu.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
