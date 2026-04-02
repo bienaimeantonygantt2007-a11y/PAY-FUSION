@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Fox Store – Accueil</title>
+    <title>Fox Store – Tableau de bord</title>
     
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -30,6 +30,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            font-size: 14px;
         }
 
         /* Navigation */
@@ -38,10 +39,10 @@
             top: 0;
             width: 100%;
             z-index: 1000;
-            padding: 14px 20px;
+            padding: 12px 24px;
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         }
 
         .nav-container {
@@ -58,70 +59,71 @@
             gap: 8px;
             text-decoration: none;
             font-weight: 700;
-            font-size: 20px;
+            font-size: 18px;
             color: #0a0c10;
+            letter-spacing: -0.3px;
         }
 
         .logo i {
-            font-size: 22px;
+            font-size: 20px;
             color: #00d1ff;
             transition: all 0.3s;
         }
 
         .logo:hover i {
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
 
         .nav-buttons {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
         .btn-nav {
-            padding: 6px 14px;
-            border-radius: 40px;
+            padding: 6px 12px;
+            border-radius: 32px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 500;
             text-decoration: none;
             transition: all 0.3s;
-            border: 1.5px solid rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.08);
             background: transparent;
             color: #0a0c10;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             cursor: pointer;
         }
 
         .btn-nav:hover {
             border-color: #00d1ff;
-            background: rgba(0, 209, 255, 0.1);
-            transform: translateY(-2px);
+            background: rgba(0, 209, 255, 0.08);
+            transform: translateY(-1px);
         }
 
         /* Main content */
         .main-content {
             flex: 1;
-            padding: 100px 20px 60px;
+            padding: 90px 24px 48px;
             max-width: 1200px;
             margin: 0 auto;
             width: 100%;
         }
 
-        /* Hero section bienvenue */
+        /* Welcome section */
         .welcome-section {
-            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
-            border-radius: 32px;
-            padding: 40px;
-            margin-bottom: 40px;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 28px 32px;
+            margin-bottom: 32px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
         }
 
         .welcome-section h1 {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 8px;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 6px;
         }
 
         .welcome-section h1 span {
@@ -130,138 +132,140 @@
 
         .welcome-section p {
             color: #4a5568;
-            font-size: 16px;
+            font-size: 13px;
         }
 
-        /* Grille des services */
+        /* Section titles */
         .section-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .section-title i {
             color: #00d1ff;
-            font-size: 28px;
+            font-size: 20px;
         }
 
+        /* Services grid */
         .services-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            margin-bottom: 48px;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
         }
 
         .service-card {
-            background: #ffffff;
-            border-radius: 24px;
-            padding: 28px 20px;
-            text-align: center;
-            text-decoration: none;
-            color: inherit;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            transition: all 0.3s;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        }
-
-        .service-card:hover {
-            transform: translateY(-5px);
-            border-color: #00d1ff;
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-        }
-
-        .service-icon {
-            width: 70px;
-            height: 70px;
-            background: #f1f5f9;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-        }
-
-        .service-icon i {
-            font-size: 32px;
-            color: #00d1ff;
-        }
-
-        .service-card h3 {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .service-card p {
-            color: #4a5568;
-            font-size: 14px;
-            margin-bottom: 16px;
-        }
-
-        .service-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: #00d1ff;
-            font-weight: 600;
-            font-size: 13px;
-        }
-
-        /* Actions rapides */
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 48px;
-        }
-
-        .action-card {
             background: #ffffff;
             border-radius: 20px;
             padding: 20px;
             text-align: center;
             text-decoration: none;
             color: inherit;
-            border: 1px solid rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            transition: all 0.3s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .service-card:hover {
+            transform: translateY(-3px);
+            border-color: #00d1ff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .service-icon {
+            width: 56px;
+            height: 56px;
+            background: #f1f5f9;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .service-icon i {
+            font-size: 26px;
+            color: #00d1ff;
+        }
+
+        .service-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .service-card p {
+            color: #4a5568;
+            font-size: 12px;
+            margin-bottom: 14px;
+            line-height: 1.4;
+        }
+
+        .service-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: #00d1ff;
+            font-weight: 500;
+            font-size: 12px;
+        }
+
+        /* Actions grid */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .action-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid rgba(0, 0, 0, 0.06);
             transition: all 0.3s;
         }
 
         .action-card:hover {
             border-color: #00d1ff;
-            transform: translateY(-3px);
+            transform: translateY(-2px);
         }
 
         .action-card i {
-            font-size: 28px;
+            font-size: 24px;
             color: #00d1ff;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .action-card h4 {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             margin-bottom: 4px;
         }
 
         .action-card p {
-            font-size: 12px;
+            font-size: 11px;
             color: #6c757d;
         }
 
-        /* Statistiques */
+        /* Stats */
         .stats {
             display: flex;
             justify-content: space-around;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 16px;
             background: #ffffff;
-            border-radius: 24px;
-            padding: 30px 20px;
-            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 20px;
+            padding: 24px 20px;
+            border: 1px solid rgba(0, 0, 0, 0.06);
             margin-bottom: 40px;
         }
 
@@ -270,34 +274,50 @@
         }
 
         .stat-number {
-            font-size: 28px;
-            font-weight: 800;
+            font-size: 22px;
+            font-weight: 700;
             color: #00d1ff;
         }
 
         .stat-label {
-            font-size: 12px;
+            font-size: 11px;
             color: #4a5568;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.4px;
         }
 
         /* Footer */
         footer {
             background: #ffffff;
-            border-top: 1px solid rgba(0, 0, 0, 0.08);
-            padding: 30px 20px;
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+            padding: 20px;
             text-align: center;
             color: #6c757d;
-            font-size: 12px;
+            font-size: 11px;
+        }
+
+        /* Admin badge */
+        .admin-badge {
+            display: inline-block;
+            background: #00d1ff10;
+            color: #00d1ff;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: 10px;
+            border: 1px solid #00d1ff20;
         }
 
         @media (max-width: 768px) {
+            .main-content {
+                padding: 80px 16px 32px;
+            }
             .welcome-section {
-                padding: 30px 20px;
+                padding: 20px;
             }
             .welcome-section h1 {
-                font-size: 24px;
+                font-size: 20px;
             }
             .services-grid {
                 grid-template-columns: 1fr;
@@ -326,15 +346,15 @@
 
     <!-- Main content -->
     <div class="main-content">
-        <div class="welcome-section">
-            <h1>Bonjour, <span id="userName">Utilisateur</span> !</h1>
-            <p>Bienvenue sur votre espace Fox Store. Découvrez nos services et gérez vos commandes.</p>
+        <div class="welcome-section" id="welcomeSection">
+            <h1>Bonjour, <span id="userName">Utilisateur</span><span id="adminBadge" style="display: none;" class="admin-badge">Administrateur</span></h1>
+            <p>Bienvenue sur votre espace Fox Store. Gérez vos commandes, services et paramètres.</p>
         </div>
 
         <!-- Services principaux -->
         <div class="section-title">
             <i class="fas fa-crown"></i>
-            <h2>Nos services premium</h2>
+            <h2>Services premium</h2>
         </div>
         <div class="services-grid">
             <a href="/pages/products/freefire.html" class="service-card">
@@ -351,7 +371,7 @@
             </a>
             <a href="/pages/products/wise.html" class="service-card">
                 <div class="service-icon"><i class="fas fa-coins"></i></div>
-                <h3>Finance Digitale</h3>
+                <h3>Finance</h3>
                 <p>Wise, PayPal, USDT, TRONX. Recharges aux meilleurs taux.</p>
                 <span class="service-link">Explorer <i class="fas fa-arrow-right"></i></span>
             </a>
@@ -385,11 +405,11 @@
             </a>
         </div>
 
-        <!-- Statistiques factices (à connecter avec Firestore plus tard) -->
+        <!-- Statistiques (dynamiques plus tard) -->
         <div class="stats">
             <div class="stat-item">
                 <div class="stat-number">15k+</div>
-                <div class="stat-label">Clients satisfaits</div>
+                <div class="stat-label">Clients</div>
             </div>
             <div class="stat-item">
                 <div class="stat-number">50k+</div>
@@ -397,7 +417,7 @@
             </div>
             <div class="stat-item">
                 <div class="stat-number">99.9%</div>
-                <div class="stat-label">Taux de satisfaction</div>
+                <div class="stat-label">Satisfaction</div>
             </div>
             <div class="stat-item">
                 <div class="stat-number">24/7</div>
@@ -407,11 +427,11 @@
     </div>
 
     <footer>
-        <p>© 2025 Fox Store. Tous droits réservés. | L'élite du service digital</p>
+        <p>© 2025 Fox Store – L'élite du service digital</p>
     </footer>
 
     <script>
-        // Configuration Firebase (identique)
+        // Configuration Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDSyFdTHBNULuUiacHM6nmEvPb7YpY24UE",
             authDomain: "foxstoreht.firebaseapp.com",
@@ -427,17 +447,35 @@
 
         const navButtons = document.getElementById('navButtons');
         const userNameSpan = document.getElementById('userName');
+        const adminBadge = document.getElementById('adminBadge');
 
-        // Mettre à jour l'affichage du nom
+        // Email administrateur
+        const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
+
         function updateUserDisplay(user) {
             if (user) {
+                // Afficher le nom ou l'email
                 const displayName = user.displayName || user.email || 'Utilisateur';
                 userNameSpan.textContent = displayName;
-                // Afficher les boutons de navigation pour utilisateur connecté
-                navButtons.innerHTML = `
+
+                // Vérifier si c'est l'admin
+                const isAdmin = (user.email === ADMIN_EMAIL);
+                if (isAdmin) {
+                    adminBadge.style.display = 'inline-block';
+                } else {
+                    adminBadge.style.display = 'none';
+                }
+
+                // Construire les boutons de navigation
+                let buttonsHtml = `
                     <a href="/orders.html" class="btn-nav"><i class="fas fa-shopping-cart"></i><span>Commandes</span></a>
-                    <button id="logoutBtn" class="btn-nav"><i class="fas fa-sign-out-alt"></i><span>Déconnexion</span></button>
                 `;
+                if (isAdmin) {
+                    buttonsHtml += `<a href="/admin.html" class="btn-nav"><i class="fas fa-shield-alt"></i><span>Admin</span></a>`;
+                }
+                buttonsHtml += `<button id="logoutBtn" class="btn-nav"><i class="fas fa-sign-out-alt"></i><span>Déconnexion</span></button>`;
+                navButtons.innerHTML = buttonsHtml;
+
                 const logoutBtn = document.getElementById('logoutBtn');
                 if (logoutBtn) {
                     logoutBtn.addEventListener('click', async () => {
@@ -446,17 +484,16 @@
                     });
                 }
             } else {
-                // Non connecté, rediriger vers login
+                // Non connecté → redirection vers login
                 window.location.href = '/login.html';
             }
         }
 
-        // Écouter les changements d'authentification
         auth.onAuthStateChanged(user => {
             updateUserDisplay(user);
         });
 
-        // Vérifier immédiatement
+        // Gestion des redirections après connexion (popup Google par ex.)
         auth.getRedirectResult().catch(console.error);
     </script>
 </body>
