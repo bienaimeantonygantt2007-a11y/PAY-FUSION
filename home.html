@@ -16,12 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
             background: #f5f7fc;
@@ -31,20 +26,16 @@
             display: flex;
             flex-direction: column;
         }
-
-        /* ========== NAVIGATION ========== */
         .navbar {
             position: fixed;
             top: 0;
-            left: 0;
-            right: 0;
+            width: 100%;
             z-index: 1000;
             padding: 14px 24px;
             background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid #eef2ff;
         }
-
         .nav-container {
             max-width: 1280px;
             margin: 0 auto;
@@ -52,7 +43,6 @@
             justify-content: space-between;
             align-items: center;
         }
-
         .logo {
             display: flex;
             align-items: center;
@@ -60,16 +50,9 @@
             text-decoration: none;
             font-weight: 800;
             font-size: 1.5rem;
-            letter-spacing: -0.02em;
             color: #0f172a;
         }
-
-        .logo i {
-            font-size: 1.6rem;
-            color: #00d1ff;
-        }
-
-        /* Bouton burger */
+        .logo i { font-size: 1.6rem; color: #00d1ff; }
         .burger-btn {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -80,18 +63,9 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s;
-            color: #1e293b;
             font-size: 1.3rem;
         }
-
-        .burger-btn:hover {
-            background: white;
-            border-color: #00d1ff40;
-            color: #00d1ff;
-        }
-
-        /* ========== DRAWER ========== */
+        .burger-btn:hover { background: white; border-color: #00d1ff40; color: #00d1ff; }
         .drawer {
             position: fixed;
             top: 0;
@@ -99,49 +73,31 @@
             width: 280px;
             height: 100vh;
             background: white;
-            box-shadow: -4px 0 24px rgba(0, 0, 0, 0.05);
+            box-shadow: -4px 0 24px rgba(0,0,0,0.05);
             z-index: 2000;
             transition: right 0.3s ease;
             display: flex;
             flex-direction: column;
             border-left: 1px solid #eef2ff;
         }
-
-        .drawer.open {
-            right: 0;
-        }
-
+        .drawer.open { right: 0; }
         .drawer-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 20px 16px;
+            padding: 20px;
             border-bottom: 1px solid #edf2f7;
         }
-
-        .drawer-header .logo {
-            font-size: 1.2rem;
-        }
-
+        .drawer-header .logo { font-size: 1.2rem; }
         .close-drawer {
             background: #f1f5f9;
             border: none;
             border-radius: 10px;
             width: 34px;
             height: 34px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             cursor: pointer;
             font-size: 1rem;
-            color: #475569;
         }
-
-        .close-drawer:hover {
-            background: #e2e8f0;
-            color: #00d1ff;
-        }
-
         .drawer-user {
             display: flex;
             align-items: center;
@@ -151,7 +107,6 @@
             margin: 16px;
             border-radius: 16px;
         }
-
         .drawer-user-avatar {
             width: 44px;
             height: 44px;
@@ -164,17 +119,8 @@
             font-size: 1.3rem;
             font-weight: 600;
         }
-
-        .drawer-user-info h4 {
-            font-size: 0.95rem;
-            font-weight: 600;
-        }
-
-        .drawer-user-info p {
-            font-size: 0.75rem;
-            color: #5b6e8c;
-        }
-
+        .drawer-user-info h4 { font-size: 0.95rem; font-weight: 600; }
+        .drawer-user-info p { font-size: 0.75rem; color: #5b6e8c; }
         .drawer-nav {
             flex: 1;
             display: flex;
@@ -182,7 +128,6 @@
             padding: 8px 12px;
             gap: 4px;
         }
-
         .drawer-nav a, .drawer-nav button {
             display: flex;
             align-items: center;
@@ -193,45 +138,27 @@
             color: #1e293b;
             font-size: 0.95rem;
             font-weight: 500;
-            transition: all 0.2s;
             background: none;
             border: none;
             cursor: pointer;
             width: 100%;
             text-align: left;
         }
-
-        .drawer-nav a i, .drawer-nav button i {
-            width: 22px;
-            font-size: 1.1rem;
-            color: #5b6e8c;
-        }
-
-        .drawer-nav a:hover, .drawer-nav button:hover {
-            background: #f1f5f9;
-        }
-
-        .drawer-nav a:hover i, .drawer-nav button:hover i {
-            color: #00d1ff;
-        }
-
+        .drawer-nav a i, .drawer-nav button i { width: 22px; color: #5b6e8c; }
+        .drawer-nav a:hover, .drawer-nav button:hover { background: #f1f5f9; }
+        .drawer-nav a:hover i, .drawer-nav button:hover i { color: #00d1ff; }
         .drawer-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0,0,0,0.3);
             backdrop-filter: blur(2px);
             z-index: 1999;
             display: none;
         }
-
-        .drawer-overlay.active {
-            display: block;
-        }
-
-        /* ========== CONTENU PRINCIPAL ========== */
+        .drawer-overlay.active { display: block; }
         .main-content {
             flex: 1;
             padding: 90px 24px 50px;
@@ -239,32 +166,20 @@
             margin: 0 auto;
             width: 100%;
         }
-
-        /* Carte bienvenue */
         .welcome-card {
             background: white;
             border-radius: 28px;
             padding: 24px 28px;
             margin-bottom: 32px;
             border: 1px solid #eef2ff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
         }
-
         .welcome-card h1 {
             font-size: 1.7rem;
             font-weight: 700;
             margin-bottom: 6px;
         }
-
-        .welcome-card h1 span {
-            color: #00d1ff;
-        }
-
-        .welcome-card p {
-            font-size: 0.95rem;
-            color: #475569;
-        }
-
+        .welcome-card h1 span { color: #00d1ff; }
+        .welcome-card p { font-size: 0.95rem; color: #475569; }
         .admin-badge {
             display: inline-block;
             background: #00d1ff10;
@@ -276,8 +191,6 @@
             margin-left: 10px;
             border: 1px solid #00d1ff20;
         }
-
-        /* Sections */
         .section-title {
             font-size: 1.3rem;
             font-weight: 700;
@@ -286,12 +199,7 @@
             align-items: center;
             gap: 10px;
         }
-        .section-title i {
-            color: #00d1ff;
-            font-size: 1.2rem;
-        }
-
-        /* Services */
+        .section-title i { color: #00d1ff; font-size: 1.2rem; }
         .services-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -309,7 +217,7 @@
         }
         .service-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.04);
             border-color: #e2e8f0;
         }
         .service-icon {
@@ -322,21 +230,9 @@
             justify-content: center;
             margin-bottom: 16px;
         }
-        .service-icon i {
-            font-size: 1.6rem;
-            color: #00d1ff;
-        }
-        .service-card h3 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        .service-card p {
-            font-size: 0.85rem;
-            color: #475569;
-            margin-bottom: 16px;
-            line-height: 1.4;
-        }
+        .service-icon i { font-size: 1.6rem; color: #00d1ff; }
+        .service-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+        .service-card p { font-size: 0.85rem; color: #475569; margin-bottom: 16px; }
         .service-link {
             font-size: 0.85rem;
             font-weight: 600;
@@ -345,8 +241,6 @@
             align-items: center;
             gap: 6px;
         }
-
-        /* Actions rapides */
         .actions-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -372,46 +266,8 @@
             color: #00d1ff;
             margin-bottom: 12px;
         }
-        .action-card h4 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-        .action-card p {
-            font-size: 0.75rem;
-            color: #5b6e8c;
-        }
-
-        /* Statistiques */
-        .stats-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            background: white;
-            border-radius: 24px;
-            padding: 20px 24px;
-            border: 1px solid #eef2ff;
-            margin-bottom: 40px;
-        }
-        .stat-item {
-            flex: 1;
-            min-width: 110px;
-            text-align: center;
-        }
-        .stat-number {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: #00d1ff;
-            margin-bottom: 4px;
-        }
-        .stat-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #5b6e8c;
-        }
-
-        /* Réseaux sociaux */
+        .action-card h4 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+        .action-card p { font-size: 0.75rem; color: #5b6e8c; }
         .social-links {
             display: flex;
             justify-content: center;
@@ -428,26 +284,15 @@
             color: #1e293b;
             transition: transform 0.2s;
         }
-        .social-icon:hover {
-            transform: translateY(-3px);
-        }
-        .social-icon i {
-            font-size: 2rem;
-        }
-        .social-icon span {
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-        .social-icon .fa-tiktok { color: #000000; }
-        .social-icon .fa-instagram { color: #E4405F; }
-        .social-icon .fa-youtube { color: #FF0000; }
-        .social-icon .fa-telegram { color: #26A5E4; }
-        .social-icon:hover .fa-tiktok { color: #00d1ff; }
-        .social-icon:hover .fa-instagram { color: #00d1ff; }
-        .social-icon:hover .fa-youtube { color: #00d1ff; }
-        .social-icon:hover .fa-telegram { color: #00d1ff; }
-
-        /* Footer */
+        .social-icon:hover { transform: translateY(-3px); }
+        .social-icon i { font-size: 2rem; }
+        .social-icon span { font-size: 0.75rem; font-weight: 500; }
+        .fa-tiktok { color: #000000; }
+        .fa-instagram { color: #E4405F; }
+        .fa-youtube { color: #FF0000; }
+        .fa-telegram { color: #26A5E4; }
+        .social-icon:hover .fa-tiktok, .social-icon:hover .fa-instagram,
+        .social-icon:hover .fa-youtube, .social-icon:hover .fa-telegram { color: #00d1ff; }
         footer {
             background: transparent;
             border-top: 1px solid #e2e8f0;
@@ -456,8 +301,6 @@
             font-size: 0.75rem;
             color: #5b6e8c;
         }
-
-        /* WhatsApp flottant */
         .whatsapp-float {
             position: fixed;
             bottom: 20px;
@@ -471,59 +314,29 @@
             align-items: center;
             justify-content: center;
             font-size: 1.8rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             z-index: 1000;
             text-decoration: none;
         }
-        .whatsapp-float:hover {
-            transform: scale(1.05);
-            background: #1da85c;
-        }
-
+        .whatsapp-float:hover { transform: scale(1.05); background: #1da85c; }
         @media (max-width: 640px) {
-            .main-content {
-                padding: 80px 16px 40px;
-            }
-            .welcome-card h1 {
-                font-size: 1.4rem;
-            }
-            .services-grid {
-                grid-template-columns: 1fr;
-            }
-            .stats-grid {
-                flex-direction: column;
-                gap: 12px;
-            }
-            .drawer {
-                width: 260px;
-                right: -260px;
-            }
-            .social-links {
-                gap: 20px;
-            }
-            .social-icon i {
-                font-size: 1.6rem;
-            }
+            .main-content { padding: 80px 16px 40px; }
+            .services-grid { grid-template-columns: 1fr; }
+            .drawer { width: 260px; right: -260px; }
+            .social-links { gap: 20px; }
+            .social-icon i { font-size: 1.6rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="/home.html" class="logo">
-                <i class="fas fa-fox"></i>
-                <span>FOX STORE</span>
-            </a>
-            <button class="burger-btn" id="burgerBtn">
-                <i class="fas fa-bars"></i>
-            </button>
+            <a href="/home.html" class="logo"><i class="fas fa-fox"></i><span>FOX STORE</span></a>
+            <button class="burger-btn" id="burgerBtn"><i class="fas fa-bars"></i></button>
         </div>
     </nav>
 
-    <!-- Overlay et drawer -->
     <div class="drawer-overlay" id="drawerOverlay"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-header">
@@ -534,45 +347,39 @@
         <div class="drawer-nav" id="drawerNav"></div>
     </div>
 
-    <!-- WhatsApp flottant -->
-    <a href="https://wa.me/50937542954" class="whatsapp-float" target="_blank" rel="noopener noreferrer">
-        <i class="fab fa-whatsapp"></i>
-    </a>
+    <a href="https://wa.me/50937542954" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
 
-    <!-- Contenu principal -->
     <div class="main-content">
         <div class="welcome-card">
             <h1>Bonjour, <span id="userName">Utilisateur</span><span id="adminBadge" class="admin-badge" style="display: none;">Administrateur</span></h1>
             <p>Bienvenue sur votre tableau de bord. Accédez à vos services et commandes.</p>
         </div>
 
-        <!-- Services -->
         <div class="section-title">
             <i class="fas fa-crown"></i>
-            <h2>Services premium</h2>
+            <h2>Nos services premium</h2>
         </div>
         <div class="services-grid">
-            <a href="/pages/products/freefire.html" class="service-card">
+            <a href="/gaming.html" class="service-card">
                 <div class="service-icon"><i class="fas fa-gamepad"></i></div>
                 <h3>Gaming</h3>
                 <p>Free Fire, PUBG, Roblox, FC Mobile, Blood Strike. Diamants, UC, Robux.</p>
                 <span class="service-link">Explorer <i class="fas fa-arrow-right"></i></span>
             </a>
-            <a href="/pages/products/netflix.html" class="service-card">
+            <a href="/streaming.html" class="service-card">
                 <div class="service-icon"><i class="fas fa-film"></i></div>
                 <h3>Streaming</h3>
                 <p>Netflix, Disney+, Prime Video, Crunchyroll. Comptes Premium garantis.</p>
                 <span class="service-link">Explorer <i class="fas fa-arrow-right"></i></span>
             </a>
-            <a href="/pages/products/wise.html" class="service-card">
+            <a href="/finance.html" class="service-card">
                 <div class="service-icon"><i class="fas fa-coins"></i></div>
                 <h3>Finance</h3>
-                <p>Wise, PayPal, USDT, TRONX. Recharges instantanées, meilleurs taux.</p>
+                <p>Wise, PayPal, USDT, TRONX, MERU. Recharges instantanées.</p>
                 <span class="service-link">Explorer <i class="fas fa-arrow-right"></i></span>
             </a>
         </div>
 
-        <!-- Actions rapides -->
         <div class="section-title">
             <i class="fas fa-bolt"></i>
             <h2>Accès rapide</h2>
@@ -600,43 +407,18 @@
             </a>
         </div>
 
-        <!-- Statistiques -->
-        <div class="stats-grid">
-            <div class="stat-item">
-                <div class="stat-number">15k+</div>
-                <div class="stat-label">Clients</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">50k+</div>
-                <div class="stat-label">Transactions</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">99.9%</div>
-                <div class="stat-label">Satisfaction</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">24/7</div>
-                <div class="stat-label">Support</div>
-            </div>
-        </div>
-
-        <!-- Réseaux sociaux -->
         <div class="social-links">
             <a href="https://www.tiktok.com/@foxstorehaiti" target="_blank" class="social-icon">
-                <i class="fab fa-tiktok"></i>
-                <span>TikTok</span>
+                <i class="fab fa-tiktok"></i><span>TikTok</span>
             </a>
             <a href="https://www.instagram.com/foxstorehaiti" target="_blank" class="social-icon">
-                <i class="fab fa-instagram"></i>
-                <span>Instagram</span>
+                <i class="fab fa-instagram"></i><span>Instagram</span>
             </a>
             <a href="https://www.youtube.com/@foxstorehaiti" target="_blank" class="social-icon">
-                <i class="fab fa-youtube"></i>
-                <span>YouTube</span>
+                <i class="fab fa-youtube"></i><span>YouTube</span>
             </a>
             <a href="https://t.me/foxstorehaiti" target="_blank" class="social-icon">
-                <i class="fab fa-telegram"></i>
-                <span>Telegram</span>
+                <i class="fab fa-telegram"></i><span>Telegram</span>
             </a>
         </div>
     </div>
@@ -646,7 +428,6 @@
     </footer>
 
     <script>
-        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDSyFdTHBNULuUiacHM6nmEvPb7YpY24UE",
             authDomain: "foxstoreht.firebaseapp.com",
@@ -656,93 +437,56 @@
             appId: "1:72533137445:web:3ba7634bc34da6115b47cc",
             measurementId: "G-X1Q7Q79BRD"
         };
-
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
 
-        // DOM elements
-        const userNameSpan = document.getElementById('userName');
-        const adminBadge = document.getElementById('adminBadge');
         const drawerNav = document.getElementById('drawerNav');
         const drawerUserSection = document.getElementById('drawerUserSection');
         const burgerBtn = document.getElementById('burgerBtn');
         const drawer = document.getElementById('drawer');
         const drawerOverlay = document.getElementById('drawerOverlay');
         const closeDrawerBtn = document.getElementById('closeDrawerBtn');
-
         const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
 
-        // Drawer controls
-        function closeDrawer() {
-            drawer.classList.remove('open');
-            drawerOverlay.classList.remove('active');
-        }
-        function openDrawer() {
-            drawer.classList.add('open');
-            drawerOverlay.classList.add('active');
-        }
+        function closeDrawer() { drawer.classList.remove('open'); drawerOverlay.classList.remove('active'); }
+        function openDrawer() { drawer.classList.add('open'); drawerOverlay.classList.add('active'); }
         burgerBtn.addEventListener('click', openDrawer);
         closeDrawerBtn.addEventListener('click', closeDrawer);
         drawerOverlay.addEventListener('click', closeDrawer);
 
-        // Update UI based on auth
         function updateUI(user) {
-            if (!user) {
-                window.location.href = '/login.html';
-                return;
-            }
-
-            const displayName = user.displayName || user.email || 'Client';
-            userNameSpan.textContent = displayName;
-
+            if (!user) { window.location.href = '/login.html'; return; }
+            const name = user.displayName || user.email || 'Client';
             const isAdmin = (user.email === ADMIN_EMAIL);
-            if (isAdmin) {
-                adminBadge.style.display = 'inline-block';
-            } else {
-                adminBadge.style.display = 'none';
-            }
-
-            // Drawer user section
-            const initial = displayName.charAt(0).toUpperCase();
+            const initial = name.charAt(0).toUpperCase();
             drawerUserSection.innerHTML = `
                 <div class="drawer-user">
                     <div class="drawer-user-avatar">${initial}</div>
                     <div class="drawer-user-info">
-                        <h4>${displayName}</h4>
+                        <h4>${name}</h4>
                         <p>${user.email}</p>
                     </div>
                 </div>
             `;
-
-            // Drawer navigation
-            let menuHtml = `
+            let menu = `
                 <a href="/home.html"><i class="fas fa-home"></i> Accueil</a>
-                <a href="/orders.html"><i class="fas fa-shopping-cart"></i> Mes commandes</a>
+                <a href="/gaming.html"><i class="fas fa-gamepad"></i> Gaming</a>
+                <a href="/streaming.html"><i class="fas fa-film"></i> Streaming</a>
+                <a href="/finance.html"><i class="fas fa-coins"></i> Finance</a>
+                <a href="/orders.html"><i class="fas fa-shopping-cart"></i> Commandes</a>
                 <a href="/user/account.html"><i class="fas fa-user"></i> Mon compte</a>
                 <a href="/user/settings.html"><i class="fas fa-sliders-h"></i> Paramètres</a>
                 <a href="/user/supports.html"><i class="fas fa-headset"></i> Support</a>
-                <a href="/pages/products/freefire.html"><i class="fas fa-gamepad"></i> Gaming</a>
-                <a href="/pages/products/netflix.html"><i class="fas fa-film"></i> Streaming</a>
-                <a href="/pages/products/wise.html"><i class="fas fa-coins"></i> Finance</a>
             `;
-            if (isAdmin) {
-                menuHtml += `<a href="/admin.html"><i class="fas fa-shield-alt"></i> Administration</a>`;
-            }
-            menuHtml += `<button id="drawerLogoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>`;
-            drawerNav.innerHTML = menuHtml;
-
-            const logoutBtn = document.getElementById('drawerLogoutBtn');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', async () => {
-                    await auth.signOut();
-                    window.location.href = '/login.html';
-                });
-            }
+            if (isAdmin) menu += `<a href="/admin.html"><i class="fas fa-shield-alt"></i> Administration</a>`;
+            menu += `<button id="drawerLogoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>`;
+            drawerNav.innerHTML = menu;
+            document.getElementById('drawerLogoutBtn')?.addEventListener('click', async () => {
+                await auth.signOut();
+                window.location.href = '/login.html';
+            });
         }
-
-        auth.onAuthStateChanged(user => {
-            updateUI(user);
-        });
+        auth.onAuthStateChanged(updateUI);
     </script>
 </body>
 </html>
