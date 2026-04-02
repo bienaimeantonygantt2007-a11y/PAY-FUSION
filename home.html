@@ -74,31 +74,115 @@
             transform: scale(1.05);
         }
 
-        .nav-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-nav {
-            padding: 6px 12px;
-            border-radius: 32px;
-            font-size: 12px;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.3s;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            background: transparent;
-            color: #0a0c10;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+        /* Menu burger */
+        .burger-menu {
+            background: none;
+            border: none;
             cursor: pointer;
+            font-size: 24px;
+            color: #0a0c10;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
         }
 
-        .btn-nav:hover {
-            border-color: #00d1ff;
-            background: rgba(0, 209, 255, 0.08);
-            transform: translateY(-1px);
+        .burger-menu:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: #00d1ff;
+        }
+
+        /* Drawer (menu latéral) */
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100%;
+            background: #ffffff;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+            z-index: 2000;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            padding: 24px 20px;
+            border-left: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .drawer.open {
+            right: 0;
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .drawer-header .logo {
+            font-size: 18px;
+        }
+
+        .close-drawer {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #4a5568;
+        }
+
+        .drawer-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .drawer-nav a, .drawer-nav button {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #0a0c10;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+        }
+
+        .drawer-nav a i, .drawer-nav button i {
+            width: 20px;
+            color: #00d1ff;
+        }
+
+        .drawer-nav a:hover, .drawer-nav button:hover {
+            background: #f1f5f9;
+        }
+
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1999;
+            display: none;
+        }
+
+        .drawer-overlay.active {
+            display: block;
         }
 
         /* Main content */
@@ -133,6 +217,18 @@
         .welcome-section p {
             color: #4a5568;
             font-size: 13px;
+        }
+
+        .admin-badge {
+            display: inline-block;
+            background: #00d1ff10;
+            color: #00d1ff;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: 10px;
+            border: 1px solid #00d1ff20;
         }
 
         /* Section titles */
@@ -296,17 +392,29 @@
             font-size: 11px;
         }
 
-        /* Admin badge */
-        .admin-badge {
-            display: inline-block;
-            background: #00d1ff10;
-            color: #00d1ff;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 20px;
-            margin-left: 10px;
-            border: 1px solid #00d1ff20;
+        /* WhatsApp flottant */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background-color: #25D366;
+            color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s;
+            z-index: 1000;
+            text-decoration: none;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.08);
+            background-color: #20b859;
         }
 
         @media (max-width: 768px) {
@@ -326,6 +434,13 @@
                 flex-direction: column;
                 align-items: center;
             }
+            .whatsapp-float {
+                width: 48px;
+                height: 48px;
+                font-size: 24px;
+                bottom: 20px;
+                right: 20px;
+            }
         }
     </style>
 </head>
@@ -338,11 +453,35 @@
                 <i class="fas fa-fox"></i>
                 <span>FOX STORE</span>
             </a>
-            <div class="nav-buttons" id="navButtons">
-                <!-- Sera rempli dynamiquement -->
-            </div>
+            <button class="burger-menu" id="burgerBtn">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
     </nav>
+
+    <!-- Drawer overlay -->
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+
+    <!-- Drawer menu -->
+    <div class="drawer" id="drawer">
+        <div class="drawer-header">
+            <div class="logo">
+                <i class="fas fa-fox"></i>
+                <span>FOX STORE</span>
+            </div>
+            <button class="close-drawer" id="closeDrawerBtn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="drawer-nav" id="drawerNav">
+            <!-- Les liens seront injectés dynamiquement -->
+        </div>
+    </div>
+
+    <!-- WhatsApp flottant -->
+    <a href="https://wa.me/50937542954" class="whatsapp-float" target="_blank" rel="noopener noreferrer">
+        <i class="fab fa-whatsapp"></i>
+    </a>
 
     <!-- Main content -->
     <div class="main-content">
@@ -405,7 +544,7 @@
             </a>
         </div>
 
-        <!-- Statistiques (dynamiques plus tard) -->
+        <!-- Statistiques -->
         <div class="stats">
             <div class="stat-item">
                 <div class="stat-number">15k+</div>
@@ -445,20 +584,35 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
 
-        const navButtons = document.getElementById('navButtons');
         const userNameSpan = document.getElementById('userName');
         const adminBadge = document.getElementById('adminBadge');
+        const drawerNav = document.getElementById('drawerNav');
+        const burgerBtn = document.getElementById('burgerBtn');
+        const drawer = document.getElementById('drawer');
+        const drawerOverlay = document.getElementById('drawerOverlay');
+        const closeDrawerBtn = document.getElementById('closeDrawerBtn');
 
-        // Email administrateur
         const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
+
+        function closeDrawer() {
+            drawer.classList.remove('open');
+            drawerOverlay.classList.remove('active');
+        }
+
+        function openDrawer() {
+            drawer.classList.add('open');
+            drawerOverlay.classList.add('active');
+        }
+
+        burgerBtn.addEventListener('click', openDrawer);
+        closeDrawerBtn.addEventListener('click', closeDrawer);
+        drawerOverlay.addEventListener('click', closeDrawer);
 
         function updateUserDisplay(user) {
             if (user) {
-                // Afficher le nom ou l'email
                 const displayName = user.displayName || user.email || 'Utilisateur';
                 userNameSpan.textContent = displayName;
 
-                // Vérifier si c'est l'admin
                 const isAdmin = (user.email === ADMIN_EMAIL);
                 if (isAdmin) {
                     adminBadge.style.display = 'inline-block';
@@ -466,17 +620,21 @@
                     adminBadge.style.display = 'none';
                 }
 
-                // Construire les boutons de navigation
-                let buttonsHtml = `
-                    <a href="/orders.html" class="btn-nav"><i class="fas fa-shopping-cart"></i><span>Commandes</span></a>
+                // Construire le menu drawer
+                let drawerHtml = `
+                    <a href="/home.html"><i class="fas fa-home"></i> Accueil</a>
+                    <a href="/orders.html"><i class="fas fa-shopping-cart"></i> Mes commandes</a>
+                    <a href="/user/account.html"><i class="fas fa-user"></i> Mon compte</a>
+                    <a href="/user/settings.html"><i class="fas fa-sliders-h"></i> Paramètres</a>
+                    <a href="/user/supports.html"><i class="fas fa-headset"></i> Support</a>
                 `;
                 if (isAdmin) {
-                    buttonsHtml += `<a href="/admin.html" class="btn-nav"><i class="fas fa-shield-alt"></i><span>Admin</span></a>`;
+                    drawerHtml += `<a href="/admin.html"><i class="fas fa-shield-alt"></i> Administration</a>`;
                 }
-                buttonsHtml += `<button id="logoutBtn" class="btn-nav"><i class="fas fa-sign-out-alt"></i><span>Déconnexion</span></button>`;
-                navButtons.innerHTML = buttonsHtml;
+                drawerHtml += `<button id="drawerLogoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>`;
+                drawerNav.innerHTML = drawerHtml;
 
-                const logoutBtn = document.getElementById('logoutBtn');
+                const logoutBtn = document.getElementById('drawerLogoutBtn');
                 if (logoutBtn) {
                     logoutBtn.addEventListener('click', async () => {
                         await auth.signOut();
@@ -484,7 +642,6 @@
                     });
                 }
             } else {
-                // Non connecté → redirection vers login
                 window.location.href = '/login.html';
             }
         }
@@ -493,7 +650,6 @@
             updateUserDisplay(user);
         });
 
-        // Gestion des redirections après connexion (popup Google par ex.)
         auth.getRedirectResult().catch(console.error);
     </script>
 </body>
