@@ -2,32 +2,49 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Fox Store – Inscription</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* Styles clairs (blanc + bleu) */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* ---------- THEME CLAIR (BLANC + BLEU) ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background: #f8fafc;
             color: #0a0c10;
+            line-height: 1.5;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
+
+        /* Navigation */
         .navbar {
             position: fixed;
             top: 0;
             width: 100%;
-            background: rgba(255,255,255,0.85);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(0,0,0,0.08);
-            padding: 14px 20px;
             z-index: 1000;
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
         }
+
         .nav-container {
             max-width: 1000px;
             margin: 0 auto;
@@ -35,6 +52,7 @@
             justify-content: space-between;
             align-items: center;
         }
+
         .logo {
             display: flex;
             align-items: center;
@@ -44,34 +62,39 @@
             font-size: 20px;
             color: #0a0c10;
         }
-        .logo i { color: #00d1ff; font-size: 22px; }
-        .btn {
+
+        .logo i {
+            font-size: 22px;
+            color: #00d1ff;
+            transition: all 0.3s;
+        }
+
+        .logo:hover i {
+            transform: scale(1.1);
+        }
+
+        .btn-nav {
             padding: 6px 14px;
             border-radius: 40px;
             font-size: 12px;
             font-weight: 600;
             text-decoration: none;
-            transition: 0.3s;
-            border: 1.5px solid transparent;
+            transition: all 0.3s;
+            border: 1.5px solid rgba(0, 0, 0, 0.08);
+            background: transparent;
+            color: #0a0c10;
             display: inline-flex;
             align-items: center;
             gap: 5px;
-            cursor: pointer;
         }
-        .btn-outline {
-            border-color: rgba(0,0,0,0.08);
-            background: transparent;
-            color: #0a0c10;
-        }
-        .btn-outline:hover {
+
+        .btn-nav:hover {
             border-color: #00d1ff;
-            background: rgba(0,209,255,0.1);
+            background: rgba(0, 209, 255, 0.1);
+            transform: translateY(-2px);
         }
-        .btn-primary {
-            background: #00d1ff;
-            color: #0a0c10;
-            box-shadow: 0 8px 20px rgba(0,209,255,0.3);
-        }
+
+        /* Main content */
         .main-content {
             flex: 1;
             display: flex;
@@ -79,51 +102,77 @@
             justify-content: center;
             padding: 100px 20px 60px;
         }
+
         .register-card {
-            background: white;
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
             border-radius: 32px;
             padding: 40px 32px;
             max-width: 480px;
             width: 100%;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
         }
-        .register-header { text-align: center; margin-bottom: 32px; }
-        .register-header h1 { font-size: 28px; margin-bottom: 8px; }
-        .register-header p { color: #4a5568; font-size: 14px; }
-        .form-group { margin-bottom: 20px; }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .register-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .register-header p {
+            color: #4a5568;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
         .form-group label {
             display: block;
             font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
             color: #4a5568;
             margin-bottom: 8px;
         }
+
         .input-wrapper {
             position: relative;
             display: flex;
             align-items: center;
         }
+
         .input-wrapper i {
             position: absolute;
             left: 16px;
             color: #6c757d;
             font-size: 16px;
+            pointer-events: none;
         }
+
         .input-wrapper input {
             width: 100%;
             background: #f1f5f9;
-            border: 1px solid rgba(0,0,0,0.08);
+            border: 1px solid rgba(0, 0, 0, 0.08);
             border-radius: 40px;
             padding: 14px 20px 14px 48px;
             font-size: 14px;
+            transition: all 0.3s;
             outline: none;
         }
+
         .input-wrapper input:focus {
             border-color: #00d1ff;
-            box-shadow: 0 0 0 2px rgba(0,209,255,0.2);
+            box-shadow: 0 0 0 2px rgba(0, 209, 255, 0.2);
         }
+
         .terms-checkbox {
             display: flex;
             align-items: flex-start;
@@ -132,50 +181,115 @@
             font-size: 13px;
             color: #4a5568;
         }
+
+        .terms-checkbox input {
+            width: 18px;
+            height: 18px;
+            accent-color: #00d1ff;
+            margin-top: 2px;
+            cursor: pointer;
+        }
+
+        .terms-checkbox label {
+            line-height: 1.4;
+            cursor: pointer;
+        }
+
         .terms-checkbox a {
             color: #00d1ff;
             text-decoration: none;
+            font-weight: 500;
         }
-        .btn-register, .btn-google {
+
+        .terms-checkbox a:hover {
+            text-decoration: underline;
+        }
+
+        .btn-primary {
             width: 100%;
-            padding: 12px;
+            background: #00d1ff;
+            border: none;
             border-radius: 40px;
-            font-weight: 600;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #0a0c10;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
             cursor: pointer;
-            transition: 0.3s;
-            border: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 209, 255, 0.3);
         }
-        .btn-register {
-            background: #00d1ff;
-            color: #0a0c10;
-            margin-bottom: 20px;
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 209, 255, 0.4);
         }
+
         .separator {
             display: flex;
             align-items: center;
             gap: 16px;
+            margin: 24px 0;
             color: #6c757d;
             font-size: 12px;
-            margin: 20px 0;
         }
-        .separator-line { flex: 1; height: 1px; background: rgba(0,0,0,0.08); }
+
+        .separator-line {
+            flex: 1;
+            height: 1px;
+            background: rgba(0, 0, 0, 0.08);
+        }
+
         .btn-google {
+            width: 100%;
             background: transparent;
-            border: 1.5px solid rgba(0,0,0,0.08);
+            border: 1.5px solid rgba(0, 0, 0, 0.08);
+            border-radius: 40px;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
             color: #0a0c10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
-        .btn-google i { color: #00d1ff; }
+
+        .btn-google i {
+            color: #ea4335;
+            font-size: 18px;
+        }
+
+        .btn-google:hover {
+            border-color: #00d1ff;
+            background: rgba(0, 209, 255, 0.04);
+            transform: translateY(-2px);
+        }
+
         .login-link {
             text-align: center;
             margin-top: 24px;
             font-size: 13px;
+            color: #4a5568;
         }
-        .login-link a { color: #00d1ff; text-decoration: none; }
-        .error-message, .success-message {
+
+        .login-link a {
+            color: #00d1ff;
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 6px;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .message {
             border-radius: 40px;
             padding: 10px 16px;
             font-size: 13px;
@@ -184,8 +298,20 @@
             align-items: center;
             gap: 8px;
         }
-        .error-message { background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.3); color: #ff4444; }
-        .success-message { background: rgba(0,200,83,0.1); border: 1px solid rgba(0,200,83,0.3); color: #00c853; }
+
+        .error-message {
+            background: rgba(255, 68, 68, 0.1);
+            border: 1px solid rgba(255, 68, 68, 0.3);
+            color: #ff4444;
+        }
+
+        .success-message {
+            background: rgba(0, 200, 83, 0.1);
+            border: 1px solid rgba(0, 200, 83, 0.3);
+            color: #00c853;
+        }
+
+        /* Modales */
         .modal {
             display: none;
             position: fixed;
@@ -193,14 +319,18 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(8px);
             z-index: 2000;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
-        .modal.active { display: flex; }
+
+        .modal.active {
+            display: flex;
+        }
+
         .modal-content {
             background: white;
             border-radius: 32px;
@@ -209,14 +339,21 @@
             max-height: 80vh;
             overflow-y: auto;
         }
+
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 24px;
-            border-bottom: 1px solid rgba(0,0,0,0.08);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
             padding-bottom: 10px;
         }
+
+        .modal-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
         .modal-close {
             background: none;
             border: none;
@@ -224,84 +361,176 @@
             cursor: pointer;
             color: #4a5568;
         }
-        .modal-body { color: #4a5568; font-size: 14px; line-height: 1.6; }
-        .modal-body h3 { color: #0a0c10; margin: 20px 0 10px; }
+
+        .modal-close:hover {
+            color: #00d1ff;
+        }
+
+        .modal-body {
+            color: #4a5568;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .modal-body h3 {
+            color: #0a0c10;
+            margin: 20px 0 10px;
+        }
+
+        @media (max-width: 480px) {
+            .register-card {
+                padding: 30px 20px;
+            }
+        }
     </style>
 </head>
 <body>
+
+    <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="/" class="logo"><i class="fas fa-fox"></i><span>FOX STORE</span></a>
-            <a href="/login.html" class="btn btn-outline"><i class="fas fa-sign-in-alt"></i><span>Connexion</span></a>
+            <a href="/" class="logo">
+                <i class="fas fa-fox"></i>
+                <span>FOX STORE</span>
+            </a>
+            <a href="/login.html" class="btn-nav">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>Connexion</span>
+            </a>
         </div>
     </nav>
 
+    <!-- Main content -->
     <div class="main-content">
         <div class="register-card">
             <div class="register-header">
                 <h1>Inscription</h1>
                 <p>Créez votre compte Fox Store</p>
             </div>
-            <div id="errorMessage" class="error-message"><i class="fas fa-exclamation-circle"></i><span></span></div>
-            <div id="successMessage" class="success-message"><i class="fas fa-check-circle"></i><span></span></div>
+
+            <div id="errorMessage" class="message error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                <span></span>
+            </div>
+            <div id="successMessage" class="message success-message">
+                <i class="fas fa-check-circle"></i>
+                <span></span>
+            </div>
 
             <form id="registerForm">
                 <div class="form-group">
                     <label>Nom complet</label>
-                    <div class="input-wrapper"><i class="far fa-user"></i><input type="text" id="fullName" placeholder="Votre nom complet" required></div>
+                    <div class="input-wrapper">
+                        <i class="far fa-user"></i>
+                        <input type="text" id="fullName" placeholder="Votre nom complet" required>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Email</label>
-                    <div class="input-wrapper"><i class="far fa-envelope"></i><input type="email" id="email" placeholder="exemple@email.com" required></div>
+                    <div class="input-wrapper">
+                        <i class="far fa-envelope"></i>
+                        <input type="email" id="email" placeholder="exemple@email.com" required>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Mot de passe</label>
-                    <div class="input-wrapper"><i class="fas fa-lock"></i><input type="password" id="password" placeholder="••••••••" required></div>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" placeholder="••••••••" required>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Confirmer</label>
-                    <div class="input-wrapper"><i class="fas fa-lock"></i><input type="password" id="confirmPassword" placeholder="••••••••" required></div>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="confirmPassword" placeholder="••••••••" required>
+                    </div>
                 </div>
                 <div class="terms-checkbox">
                     <input type="checkbox" id="acceptTerms" required>
-                    <label for="acceptTerms">J'accepte les <a href="#" id="showTermsLink">conditions</a> et la <a href="#" id="showPrivacyLink">politique de confidentialité</a></label>
+                    <label for="acceptTerms">
+                        J'accepte les 
+                        <a href="#" id="showTermsLink">conditions d'utilisation</a> 
+                        et la 
+                        <a href="#" id="showPrivacyLink">politique de confidentialité</a>
+                    </label>
                 </div>
-                <button type="submit" class="btn-register"><span>S'inscrire</span><i class="fas fa-arrow-right"></i></button>
+                <button type="submit" class="btn-primary">
+                    <span>S'inscrire</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
             </form>
 
-            <div class="separator"><span class="separator-line"></span><span>ou</span><span class="separator-line"></span></div>
-            <button class="btn-google" id="googleSignUpBtn"><i class="fab fa-google"></i><span>S'inscrire avec Google</span></button>
-            <div class="login-link">Déjà un compte ? <a href="/login.html">Se connecter</a></div>
-        </div>
-    </div>
+            <div class="separator">
+                <span class="separator-line"></span>
+                <span>ou</span>
+                <span class="separator-line"></span>
+            </div>
 
-    <!-- Modales -->
-    <div class="modal" id="termsModal">
-        <div class="modal-content">
-            <div class="modal-header"><h2>Conditions d'utilisation</h2><button class="modal-close" id="closeTermsModal">&times;</button></div>
-            <div class="modal-body">
-                <h3>1. Acceptation</h3><p>En accédant au site Fox Store, vous acceptez ces conditions...</p>
-                <h3>2. Compte</h3><p>Vous êtes responsable de la confidentialité de votre compte...</p>
+            <button class="btn-google" id="googleSignUpBtn">
+                <i class="fab fa-google"></i>
+                <span>S'inscrire avec Google</span>
+            </button>
+
+            <div class="login-link">
+                Déjà un compte ? <a href="/login.html">Se connecter</a>
             </div>
         </div>
     </div>
+
+    <!-- Modal Conditions -->
+    <div class="modal" id="termsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Conditions d'utilisation</h2>
+                <button class="modal-close" id="closeTermsModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3>1. Acceptation</h3>
+                <p>En accédant au site Fox Store, vous acceptez d'être lié par les présentes conditions...</p>
+                <h3>2. Compte utilisateur</h3>
+                <p>Vous êtes responsable de la confidentialité de votre compte...</p>
+                <h3>3. Commandes</h3>
+                <p>Les commandes sont fermes après validation du paiement...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Confidentialité -->
     <div class="modal" id="privacyModal">
         <div class="modal-content">
-            <div class="modal-header"><h2>Politique de confidentialité</h2><button class="modal-close" id="closePrivacyModal">&times;</button></div>
+            <div class="modal-header">
+                <h2>Politique de confidentialité</h2>
+                <button class="modal-close" id="closePrivacyModal">&times;</button>
+            </div>
             <div class="modal-body">
-                <h3>1. Collecte</h3><p>Nous collectons vos informations pour traiter vos commandes...</p>
-                <h3>2. Sécurité</h3><p>Toutes les données sont protégées...</p>
+                <h3>1. Collecte des données</h3>
+                <p>Nous collectons votre nom, email, et informations de commande...</p>
+                <h3>2. Utilisation</h3>
+                <p>Vos données servent à traiter vos commandes et améliorer nos services...</p>
+                <h3>3. Sécurité</h3>
+                <p>Les données sont hébergées sur des serveurs sécurisés (Firebase).</p>
             </div>
         </div>
     </div>
 
     <script>
-        // Supabase
-        const supabaseUrl = 'https://gjnnsfbsfaxmfjmkgoyw.supabase.co';
-        const supabaseAnonKey = 'sb_publishable_dlZEgaJnsbzwe_mOyIVJoQ_dLao6nju';
-        const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
+        // Configuration Firebase (fournie)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDSyFdTHBNULuUiacHM6nmEvPb7YpY24UE",
+            authDomain: "foxstoreht.firebaseapp.com",
+            projectId: "foxstoreht",
+            storageBucket: "foxstoreht.firebasestorage.app",
+            messagingSenderId: "72533137445",
+            appId: "1:72533137445:web:3ba7634bc34da6115b47cc",
+            measurementId: "G-X1Q7Q79BRD"
+        };
 
-        // Éléments
+        // Initialiser Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Éléments DOM
         const form = document.getElementById('registerForm');
         const fullName = document.getElementById('fullName');
         const email = document.getElementById('email');
@@ -311,7 +540,7 @@
         const errorDiv = document.getElementById('errorMessage');
         const successDiv = document.getElementById('successMessage');
         const googleBtn = document.getElementById('googleSignUpBtn');
-        
+
         // Modales
         const termsModal = document.getElementById('termsModal');
         const privacyModal = document.getElementById('privacyModal');
@@ -320,20 +549,33 @@
         const closeTerms = document.getElementById('closeTermsModal');
         const closePrivacy = document.getElementById('closePrivacyModal');
 
+        // Fonctions messages
         function showError(msg) {
             errorDiv.style.display = 'flex';
             errorDiv.querySelector('span').textContent = msg;
+            successDiv.style.display = 'none';
             setTimeout(() => errorDiv.style.display = 'none', 5000);
         }
         function showSuccess(msg) {
             successDiv.style.display = 'flex';
             successDiv.querySelector('span').textContent = msg;
+            errorDiv.style.display = 'none';
             setTimeout(() => successDiv.style.display = 'none', 5000);
         }
 
-        // Modales
-        if (showTerms) showTerms.addEventListener('click', (e) => { e.preventDefault(); termsModal.classList.add('active'); });
-        if (showPrivacy) showPrivacy.addEventListener('click', (e) => { e.preventDefault(); privacyModal.classList.add('active'); });
+        // Gestion modales
+        if (showTerms) {
+            showTerms.addEventListener('click', (e) => {
+                e.preventDefault();
+                termsModal.classList.add('active');
+            });
+        }
+        if (showPrivacy) {
+            showPrivacy.addEventListener('click', (e) => {
+                e.preventDefault();
+                privacyModal.classList.add('active');
+            });
+        }
         if (closeTerms) closeTerms.onclick = () => termsModal.classList.remove('active');
         if (closePrivacy) closePrivacy.onclick = () => privacyModal.classList.remove('active');
         termsModal.onclick = (e) => { if (e.target === termsModal) termsModal.classList.remove('active'); };
@@ -347,63 +589,61 @@
             const pwd = password.value;
             const confirm = confirmPwd.value;
 
-            if (!name || !mail || !pwd || !confirm) return showError('Tous les champs sont requis.');
-            if (pwd.length < 6) return showError('6 caractères minimum.');
-            if (pwd !== confirm) return showError('Mots de passe différents.');
-            if (!acceptTerms.checked) return showError('Acceptez les conditions.');
+            if (!name || !mail || !pwd || !confirm) return showError('Tous les champs sont obligatoires.');
+            if (pwd.length < 6) return showError('Le mot de passe doit contenir au moins 6 caractères.');
+            if (pwd !== confirm) return showError('Les mots de passe ne correspondent pas.');
+            if (!acceptTerms.checked) return showError('Vous devez accepter les conditions.');
 
             try {
-                const { error } = await supabase.auth.signUp({
-                    email: mail,
-                    password: pwd,
-                    options: { data: { full_name: name } }
-                });
-                if (error) throw error;
-                showSuccess('Compte créé ! Vérifiez votre email.');
-                setTimeout(() => window.location.href = '/login.html', 3000);
+                // Créer l'utilisateur
+                const userCredential = await auth.createUserWithEmailAndPassword(mail, pwd);
+                // Mettre à jour le profil avec le nom complet
+                await userCredential.user.updateProfile({ displayName: name });
+                showSuccess('Compte créé avec succès ! Redirection...');
+                setTimeout(() => {
+                    window.location.href = '/home.html';
+                }, 2000);
             } catch (err) {
                 console.error(err);
-                showError(err.message.includes('already registered') ? 'Email déjà utilisé' : 'Erreur lors de l\'inscription.');
+                let message = 'Erreur lors de l\'inscription.';
+                if (err.code === 'auth/email-already-in-use') message = 'Cet email est déjà utilisé.';
+                else if (err.code === 'auth/invalid-email') message = 'Email invalide.';
+                else if (err.code === 'auth/weak-password') message = 'Mot de passe trop faible.';
+                showError(message);
             }
         });
 
-        // Google OAuth (corrigé)
+        // Google Sign-Up
         if (googleBtn) {
             googleBtn.addEventListener('click', async () => {
-                console.log('Tentative connexion Google...');
-                // Désactiver temporairement le bouton pour éviter les doubles clics
                 googleBtn.disabled = true;
                 const originalText = googleBtn.innerHTML;
                 googleBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Redirection...';
                 try {
-                    const { error } = await supabase.auth.signInWithOAuth({
-                        provider: 'google',
-                        options: {
-                            redirectTo: window.location.origin + '/home.html',
-                            // Force la popup si possible (mais de toute façon Supabase gère)
-                            skipBrowserRedirect: false
-                        }
-                    });
-                    if (error) throw error;
-                    // Si aucune erreur, la redirection est automatique
+                    const provider = new firebase.auth.GoogleAuthProvider();
+                    const result = await auth.signInWithPopup(provider);
+                    // Si c'est la première connexion, on peut ajouter des données si nécessaire
+                    showSuccess('Connexion avec Google réussie ! Redirection...');
+                    setTimeout(() => {
+                        window.location.href = '/home.html';
+                    }, 1500);
                 } catch (err) {
-                    console.error('Erreur Google détaillée:', err);
-                    let message = 'Connexion Google échouée. ';
-                    if (err.message === 'popup closed by user') message += 'Fenêtre fermée.';
-                    else if (err.message.includes('invalid_client')) message += 'Configuration OAuth incorrecte.';
-                    else message += err.message;
+                    console.error('Google error:', err);
+                    let message = 'Connexion Google échouée.';
+                    if (err.code === 'auth/popup-blocked') message = 'Popup bloquée. Autorisez les popups.';
+                    else if (err.code === 'auth/cancelled-popup-request') message = 'Fenêtre fermée.';
                     showError(message);
                     googleBtn.disabled = false;
                     googleBtn.innerHTML = originalText;
                 }
             });
-        } else {
-            console.error('Bouton Google introuvable');
         }
 
         // Redirection si déjà connecté
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            if (session) window.location.href = '/home.html';
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                window.location.href = '/home.html';
+            }
         });
     </script>
 </body>
