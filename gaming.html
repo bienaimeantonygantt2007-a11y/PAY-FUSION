@@ -186,13 +186,13 @@
         }
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 40px;
         }
         .game-card {
             background: white;
-            border-radius: 32px;
-            padding: 28px 20px;
+            border-radius: 36px;
+            padding: 32px 20px;
             text-decoration: none;
             color: inherit;
             border: 1px solid #eef2ff;
@@ -205,52 +205,85 @@
         }
         .game-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.1);
+            box-shadow: 0 25px 35px -12px rgba(0,0,0,0.12);
             border-color: #cbd5e1;
         }
         .game-logo {
-            width: 160px;
-            height: 160px;
+            width: 280px;
+            height: 280px;
             background: #f8fafc;
-            border-radius: 32px;
+            border-radius: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 24px;
+            margin-bottom: 28px;
             transition: transform 0.2s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.04);
         }
         .game-card:hover .game-logo {
             transform: scale(1.02);
         }
         .game-logo img {
-            max-width: 130px;
-            max-height: 130px;
+            max-width: 240px;
+            max-height: 240px;
             object-fit: contain;
         }
         .game-card h3 {
-            font-size: 1.4rem;
+            font-size: 1.6rem;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
         .game-card p {
-            font-size: 0.9rem;
+            font-size: 1rem;
             color: #5b6e8c;
         }
         footer {
-            background: transparent;
+            background: #ffffff;
             border-top: 1px solid #e2e8f0;
-            padding: 24px;
+            padding: 32px 24px 24px;
+            margin-top: 60px;
+        }
+        .footer-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 32px;
+        }
+        .footer-col h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #0f172a;
+        }
+        .footer-col ul {
+            list-style: none;
+        }
+        .footer-col ul li {
+            margin-bottom: 8px;
+        }
+        .footer-col ul li a {
+            color: #5b6e8c;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+        .footer-col ul li a:hover {
+            color: #00d1ff;
+        }
+        .footer-bottom {
             text-align: center;
+            padding-top: 32px;
+            margin-top: 32px;
+            border-top: 1px solid #e2e8f0;
             font-size: 0.8rem;
             color: #5b6e8c;
-            margin-top: 40px;
         }
-        @media (max-width: 640px) {
+        @media (max-width: 768px) {
             .main-content { padding: 80px 16px 40px; }
-            .games-grid { grid-template-columns: 1fr; gap: 20px; }
-            .game-logo { width: 140px; height: 140px; }
-            .game-logo img { max-width: 110px; max-height: 110px; }
+            .games-grid { grid-template-columns: 1fr; gap: 24px; }
+            .game-logo { width: 200px; height: 200px; }
+            .game-logo img { max-width: 160px; max-height: 160px; }
             .drawer { width: 260px; right: -260px; }
         }
     </style>
@@ -329,7 +362,42 @@
     </div>
 
     <footer>
-        <p>© 2025 Fox Store – L'élite du service digital</p>
+        <div class="footer-container">
+            <div class="footer-col">
+                <h4>Fox Store</h4>
+                <ul>
+                    <li><a href="/home.html">Accueil</a></li>
+                    <li><a href="/gaming.html">Gaming</a></li>
+                    <li><a href="/streaming.html">Streaming</a></li>
+                    <li><a href="/finance.html">Finance</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="/user/supports.html">Centre d'aide</a></li>
+                    <li><a href="/orders.html">Mes commandes</a></li>
+                    <li><a href="/user/account.html">Mon compte</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Légal</h4>
+                <ul>
+                    <li><a href="#">Conditions</a></li>
+                    <li><a href="#">Confidentialité</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact</h4>
+                <ul>
+                    <li><a href="https://wa.me/50937542954" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a></li>
+                    <li><a href="mailto:support@foxstore.com">support@foxstore.com</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Fox Store – L'élite du service digital. Tous droits réservés.</p>
+        </div>
     </footer>
 
     <script>
