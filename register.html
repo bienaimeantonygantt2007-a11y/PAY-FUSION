@@ -2,62 +2,32 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fox Store – Inscription</title>
-    
-    <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
-    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-deep: #f8fafc;
-            --bg-card: #ffffff;
-            --bg-surface: #f1f5f9;
-            --accent: #00d1ff;
-            --text-main: #0a0c10;
-            --text-muted: #4a5568;
-            --text-tertiary: #6c757d;
-            --glass-border: rgba(0, 0, 0, 0.08);
-            --error: #ff4444;
-            --success: #00c853;
-            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
+        /* Styles clairs (blanc + bleu) */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--bg-deep);
-            color: var(--text-main);
-            line-height: 1.5;
+            background: #f8fafc;
+            color: #0a0c10;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
-
         .navbar {
             position: fixed;
             top: 0;
             width: 100%;
-            z-index: 1000;
-            padding: 14px 20px;
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255,255,255,0.85);
             backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--glass-border);
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            padding: 14px 20px;
+            z-index: 1000;
         }
-
         .nav-container {
             max-width: 1000px;
             margin: 0 auto;
@@ -65,67 +35,43 @@
             justify-content: space-between;
             align-items: center;
         }
-
         .logo {
             display: flex;
             align-items: center;
             gap: 8px;
             text-decoration: none;
-            color: var(--text-main);
-            font-family: 'Clash Display', sans-serif;
             font-weight: 700;
             font-size: 20px;
-            letter-spacing: -0.5px;
+            color: #0a0c10;
         }
-
-        .logo i {
-            font-size: 22px;
-            color: var(--accent);
-            transition: var(--transition);
-        }
-
-        .logo:hover i {
-            transform: scale(1.1);
-        }
-
+        .logo i { color: #00d1ff; font-size: 22px; }
         .btn {
             padding: 6px 14px;
             border-radius: 40px;
             font-size: 12px;
             font-weight: 600;
             text-decoration: none;
-            transition: var(--transition);
+            transition: 0.3s;
             border: 1.5px solid transparent;
             display: inline-flex;
             align-items: center;
             gap: 5px;
             cursor: pointer;
-            background: transparent;
-            color: var(--text-main);
         }
-
         .btn-outline {
-            border-color: var(--glass-border);
-        }
-
-        .btn-outline:hover {
-            border-color: var(--accent);
-            background: rgba(0, 209, 255, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .btn-primary {
-            background: var(--accent);
+            border-color: rgba(0,0,0,0.08);
+            background: transparent;
             color: #0a0c10;
-            font-weight: 700;
-            box-shadow: 0 8px 20px rgba(0, 209, 255, 0.3);
         }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 28px rgba(0, 209, 255, 0.5);
+        .btn-outline:hover {
+            border-color: #00d1ff;
+            background: rgba(0,209,255,0.1);
         }
-
+        .btn-primary {
+            background: #00d1ff;
+            color: #0a0c10;
+            box-shadow: 0 8px 20px rgba(0,209,255,0.3);
+        }
         .main-content {
             flex: 1;
             display: flex;
@@ -133,177 +79,102 @@
             justify-content: center;
             padding: 100px 20px 60px;
         }
-
         .register-card {
-            background: var(--bg-card);
-            border: 1px solid var(--glass-border);
+            background: white;
             border-radius: 32px;
             padding: 40px 32px;
             max-width: 480px;
             width: 100%;
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.08);
         }
-
-        .register-header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .register-header h1 {
-            font-family: 'Clash Display', sans-serif;
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .register-header p {
-            color: var(--text-muted);
-            font-size: 14px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
+        .register-header { text-align: center; margin-bottom: 32px; }
+        .register-header h1 { font-size: 28px; margin-bottom: 8px; }
+        .register-header p { color: #4a5568; font-size: 14px; }
+        .form-group { margin-bottom: 20px; }
         .form-group label {
             display: block;
             font-size: 12px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
+            color: #4a5568;
             margin-bottom: 8px;
         }
-
         .input-wrapper {
             position: relative;
             display: flex;
             align-items: center;
         }
-
         .input-wrapper i {
             position: absolute;
             left: 16px;
-            color: var(--text-tertiary);
+            color: #6c757d;
             font-size: 16px;
-            pointer-events: none;
         }
-
         .input-wrapper input {
             width: 100%;
-            background: var(--bg-surface);
-            border: 1px solid var(--glass-border);
+            background: #f1f5f9;
+            border: 1px solid rgba(0,0,0,0.08);
             border-radius: 40px;
             padding: 14px 20px 14px 48px;
-            color: var(--text-main);
             font-size: 14px;
-            transition: var(--transition);
             outline: none;
         }
-
         .input-wrapper input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(0, 209, 255, 0.2);
+            border-color: #00d1ff;
+            box-shadow: 0 0 0 2px rgba(0,209,255,0.2);
         }
-
         .terms-checkbox {
             display: flex;
             align-items: flex-start;
             gap: 10px;
             margin: 24px 0;
-            color: var(--text-muted);
             font-size: 13px;
+            color: #4a5568;
         }
-
-        .terms-checkbox input {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--accent);
-            margin-top: 2px;
-            cursor: pointer;
-        }
-
-        .terms-checkbox label {
-            line-height: 1.5;
-            cursor: pointer;
-        }
-
         .terms-checkbox a {
-            color: var(--accent);
+            color: #00d1ff;
             text-decoration: none;
-            font-weight: 500;
         }
-
-        .terms-checkbox a:hover {
-            text-decoration: underline;
-        }
-
-        .btn-register {
-            width: 100%;
-            padding: 14px;
-            border-radius: 40px;
-            font-size: 15px;
-            font-weight: 700;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .separator {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            color: var(--text-tertiary);
-            font-size: 12px;
-            margin: 20px 0;
-        }
-
-        .separator-line {
-            flex: 1;
-            height: 1px;
-            background: var(--glass-border);
-        }
-
-        .btn-google {
+        .btn-register, .btn-google {
             width: 100%;
             padding: 12px;
             border-radius: 40px;
-            background: transparent;
-            border: 1.5px solid var(--glass-border);
-            color: var(--text-main);
             font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            transition: var(--transition);
             cursor: pointer;
+            transition: 0.3s;
+            border: none;
         }
-
-        .btn-google:hover {
-            border-color: var(--accent);
-            background: rgba(0, 209, 255, 0.05);
-            transform: translateY(-2px);
+        .btn-register {
+            background: #00d1ff;
+            color: #0a0c10;
+            margin-bottom: 20px;
         }
-
-        .btn-google i {
-            color: var(--accent);
-            font-size: 18px;
+        .separator {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: #6c757d;
+            font-size: 12px;
+            margin: 20px 0;
         }
-
+        .separator-line { flex: 1; height: 1px; background: rgba(0,0,0,0.08); }
+        .btn-google {
+            background: transparent;
+            border: 1.5px solid rgba(0,0,0,0.08);
+            color: #0a0c10;
+        }
+        .btn-google i { color: #00d1ff; }
         .login-link {
             text-align: center;
             margin-top: 24px;
             font-size: 13px;
-            color: var(--text-muted);
         }
-
-        .login-link a {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 600;
-            margin-left: 6px;
-        }
-
+        .login-link a { color: #00d1ff; text-decoration: none; }
         .error-message, .success-message {
             border-radius: 40px;
             padding: 10px 16px;
@@ -313,20 +184,8 @@
             align-items: center;
             gap: 8px;
         }
-
-        .error-message {
-            background: rgba(255, 68, 68, 0.1);
-            border: 1px solid rgba(255, 68, 68, 0.3);
-            color: var(--error);
-        }
-
-        .success-message {
-            background: rgba(0, 200, 83, 0.1);
-            border: 1px solid rgba(0, 200, 83, 0.3);
-            color: var(--success);
-        }
-
-        /* Modal */
+        .error-message { background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.3); color: #ff4444; }
+        .success-message { background: rgba(0,200,83,0.1); border: 1px solid rgba(0,200,83,0.3); color: #00c853; }
         .modal {
             display: none;
             position: fixed;
@@ -334,92 +193,46 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0,0,0,0.7);
             backdrop-filter: blur(8px);
             z-index: 2000;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
-
-        .modal.active {
-            display: flex;
-        }
-
+        .modal.active { display: flex; }
         .modal-content {
-            background: var(--bg-card);
-            border: 1px solid var(--glass-border);
+            background: white;
             border-radius: 32px;
             padding: 32px;
             max-width: 600px;
-            width: 100%;
             max-height: 80vh;
             overflow-y: auto;
         }
-
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 24px;
-            position: sticky;
-            top: 0;
-            background: var(--bg-card);
+            border-bottom: 1px solid rgba(0,0,0,0.08);
             padding-bottom: 10px;
-            border-bottom: 1px solid var(--glass-border);
         }
-
-        .modal-header h2 {
-            font-family: 'Clash Display', sans-serif;
-            font-size: 22px;
-            font-weight: 600;
-        }
-
         .modal-close {
             background: none;
             border: none;
-            color: var(--text-muted);
             font-size: 28px;
             cursor: pointer;
-            transition: var(--transition);
+            color: #4a5568;
         }
-
-        .modal-close:hover {
-            color: var(--accent);
-        }
-
-        .modal-body {
-            color: var(--text-muted);
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .modal-body h3 {
-            color: var(--text-main);
-            font-size: 18px;
-            margin: 20px 0 10px;
-        }
-
-        @media (max-width: 480px) {
-            .register-card {
-                padding: 30px 20px;
-            }
-        }
+        .modal-body { color: #4a5568; font-size: 14px; line-height: 1.6; }
+        .modal-body h3 { color: #0a0c10; margin: 20px 0 10px; }
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-container">
-            <a href="/" class="logo">
-                <i class="fas fa-fox"></i>
-                <span>FOX STORE</span>
-            </a>
-            <div class="nav-buttons">
-                <a href="/login.html" class="btn btn-outline">
-                    <i class="fas fa-sign-in-alt"></i>
-                    <span>Connexion</span>
-                </a>
-            </div>
+            <a href="/" class="logo"><i class="fas fa-fox"></i><span>FOX STORE</span></a>
+            <a href="/login.html" class="btn btn-outline"><i class="fas fa-sign-in-alt"></i><span>Connexion</span></a>
         </div>
     </nav>
 
@@ -429,272 +242,168 @@
                 <h1>Inscription</h1>
                 <p>Créez votre compte Fox Store</p>
             </div>
-
-            <div id="errorMessage" class="error-message">
-                <i class="fas fa-exclamation-circle"></i>
-                <span></span>
-            </div>
-            <div id="successMessage" class="success-message">
-                <i class="fas fa-check-circle"></i>
-                <span></span>
-            </div>
+            <div id="errorMessage" class="error-message"><i class="fas fa-exclamation-circle"></i><span></span></div>
+            <div id="successMessage" class="success-message"><i class="fas fa-check-circle"></i><span></span></div>
 
             <form id="registerForm">
                 <div class="form-group">
-                    <label for="fullName">Nom complet</label>
-                    <div class="input-wrapper">
-                        <i class="far fa-user"></i>
-                        <input type="text" id="fullName" placeholder="Jean Dupont" required>
-                    </div>
+                    <label>Nom complet</label>
+                    <div class="input-wrapper"><i class="far fa-user"></i><input type="text" id="fullName" placeholder="Votre nom complet" required></div>
                 </div>
                 <div class="form-group">
-                    <label for="email">Adresse email</label>
-                    <div class="input-wrapper">
-                        <i class="far fa-envelope"></i>
-                        <input type="email" id="email" placeholder="exemple@email.com" required>
-                    </div>
+                    <label>Email</label>
+                    <div class="input-wrapper"><i class="far fa-envelope"></i><input type="email" id="email" placeholder="exemple@email.com" required></div>
                 </div>
                 <div class="form-group">
-                    <label for="password">Mot de passe</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="password" placeholder="••••••••" required>
-                    </div>
+                    <label>Mot de passe</label>
+                    <div class="input-wrapper"><i class="fas fa-lock"></i><input type="password" id="password" placeholder="••••••••" required></div>
                 </div>
                 <div class="form-group">
-                    <label for="confirmPassword">Confirmer le mot de passe</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-lock"></i>
-                        <input type="password" id="confirmPassword" placeholder="••••••••" required>
-                    </div>
+                    <label>Confirmer</label>
+                    <div class="input-wrapper"><i class="fas fa-lock"></i><input type="password" id="confirmPassword" placeholder="••••••••" required></div>
                 </div>
                 <div class="terms-checkbox">
                     <input type="checkbox" id="acceptTerms" required>
-                    <label for="acceptTerms">
-                        J'accepte les 
-                        <a href="#" id="showTermsLink">conditions d'utilisation</a> 
-                        et la 
-                        <a href="#" id="showPrivacyLink">politique de confidentialité</a>
-                    </label>
+                    <label for="acceptTerms">J'accepte les <a href="#" id="showTermsLink">conditions</a> et la <a href="#" id="showPrivacyLink">politique de confidentialité</a></label>
                 </div>
-                <button type="submit" class="btn btn-primary btn-register">
-                    <span>S'inscrire</span>
-                    <i class="fas fa-arrow-right"></i>
-                </button>
+                <button type="submit" class="btn-register"><span>S'inscrire</span><i class="fas fa-arrow-right"></i></button>
             </form>
 
-            <div class="separator">
-                <span class="separator-line"></span>
-                <span>ou</span>
-                <span class="separator-line"></span>
-            </div>
-
-            <button class="btn-google" id="googleSignUpBtn">
-                <i class="fab fa-google"></i>
-                <span>S'inscrire avec Google</span>
-            </button>
-
-            <div class="login-link">
-                Déjà un compte ?<a href="/login.html">Se connecter</a>
-            </div>
+            <div class="separator"><span class="separator-line"></span><span>ou</span><span class="separator-line"></span></div>
+            <button class="btn-google" id="googleSignUpBtn"><i class="fab fa-google"></i><span>S'inscrire avec Google</span></button>
+            <div class="login-link">Déjà un compte ? <a href="/login.html">Se connecter</a></div>
         </div>
     </div>
 
     <!-- Modales -->
     <div class="modal" id="termsModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2>Conditions d'utilisation</h2>
-                <button class="modal-close" id="closeTermsModal">&times;</button>
-            </div>
+            <div class="modal-header"><h2>Conditions d'utilisation</h2><button class="modal-close" id="closeTermsModal">&times;</button></div>
             <div class="modal-body">
-                <h3>1. Acceptation des conditions</h3>
-                <p>En accédant au site Fox Store, vous acceptez d'être lié par les présentes conditions d'utilisation...</p>
-                <h3>2. Utilisation de la plateforme</h3>
-                <p>Fox Store fournit une plateforme d'achat de services digitaux...</p>
-                <h3>3. Compte utilisateur</h3>
-                <p>Vous êtes responsable de la confidentialité de votre compte...</p>
-                <h3>4. Paiements et transactions</h3>
-                <p>Tous les paiements sont traités de manière sécurisée...</p>
-                <h3>5. Propriété intellectuelle</h3>
-                <p>Le contenu du site est la propriété de Fox Store...</p>
-                <h3>6. Limitation de responsabilité</h3>
-                <p>Fox Store ne peut être tenu responsable...</p>
-                <h3>7. Modifications</h3>
-                <p>Nous nous réservons le droit de modifier ces conditions...</p>
+                <h3>1. Acceptation</h3><p>En accédant au site Fox Store, vous acceptez ces conditions...</p>
+                <h3>2. Compte</h3><p>Vous êtes responsable de la confidentialité de votre compte...</p>
             </div>
         </div>
     </div>
-
     <div class="modal" id="privacyModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2>Politique de confidentialité</h2>
-                <button class="modal-close" id="closePrivacyModal">&times;</button>
-            </div>
+            <div class="modal-header"><h2>Politique de confidentialité</h2><button class="modal-close" id="closePrivacyModal">&times;</button></div>
             <div class="modal-body">
-                <h3>1. Collecte des informations</h3>
-                <p>Nous collectons les informations que vous nous fournissez directement...</p>
-                <h3>2. Utilisation des informations</h3>
-                <p>Nous utilisons vos informations pour traiter vos commandes, vous assister, améliorer nos services...</p>
-                <h3>3. Sécurité des données</h3>
-                <p>Nous mettons en œuvre des mesures de sécurité pour protéger vos données...</p>
-                <h3>4. Partage des informations</h3>
-                <p>Nous ne partageons pas vos informations personnelles avec des tiers, sauf pour le traitement des paiements ou si requis par la loi.</p>
-                <h3>5. Vos droits</h3>
-                <p>Vous avez le droit d'accéder, de corriger ou de supprimer vos informations personnelles.</p>
-                <h3>6. Cookies</h3>
-                <p>Notre site utilise des cookies pour améliorer votre expérience.</p>
-                <h3>7. Modifications de la politique</h3>
-                <p>Nous pouvons mettre à jour cette politique. Vous serez informé des changements importants.</p>
+                <h3>1. Collecte</h3><p>Nous collectons vos informations pour traiter vos commandes...</p>
+                <h3>2. Sécurité</h3><p>Toutes les données sont protégées...</p>
             </div>
         </div>
     </div>
 
     <script>
-        // Supabase configuration
+        // Supabase
         const supabaseUrl = 'https://gjnnsfbsfaxmfjmkgoyw.supabase.co';
         const supabaseAnonKey = 'sb_publishable_dlZEgaJnsbzwe_mOyIVJoQ_dLao6nju';
         const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
 
-        // DOM elements
-        const registerForm = document.getElementById('registerForm');
-        const fullNameInput = document.getElementById('fullName');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const confirmPasswordInput = document.getElementById('confirmPassword');
-        const acceptTermsCheck = document.getElementById('acceptTerms');
+        // Éléments
+        const form = document.getElementById('registerForm');
+        const fullName = document.getElementById('fullName');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        const confirmPwd = document.getElementById('confirmPassword');
+        const acceptTerms = document.getElementById('acceptTerms');
         const errorDiv = document.getElementById('errorMessage');
         const successDiv = document.getElementById('successMessage');
         const googleBtn = document.getElementById('googleSignUpBtn');
-
-        // Modals
+        
+        // Modales
         const termsModal = document.getElementById('termsModal');
         const privacyModal = document.getElementById('privacyModal');
-        const showTermsLink = document.getElementById('showTermsLink');
-        const showPrivacyLink = document.getElementById('showPrivacyLink');
-        const closeTermsBtn = document.getElementById('closeTermsModal');
-        const closePrivacyBtn = document.getElementById('closePrivacyModal');
+        const showTerms = document.getElementById('showTermsLink');
+        const showPrivacy = document.getElementById('showPrivacyLink');
+        const closeTerms = document.getElementById('closeTermsModal');
+        const closePrivacy = document.getElementById('closePrivacyModal');
 
-        function showError(message) {
+        function showError(msg) {
             errorDiv.style.display = 'flex';
-            errorDiv.querySelector('span').textContent = message;
-            setTimeout(() => {
-                errorDiv.style.display = 'none';
-            }, 5000);
+            errorDiv.querySelector('span').textContent = msg;
+            setTimeout(() => errorDiv.style.display = 'none', 5000);
         }
-
-        function showSuccess(message) {
+        function showSuccess(msg) {
             successDiv.style.display = 'flex';
-            successDiv.querySelector('span').textContent = message;
-            setTimeout(() => {
-                successDiv.style.display = 'none';
-            }, 5000);
+            successDiv.querySelector('span').textContent = msg;
+            setTimeout(() => successDiv.style.display = 'none', 5000);
         }
 
-        // Ouvrir les modales
-        if (showTermsLink) {
-            showTermsLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                termsModal.classList.add('active');
-            });
-        }
-        if (showPrivacyLink) {
-            showPrivacyLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                privacyModal.classList.add('active');
-            });
-        }
-
-        // Fermer les modales
-        if (closeTermsBtn) {
-            closeTermsBtn.addEventListener('click', () => termsModal.classList.remove('active'));
-        }
-        if (closePrivacyBtn) {
-            closePrivacyBtn.addEventListener('click', () => privacyModal.classList.remove('active'));
-        }
-        // Cliquer en dehors
-        termsModal.addEventListener('click', (e) => {
-            if (e.target === termsModal) termsModal.classList.remove('active');
-        });
-        privacyModal.addEventListener('click', (e) => {
-            if (e.target === privacyModal) privacyModal.classList.remove('active');
-        });
+        // Modales
+        if (showTerms) showTerms.addEventListener('click', (e) => { e.preventDefault(); termsModal.classList.add('active'); });
+        if (showPrivacy) showPrivacy.addEventListener('click', (e) => { e.preventDefault(); privacyModal.classList.add('active'); });
+        if (closeTerms) closeTerms.onclick = () => termsModal.classList.remove('active');
+        if (closePrivacy) closePrivacy.onclick = () => privacyModal.classList.remove('active');
+        termsModal.onclick = (e) => { if (e.target === termsModal) termsModal.classList.remove('active'); };
+        privacyModal.onclick = (e) => { if (e.target === privacyModal) privacyModal.classList.remove('active'); };
 
         // Inscription email/password
-        registerForm.addEventListener('submit', async (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const name = fullName.value.trim();
+            const mail = email.value.trim();
+            const pwd = password.value;
+            const confirm = confirmPwd.value;
 
-            const fullName = fullNameInput.value.trim();
-            const email = emailInput.value.trim();
-            const password = passwordInput.value;
-            const confirm = confirmPasswordInput.value;
-
-            if (!fullName || !email || !password || !confirm) {
-                showError('Tous les champs sont obligatoires.');
-                return;
-            }
-            if (password.length < 6) {
-                showError('Le mot de passe doit contenir au moins 6 caractères.');
-                return;
-            }
-            if (password !== confirm) {
-                showError('Les mots de passe ne correspondent pas.');
-                return;
-            }
-            if (!acceptTermsCheck.checked) {
-                showError('Vous devez accepter les conditions d\'utilisation.');
-                return;
-            }
+            if (!name || !mail || !pwd || !confirm) return showError('Tous les champs sont requis.');
+            if (pwd.length < 6) return showError('6 caractères minimum.');
+            if (pwd !== confirm) return showError('Mots de passe différents.');
+            if (!acceptTerms.checked) return showError('Acceptez les conditions.');
 
             try {
-                const { data, error } = await supabase.auth.signUp({
-                    email,
-                    password,
-                    options: {
-                        data: {
-                            full_name: fullName
+                const { error } = await supabase.auth.signUp({
+                    email: mail,
+                    password: pwd,
+                    options: { data: { full_name: name } }
+                });
+                if (error) throw error;
+                showSuccess('Compte créé ! Vérifiez votre email.');
+                setTimeout(() => window.location.href = '/login.html', 3000);
+            } catch (err) {
+                console.error(err);
+                showError(err.message.includes('already registered') ? 'Email déjà utilisé' : 'Erreur lors de l\'inscription.');
+            }
+        });
+
+        // Google OAuth (corrigé)
+        if (googleBtn) {
+            googleBtn.addEventListener('click', async () => {
+                console.log('Tentative connexion Google...');
+                // Désactiver temporairement le bouton pour éviter les doubles clics
+                googleBtn.disabled = true;
+                const originalText = googleBtn.innerHTML;
+                googleBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Redirection...';
+                try {
+                    const { error } = await supabase.auth.signInWithOAuth({
+                        provider: 'google',
+                        options: {
+                            redirectTo: window.location.origin + '/home.html',
+                            // Force la popup si possible (mais de toute façon Supabase gère)
+                            skipBrowserRedirect: false
                         }
-                    }
-                });
-
-                if (error) throw error;
-
-                showSuccess('Compte créé avec succès ! Vérifiez votre email pour confirmer votre compte.');
-                setTimeout(() => {
-                    window.location.href = '/login.html';
-                }, 3000);
-            } catch (error) {
-                console.error('Registration error', error);
-                let message = 'Erreur lors de l\'inscription.';
-                if (error.message.includes('already registered')) message = 'Cet email est déjà utilisé.';
-                else if (error.message.includes('invalid email')) message = 'Email invalide.';
-                else if (error.message.includes('password')) message = 'Mot de passe trop faible.';
-                showError(message);
-            }
-        });
-
-        // Google Sign-Up
-        googleBtn.addEventListener('click', async () => {
-            try {
-                const { error } = await supabase.auth.signInWithOAuth({
-                    provider: 'google',
-                    options: {
-                        redirectTo: window.location.origin + '/home.html'
-                    }
-                });
-                if (error) throw error;
-            } catch (error) {
-                console.error('Google sign-up error', error);
-                showError('Erreur lors de l\'inscription avec Google. Vérifiez la configuration OAuth.');
-            }
-        });
+                    });
+                    if (error) throw error;
+                    // Si aucune erreur, la redirection est automatique
+                } catch (err) {
+                    console.error('Erreur Google détaillée:', err);
+                    let message = 'Connexion Google échouée. ';
+                    if (err.message === 'popup closed by user') message += 'Fenêtre fermée.';
+                    else if (err.message.includes('invalid_client')) message += 'Configuration OAuth incorrecte.';
+                    else message += err.message;
+                    showError(message);
+                    googleBtn.disabled = false;
+                    googleBtn.innerHTML = originalText;
+                }
+            });
+        } else {
+            console.error('Bouton Google introuvable');
+        }
 
         // Redirection si déjà connecté
         supabase.auth.getSession().then(({ data: { session } }) => {
-            if (session) {
-                window.location.href = '/home.html';
-            }
+            if (session) window.location.href = '/home.html';
         });
     </script>
 </body>
