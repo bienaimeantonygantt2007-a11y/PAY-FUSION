@@ -37,7 +37,7 @@
             border-bottom: 1px solid #eef2ff;
         }
         .nav-container {
-            max-width: 1280px;
+            max-width: 1200px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -163,7 +163,7 @@
         .main-content {
             flex: 1;
             padding: 90px 24px 50px;
-            max-width: 1280px;
+            max-width: 1200px;
             margin: 0 auto;
             width: 100%;
         }
@@ -186,7 +186,7 @@
         }
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 40px;
         }
         .game-card {
@@ -209,8 +209,8 @@
             border-color: #cbd5e1;
         }
         .game-logo {
-            width: 280px;
-            height: 280px;
+            width: 240px;
+            height: 240px;
             background: #f8fafc;
             border-radius: 48px;
             display: flex;
@@ -224,8 +224,8 @@
             transform: scale(1.02);
         }
         .game-logo img {
-            max-width: 240px;
-            max-height: 240px;
+            max-width: 200px;
+            max-height: 200px;
             object-fit: contain;
         }
         .game-card h3 {
@@ -240,14 +240,14 @@
         footer {
             background: #ffffff;
             border-top: 1px solid #e2e8f0;
-            padding: 32px 24px 24px;
+            padding: 48px 24px 32px;
             margin-top: 60px;
         }
         .footer-container {
-            max-width: 1280px;
+            max-width: 1200px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 32px;
         }
         .footer-col h4 {
@@ -260,7 +260,7 @@
             list-style: none;
         }
         .footer-col ul li {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
         .footer-col ul li a {
             color: #5b6e8c;
@@ -282,9 +282,10 @@
         @media (max-width: 768px) {
             .main-content { padding: 80px 16px 40px; }
             .games-grid { grid-template-columns: 1fr; gap: 24px; }
-            .game-logo { width: 200px; height: 200px; }
-            .game-logo img { max-width: 160px; max-height: 160px; }
+            .game-logo { width: 180px; height: 180px; }
+            .game-logo img { max-width: 140px; max-height: 140px; }
             .drawer { width: 260px; right: -260px; }
+            .footer-container { grid-template-columns: 1fr; gap: 24px; text-align: center; }
         }
     </style>
 </head>
@@ -373,6 +374,15 @@
                 </ul>
             </div>
             <div class="footer-col">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="/pages/products/freefire.html">Free Fire</a></li>
+                    <li><a href="/pages/products/netflix.html">Netflix</a></li>
+                    <li><a href="/pages/products/wise.html">Wise</a></li>
+                    <li><a href="/pages/products/paypal.html">PayPal</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
                 <h4>Support</h4>
                 <ul>
                     <li><a href="/user/supports.html">Centre d'aide</a></li>
@@ -385,13 +395,7 @@
                 <ul>
                     <li><a href="#">Conditions</a></li>
                     <li><a href="#">Confidentialité</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Contact</h4>
-                <ul>
                     <li><a href="https://wa.me/50937542954" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a></li>
-                    <li><a href="mailto:support@foxstore.com">support@foxstore.com</a></li>
                 </ul>
             </div>
         </div>
