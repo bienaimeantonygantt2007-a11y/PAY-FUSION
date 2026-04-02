@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Fox Store – L'expérience digitale premium</title>
     
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -25,15 +23,15 @@
         }
 
         :root {
-            --bg-deep: #06070a;
-            --bg-card: #0f121a;
-            --bg-surface: #151a22;
+            --bg-deep: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-surface: #f1f5f9;
             --accent: #00d1ff;
-            --text-main: #ffffff;
-            --text-muted: #8e95a2;
-            --text-tertiary: #5f6b7a;
-            --glass-border: rgba(255, 255, 255, 0.05);
-            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --text-main: #0a0c10;
+            --text-muted: #4a5568;
+            --text-tertiary: #6c757d;
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -52,7 +50,7 @@
             width: 100%;
             z-index: 1000;
             padding: 14px 20px;
-            background: rgba(6, 7, 10, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(15px);
             border-bottom: 1px solid var(--glass-border);
         }
@@ -120,7 +118,7 @@
 
         .btn-primary {
             background: var(--accent);
-            color: var(--bg-deep);
+            color: #0a0c10;
             font-weight: 700;
             box-shadow: 0 8px 20px rgba(0, 209, 255, 0.3);
         }
@@ -253,7 +251,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* Paiements : deux lignes distinctes */
+        /* Paiements */
         .payments {
             padding: 50px 20px;
             background: var(--bg-card);
@@ -349,6 +347,7 @@
             text-decoration: none;
             color: inherit;
             display: block;
+            box-shadow: var(--shadow-md);
         }
 
         .service-card:hover {
@@ -404,10 +403,10 @@
             transform: translateX(4px);
         }
 
-        /* Produits populaires : 3 produits, logos très grands */
+        /* Produits populaires */
         .products {
             padding: 50px 20px;
-            background: var(--bg-card);
+            background: var(--bg-surface);
         }
 
         .products-grid {
@@ -419,7 +418,7 @@
         }
 
         .product-card {
-            background: rgba(15, 18, 26, 0.6);
+            background: var(--bg-card);
             backdrop-filter: blur(4px);
             border-radius: 28px;
             padding: 30px 20px 25px;
@@ -437,19 +436,19 @@
         .product-card:hover {
             transform: translateY(-8px);
             border-color: var(--accent);
-            background: rgba(15, 18, 26, 0.8);
+            background: var(--bg-card);
         }
 
         .product-card img {
-            height: 180px;        /* très grand */
+            height: 180px;
             width: auto;
             max-width: 100%;
             object-fit: contain;
             margin-bottom: 20px;
-            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.7));
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.1));
             transition: var(--transition);
-            border-radius: 20px;   /* bords arrondis pour un style plus doux */
-            background: rgba(255,255,255,0.02); /* très léger fond pour détacher */
+            border-radius: 20px;
+            background: rgba(0,0,0,0.02);
             padding: 10px;
         }
 
@@ -500,6 +499,7 @@
             border: 1px solid var(--glass-border);
             font-size: 24px;
             color: var(--accent);
+            box-shadow: var(--shadow-md);
         }
 
         .feature-item h4 {
@@ -520,6 +520,8 @@
             text-align: center;
             position: relative;
             overflow: hidden;
+            border-top: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
         }
 
         .cta-content {
@@ -620,7 +622,7 @@
 
         .social-links a:hover {
             background: var(--accent);
-            color: var(--bg-deep);
+            color: white;
             transform: translateY(-3px);
             border-color: var(--accent);
         }
@@ -762,15 +764,8 @@
                 <span>FOX STORE</span>
             </a>
 
-            <div class="nav-buttons">
-                <a href="/login.html" class="btn btn-outline">
-                    <i class="fas fa-sign-in-alt"></i>
-                    <span>Connexion</span>
-                </a>
-                <a href="/register.html" class="btn btn-primary">
-                    <span>S'inscrire</span>
-                    <i class="fas fa-arrow-right"></i>
-                </a>
+            <div class="nav-buttons" id="nav-buttons">
+                <!-- Sera rempli dynamiquement -->
             </div>
         </div>
     </nav>
@@ -787,7 +782,7 @@
             <p>Gaming, Streaming et Services Financiers. Une plateforme unique pour tous vos besoins numériques.</p>
             
             <div class="hero-buttons">
-                <a href="/register.html" class="btn btn-primary">
+                <a href="/register.html" class="btn btn-primary" id="cta-register">
                     Créer un compte
                     <i class="fas fa-arrow-right"></i>
                 </a>
@@ -813,7 +808,7 @@
         </div>
     </section>
 
-    <!-- Paiements : deux lignes horizontales distinctes -->
+    <!-- Paiements -->
     <section class="payments">
         <div class="section-header">
             <h2>Paiements sécurisés</h2>
@@ -821,7 +816,6 @@
         </div>
 
         <div class="payments-grid">
-            <!-- Première ligne : 3 premiers -->
             <div class="payment-row">
                 <div class="payment-item">
                     <img src="/assets/logos/moncash-logo.png" alt="Moncash">
@@ -836,7 +830,6 @@
                     <span>Wise</span>
                 </div>
             </div>
-            <!-- Deuxième ligne : 3 suivants -->
             <div class="payment-row">
                 <div class="payment-item">
                     <img src="/assets/logos/paypal-logo.png" alt="PayPal">
@@ -897,7 +890,7 @@
         </div>
     </section>
 
-    <!-- Produits populaires : 3 produits, logos très grands et soignés -->
+    <!-- Produits populaires -->
     <section class="products">
         <div class="section-header">
             <h2>Les plus populaires</h2>
@@ -938,7 +931,7 @@
                     <i class="fas fa-shield-alt"></i>
                 </div>
                 <h4>Sécurité maximale</h4>
-                <p>Données cryptées, authentification Firebase</p>
+                <p>Données cryptées, authentification Supabase</p>
             </div>
             <div class="feature-item">
                 <div class="feature-icon">
@@ -1021,19 +1014,51 @@
     </footer>
 
     <script>
-        // Configuration Firebase (projet fox-storeht)
-        const firebaseConfig = {
-            apiKey: "AIzaSyA0n2m2R9q07HQ94V58CdbNTlxnKztdmQo",
-            authDomain: "fox-storeht.firebaseapp.com",
-            projectId: "fox-storeht",
-            storageBucket: "fox-storeht.firebasestorage.app",
-            messagingSenderId: "589792388283",
-            appId: "1:589792388283:web:c372bd886f0a98e82db59e",
-            measurementId: "G-WN9M206F4M"
-        };
-        
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
+        // Configuration Supabase
+        const supabaseUrl = 'https://gjnnsfbsfaxmfjmkgoyw.supabase.co';
+        const supabaseAnonKey = 'sb_publishable_dlZEgaJnsbzwe_mOyIVJoQ_dLao6nju';
+        const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+        const navButtons = document.getElementById('nav-buttons');
+
+        async function updateAuthUI() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                // Utilisateur connecté
+                navButtons.innerHTML = `
+                    <a href="/home.html" class="btn btn-outline">
+                        <i class="fas fa-home"></i>
+                        <span>Accueil</span>
+                    </a>
+                    <a href="#" class="btn btn-outline" id="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Déconnexion</span>
+                    </a>
+                `;
+                document.getElementById('logout-btn')?.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await supabase.auth.signOut();
+                    window.location.href = '/';
+                });
+            } else {
+                navButtons.innerHTML = `
+                    <a href="/login.html" class="btn btn-outline">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Connexion</span>
+                    </a>
+                    <a href="/register.html" class="btn btn-primary">
+                        <span>S'inscrire</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                `;
+            }
+        }
+
+        supabase.auth.onAuthStateChange((event, session) => {
+            updateAuthUI();
+        });
+
+        updateAuthUI();
     </script>
 </body>
 </html>
