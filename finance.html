@@ -3,361 +3,336 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Fox Store – Finance</title>
+    <title>Fox Store – Services financiers</title>
     
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    
-    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
-    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-deep: #06070a;
-            --bg-card: #0f121a;
-            --bg-surface: #151a22;
-            --accent: #00d1ff;
-            --text-main: #ffffff;
-            --text-muted: #8e95a2;
-            --text-tertiary: #5f6b7a;
-            --glass-border: rgba(255,255,255,0.05);
-            --border-accent: rgba(0,209,255,0.3);
-            --shadow-md: 0 8px 24px rgba(0,0,0,0.4);
-            --transition: all 0.3s ease;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--bg-deep);
-            color: var(--text-main);
+            background: #f5f7fc;
+            color: #1e293b;
+            line-height: 1.5;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
-
-        /* Navigation (identique à gaming) */
         .navbar {
-            position: sticky; top:0; width:100%; z-index:1000; padding:12px 20px;
-            background: rgba(6,7,10,0.8); backdrop-filter:blur(15px);
-            border-bottom:1px solid var(--glass-border);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 14px 24px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #eef2ff;
         }
         .nav-container {
-            max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; align-items:center;
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .logo {
-            display:flex; align-items:center; gap:8px; text-decoration:none; color:var(--text-main);
-            font-family:'Clash Display', sans-serif; font-weight:700; font-size:18px;
-        }
-        .logo i { font-size:20px; color:var(--accent); transition:var(--transition); }
-        .logo:hover i { transform:scale(1.1); }
-        .nav-links { display:flex; align-items:center; gap:20px; }
-        .nav-links a { color:var(--text-muted); text-decoration:none; font-size:13px; font-weight:500; transition:var(--transition); }
-        .nav-links a:hover, .nav-links a.active { color:var(--accent); }
-        .user-menu { display:flex; align-items:center; gap:12px; }
-        .user-greeting { font-size:13px; color:var(--text-muted); }
-        .user-greeting span { color:var(--accent); font-weight:600; }
-        .btn {
-            padding:5px 12px; border-radius:40px; font-size:11px; font-weight:600; text-decoration:none;
-            transition:var(--transition); border:1.5px solid transparent; display:inline-flex; align-items:center; gap:4px;
-            cursor:pointer; background:transparent; color:var(--text-main);
-        }
-        .btn-outline { border-color:var(--glass-border); }
-        .btn-outline:hover { border-color:var(--accent); background:rgba(0,209,255,0.1); transform:translateY(-2px); }
-        .btn-primary { background:var(--accent); color:var(--bg-deep); font-weight:700; box-shadow:0 8px 20px rgba(0,209,255,0.3); }
-        .btn-primary:hover { transform:translateY(-2px); box-shadow:0 12px 28px rgba(0,209,255,0.5); }
-        
-        .menu-toggle { display:none; background:transparent; border:1px solid var(--glass-border); color:var(--text-main); font-size:18px; padding:6px 12px; border-radius:10px; cursor:pointer; }
-        .menu-toggle:hover { border-color:var(--accent); }
-        .sidebar { position:fixed; top:70px; left:-280px; width:260px; bottom:0; background:rgba(15,18,26,0.98); backdrop-filter:blur(15px); border-right:1px solid var(--glass-border); padding:20px 12px; overflow-y:auto; transition:left 0.3s ease; z-index:99; display:flex; flex-direction:column; }
-        .sidebar.open { left:0; }
-        .sidebar-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); z-index:98; display:none; }
-        .sidebar-overlay.active { display:block; }
-        .user-profile { display:flex; align-items:center; gap:12px; padding:16px 12px; border-bottom:1px solid var(--glass-border); margin-bottom:16px; }
-        .avatar { width:48px; height:48px; background:var(--accent); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--bg-deep); font-weight:700; font-size:20px; text-transform:uppercase; }
-        .user-info h4 { font-size:14px; font-weight:600; }
-        .user-info p { font-size:11px; color:var(--text-muted); }
-        .sidebar-section { margin-bottom:20px; }
-        .sidebar-section-title { font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--text-tertiary); padding:0 12px 8px; }
-        .sidebar-link { display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:12px; color:var(--text-muted); transition:var(--transition); text-decoration:none; font-size:13px; }
-        .sidebar-link i { width:20px; color:var(--accent); font-size:14px; }
-        .sidebar-link:hover { background:rgba(255,255,255,0.03); color:var(--text-main); border:1px solid var(--border-accent); }
-        .sidebar-link.logout { margin-top:auto; border-top:1px solid var(--glass-border); padding-top:16px; }
-        @media (max-width:768px) { .nav-links { display:none; } .menu-toggle { display:inline-block; } }
-
-        /* Main content */
-        .main-content {
-            flex: 1;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 30px 20px;
-            width: 100%;
-        }
-        .breadcrumb {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 20px;
-            color: var(--text-muted);
-            font-size: 13px;
-        }
-        .breadcrumb a {
-            color: var(--text-muted);
+            gap: 10px;
             text-decoration: none;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: #0f172a;
         }
-        .breadcrumb a:hover {
-            color: var(--accent);
+        .logo i { font-size: 1.6rem; color: #00d1ff; }
+        .burger-btn {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.3rem;
         }
-        .page-header {
-            margin-bottom: 30px;
-        }
-        .page-header h1 {
-            font-family: 'Clash Display', sans-serif;
-            font-size: 30px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        .page-header p {
-            color: var(--text-muted);
-            font-size: 15px;
-        }
-
-        /* Grille des services financiers */
-        .finance-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 20px;
-        }
-        .finance-card {
-            background: var(--bg-card);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 24px 20px;
-            transition: var(--transition);
-            text-decoration: none;
-            color: inherit;
+        .burger-btn:hover { background: white; border-color: #00d1ff40; color: #00d1ff; }
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 280px;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 24px rgba(0,0,0,0.05);
+            z-index: 2000;
+            transition: right 0.3s ease;
             display: flex;
             flex-direction: column;
+            border-left: 1px solid #eef2ff;
+        }
+        .drawer.open { right: 0; }
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #edf2f7;
+        }
+        .drawer-header .logo { font-size: 1.2rem; }
+        .close-drawer {
+            background: #f1f5f9;
+            border: none;
+            border-radius: 10px;
+            width: 34px;
+            height: 34px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .drawer-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: #f8fafc;
+            margin: 16px;
+            border-radius: 16px;
+        }
+        .drawer-user-avatar {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #00d1ff, #009ac7);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        .drawer-user-info h4 { font-size: 0.95rem; font-weight: 600; }
+        .drawer-user-info p { font-size: 0.75rem; color: #5b6e8c; }
+        .drawer-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 8px 12px;
+            gap: 4px;
+        }
+        .drawer-nav a, .drawer-nav button {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            text-decoration: none;
+            color: #1e293b;
+            font-size: 0.95rem;
+            font-weight: 500;
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+        }
+        .drawer-nav a i, .drawer-nav button i { width: 22px; color: #5b6e8c; }
+        .drawer-nav a:hover, .drawer-nav button:hover { background: #f1f5f9; }
+        .drawer-nav a:hover i, .drawer-nav button:hover i { color: #00d1ff; }
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(2px);
+            z-index: 1999;
+            display: none;
+        }
+        .drawer-overlay.active { display: block; }
+        .main-content {
+            flex: 1;
+            padding: 90px 24px 50px;
+            max-width: 1280px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .page-header { margin-bottom: 32px; }
+        .page-header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+        .page-header p { color: #475569; font-size: 1rem; }
+        .finance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
+        }
+        .finance-card {
+            background: white;
+            border-radius: 24px;
+            padding: 20px;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid #eef2ff;
+            transition: all 0.2s;
             text-align: center;
         }
         .finance-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent);
-            background: var(--bg-surface);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.04);
+            border-color: #e2e8f0;
         }
-        .finance-card img {
-            height: 100px;
-            width: auto;
-            max-width: 100%;
+        .finance-logo {
+            width: 90px;
+            height: 90px;
+            background: #f1f5f9;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+        .finance-logo img {
+            max-width: 70px;
+            max-height: 70px;
             object-fit: contain;
-            margin-bottom: 16px;
-            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.5));
         }
-        .finance-card h3 {
-            font-family: 'Clash Display', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-        .finance-card .pricing {
-            color: var(--accent);
-            font-weight: 700;
-            font-size: 15px;
-            margin-bottom: 16px;
-        }
-        .finance-card .btn-small {
-            padding: 8px 20px;
-            border-radius: 40px;
-            background: transparent;
-            border: 1.5px solid var(--accent);
-            color: var(--accent);
-            font-weight: 600;
-            font-size: 13px;
-            transition: var(--transition);
-        }
-        .finance-card:hover .btn-small {
-            background: var(--accent);
-            color: var(--bg-deep);
-        }
-
+        .finance-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+        .finance-card p { font-size: 0.85rem; color: #5b6e8c; }
         footer {
-            background: var(--bg-deep);
-            padding: 25px 20px;
-            border-top: 1px solid var(--glass-border);
+            background: transparent;
+            border-top: 1px solid #e2e8f0;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #5b6e8c;
         }
-        .footer-content {
-            max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; align-items:center;
-            color:var(--text-tertiary); font-size:11px;
+        @media (max-width: 640px) {
+            .main-content { padding: 80px 16px 40px; }
+            .finance-grid { grid-template-columns: 1fr; }
+            .drawer { width: 260px; right: -260px; }
         }
-        @media (max-width:768px) { .footer-content { flex-direction:column; gap:8px; text-align:center; } }
     </style>
 </head>
 <body>
+
     <nav class="navbar">
         <div class="nav-container">
-            <a href="/" class="logo"><i class="fas fa-fox"></i><span>FOX STORE</span></a>
-            <div class="nav-links">
-                <a href="/gaming.html">Gaming</a>
-                <a href="/streaming.html">Streaming</a>
-                <a href="/finance.html" class="active">Finance</a>
-                <a href="/wallet/dashboard.html">Wallet</a>
-                <a href="/orders.html">Commandes</a>
-            </div>
-            <div class="user-menu">
-                <span class="user-greeting" id="userGreeting">Bonjour, <span>Chargement...</span></span>
-                <button class="btn btn-outline" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span>Déconnexion</span></button>
-                <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
-            </div>
+            <a href="/home.html" class="logo"><i class="fas fa-fox"></i><span>FOX STORE</span></a>
+            <button class="burger-btn" id="burgerBtn"><i class="fas fa-bars"></i></button>
         </div>
     </nav>
 
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    <div class="sidebar" id="sidebar">
-        <div class="user-profile" id="userProfile">
-            <div class="avatar" id="userAvatar">F</div>
-            <div class="user-info"><h4 id="sidebarUserName">Chargement...</h4><p id="sidebarUserEmail">...</p></div>
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    <div class="drawer" id="drawer">
+        <div class="drawer-header">
+            <div class="logo"><i class="fas fa-fox"></i><span>Menu</span></div>
+            <button class="close-drawer" id="closeDrawerBtn"><i class="fas fa-times"></i></button>
         </div>
-        <div class="sidebar-section"><div class="sidebar-section-title">ACCUEIL</div><a href="/home.html" class="sidebar-link"><i class="fas fa-home"></i> Accueil</a></div>
-        <div class="sidebar-section"><div class="sidebar-section-title">BOUTIQUE</div>
-            <a href="/gaming.html" class="sidebar-link"><i class="fas fa-gamepad"></i> Gaming</a>
-            <a href="/streaming.html" class="sidebar-link"><i class="fas fa-film"></i> Streaming</a>
-            <a href="/finance.html" class="sidebar-link"><i class="fas fa-coins"></i> Finance</a>
-        </div>
-        <div class="sidebar-section"><div class="sidebar-section-title">PORTEFEUILLE</div>
-            <a href="/wallet/dashboard.html" class="sidebar-link"><i class="fas fa-chart-pie"></i> Tableau de bord</a>
-            <a href="/wallet/deposit.html" class="sidebar-link"><i class="fas fa-arrow-down"></i> Recharger</a>
-            <a href="/wallet/withdraw.html" class="sidebar-link"><i class="fas fa-arrow-up"></i> Retrait</a>
-            <a href="/wallet/transfer.html" class="sidebar-link"><i class="fas fa-exchange-alt"></i> Transfert</a>
-            <a href="/wallet/history.html" class="sidebar-link"><i class="fas fa-history"></i> Historique</a>
-        </div>
-        <div class="sidebar-section"><div class="sidebar-section-title">MON COMPTE</div>
-            <a href="/orders.html" class="sidebar-link"><i class="fas fa-shopping-bag"></i> Mes commandes</a>
-            <a href="/user/account.html" class="sidebar-link"><i class="fas fa-user"></i> Profil</a>
-            <a href="/user/settings.html" class="sidebar-link"><i class="fas fa-cog"></i> Paramètres</a>
-            <a href="/user/notifications.html" class="sidebar-link"><i class="fas fa-bell"></i> Notifications</a>
-        </div>
-        <div class="sidebar-section"><div class="sidebar-section-title">SUPPORT</div>
-            <a href="/user/supports.html" class="sidebar-link"><i class="fas fa-headset"></i> Support</a>
-        </div>
-        <div class="sidebar-link logout" id="sidebarLogout"><i class="fas fa-sign-out-alt"></i> Se déconnecter</div>
+        <div id="drawerUserSection"></div>
+        <div class="drawer-nav" id="drawerNav"></div>
     </div>
 
     <div class="main-content">
-        <div class="breadcrumb">
-            <a href="/home.html">Accueil</a> <i class="fas fa-chevron-right"></i> <span>Finance</span>
-        </div>
         <div class="page-header">
-            <h1>Services financiers</h1>
-            <p>Wise, PayPal, USDT, TRONX, Telegram – recharges instantanées</p>
+            <h1>Finance Digitale</h1>
+            <p>Recharges instantanées – Wise, PayPal, USDT, TRONX, MERU</p>
         </div>
-        <div class="finance-grid" id="financeGrid">
-            <!-- Rempli dynamiquement -->
+        <div class="finance-grid">
+            <a href="/pages/products/wise.html" class="finance-card">
+                <div class="finance-logo"><img src="/assets/logos/wise-logo.png" alt="Wise"></div>
+                <h3>Wise</h3>
+                <p>Transferts internationaux</p>
+            </a>
+            <a href="/pages/products/paypal.html" class="finance-card">
+                <div class="finance-logo"><img src="/assets/logos/paypal-logo.png" alt="PayPal"></div>
+                <h3>PayPal</h3>
+                <p>Recharge de compte</p>
+            </a>
+            <a href="/pages/products/usdt.html" class="finance-card">
+                <div class="finance-logo"><img src="/assets/logos/usdt-logo.png" alt="USDT"></div>
+                <h3>USDT (TRC20)</h3>
+                <p>Stablecoin</p>
+            </a>
+            <a href="/pages/products/tronx.html" class="finance-card">
+                <div class="finance-logo"><img src="/assets/logos/tronx-logo.png" alt="TRONX"></div>
+                <h3>TRONX</h3>
+                <p>Crypto-monnaie</p>
+            </a>
+            <a href="/pages/products/meru.html" class="finance-card">
+                <div class="finance-logo"><img src="/assets/logos/meru-logo.png" alt="MERU"></div>
+                <h3>MERU</h3>
+                <p>Portefeuille digital</p>
+            </a>
         </div>
     </div>
 
     <footer>
-        <div class="footer-content"><p>© 2025 Fox Store. Tous droits réservés.</p><p>Design élite - Performance absolue</p></div>
+        <p>© 2025 Fox Store – L'élite du service digital</p>
     </footer>
 
     <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyA0n2m2R9q07HQ94V58CdbNTlxnKztdmQo",
-            authDomain: "fox-storeht.firebaseapp.com",
-            projectId: "fox-storeht",
-            storageBucket: "fox-storeht.firebasestorage.app",
-            messagingSenderId: "589792388283",
-            appId: "1:589792388283:web:c372bd886f0a98e82db59e",
-            measurementId: "G-WN9M206F4M"
+            apiKey: "AIzaSyDSyFdTHBNULuUiacHM6nmEvPb7YpY24UE",
+            authDomain: "foxstoreht.firebaseapp.com",
+            projectId: "foxstoreht",
+            storageBucket: "foxstoreht.firebasestorage.app",
+            messagingSenderId: "72533137445",
+            appId: "1:72533137445:web:3ba7634bc34da6115b47cc",
+            measurementId: "G-X1Q7Q79BRD"
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const db = firebase.firestore();
 
-        const userGreetingSpan = document.querySelector('#userGreeting span');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const sidebarLogout = document.getElementById('sidebarLogout');
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        const sidebarUserName = document.getElementById('sidebarUserName');
-        const sidebarUserEmail = document.getElementById('sidebarUserEmail');
-        const userAvatar = document.getElementById('userAvatar');
-        const financeGrid = document.getElementById('financeGrid');
+        const drawerNav = document.getElementById('drawerNav');
+        const drawerUserSection = document.getElementById('drawerUserSection');
+        const burgerBtn = document.getElementById('burgerBtn');
+        const drawer = document.getElementById('drawer');
+        const drawerOverlay = document.getElementById('drawerOverlay');
+        const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+        const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
 
-        function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('active'); }
-        menuToggle.addEventListener('click', (e) => { e.stopPropagation(); sidebar.classList.toggle('open'); overlay.classList.toggle('active'); });
-        overlay.addEventListener('click', closeSidebar);
+        function closeDrawer() { drawer.classList.remove('open'); drawerOverlay.classList.remove('active'); }
+        function openDrawer() { drawer.classList.add('open'); drawerOverlay.classList.add('active'); }
+        burgerBtn.addEventListener('click', openDrawer);
+        closeDrawerBtn.addEventListener('click', closeDrawer);
+        drawerOverlay.addEventListener('click', closeDrawer);
 
-        auth.onAuthStateChanged(async (user) => {
+        function updateUI(user) {
             if (!user) { window.location.href = '/login.html'; return; }
-            const displayName = user.displayName || user.email.split('@')[0] || 'Utilisateur';
-            const initial = displayName.charAt(0).toUpperCase();
-            userGreetingSpan.textContent = displayName;
-            sidebarUserName.textContent = displayName;
-            sidebarUserEmail.textContent = user.email;
-            userAvatar.textContent = initial;
-
-            try {
-                const productsSnap = await db.collection('products').where('category', '==', 'finance').where('active', '==', true).get();
-                if (!productsSnap.empty) {
-                    financeGrid.innerHTML = '';
-                    productsSnap.forEach(doc => {
-                        const p = doc.data();
-                        const link = p.pageUrl || `/pages/products/${p.id || p.name.toLowerCase().replace(/\s+/g, '')}.html`;
-                        const card = document.createElement('a');
-                        card.href = link;
-                        card.className = 'finance-card';
-                        card.innerHTML = `
-                            <img src="/assets/logos/${p.logo || 'placeholder.png'}" alt="${p.name}" loading="lazy" onerror="this.src='/assets/logos/placeholder.png'">
-                            <h3>${p.name}</h3>
-                            <div class="pricing">${p.priceDisplay || 'Taux préférentiels'}</div>
-                            <div class="btn-small">Recharger</div>
-                        `;
-                        financeGrid.appendChild(card);
-                    });
-                } else {
-                    // Fallback documenté
-                    const fallback = [
-                        { name: 'Wise', logo: 'wise-logo.png', price: '1$ = 150 Gdes' },
-                        { name: 'PayPal', logo: 'paypal-logo.png', price: '1$ = 150 Gdes' },
-                        { name: 'USDT', logo: 'usdt-logo.png', price: 'Adresse: TBcmhX...' },
-                        { name: 'TRONX', logo: 'tronx-logo.png', price: '1 TRX = 0.30$' },
-                        { name: 'Telegram', logo: 'telegram-logo.png', price: '1 mois 1160 HTG' }
-                    ];
-                    financeGrid.innerHTML = '';
-                    fallback.forEach(f => {
-                        const card = document.createElement('a');
-                        card.href = `/pages/products/${f.name.toLowerCase()}.html`;
-                        card.className = 'finance-card';
-                        card.innerHTML = `
-                            <img src="/assets/logos/${f.logo}" alt="${f.name}" loading="lazy" onerror="this.src='/assets/logos/placeholder.png'">
-                            <h3>${f.name}</h3>
-                            <div class="pricing">${f.price}</div>
-                            <div class="btn-small">Recharger</div>
-                        `;
-                        financeGrid.appendChild(card);
-                    });
-                }
-            } catch (error) {
-                console.error('Erreur chargement finance', error);
-            }
-        });
-
-        async function handleLogout() { await auth.signOut(); window.location.href = '/'; }
-        logoutBtn.addEventListener('click', handleLogout);
-        sidebarLogout.addEventListener('click', handleLogout);
+            const name = user.displayName || user.email || 'Client';
+            const isAdmin = (user.email === ADMIN_EMAIL);
+            const initial = name.charAt(0).toUpperCase();
+            drawerUserSection.innerHTML = `
+                <div class="drawer-user">
+                    <div class="drawer-user-avatar">${initial}</div>
+                    <div class="drawer-user-info">
+                        <h4>${name}</h4>
+                        <p>${user.email}</p>
+                    </div>
+                </div>
+            `;
+            let menu = `
+                <a href="/home.html"><i class="fas fa-home"></i> Accueil</a>
+                <a href="/gaming.html"><i class="fas fa-gamepad"></i> Gaming</a>
+                <a href="/streaming.html"><i class="fas fa-film"></i> Streaming</a>
+                <a href="/finance.html"><i class="fas fa-coins"></i> Finance</a>
+                <a href="/orders.html"><i class="fas fa-shopping-cart"></i> Commandes</a>
+                <a href="/user/account.html"><i class="fas fa-user"></i> Mon compte</a>
+                <a href="/user/settings.html"><i class="fas fa-sliders-h"></i> Paramètres</a>
+                <a href="/user/supports.html"><i class="fas fa-headset"></i> Support</a>
+            `;
+            if (isAdmin) menu += `<a href="/admin.html"><i class="fas fa-shield-alt"></i> Administration</a>`;
+            menu += `<button id="drawerLogoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>`;
+            drawerNav.innerHTML = menu;
+            document.getElementById('drawerLogoutBtn')?.addEventListener('click', async () => {
+                await auth.signOut();
+                window.location.href = '/login.html';
+            });
+        }
+        auth.onAuthStateChanged(updateUI);
     </script>
 </body>
 </html>
