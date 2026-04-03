@@ -8,6 +8,7 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -26,6 +27,8 @@
             display: flex;
             flex-direction: column;
         }
+        
+        /* Navbar */
         .navbar {
             position: fixed;
             top: 0;
@@ -66,6 +69,8 @@
             font-size: 1.3rem;
         }
         .burger-btn:hover { background: white; border-color: #00d1ff40; color: #00d1ff; }
+        
+        /* Drawer */
         .drawer {
             position: fixed;
             top: 0;
@@ -159,6 +164,8 @@
             display: none;
         }
         .drawer-overlay.active { display: block; }
+        
+        /* Main content */
         .main-content {
             flex: 1;
             padding: 90px 24px 50px;
@@ -166,6 +173,8 @@
             margin: 0 auto;
             width: 100%;
         }
+        
+        /* Welcome card */
         .welcome-card {
             background: white;
             border-radius: 28px;
@@ -191,6 +200,8 @@
             margin-left: 10px;
             border: 1px solid #00d1ff20;
         }
+        
+        /* Section title */
         .section-title {
             font-size: 1.3rem;
             font-weight: 700;
@@ -200,6 +211,8 @@
             gap: 10px;
         }
         .section-title i { color: #00d1ff; font-size: 1.2rem; }
+        
+        /* Services grid */
         .services-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -241,6 +254,8 @@
             align-items: center;
             gap: 6px;
         }
+        
+        /* Actions grid */
         .actions-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -268,6 +283,8 @@
         }
         .action-card h4 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
         .action-card p { font-size: 0.75rem; color: #5b6e8c; }
+        
+        /* Social links */
         .social-links {
             display: flex;
             justify-content: center;
@@ -291,16 +308,12 @@
         .fa-instagram { color: #E4405F; }
         .fa-youtube { color: #FF0000; }
         .fa-telegram { color: #26A5E4; }
-        .social-icon:hover .fa-tiktok, .social-icon:hover .fa-instagram,
-        .social-icon:hover .fa-youtube, .social-icon:hover .fa-telegram { color: #00d1ff; }
-        footer {
-            background: transparent;
-            border-top: 1px solid #e2e8f0;
-            padding: 20px;
-            text-align: center;
-            font-size: 0.75rem;
-            color: #5b6e8c;
-        }
+        .social-icon:hover .fa-tiktok,
+        .social-icon:hover .fa-instagram,
+        .social-icon:hover .fa-youtube,
+        .social-icon:hover .fa-telegram { color: #00d1ff; }
+        
+        /* WhatsApp float */
         .whatsapp-float {
             position: fixed;
             bottom: 20px;
@@ -319,10 +332,20 @@
             text-decoration: none;
         }
         .whatsapp-float:hover { transform: scale(1.05); background: #1da85c; }
+        
+        footer {
+            background: transparent;
+            border-top: 1px solid #e2e8f0;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #5b6e8c;
+        }
+        
         @media (max-width: 640px) {
             .main-content { padding: 80px 16px 40px; }
-            .services-grid { grid-template-columns: 1fr; }
             .drawer { width: 260px; right: -260px; }
+            .services-grid { grid-template-columns: 1fr; }
             .social-links { gap: 20px; }
             .social-icon i { font-size: 1.6rem; }
         }
@@ -330,6 +353,7 @@
 </head>
 <body>
 
+    <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="/home.html" class="logo"><i class="fas fa-fox"></i><span>FOX STORE</span></a>
@@ -337,6 +361,7 @@
         </div>
     </nav>
 
+    <!-- Drawer -->
     <div class="drawer-overlay" id="drawerOverlay"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-header">
@@ -347,8 +372,10 @@
         <div class="drawer-nav" id="drawerNav"></div>
     </div>
 
+    <!-- WhatsApp Float -->
     <a href="https://wa.me/50937542954" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
 
+    <!-- Main Content -->
     <div class="main-content">
         <div class="welcome-card">
             <h1>Bonjour, <span id="userName">Utilisateur</span><span id="adminBadge" class="admin-badge" style="display: none;">Administrateur</span></h1>
@@ -428,6 +455,7 @@
     </footer>
 
     <script>
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyDSyFdTHBNULuUiacHM6nmEvPb7YpY24UE",
             authDomain: "foxstoreht.firebaseapp.com",
@@ -439,25 +467,39 @@
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
 
+        // DOM Elements
         const drawerNav = document.getElementById('drawerNav');
         const drawerUserSection = document.getElementById('drawerUserSection');
         const burgerBtn = document.getElementById('burgerBtn');
         const drawer = document.getElementById('drawer');
         const drawerOverlay = document.getElementById('drawerOverlay');
         const closeDrawerBtn = document.getElementById('closeDrawerBtn');
-        const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
+        const userNameSpan = document.getElementById('userName');
+        const adminBadgeSpan = document.getElementById('adminBadge');
 
+        // Drawer functions
         function closeDrawer() { drawer.classList.remove('open'); drawerOverlay.classList.remove('active'); }
         function openDrawer() { drawer.classList.add('open'); drawerOverlay.classList.add('active'); }
-        burgerBtn.addEventListener('click', openDrawer);
-        closeDrawerBtn.addEventListener('click', closeDrawer);
-        drawerOverlay.addEventListener('click', closeDrawer);
+        if (burgerBtn) burgerBtn.addEventListener('click', openDrawer);
+        if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeDrawer);
+        if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
 
         function updateUI(user) {
-            if (!user) { window.location.href = '/login.html'; return; }
+            if (!user) {
+                window.location.href = '/login.html';
+                return;
+            }
             const name = user.displayName || user.email || 'Client';
             const isAdmin = (user.email === ADMIN_EMAIL);
+            
+            // Welcome section
+            userNameSpan.textContent = name;
+            if (isAdmin) adminBadgeSpan.style.display = 'inline-block';
+            else adminBadgeSpan.style.display = 'none';
+            
+            // Drawer user section
             const initial = name.charAt(0).toUpperCase();
             drawerUserSection.innerHTML = `
                 <div class="drawer-user">
@@ -465,9 +507,12 @@
                     <div class="drawer-user-info">
                         <h4>${name}</h4>
                         <p>${user.email}</p>
+                        ${isAdmin ? '<p style="color:#00d1ff; font-size:0.7rem;">🔐 Administrateur</p>' : ''}
                     </div>
                 </div>
             `;
+            
+            // Drawer navigation links
             let menu = `
                 <a href="/home.html"><i class="fas fa-home"></i> Accueil</a>
                 <a href="/gaming.html"><i class="fas fa-gamepad"></i> Gaming</a>
@@ -481,12 +526,19 @@
             if (isAdmin) menu += `<a href="/admin.html"><i class="fas fa-shield-alt"></i> Administration</a>`;
             menu += `<button id="drawerLogoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>`;
             drawerNav.innerHTML = menu;
-            document.getElementById('drawerLogoutBtn')?.addEventListener('click', async () => {
-                await auth.signOut();
-                window.location.href = '/login.html';
-            });
+            
+            const logoutBtn = document.getElementById('drawerLogoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', async () => {
+                    await auth.signOut();
+                    window.location.href = '/login.html';
+                });
+            }
         }
-        auth.onAuthStateChanged(updateUI);
+
+        auth.onAuthStateChanged(user => {
+            updateUI(user);
+        });
     </script>
 </body>
 </html>
