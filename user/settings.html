@@ -2,132 +2,91 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Paramètres — Fox Store Elite</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Fox Store – Paramètres</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #0056b3; --bg: #f8fafc; --white: #ffffff;
-            --text: #1e293b; --muted: #64748b; --border: rgba(0, 86, 179, 0.08);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding-bottom: 40px; }
-
-        /* --- NOTIFICATION TOAST PRO --- */
-        #toast {
-            position: fixed; top: 20px; right: 20px; background: var(--white);
-            border-left: 4px solid var(--primary); padding: 15px 25px; border-radius: 12px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px;
-            transform: translateX(150%); transition: var(--transition); z-index: 9999;
-        }
-        #toast.active { transform: translateX(0); }
-        #toast i { font-size: 1.2rem; color: var(--primary); }
-        #toast span { font-size: 0.85rem; font-weight: 700; color: var(--text); }
-
-        header { height: 65px; background: #fff; display: flex; align-items: center; padding: 0 5%; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; }
-        .back-btn { color: var(--primary); font-size: 1.2rem; text-decoration: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 12px; transition: var(--transition); }
-        header h1 { font-size: 0.95rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; margin-left: 10px; }
-
-        .container { padding: 25px 5%; max-width: 500px; margin: 0 auto; }
-        .card { background: #fff; border-radius: 24px; padding: 30px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 25px; }
-        .section-label { font-size: 0.7rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; padding-left: 5px; }
-
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; font-size: 0.65rem; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
-        .form-group input { width: 100%; padding: 15px; border: 1.5px solid #e2e8f0; border-radius: 14px; outline: none; font-size: 0.95rem; font-weight: 600; background: #fcfcfd; transition: 0.3s; }
-        .form-group input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.04); }
-
-        .btn-primary { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 15px; font-weight: 800; font-size: 0.9rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-primary:hover { background: #003d82; transform: translateY(-2px); }
-
-        .setting-item { padding: 15px 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f8fafc; cursor: pointer; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f5f7fc; color: #1e293b; line-height: 1.5; min-height: 100vh; }
+        .navbar { position: fixed; top: 0; width: 100%; z-index: 1000; padding: 14px 24px; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid #eef2ff; }
+        .nav-container { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; font-size: 1.5rem; color: #0f172a; }
+        .logo i { font-size: 1.6rem; color: #00d1ff; }
+        .burger-btn { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.3rem; }
+        .burger-btn:hover { background: white; border-color: #00d1ff40; color: #00d1ff; }
+        .drawer { position: fixed; top: 0; right: -260px; width: 260px; height: 100vh; background: white; box-shadow: -4px 0 24px rgba(0,0,0,0.05); z-index: 2000; transition: right 0.3s; display: flex; flex-direction: column; border-left: 1px solid #eef2ff; }
+        .drawer.open { right: 0; }
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #edf2f7; }
+        .drawer-header .logo { font-size: 1.2rem; }
+        .close-drawer { background: #f1f5f9; border: none; border-radius: 10px; width: 34px; height: 34px; cursor: pointer; font-size: 1rem; }
+        .drawer-user { display: flex; align-items: center; gap: 12px; padding: 14px; background: #f8fafc; margin: 12px; border-radius: 14px; border: 1px solid #e2e8f0; }
+        .drawer-user-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, #00d1ff, #009ac7); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; font-weight: 600; }
+        .drawer-user-info h4 { font-size: 0.9rem; font-weight: 600; }
+        .drawer-user-info p { font-size: 0.7rem; color: #5b6e8c; }
+        .drawer-nav { flex: 1; display: flex; flex-direction: column; padding: 8px 10px; gap: 2px; overflow-y: auto; }
+        .drawer-section-title { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; padding: 8px 10px 4px 10px; }
+        .drawer-nav a, .drawer-nav button { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; text-decoration: none; color: #1e293b; font-size: 0.85rem; font-weight: 500; background: none; border: 1px solid transparent; cursor: pointer; width: 100%; text-align: left; transition: all 0.2s; }
+        .drawer-nav a i, .drawer-nav button i { width: 20px; font-size: 0.9rem; color: #5b6e8c; }
+        .drawer-nav a:hover, .drawer-nav button:hover { background: #f1f5f9; border-color: #e2e8f0; }
+        .drawer-nav a:hover i, .drawer-nav button:hover i { color: #00d1ff; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(2px); z-index: 1999; display: none; }
+        .drawer-overlay.active { display: block; }
+        .main-content { padding: 90px 24px 50px; max-width: 800px; margin: 0 auto; }
+        .page-header { margin-bottom: 32px; }
+        .page-header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+        .page-header h1 i { color: #00d1ff; margin-right: 12px; }
+        .page-header p { color: #475569; font-size: 0.95rem; }
+        .settings-card { background: white; border-radius: 28px; padding: 32px; border: 1px solid #eef2ff; margin-bottom: 24px; }
+        .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid #f1f5f9; }
         .setting-item:last-child { border-bottom: none; }
-        .item-text h4 { font-size: 0.9rem; font-weight: 700; color: var(--text); }
-        .item-text p { font-size: 0.75rem; color: var(--muted); font-weight: 600; }
+        .setting-info h3 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+        .setting-info p { font-size: 0.75rem; color: #5b6e8c; }
+        .toggle-switch { width: 44px; height: 24px; background: #cbd5e1; border-radius: 30px; position: relative; cursor: pointer; transition: 0.2s; }
+        .toggle-switch.active { background: #00d1ff; }
+        .toggle-switch::after { content: ''; position: absolute; width: 20px; height: 20px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: 0.2s; }
+        .toggle-switch.active::after { left: 22px; }
+        .btn-danger { background: none; border: 1px solid #fee2e2; color: #dc2626; padding: 8px 20px; border-radius: 40px; font-size: 0.85rem; cursor: pointer; transition: 0.2s; }
+        .btn-danger:hover { background: #fee2e2; }
+        .whatsapp-float { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; text-decoration: none; }
+        .whatsapp-float:hover { transform: scale(1.05); background: #1da85c; }
+        footer { background: transparent; border-top: 1px solid #e2e8f0; padding: 20px; text-align: center; font-size: 0.75rem; color: #5b6e8c; margin-top: 40px; }
+        @media (max-width: 640px) { .main-content { padding: 80px 16px 40px; } .drawer { width: 260px; right: -260px; } }
     </style>
 </head>
 <body>
-
-    <div id="toast"><i class="fas fa-info-circle"></i> <span id="toastMsg">Message</span></div>
-
-    <header><a href="/home.html" class="back-btn"><i class="fas fa-arrow-left"></i></a><h1>Paramètres du Compte</h1></header>
-
-    <div class="container">
-        <p class="section-label">Identité Fox Store</p>
-        <div class="card">
-            <form id="profileForm">
-                <div class="form-group"><label>Prénom</label><input type="text" id="fn" required></div>
-                <div class="form-group"><label>Nom de famille</label><input type="text" id="ln" required></div>
-                <div class="form-group"><label>Numéro WhatsApp</label><input type="tel" id="ph" required></div>
-                <button type="submit" class="btn-primary">Enregistrer les changements <i class="fas fa-check-circle"></i></button>
-            </form>
-        </div>
-
-        <p class="section-label">Sécurité & Privacité</p>
-        <div class="card">
-            <div class="setting-item" onclick="triggerPassReset()">
-                <div class="item-text"><h4>Mot de passe</h4><p>Recevoir un lien de réinitialisation</p></div>
-                <i class="fas fa-chevron-right" style="color:var(--muted)"></i>
-            </div>
-            <div class="setting-item">
-                <div class="item-text"><h4>Authentification</h4><p>Compte protégé par cryptage SSL</p></div>
-                <i class="fas fa-shield-alt" style="color:var(--primary)"></i>
-            </div>
-        </div>
-
-        <a href="/logout.html" class="btn-primary" style="background:#fff5f5; color:#ff4444; border:1px solid #ffebee; margin-top:10px;">Déconnexion sécurisée <i class="fas fa-power-off"></i></a>
+    <nav class="navbar"><div class="nav-container"><a href="/home.html" class="logo"><i class="fas fa-fox"></i><span>FOX STORE</span></a><button class="burger-btn" id="burgerBtn"><i class="fas fa-bars"></i></button></div></nav>
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    <div class="drawer" id="drawer"><div class="drawer-header"><div class="logo"><i class="fas fa-fox"></i><span>Menu</span></div><button class="close-drawer" id="closeDrawerBtn"><i class="fas fa-times"></i></button></div><div id="drawerUserSection"></div><div class="drawer-nav" id="drawerNav"></div></div>
+    <a href="https://wa.me/50937542954" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+    <div class="main-content">
+        <div class="page-header"><h1><i class="fas fa-sliders-h"></i> Paramètres</h1><p>Préférences et configurations</p></div>
+        <div class="settings-card"><div class="setting-item"><div class="setting-info"><h3>Notifications push</h3><p>Recevoir des alertes sur vos commandes</p></div><div class="toggle-switch" id="notifToggle"></div></div><div class="setting-item"><div class="setting-info"><h3>Mode sombre</h3><p>Adapter l'affichage (non disponible actuellement)</p></div><div class="toggle-switch" id="darkModeToggle"></div></div><div class="setting-item"><div class="setting-info"><h3>Langue</h3><p>Français (par défaut)</p></div><button class="btn-danger" id="changeLangBtn" disabled>Bientôt</button></div><div class="setting-item"><div class="setting-info"><h3>Supprimer mon compte</h3><p>Cette action est irréversible</p></div><button class="btn-danger" id="deleteAccountBtn">Supprimer</button></div></div>
     </div>
-
+    <footer><p>© 2025 Fox Store – L'élite du service digital. Tous droits réservés.</p></footer>
     <script>
-        const firebaseConfig = { apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg", authDomain: "pay-fusion-6dfaf.firebaseapp.com", projectId: "pay-fusion-6dfaf", storageBucket: "pay-fusion-6dfaf.firebasestorage.app", messagingSenderId: "945593776812", appId: "1:945593776812:web:4475e1085fdfa31690fd09", measurementId: "G-8FEQG6B7ZY" };
+        const firebaseConfig = { apiKey: "AIzaSyDSyFdTHBNULuUiacHM6nmEvPb7YpY24UE", authDomain: "foxstoreht.firebaseapp.com", projectId: "foxstoreht", storageBucket: "foxstoreht.firebasestorage.app", messagingSenderId: "72533137445", appId: "1:72533137445:web:3ba7634bc34da6115b47cc", measurementId: "G-X1Q7Q79BRD" };
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth(), db = firebase.firestore();
-
-        function showToast(msg) {
-            const t = document.getElementById('toast');
-            document.getElementById('toastMsg').textContent = msg;
-            t.classList.add('active');
-            setTimeout(() => t.classList.remove('active'), 4000);
-        }
-
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                db.collection("users").doc(user.uid).onSnapshot(doc => {
-                    const info = doc.data().personalInfo;
-                    document.getElementById('fn').value = info.firstName;
-                    document.getElementById('ln').value = info.lastName;
-                    document.getElementById('ph').value = info.phone;
-                });
-            } else { window.location.href = "/login.html"; }
-        });
-
-        document.getElementById('profileForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const user = auth.currentUser;
-            const fn = document.getElementById('fn').value, ln = document.getElementById('ln').value, ph = document.getElementById('ph').value;
-
-            try {
-                await db.collection("users").doc(user.uid).update({
-                    "personalInfo.firstName": fn, "personalInfo.lastName": ln,
-                    "personalInfo.fullName": fn + " " + ln, "personalInfo.phone": ph
-                });
-                showToast("Vos modifications ont été enregistrées.");
-            } catch (e) { showToast("Une erreur est survenue."); }
-        };
-
-        function triggerPassReset() {
-            auth.sendPasswordResetEmail(auth.currentUser.email).then(() => {
-                showToast("Email de sécurité envoyé avec succès.");
-            }).catch(() => showToast("Erreur lors de l'envoi de l'email."));
-        }
+        const auth = firebase.auth();
+        const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
+        // Drawer (identique)
+        const drawerNav = document.getElementById('drawerNav'), drawerUserSection = document.getElementById('drawerUserSection'), burgerBtn = document.getElementById('burgerBtn'), drawer = document.getElementById('drawer'), drawerOverlay = document.getElementById('drawerOverlay'), closeDrawerBtn = document.getElementById('closeDrawerBtn');
+        function closeDrawer() { drawer.classList.remove('open'); drawerOverlay.classList.remove('active'); }
+        function openDrawer() { drawer.classList.add('open'); drawerOverlay.classList.add('active'); }
+        if(burgerBtn) burgerBtn.addEventListener('click', openDrawer);
+        if(closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeDrawer);
+        if(drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+        function updateDrawer(user) { if(!user) return; const name = user.displayName || user.email || 'Client', isAdmin = (user.email === ADMIN_EMAIL), initial = name.charAt(0).toUpperCase(); drawerUserSection.innerHTML = `<div class="drawer-user"><div class="drawer-user-avatar">${initial}</div><div class="drawer-user-info"><h4>${name}</h4><p>${user.email}</p>${isAdmin ? '<p style="color:#00d1ff; font-size:0.7rem;">Administrateur</p>' : ''}</div></div>`; let menu = `<div class="drawer-section-title">PRINCIPALE</div><a href="/home.html"><i class="fas fa-home"></i> Accueil</a><a href="/user/notifications.html"><i class="fas fa-bullhorn"></i> Annonce</a><div class="drawer-section-title">PORTEFEUILLE</div><a href="/user/wallet.html"><i class="fas fa-wallet"></i> Wallet</a><div class="drawer-section-title">SERVICES</div><a href="/gaming.html"><i class="fas fa-gamepad"></i> Gaming</a><a href="/streaming.html"><i class="fas fa-film"></i> Streaming</a><a href="/finance.html"><i class="fas fa-coins"></i> Finance</a><div class="drawer-section-title">COMPTE</div><a href="/orders.html"><i class="fas fa-shopping-cart"></i> Commandes</a><a href="/user/account.html"><i class="fas fa-user"></i> Mon compte</a><a href="/user/settings.html"><i class="fas fa-sliders-h"></i> Paramètres</a><a href="/user/supports.html"><i class="fas fa-headset"></i> Support</a>`; if(isAdmin) menu += `<div class="drawer-section-title">ADMINISTRATION</div><a href="/admin.html"><i class="fas fa-shield-alt"></i> Administration</a>`; menu += `<div class="drawer-section-title">RESEAUX</div><a href="https://whatsapp.com/channel/0029Vb84FJYAojYxTIur7b2n" target="_blank"><i class="fab fa-whatsapp"></i> Chaine WhatsApp</a><button id="drawerLogoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>`; drawerNav.innerHTML = menu; document.getElementById('drawerLogoutBtn')?.addEventListener('click', async () => { await auth.signOut(); window.location.href = '/login.html'; }); }
+        auth.onAuthStateChanged(user => { if(!user) { window.location.href = '/login.html'; return; } updateDrawer(user); });
+        // Toggles (simulation)
+        const notifToggle = document.getElementById('notifToggle');
+        notifToggle.addEventListener('click', () => notifToggle.classList.toggle('active'));
+        const darkToggle = document.getElementById('darkModeToggle');
+        darkToggle.addEventListener('click', () => darkToggle.classList.toggle('active'));
+        // Delete account
+        document.getElementById('deleteAccountBtn')?.addEventListener('click', async () => { if(confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.')) { try { await auth.currentUser.delete(); alert('Compte supprimé. Vous allez être redirigé.'); window.location.href = '/'; } catch(e) { alert('Erreur: '+e.message); } } });
     </script>
 </body>
 </html>
