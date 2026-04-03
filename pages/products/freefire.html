@@ -262,7 +262,7 @@
             color: #00d1ff;
             width: 20px;
         }
-        .form-group input, .form-group select {
+        .form-group input {
             width: 100%;
             padding: 12px 16px;
             border: 1px solid #e2e8f0;
@@ -271,7 +271,7 @@
             transition: all 0.2s;
             background: #f8fafc;
         }
-        .form-group input:focus, .form-group select:focus {
+        .form-group input:focus {
             outline: none;
             border-color: #00d1ff;
             box-shadow: 0 0 0 3px rgba(0,209,255,0.1);
@@ -314,6 +314,11 @@
         .pack-price small {
             font-size: 0.7rem;
             font-weight: normal;
+        }
+        
+        /* Dynamic form fields */
+        .dynamic-field {
+            transition: all 0.2s;
         }
         
         /* Button */
@@ -498,17 +503,12 @@
             </div>
         </div>
 
-        <!-- Customer Info Form -->
+        <!-- Customer Info Form (Dynamic) -->
         <div class="form-section">
             <h2><i class="fas fa-user"></i> Informations du compte</h2>
             <form id="orderForm">
-                <div class="form-group">
-                    <label><i class="fas fa-id-card"></i> ID du compte Free Fire *</label>
-                    <input type="text" id="gameId" placeholder="Ex: 1234567890" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-user-circle"></i> Nom du compte *</label>
-                    <input type="text" id="gameName" placeholder="Votre pseudo dans le jeu" required>
+                <div id="dynamicFieldsContainer">
+                    <!-- Les champs seront injectés dynamiquement selon le pack -->
                 </div>
                 <div class="form-group">
                     <label><i class="fab fa-whatsapp"></i> Numéro WhatsApp *</label>
@@ -541,18 +541,18 @@
         const db = firebase.firestore();
         const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
 
-        // Packs data
+        // Packs data with type: 'diamond' or 'pass'
         const packs = [
-            { id: "diamonds-110", name: "110 + 10 Diamants", price: 157 },
-            { id: "diamonds-310", name: "310 + 31 Diamants", price: 471 },
-            { id: "diamonds-520", name: "520 + 52 Diamants", price: 775 },
-            { id: "diamonds-1060", name: "1060 + 106 Diamants", price: 1550 },
-            { id: "diamonds-2180", name: "2180 + 218 Diamants", price: 3100 },
-            { id: "diamonds-5600", name: "5600 + 560 Diamants", price: 7750 },
-            { id: "booyah-pass", name: "Booyah Pass", price: 400 },
-            { id: "level-up-pass", name: "Level Up Pass", price: 800 },
-            { id: "weekly-sub", name: "Abonnement Semaine", price: 325 },
-            { id: "monthly-sub", name: "Abonnement Mois", price: 1600 }
+            { id: "diamonds-110", name: "110 + 10 Diamants", price: 157, type: "diamond" },
+            { id: "diamonds-310", name: "310 + 31 Diamants", price: 471, type: "diamond" },
+            { id: "diamonds-520", name: "520 + 52 Diamants", price: 775, type: "diamond" },
+            { id: "diamonds-1060", name: "1060 + 106 Diamants", price: 1550, type: "diamond" },
+            { id: "diamonds-2180", name: "2180 + 218 Diamants", price: 3100, type: "diamond" },
+            { id: "diamonds-5600", name: "5600 + 560 Diamants", price: 7750, type: "diamond" },
+            { id: "booyah-pass", name: "Booyah Pass", price: 400, type: "pass" },
+            { id: "level-up-pass", name: "Level Up Pass", price: 800, type: "pass" },
+            { id: "weekly-sub", name: "Abonnement Semaine", price: 325, type: "pass" },
+            { id: "monthly-sub", name: "Abonnement Mois", price: 1600, type: "pass" }
         ];
 
         let selectedPack = null;
@@ -561,8 +561,7 @@
         // DOM Elements
         const packsGrid = document.getElementById('packsGrid');
         const orderForm = document.getElementById('orderForm');
-        const gameIdInput = document.getElementById('gameId');
-        const gameNameInput = document.getElementById('gameName');
+        const dynamicFieldsContainer = document.getElementById('dynamicFieldsContainer');
         const whatsappInput = document.getElementById('whatsapp');
         const submitBtn = document.getElementById('submitBtn');
         const toast = document.getElementById('toast');
@@ -582,8 +581,6 @@
 
         function addToCartItem(item) {
             const cart = getCart();
-            // Vérifier si le même produit avec mêmes infos client existe déjà ? Pour simplifier, on ajoute un nouvel article à chaque fois.
-            // On peut générer un ID unique
             const newItem = {
                 id: Date.now() + '_' + Math.random().toString(36).substr(2, 6),
                 ...item,
@@ -605,7 +602,6 @@
             }
         }
 
-        // Redirection vers le panier au clic sur le badge
         cartBadge.addEventListener('click', () => {
             window.location.href = '/pages/checkout/cart.html';
         });
@@ -618,6 +614,38 @@
             setTimeout(() => {
                 toast.style.display = 'none';
             }, 3000);
+        }
+
+        // ---------- Dynamic Form Fields ----------
+        function renderFormFields() {
+            if (!selectedPack) {
+                dynamicFieldsContainer.innerHTML = '<p class="form-group" style="color:#5b6e8c;">Veuillez sélectionner un pack ci-dessus.</p>';
+                return;
+            }
+            
+            if (selectedPack.type === 'diamond') {
+                dynamicFieldsContainer.innerHTML = `
+                    <div class="form-group">
+                        <label><i class="fas fa-id-card"></i> ID du compte Free Fire *</label>
+                        <input type="text" id="gameId" placeholder="Ex: 1234567890" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-user-circle"></i> Nom du compte *</label>
+                        <input type="text" id="gameName" placeholder="Votre pseudo dans le jeu" required>
+                    </div>
+                `;
+            } else { // type 'pass'
+                dynamicFieldsContainer.innerHTML = `
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email du compte Free Fire *</label>
+                        <input type="email" id="email" placeholder="Email associé au compte" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Mot de passe *</label>
+                        <input type="password" id="password" placeholder="Mot de passe du compte" required>
+                    </div>
+                `;
+            }
         }
 
         // Render packs
@@ -634,21 +662,12 @@
                     document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
                     card.classList.add('selected');
                     selectedPack = JSON.parse(card.dataset.pack);
+                    renderFormFields(); // Mettre à jour le formulaire selon le type
                 });
             });
         }
 
-        // Ajout au panier (création d'un objet article sans enregistrement Firestore immédiat)
-        // On enregistre localement puis on notifie
-        function addToCartLocal(item) {
-            addToCartItem(item);
-            showToast(`${item.productName} ajouté au panier !`, 'success');
-        }
-
-        // Gestion du formulaire : on ajoute au panier local (pas de Firestore ici, car le panier est temporaire)
-        // Mais selon votre logique précédente, vous vouliez créer une commande en base. On va plutôt créer un panier local,
-        // et lors du passage en caisse, on créera les commandes. C'est plus classique.
-        // Je modifie donc : on ajoute simplement dans localStorage.
+        // Ajout au panier
         function handleAddToCart(e) {
             e.preventDefault();
             
@@ -657,13 +676,32 @@
                 return;
             }
             
-            const gameId = gameIdInput.value.trim();
-            const gameName = gameNameInput.value.trim();
             const whatsapp = whatsappInput.value.trim();
-            
-            if (!gameId || !gameName || !whatsapp) {
-                showToast('Veuillez remplir tous les champs', 'error');
+            if (!whatsapp) {
+                showToast('Veuillez renseigner votre numéro WhatsApp', 'error');
                 return;
+            }
+            
+            let customerInfo = { whatsapp };
+            
+            if (selectedPack.type === 'diamond') {
+                const gameId = document.getElementById('gameId')?.value.trim();
+                const gameName = document.getElementById('gameName')?.value.trim();
+                if (!gameId || !gameName) {
+                    showToast('Veuillez remplir tous les champs (ID et Nom du compte)', 'error');
+                    return;
+                }
+                customerInfo.gameId = gameId;
+                customerInfo.gameName = gameName;
+            } else {
+                const email = document.getElementById('email')?.value.trim();
+                const password = document.getElementById('password')?.value.trim();
+                if (!email || !password) {
+                    showToast('Veuillez remplir tous les champs (Email et Mot de passe)', 'error');
+                    return;
+                }
+                customerInfo.email = email;
+                customerInfo.password = password; // À noter : stocker un mot de passe en clair est sensible. En production, mieux vaut ne pas stocker.
             }
             
             if (!currentUser) {
@@ -672,7 +710,6 @@
                 return;
             }
             
-            // Création de l'article pour le panier local
             const cartItem = {
                 userId: currentUser.uid,
                 userEmail: currentUser.email,
@@ -682,22 +719,25 @@
                 price: selectedPack.price,
                 quantity: 1,
                 total: selectedPack.price,
-                customerInfo: {
-                    gameId: gameId,
-                    gameName: gameName,
-                    whatsapp: whatsapp
-                },
-                status: "en-attente" // sera utilisé lors de la validation finale
+                customerInfo: customerInfo,
+                status: "en-attente"
             };
             
-            addToCartLocal(cartItem);
+            addToCartItem(cartItem);
+            showToast(`${selectedPack.name} ajouté au panier !`, 'success');
             
             // Reset form
-            gameIdInput.value = '';
-            gameNameInput.value = '';
+            if (selectedPack.type === 'diamond') {
+                if (document.getElementById('gameId')) document.getElementById('gameId').value = '';
+                if (document.getElementById('gameName')) document.getElementById('gameName').value = '';
+            } else {
+                if (document.getElementById('email')) document.getElementById('email').value = '';
+                if (document.getElementById('password')) document.getElementById('password').value = '';
+            }
             whatsappInput.value = '';
             document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
             selectedPack = null;
+            renderFormFields(); // Afficher message "Veuillez sélectionner un pack"
         }
 
         orderForm.addEventListener('submit', handleAddToCart);
@@ -762,7 +802,8 @@
 
         // Initialize
         renderPacks();
-        updateCartBadge(); // Affiche le badge si des articles existent déjà
+        renderFormFields(); // Message par défaut
+        updateCartBadge();
     </script>
 </body>
 </html>
