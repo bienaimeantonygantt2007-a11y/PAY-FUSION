@@ -11,6 +11,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #f5f7fc; color: #1e293b; line-height: 1.5; min-height: 100vh; }
+        /* Navbar & Drawer (identique) */
         .navbar { position: fixed; top: 0; width: 100%; z-index: 1000; padding: 14px 24px; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid #eef2ff; }
         .nav-container { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
         .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; font-size: 1.5rem; color: #0f172a; }
@@ -34,27 +35,27 @@
         .drawer-nav a:hover i, .drawer-nav button:hover i { color: #00d1ff; }
         .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(2px); z-index: 1999; display: none; }
         .drawer-overlay.active { display: block; }
+        
         .main-content { padding: 90px 24px 50px; max-width: 800px; margin: 0 auto; }
         .page-header { margin-bottom: 32px; }
         .page-header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
         .page-header h1 i { color: #00d1ff; margin-right: 12px; }
         .page-header p { color: #475569; font-size: 0.95rem; }
-        .support-card { background: white; border-radius: 28px; padding: 32px; border: 1px solid #eef2ff; margin-bottom: 24px; }
-        .contact-method { display: flex; align-items: center; gap: 20px; padding: 20px; border: 1px solid #eef2ff; border-radius: 24px; margin-bottom: 20px; transition: 0.2s; }
-        .contact-method:hover { border-color: #00d1ff40; background: #00d1ff02; }
-        .contact-icon { width: 56px; height: 56px; background: #f1f5f9; border-radius: 28px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #00d1ff; }
-        .contact-info h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
-        .contact-info p { font-size: 0.85rem; color: #5b6e8c; }
-        .contact-link { margin-left: auto; background: #f1f5f9; padding: 8px 20px; border-radius: 40px; text-decoration: none; color: #1e293b; font-weight: 500; font-size: 0.85rem; transition: 0.2s; }
-        .contact-link:hover { background: #00d1ff; color: white; }
-        .faq-item { border-bottom: 1px solid #f1f5f9; padding: 16px 0; }
-        .faq-question { font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; }
-        .faq-answer { display: none; padding-top: 8px; color: #5b6e8c; font-size: 0.85rem; }
-        .faq-question i { transition: 0.2s; }
+        
+        .support-card { background: white; border-radius: 28px; padding: 28px; border: 1px solid #eef2ff; margin-bottom: 24px; }
+        .contact-method { display: flex; align-items: center; gap: 20px; padding: 16px; border: 1px solid #eef2ff; border-radius: 24px; margin-bottom: 16px; transition: 0.2s; text-decoration: none; color: inherit; }
+        .contact-method:hover { border-color: #00d1ff40; background: #00d1ff02; transform: translateX(4px); }
+        .contact-icon { width: 52px; height: 52px; background: #f1f5f9; border-radius: 26px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #00d1ff; }
+        .contact-info h3 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+        .contact-info p { font-size: 0.8rem; color: #5b6e8c; }
+        .contact-link { margin-left: auto; color: #00d1ff; font-weight: 500; }
+        .faq-item { border-bottom: 1px solid #f1f5f9; padding: 16px 0; cursor: pointer; }
+        .faq-question { display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+        .faq-answer { display: none; padding-top: 12px; color: #5b6e8c; font-size: 0.85rem; line-height: 1.5; }
         .faq-item.active .faq-answer { display: block; }
         .faq-item.active .faq-question i { transform: rotate(180deg); }
-        .whatsapp-float { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; text-decoration: none; }
-        .whatsapp-float:hover { transform: scale(1.05); background: #1da85c; }
+        
+        .whatsapp-float { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; z-index: 1000; text-decoration: none; }
         footer { background: transparent; border-top: 1px solid #e2e8f0; padding: 20px; text-align: center; font-size: 0.75rem; color: #5b6e8c; margin-top: 40px; }
         @media (max-width: 640px) { .main-content { padding: 80px 16px 40px; } .drawer { width: 260px; right: -260px; } .contact-method { flex-wrap: wrap; } .contact-link { margin-left: 0; } }
     </style>
@@ -67,9 +68,9 @@
     <div class="main-content">
         <div class="page-header"><h1><i class="fas fa-headset"></i> Support client</h1><p>Une question ? Nous sommes là pour vous aider 24h/24</p></div>
         <div class="support-card"><h2 style="margin-bottom:20px;">Nos canaux d'assistance</h2>
-            <a href="https://wa.me/50937542954" target="_blank" class="contact-method"><div class="contact-icon"><i class="fab fa-whatsapp"></i></div><div class="contact-info"><h3>WhatsApp</h3><p>Réponse immédiate</p></div><span class="contact-link">+509 37 54 29 54 <i class="fas fa-arrow-right"></i></span></a>
-            <a href="https://t.me/foxstorehaiti" target="_blank" class="contact-method"><div class="contact-icon"><i class="fab fa-telegram"></i></div><div class="contact-info"><h3>Telegram</h3><p>Support rapide</p></div><span class="contact-link">@foxstorehaiti <i class="fas fa-arrow-right"></i></span></a>
-            <a href="mailto:support@foxstore.com" class="contact-method"><div class="contact-icon"><i class="fas fa-envelope"></i></div><div class="contact-info"><h3>Email</h3><p>Réponse sous 24h</p></div><span class="contact-link">support@foxstore.com <i class="fas fa-arrow-right"></i></span></a>
+            <a href="https://wa.me/50937542954" target="_blank" class="contact-method"><div class="contact-icon"><i class="fab fa-whatsapp"></i></div><div class="contact-info"><h3>WhatsApp</h3><p>Réponse immédiate</p></div><span class="contact-link"><i class="fas fa-arrow-right"></i></span></a>
+            <a href="https://t.me/foxstorehaiti" target="_blank" class="contact-method"><div class="contact-icon"><i class="fab fa-telegram"></i></div><div class="contact-info"><h3>Telegram</h3><p>Support rapide</p></div><span class="contact-link"><i class="fas fa-arrow-right"></i></span></a>
+            <a href="mailto:support@foxstore.com" class="contact-method"><div class="contact-icon"><i class="fas fa-envelope"></i></div><div class="contact-info"><h3>Email</h3><p>Réponse sous 24h</p></div><span class="contact-link"><i class="fas fa-arrow-right"></i></span></a>
         </div>
         <div class="support-card"><h2 style="margin-bottom:20px;">Foire aux questions</h2>
             <div class="faq-item"><div class="faq-question">Comment suivre ma commande ? <i class="fas fa-chevron-down"></i></div><div class="faq-answer">Rendez-vous dans la section "Commandes" de votre tableau de bord. Vous y verrez l'état en temps réel.</div></div>
@@ -84,17 +85,17 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
-        // Drawer
+        // Drawer (identique)
         const drawerNav = document.getElementById('drawerNav'), drawerUserSection = document.getElementById('drawerUserSection'), burgerBtn = document.getElementById('burgerBtn'), drawer = document.getElementById('drawer'), drawerOverlay = document.getElementById('drawerOverlay'), closeDrawerBtn = document.getElementById('closeDrawerBtn');
         function closeDrawer() { drawer.classList.remove('open'); drawerOverlay.classList.remove('active'); }
         function openDrawer() { drawer.classList.add('open'); drawerOverlay.classList.add('active'); }
-        if(burgerBtn) burgerBtn.addEventListener('click', openDrawer);
-        if(closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeDrawer);
-        if(drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+        burgerBtn?.addEventListener('click', openDrawer);
+        closeDrawerBtn?.addEventListener('click', closeDrawer);
+        drawerOverlay?.addEventListener('click', closeDrawer);
         function updateDrawer(user) { if(!user) return; const name = user.displayName || user.email || 'Client', isAdmin = (user.email === ADMIN_EMAIL), initial = name.charAt(0).toUpperCase(); drawerUserSection.innerHTML = `<div class="drawer-user"><div class="drawer-user-avatar">${initial}</div><div class="drawer-user-info"><h4>${name}</h4><p>${user.email}</p>${isAdmin ? '<p style="color:#00d1ff; font-size:0.7rem;">Administrateur</p>' : ''}</div></div>`; let menu = `<div class="drawer-section-title">PRINCIPALE</div><a href="/home.html"><i class="fas fa-home"></i> Accueil</a><a href="/user/notifications.html"><i class="fas fa-bullhorn"></i> Annonce</a><div class="drawer-section-title">PORTEFEUILLE</div><a href="/user/wallet.html"><i class="fas fa-wallet"></i> Wallet</a><div class="drawer-section-title">SERVICES</div><a href="/gaming.html"><i class="fas fa-gamepad"></i> Gaming</a><a href="/streaming.html"><i class="fas fa-film"></i> Streaming</a><a href="/finance.html"><i class="fas fa-coins"></i> Finance</a><div class="drawer-section-title">COMPTE</div><a href="/orders.html"><i class="fas fa-shopping-cart"></i> Commandes</a><a href="/user/account.html"><i class="fas fa-user"></i> Mon compte</a><a href="/user/settings.html"><i class="fas fa-sliders-h"></i> Paramètres</a><a href="/user/supports.html"><i class="fas fa-headset"></i> Support</a>`; if(isAdmin) menu += `<div class="drawer-section-title">ADMINISTRATION</div><a href="/admin.html"><i class="fas fa-shield-alt"></i> Administration</a>`; menu += `<div class="drawer-section-title">RESEAUX</div><a href="https://whatsapp.com/channel/0029Vb84FJYAojYxTIur7b2n" target="_blank"><i class="fab fa-whatsapp"></i> Chaine WhatsApp</a><button id="drawerLogoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>`; drawerNav.innerHTML = menu; document.getElementById('drawerLogoutBtn')?.addEventListener('click', async () => { await auth.signOut(); window.location.href = '/login.html'; }); }
         auth.onAuthStateChanged(user => { if(!user) { window.location.href = '/login.html'; return; } updateDrawer(user); });
         // FAQ accordion
-        document.querySelectorAll('.faq-item').forEach(item => { item.querySelector('.faq-question').addEventListener('click', () => { item.classList.toggle('active'); }); });
+        document.querySelectorAll('.faq-item').forEach(item => { item.addEventListener('click', () => item.classList.toggle('active')); });
     </script>
 </body>
 </html>
