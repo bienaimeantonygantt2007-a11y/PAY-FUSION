@@ -12,7 +12,6 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #f5f7fc; color: #1e293b; line-height: 1.5; min-height: 100vh; }
-        /* Navbar & Drawer (identique) */
         .navbar { position: fixed; top: 0; width: 100%; z-index: 1000; padding: 14px 24px; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid #eef2ff; }
         .nav-container { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
         .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; font-size: 1.5rem; color: #0f172a; }
@@ -36,13 +35,11 @@
         .drawer-nav a:hover i, .drawer-nav button:hover i { color: #00d1ff; }
         .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(2px); z-index: 1999; display: none; }
         .drawer-overlay.active { display: block; }
-        
         .main-content { padding: 90px 24px 50px; max-width: 1000px; margin: 0 auto; }
         .page-header { margin-bottom: 32px; }
         .page-header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
         .page-header h1 i { color: #00d1ff; margin-right: 12px; }
         .page-header p { color: #475569; font-size: 0.95rem; }
-        
         .cart-container { background: white; border-radius: 28px; border: 1px solid #eef2ff; overflow: hidden; }
         .cart-item { display: flex; align-items: center; padding: 20px; border-bottom: 1px solid #f1f5f9; gap: 16px; flex-wrap: wrap; }
         .cart-item-info { flex: 2; }
@@ -89,15 +86,55 @@
         closeDrawerBtn?.addEventListener('click', closeDrawer);
         drawerOverlay?.addEventListener('click', closeDrawer);
         function updateDrawer(user) { if(!user) return; const name = user.displayName || user.email || 'Client', isAdmin = (user.email === ADMIN_EMAIL), initial = name.charAt(0).toUpperCase(); drawerUserSection.innerHTML = `<div class="drawer-user"><div class="drawer-user-avatar">${initial}</div><div class="drawer-user-info"><h4>${name}</h4><p>${user.email}</p>${isAdmin ? '<p style="color:#00d1ff; font-size:0.7rem;">Administrateur</p>' : ''}</div></div>`; let menu = `<div class="drawer-section-title">PRINCIPALE</div><a href="/home.html"><i class="fas fa-home"></i> Accueil</a><a href="/user/notifications.html"><i class="fas fa-bullhorn"></i> Annonce</a><div class="drawer-section-title">PORTEFEUILLE</div><a href="/user/wallet.html"><i class="fas fa-wallet"></i> Wallet</a><div class="drawer-section-title">SERVICES</div><a href="/gaming.html"><i class="fas fa-gamepad"></i> Gaming</a><a href="/streaming.html"><i class="fas fa-film"></i> Streaming</a><a href="/finance.html"><i class="fas fa-coins"></i> Finance</a><div class="drawer-section-title">COMPTE</div><a href="/orders.html"><i class="fas fa-shopping-cart"></i> Commandes</a><a href="/user/account.html"><i class="fas fa-user"></i> Mon compte</a><a href="/user/settings.html"><i class="fas fa-sliders-h"></i> Paramètres</a><a href="/user/supports.html"><i class="fas fa-headset"></i> Support</a>`; if(isAdmin) menu += `<div class="drawer-section-title">ADMINISTRATION</div><a href="/admin.html"><i class="fas fa-shield-alt"></i> Administration</a>`; menu += `<div class="drawer-section-title">RESEAUX</div><a href="https://whatsapp.com/channel/0029Vb84FJYAojYxTIur7b2n" target="_blank"><i class="fab fa-whatsapp"></i> Chaine WhatsApp</a><button id="drawerLogoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>`; drawerNav.innerHTML = menu; document.getElementById('drawerLogoutBtn')?.addEventListener('click', async () => { await auth.signOut(); window.location.href = '/login.html'; }); }
-        auth.onAuthStateChanged(user => { if(!user) { window.location.href = '/login.html'; return; } updateDrawer(user); renderCart(); });
         
-        // Cart functions
+        // Fonctions panier
         function getCart() { const c = localStorage.getItem('foxstore_cart'); return c ? JSON.parse(c) : []; }
         function saveCart(cart) { localStorage.setItem('foxstore_cart', JSON.stringify(cart)); renderCart(); }
         function removeFromCart(id) { let cart = getCart(); cart = cart.filter(item => item.id != id); saveCart(cart); }
         function clearCart() { localStorage.removeItem('foxstore_cart'); renderCart(); }
-        async function checkout() { const cart = getCart(); if(cart.length === 0) return; const user = auth.currentUser; if(!user) { window.location.href = '/login.html'; return; } for(const item of cart) { await db.collection('orders').add({ ...item, userId: user.uid, userEmail: user.email, createdAt: firebase.firestore.FieldValue.serverTimestamp(), status: 'en-attente' }); } clearCart(); window.location.href = '/paiement/mobile/moncash.html'; }
-        function renderCart() { const cart = getCart(); const container = document.getElementById('cartContainer'); if(cart.length === 0) { container.innerHTML = `<div class="empty-cart"><i class="fas fa-shopping-basket" style="font-size:3rem; margin-bottom:16px;"></i><p>Votre panier est vide</p><a href="/gaming.html" class="btn-primary" style="display:inline-block; margin-top:16px;">Découvrir nos services</a></div>`; return; } let total = 0; let itemsHtml = ''; cart.forEach(item => { total += item.price; itemsHtml += `<div class="cart-item"><div class="cart-item-info"><h3>${item.productName}</h3><p>${item.serviceName} - ${item.customerInfo?.gameId || item.customerInfo?.email || ''}</p></div><div class="cart-item-price">${item.price} HTG</div><div class="cart-item-remove" data-id="${item.id}"><i class="fas fa-trash-alt"></i></div></div>`; }); container.innerHTML = itemsHtml + `<div class="cart-total"><h3>Total: ${total} HTG</h3></div><div class="cart-actions"><a href="/gaming.html" class="btn-secondary"><i class="fas fa-arrow-left"></i> Continuer les achats</a><button class="btn-primary" id="checkoutBtn">Procéder au paiement <i class="fas fa-arrow-right"></i></button><button class="btn-secondary" id="clearCartBtn">Vider le panier</button></div>`; document.querySelectorAll('.cart-item-remove').forEach(btn => btn.addEventListener('click', (e) => { const id = btn.dataset.id; removeFromCart(id); })); document.getElementById('clearCartBtn')?.addEventListener('click', () => clearCart()); document.getElementById('checkoutBtn')?.addEventListener('click', () => checkout()); }
+        
+        async function checkout() {
+            const cart = getCart();
+            if (cart.length === 0) return;
+            const user = auth.currentUser;
+            if (!user) { window.location.href = '/login.html'; return; }
+            try {
+                const promises = cart.map(item => db.collection('orders').add({
+                    ...item,
+                    userId: user.uid,
+                    userEmail: user.email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    status: 'en-attente'
+                }));
+                await Promise.all(promises);
+                clearCart();
+                window.location.href = '/paiement/mobile/moncash.html';
+            } catch (error) {
+                console.error('Erreur checkout:', error);
+                // Optionnel : message discret
+            }
+        }
+        
+        function renderCart() {
+            const cart = getCart();
+            const container = document.getElementById('cartContainer');
+            if (cart.length === 0) {
+                container.innerHTML = `<div class="empty-cart"><i class="fas fa-shopping-basket" style="font-size:3rem; margin-bottom:16px;"></i><p>Votre panier est vide</p><a href="/gaming.html" class="btn-primary" style="display:inline-block; margin-top:16px;">Découvrir nos services</a></div>`;
+                return;
+            }
+            let total = 0;
+            let itemsHtml = '';
+            cart.forEach(item => {
+                total += item.price;
+                itemsHtml += `<div class="cart-item"><div class="cart-item-info"><h3>${item.productName}</h3><p>${item.serviceName} - ${item.customerInfo?.gameId || item.customerInfo?.email || ''}</p></div><div class="cart-item-price">${item.price} HTG</div><div class="cart-item-remove" data-id="${item.id}"><i class="fas fa-trash-alt"></i></div></div>`;
+            });
+            container.innerHTML = itemsHtml + `<div class="cart-total"><h3>Total: ${total} HTG</h3></div><div class="cart-actions"><a href="/gaming.html" class="btn-secondary"><i class="fas fa-arrow-left"></i> Continuer les achats</a><button class="btn-primary" id="checkoutBtn">Procéder au paiement <i class="fas fa-arrow-right"></i></button><button class="btn-secondary" id="clearCartBtn">Vider le panier</button></div>`;
+            document.querySelectorAll('.cart-item-remove').forEach(btn => btn.addEventListener('click', (e) => { const id = btn.dataset.id; removeFromCart(id); }));
+            document.getElementById('clearCartBtn')?.addEventListener('click', () => clearCart());
+            document.getElementById('checkoutBtn')?.addEventListener('click', () => checkout());
+        }
+        
+        auth.onAuthStateChanged(user => { if(!user) { window.location.href = '/login.html'; return; } updateDrawer(user); renderCart(); });
     </script>
 </body>
 </html>
