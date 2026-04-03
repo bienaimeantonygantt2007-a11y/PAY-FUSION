@@ -5,158 +5,125 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Fox Store – Gaming Elite</title>
     
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
             background: #f5f7fc;
             color: #1e293b;
             line-height: 1.5;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
-
-        /* ===== NAVIGATION ===== */
+        
+        /* Navbar */
         .navbar {
             position: fixed;
             top: 0;
             width: 100%;
             z-index: 1000;
-            padding: 12px 16px;
-            background: rgba(255, 255, 255, 0.96);
+            padding: 14px 24px;
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid #eef2ff;
         }
-
         .nav-container {
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-
         .logo {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             text-decoration: none;
             font-weight: 800;
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             color: #0f172a;
         }
-
-        .logo i {
-            font-size: 1.4rem;
-            color: #00d1ff;
-        }
-
+        .logo i { font-size: 1.6rem; color: #00d1ff; }
         .burger-btn {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            width: 40px;
-            height: 40px;
+            border-radius: 12px;
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 1.2rem;
-            transition: all 0.2s;
+            font-size: 1.3rem;
         }
-
-        .burger-btn:hover {
-            background: white;
-            border-color: #00d1ff40;
-            color: #00d1ff;
-        }
-
-        /* ===== DRAWER ===== */
+        .burger-btn:hover { background: white; border-color: #00d1ff40; color: #00d1ff; }
+        
+        /* Drawer */
         .drawer {
             position: fixed;
             top: 0;
-            right: -260px;
-            width: 260px;
+            right: -280px;
+            width: 280px;
             height: 100vh;
             background: white;
-            box-shadow: -4px 0 24px rgba(0, 0, 0, 0.05);
+            box-shadow: -4px 0 24px rgba(0,0,0,0.05);
             z-index: 2000;
             transition: right 0.3s ease;
             display: flex;
             flex-direction: column;
             border-left: 1px solid #eef2ff;
         }
-
-        .drawer.open {
-            right: 0;
-        }
-
+        .drawer.open { right: 0; }
         .drawer-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 18px;
+            padding: 20px;
             border-bottom: 1px solid #edf2f7;
         }
-
-        .drawer-header .logo {
-            font-size: 1.1rem;
-        }
-
+        .drawer-header .logo { font-size: 1.2rem; }
         .close-drawer {
             background: #f1f5f9;
             border: none;
-            border-radius: 8px;
-            width: 32px;
-            height: 32px;
+            border-radius: 10px;
+            width: 34px;
+            height: 34px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 1rem;
         }
-
         .drawer-user {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 14px;
+            gap: 12px;
+            padding: 16px;
             background: #f8fafc;
-            margin: 14px;
-            border-radius: 14px;
+            margin: 16px;
+            border-radius: 16px;
         }
-
         .drawer-user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             background: linear-gradient(135deg, #00d1ff, #009ac7);
-            border-radius: 12px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 600;
         }
-
-        .drawer-user-info h4 {
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        .drawer-user-info p {
-            font-size: 0.7rem;
-            color: #5b6e8c;
-        }
-
+        .drawer-user-info h4 { font-size: 0.95rem; font-weight: 600; }
+        .drawer-user-info p { font-size: 0.75rem; color: #5b6e8c; }
         .drawer-nav {
             flex: 1;
             display: flex;
@@ -164,17 +131,15 @@
             padding: 8px 12px;
             gap: 4px;
         }
-
-        .drawer-nav a,
-        .drawer-nav button {
+        .drawer-nav a, .drawer-nav button {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 10px 12px;
-            border-radius: 12px;
+            padding: 12px 14px;
+            border-radius: 14px;
             text-decoration: none;
             color: #1e293b;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 500;
             background: none;
             border: none;
@@ -182,249 +147,180 @@
             width: 100%;
             text-align: left;
         }
-
-        .drawer-nav a i,
-        .drawer-nav button i {
-            width: 20px;
-            font-size: 1rem;
-            color: #5b6e8c;
-        }
-
-        .drawer-nav a:hover,
-        .drawer-nav button:hover {
-            background: #f1f5f9;
-        }
-
-        .drawer-nav a:hover i,
-        .drawer-nav button:hover i {
-            color: #00d1ff;
-        }
-
+        .drawer-nav a i, .drawer-nav button i { width: 22px; color: #5b6e8c; }
+        .drawer-nav a:hover, .drawer-nav button:hover { background: #f1f5f9; }
+        .drawer-nav a:hover i, .drawer-nav button:hover i { color: #00d1ff; }
         .drawer-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0,0,0,0.3);
             backdrop-filter: blur(2px);
             z-index: 1999;
             display: none;
         }
-
-        .drawer-overlay.active {
-            display: block;
-        }
-
-        /* ===== MAIN CONTENT ===== */
+        .drawer-overlay.active { display: block; }
+        
+        /* Main content */
         .main-content {
-            flex: 1;
-            padding: 80px 12px 40px;
-            max-width: 1200px;
+            padding: 90px 24px 50px;
+            max-width: 1280px;
             margin: 0 auto;
             width: 100%;
         }
-
+        
+        /* Header */
         .page-header {
-            text-align: center;
             margin-bottom: 32px;
         }
-
         .page-header h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #0f172a, #00d1ff);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
+            font-size: 2rem;
+            font-weight: 700;
             margin-bottom: 8px;
         }
-
+        .page-header h1 i {
+            color: #00d1ff;
+            margin-right: 12px;
+        }
         .page-header p {
             color: #475569;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
-
-        /* Grille : 2 colonnes sur mobile ET desktop */
+        
+        /* Categories tabs */
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 32px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 16px;
+        }
+        .category-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #5b6e8c;
+        }
+        .category-btn.active {
+            background: #00d1ff;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,209,255,0.3);
+        }
+        .category-btn:hover:not(.active) {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+        
+        /* Games grid */
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
         }
-
         .game-card {
             background: white;
             border-radius: 24px;
-            padding: 20px 12px;
+            border: 1px solid #eef2ff;
+            overflow: hidden;
+            transition: all 0.3s ease;
             text-decoration: none;
             color: inherit;
-            border: 1px solid #eef2ff;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
+            display: block;
         }
-
         .game-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-            border-color: #cbd5e1;
+            transform: translateY(-5px);
+            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.1);
+            border-color: #00d1ff40;
         }
-
-        .game-logo {
-            width: 180px;
-            height: 180px;
-            background: #f8fafc;
-            border-radius: 32px;
+        .game-image {
+            height: 160px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 16px;
-            transition: transform 0.2s;
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            padding: 20px;
         }
-
-        .game-card:hover .game-logo {
-            transform: scale(1.02);
-        }
-
-        .game-logo img {
-            max-width: 140px;
-            max-height: 140px;
+        .game-image img {
+            max-height: 100%;
+            max-width: 100%;
             object-fit: contain;
+            transition: transform 0.3s;
         }
-
-        .game-card h3 {
-            font-size: 1.1rem;
+        .game-card:hover .game-image img {
+            transform: scale(1.05);
+        }
+        .game-info {
+            padding: 20px;
+        }
+        .game-info h3 {
+            font-size: 1.2rem;
             font-weight: 700;
             margin-bottom: 6px;
         }
-
-        .game-card p {
+        .game-info p {
+            font-size: 0.8rem;
+            color: #5b6e8c;
+            margin-bottom: 12px;
+        }
+        .game-price {
+            display: inline-block;
+            background: #00d1ff10;
+            color: #00d1ff;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid #00d1ff20;
+        }
+        
+        /* WhatsApp float */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #25D366;
+            color: white;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 1000;
+            text-decoration: none;
+        }
+        .whatsapp-float:hover { transform: scale(1.05); background: #1da85c; }
+        
+        footer {
+            background: transparent;
+            border-top: 1px solid #e2e8f0;
+            padding: 20px;
+            text-align: center;
             font-size: 0.75rem;
             color: #5b6e8c;
-        }
-
-        /* ===== FOOTER ===== */
-        footer {
-            background: #ffffff;
-            border-top: 1px solid #e2e8f0;
-            padding: 32px 16px 24px;
             margin-top: 40px;
         }
-
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
-        }
-
-        .footer-col h4 {
-            font-size: 0.9rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: #0f172a;
-        }
-
-        .footer-col ul {
-            list-style: none;
-        }
-
-        .footer-col ul li {
-            margin-bottom: 8px;
-        }
-
-        .footer-col ul li a {
-            color: #5b6e8c;
-            text-decoration: none;
-            font-size: 0.75rem;
-            transition: color 0.2s;
-        }
-
-        .footer-col ul li a:hover {
-            color: #00d1ff;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 24px;
-            margin-top: 24px;
-            border-top: 1px solid #e2e8f0;
-            font-size: 0.7rem;
-            color: #5b6e8c;
-        }
-
-        /* ===== DESKTOP (>= 768px) ===== */
-        @media (min-width: 768px) {
-            .navbar {
-                padding: 14px 24px;
-            }
-            .logo {
-                font-size: 1.5rem;
-            }
-            .logo i {
-                font-size: 1.6rem;
-            }
-            .burger-btn {
-                width: 44px;
-                height: 44px;
-                font-size: 1.3rem;
-            }
-            .main-content {
-                padding: 100px 24px 60px;
-            }
-            .page-header h1 {
-                font-size: 2.5rem;
-            }
-            .page-header p {
-                font-size: 1.1rem;
-            }
-            .games-grid {
-                gap: 30px;
-            }
-            .game-card {
-                padding: 28px 20px;
-                border-radius: 28px;
-            }
-            .game-logo {
-                width: 240px;
-                height: 240px;
-                border-radius: 40px;
-                margin-bottom: 20px;
-            }
-            .game-logo img {
-                max-width: 200px;
-                max-height: 200px;
-            }
-            .game-card h3 {
-                font-size: 1.3rem;
-            }
-            .game-card p {
-                font-size: 0.85rem;
-            }
-            .footer-container {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 32px;
-            }
-            .footer-col h4 {
-                font-size: 1rem;
-            }
-            .footer-col ul li a {
-                font-size: 0.85rem;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .games-grid {
-                gap: 40px;
-            }
+        
+        @media (max-width: 640px) {
+            .main-content { padding: 80px 16px 40px; }
+            .games-grid { grid-template-columns: 1fr; }
+            .drawer { width: 260px; right: -260px; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="/home.html" class="logo"><i class="fas fa-fox"></i><span>FOX STORE</span></a>
@@ -432,6 +328,7 @@
         </div>
     </nav>
 
+    <!-- Drawer -->
     <div class="drawer-overlay" id="drawerOverlay"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-header">
@@ -442,103 +339,42 @@
         <div class="drawer-nav" id="drawerNav"></div>
     </div>
 
+    <!-- WhatsApp Float -->
+    <a href="https://wa.me/50937542954" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+
+    <!-- Main Content -->
     <div class="main-content">
         <div class="page-header">
-            <h1>Gaming Elite</h1>
-            <p>Diamants, UC, Robux – Livraison instantanée</p>
+            <h1><i class="fas fa-gamepad"></i> Gaming Elite</h1>
+            <p>Diamants, UC, Robux, Pièces et plus encore. Livraison instantanée après validation.</p>
         </div>
-        <div class="games-grid">
-            <a href="/pages/products/freefire.html" class="game-card">
-                <div class="game-logo"><img src="/assets/logos/freefire-logo.png" alt="Free Fire"></div>
-                <h3>Free Fire</h3>
-                <p>Diamants & passes</p>
-            </a>
-            <a href="/pages/products/fcmobile.html" class="game-card">
-                <div class="game-logo"><img src="/assets/logos/fcmobile-logo.png" alt="FC Mobile"></div>
-                <h3>FC Mobile</h3>
-                <p>Points FC</p>
-            </a>
-            <a href="/pages/products/efootball.html" class="game-card">
-                <div class="game-logo"><img src="/assets/logos/efootball-logo.png" alt="E-Football"></div>
-                <h3>E-Football</h3>
-                <p>Pièces</p>
-            </a>
-            <a href="/pages/products/pubgmobile.html" class="game-card">
-                <div class="game-logo"><img src="/assets/logos/pubgmobile-logo.png" alt="PUBG Mobile"></div>
-                <h3>PUBG Mobile</h3>
-                <p>UC</p>
-            </a>
-            <a href="/pages/products/bloodstrike.html" class="game-card">
-                <div class="game-logo"><img src="/assets/logos/bloodstrike-logo.png" alt="Blood Strike"></div>
-                <h3>Blood Strike</h3>
-                <p>Gold & passes</p>
-            </a>
-            <a href="/pages/products/roblox.html" class="game-card">
-                <div class="game-logo"><img src="/assets/logos/roblox-logo.png" alt="Roblox"></div>
-                <h3>Roblox</h3>
-                <p>Robux</p>
-            </a>
-            <a href="/pages/products/dls.html" class="game-card">
-                <div class="game-logo"><img src="/assets/logos/dls-logo.png" alt="DLS"></div>
-                <h3>DLS</h3>
-                <p>Coins & gems</p>
-            </a>
-            <a href="/pages/products/minecraft.html" class="game-card">
-                <div class="game-logo"><img src="/assets/logos/minecraft-logo.png" alt="Minecraft"></div>
-                <h3>Minecraft</h3>
-                <p>Minecoins</p>
-            </a>
-            <a href="/pages/products/flexcity.html" class="game-card">
-                <div class="game-logo"><img src="/assets/logos/flexcity-logo.png" alt="Flex City"></div>
-                <h3>Flex City</h3>
-                <p>Diamants & Gold</p>
-            </a>
+
+        <!-- Categories -->
+        <div class="categories">
+            <button class="category-btn active" data-category="all">Tous</button>
+            <button class="category-btn" data-category="freefire">Free Fire</button>
+            <button class="category-btn" data-category="pubg">PUBG Mobile</button>
+            <button class="category-btn" data-category="roblox">Roblox</button>
+            <button class="category-btn" data-category="fcmobile">FC Mobile</button>
+            <button class="category-btn" data-category="efootball">E-Football</button>
+            <button class="category-btn" data-category="bloodstrike">Blood Strike</button>
+            <button class="category-btn" data-category="minecraft">Minecraft</button>
+            <button class="category-btn" data-category="dls">DLS</button>
+            <button class="category-btn" data-category="flexcity">Flex City</button>
+        </div>
+
+        <!-- Games Grid -->
+        <div class="games-grid" id="gamesGrid">
+            <!-- Games will be loaded dynamically -->
         </div>
     </div>
 
     <footer>
-        <div class="footer-container">
-            <div class="footer-col">
-                <h4>Fox Store</h4>
-                <ul>
-                    <li><a href="/home.html">Accueil</a></li>
-                    <li><a href="/gaming.html">Gaming</a></li>
-                    <li><a href="/streaming.html">Streaming</a></li>
-                    <li><a href="/finance.html">Finance</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Services</h4>
-                <ul>
-                    <li><a href="/pages/products/freefire.html">Free Fire</a></li>
-                    <li><a href="/pages/products/netflix.html">Netflix</a></li>
-                    <li><a href="/pages/products/wise.html">Wise</a></li>
-                    <li><a href="/pages/products/paypal.html">PayPal</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Support</h4>
-                <ul>
-                    <li><a href="/user/supports.html">Centre d'aide</a></li>
-                    <li><a href="/orders.html">Mes commandes</a></li>
-                    <li><a href="/user/account.html">Mon compte</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Légal</h4>
-                <ul>
-                    <li><a href="#">Conditions</a></li>
-                    <li><a href="#">Confidentialité</a></li>
-                    <li><a href="https://wa.me/50937542954" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>© 2025 Fox Store – L'élite du service digital. Tous droits réservés.</p>
-        </div>
+        <p>© 2025 Fox Store – L'élite du service digital. Tous droits réservés.</p>
     </footer>
 
     <script>
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyDSyFdTHBNULuUiacHM6nmEvPb7YpY24UE",
             authDomain: "foxstoreht.firebaseapp.com",
@@ -550,22 +386,70 @@
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
 
+        // Games data
+        const games = [
+            { id: "freefire", name: "Free Fire", category: "freefire", page: "/pages/products/freefire.html", price: "157 HTG", icon: "/assets/logos/freefire-logo.png", desc: "Diamants, Pass, Abonnements" },
+            { id: "pubg", name: "PUBG Mobile", category: "pubg", page: "/pages/products/pubgmobile.html", price: "180 HTG", icon: "/assets/logos/pubgmobile-logo.png", desc: "UC et passes" },
+            { id: "roblox", name: "Roblox", category: "roblox", page: "/pages/products/roblox.html", price: "750 HTG", icon: "/assets/logos/roblox-logo.png", desc: "Robux premium" },
+            { id: "fcmobile", name: "FC Mobile", category: "fcmobile", page: "/pages/products/fcmobile.html", price: "95 HTG", icon: "/assets/logos/fcmobile-logo.png", desc: "Points FC" },
+            { id: "efootball", name: "E-Football", category: "efootball", page: "/pages/products/efootball.html", price: "220 HTG", icon: "/assets/logos/efootball-logo.png", desc: "Pièces eFootball" },
+            { id: "bloodstrike", name: "Blood Strike", category: "bloodstrike", page: "/pages/products/bloodstrike.html", price: "80 HTG", icon: "/assets/logos/bloodstrike-logo.png", desc: "Gold et Pass" },
+            { id: "minecraft", name: "Minecraft", category: "minecraft", page: "/pages/products/minecraft.html", price: "316 HTG", icon: "/assets/logos/minecraft-logo.png", desc: "Minecoins" },
+            { id: "dls", name: "DLS", category: "dls", page: "/pages/products/dls.html", price: "400 HTG", icon: "/assets/logos/dls-logo.png", desc: "Coins, Gems, Pass" },
+            { id: "flexcity", name: "Flex City", category: "flexcity", page: "/pages/products/flexcity.html", price: "215 HTG", icon: "/assets/logos/flexcity-logo.png", desc: "Diamants & Gold" }
+        ];
+
+        // DOM Elements
+        const gamesGrid = document.getElementById('gamesGrid');
+        const categoryBtns = document.querySelectorAll('.category-btn');
+
+        // Render games
+        function renderGames(category = 'all') {
+            const filtered = category === 'all' ? games : games.filter(g => g.category === category);
+            gamesGrid.innerHTML = filtered.map(game => `
+                <a href="${game.page}" class="game-card">
+                    <div class="game-image">
+                        <img src="${game.icon}" alt="${game.name}" onerror="this.src='https://placehold.co/200x150?text=${game.name}'">
+                    </div>
+                    <div class="game-info">
+                        <h3>${game.name}</h3>
+                        <p>${game.desc}</p>
+                        <span class="game-price">À partir de ${game.price}</span>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        // Category click handler
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const category = btn.dataset.category;
+                renderGames(category);
+            });
+        });
+
+        // Initial render
+        renderGames('all');
+
+        // Drawer Functions
         const drawerNav = document.getElementById('drawerNav');
         const drawerUserSection = document.getElementById('drawerUserSection');
         const burgerBtn = document.getElementById('burgerBtn');
         const drawer = document.getElementById('drawer');
         const drawerOverlay = document.getElementById('drawerOverlay');
         const closeDrawerBtn = document.getElementById('closeDrawerBtn');
-        const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
 
         function closeDrawer() { drawer.classList.remove('open'); drawerOverlay.classList.remove('active'); }
         function openDrawer() { drawer.classList.add('open'); drawerOverlay.classList.add('active'); }
-        burgerBtn.addEventListener('click', openDrawer);
-        closeDrawerBtn.addEventListener('click', closeDrawer);
-        drawerOverlay.addEventListener('click', closeDrawer);
+        if (burgerBtn) burgerBtn.addEventListener('click', openDrawer);
+        if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeDrawer);
+        if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
 
-        function updateUI(user) {
+        function updateDrawer(user) {
             if (!user) { window.location.href = '/login.html'; return; }
             const name = user.displayName || user.email || 'Client';
             const isAdmin = (user.email === ADMIN_EMAIL);
@@ -597,7 +481,11 @@
                 window.location.href = '/login.html';
             });
         }
-        auth.onAuthStateChanged(updateUI);
+
+        auth.onAuthStateChanged(user => {
+            if (!user) window.location.href = '/login.html';
+            else updateDrawer(user);
+        });
     </script>
 </body>
 </html>
