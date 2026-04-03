@@ -508,7 +508,7 @@
             <h2><i class="fas fa-user"></i> Informations du compte</h2>
             <form id="orderForm">
                 <div id="dynamicFieldsContainer">
-                    <!-- Les champs seront injectés dynamiquement selon le pack -->
+                    <!-- Les champs seront injectés dynamiquement selon le pack sélectionné -->
                 </div>
                 <div class="form-group">
                     <label><i class="fab fa-whatsapp"></i> Numéro WhatsApp *</label>
@@ -541,18 +541,18 @@
         const db = firebase.firestore();
         const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
 
-        // Packs data with type: 'diamond' or 'pass'
+        // Packs data (no 'type' needed, we check by name)
         const packs = [
-            { id: "diamonds-110", name: "110 + 10 Diamants", price: 157, type: "diamond" },
-            { id: "diamonds-310", name: "310 + 31 Diamants", price: 471, type: "diamond" },
-            { id: "diamonds-520", name: "520 + 52 Diamants", price: 775, type: "diamond" },
-            { id: "diamonds-1060", name: "1060 + 106 Diamants", price: 1550, type: "diamond" },
-            { id: "diamonds-2180", name: "2180 + 218 Diamants", price: 3100, type: "diamond" },
-            { id: "diamonds-5600", name: "5600 + 560 Diamants", price: 7750, type: "diamond" },
-            { id: "booyah-pass", name: "Booyah Pass", price: 400, type: "pass" },
-            { id: "level-up-pass", name: "Level Up Pass", price: 800, type: "pass" },
-            { id: "weekly-sub", name: "Abonnement Semaine", price: 325, type: "pass" },
-            { id: "monthly-sub", name: "Abonnement Mois", price: 1600, type: "pass" }
+            { id: "diamonds-110", name: "110 + 10 Diamants", price: 157 },
+            { id: "diamonds-310", name: "310 + 31 Diamants", price: 471 },
+            { id: "diamonds-520", name: "520 + 52 Diamants", price: 775 },
+            { id: "diamonds-1060", name: "1060 + 106 Diamants", price: 1550 },
+            { id: "diamonds-2180", name: "2180 + 218 Diamants", price: 3100 },
+            { id: "diamonds-5600", name: "5600 + 560 Diamants", price: 7750 },
+            { id: "booyah-pass", name: "Booyah Pass", price: 400 },
+            { id: "level-up-pass", name: "Level Up Pass", price: 800 },
+            { id: "weekly-sub", name: "Abonnement Semaine", price: 325 },
+            { id: "monthly-sub", name: "Abonnement Mois", price: 1600 }
         ];
 
         let selectedPack = null;
@@ -616,25 +616,15 @@
             }, 3000);
         }
 
-        // ---------- Dynamic Form Fields ----------
+        // ---------- Dynamic Form Fields (selon le pack) ----------
         function renderFormFields() {
             if (!selectedPack) {
                 dynamicFieldsContainer.innerHTML = '<p class="form-group" style="color:#5b6e8c;">Veuillez sélectionner un pack ci-dessus.</p>';
                 return;
             }
             
-            if (selectedPack.type === 'diamond') {
-                dynamicFieldsContainer.innerHTML = `
-                    <div class="form-group">
-                        <label><i class="fas fa-id-card"></i> ID du compte Free Fire *</label>
-                        <input type="text" id="gameId" placeholder="Ex: 1234567890" required>
-                    </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-user-circle"></i> Nom du compte *</label>
-                        <input type="text" id="gameName" placeholder="Votre pseudo dans le jeu" required>
-                    </div>
-                `;
-            } else { // type 'pass'
+            // Vérifier si c'est le pack "Level Up Pass"
+            if (selectedPack.name === "Level Up Pass") {
                 dynamicFieldsContainer.innerHTML = `
                     <div class="form-group">
                         <label><i class="fas fa-envelope"></i> Email du compte Free Fire *</label>
@@ -643,6 +633,18 @@
                     <div class="form-group">
                         <label><i class="fas fa-lock"></i> Mot de passe *</label>
                         <input type="password" id="password" placeholder="Mot de passe du compte" required>
+                    </div>
+                `;
+            } else {
+                // Tous les autres packs (diamants, Booyah Pass, abonnements)
+                dynamicFieldsContainer.innerHTML = `
+                    <div class="form-group">
+                        <label><i class="fas fa-id-card"></i> ID du compte Free Fire *</label>
+                        <input type="text" id="gameId" placeholder="Ex: 1234567890" required>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-user-circle"></i> Nom du compte *</label>
+                        <input type="text" id="gameName" placeholder="Votre pseudo dans le jeu" required>
                     </div>
                 `;
             }
@@ -662,7 +664,7 @@
                     document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
                     card.classList.add('selected');
                     selectedPack = JSON.parse(card.dataset.pack);
-                    renderFormFields(); // Mettre à jour le formulaire selon le type
+                    renderFormFields(); // Mettre à jour le formulaire selon le pack
                 });
             });
         }
@@ -684,7 +686,16 @@
             
             let customerInfo = { whatsapp };
             
-            if (selectedPack.type === 'diamond') {
+            if (selectedPack.name === "Level Up Pass") {
+                const email = document.getElementById('email')?.value.trim();
+                const password = document.getElementById('password')?.value.trim();
+                if (!email || !password) {
+                    showToast('Veuillez remplir tous les champs (Email et Mot de passe)', 'error');
+                    return;
+                }
+                customerInfo.email = email;
+                customerInfo.password = password; // À noter : stockage en clair, usage interne
+            } else {
                 const gameId = document.getElementById('gameId')?.value.trim();
                 const gameName = document.getElementById('gameName')?.value.trim();
                 if (!gameId || !gameName) {
@@ -693,15 +704,6 @@
                 }
                 customerInfo.gameId = gameId;
                 customerInfo.gameName = gameName;
-            } else {
-                const email = document.getElementById('email')?.value.trim();
-                const password = document.getElementById('password')?.value.trim();
-                if (!email || !password) {
-                    showToast('Veuillez remplir tous les champs (Email et Mot de passe)', 'error');
-                    return;
-                }
-                customerInfo.email = email;
-                customerInfo.password = password; // À noter : stocker un mot de passe en clair est sensible. En production, mieux vaut ne pas stocker.
             }
             
             if (!currentUser) {
@@ -727,14 +729,14 @@
             showToast(`${selectedPack.name} ajouté au panier !`, 'success');
             
             // Reset form
-            if (selectedPack.type === 'diamond') {
-                if (document.getElementById('gameId')) document.getElementById('gameId').value = '';
-                if (document.getElementById('gameName')) document.getElementById('gameName').value = '';
-            } else {
+            whatsappInput.value = '';
+            if (selectedPack.name === "Level Up Pass") {
                 if (document.getElementById('email')) document.getElementById('email').value = '';
                 if (document.getElementById('password')) document.getElementById('password').value = '';
+            } else {
+                if (document.getElementById('gameId')) document.getElementById('gameId').value = '';
+                if (document.getElementById('gameName')) document.getElementById('gameName').value = '';
             }
-            whatsappInput.value = '';
             document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
             selectedPack = null;
             renderFormFields(); // Afficher message "Veuillez sélectionner un pack"
@@ -802,7 +804,7 @@
 
         // Initialize
         renderPacks();
-        renderFormFields(); // Message par défaut
+        renderFormFields();
         updateCartBadge();
     </script>
 </body>
