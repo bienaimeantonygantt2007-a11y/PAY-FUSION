@@ -3,12 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Fox Store – Streaming 4K</title>
+    <title>Fox Store – Streaming 4K Premium</title>
     
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -18,21 +24,21 @@
             color: #1e293b;
             line-height: 1.5;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
+        
+        /* Navbar */
         .navbar {
             position: fixed;
             top: 0;
             width: 100%;
             z-index: 1000;
-            padding: 12px 16px;
-            background: rgba(255,255,255,0.96);
+            padding: 14px 24px;
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid #eef2ff;
         }
         .nav-container {
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -41,31 +47,33 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             text-decoration: none;
             font-weight: 800;
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             color: #0f172a;
         }
-        .logo i { font-size: 1.4rem; color: #00d1ff; }
+        .logo i { font-size: 1.6rem; color: #00d1ff; }
         .burger-btn {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            width: 40px;
-            height: 40px;
+            border-radius: 12px;
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
         }
         .burger-btn:hover { background: white; border-color: #00d1ff40; color: #00d1ff; }
+        
+        /* Drawer */
         .drawer {
             position: fixed;
             top: 0;
-            right: -260px;
-            width: 260px;
+            right: -280px;
+            width: 280px;
             height: 100vh;
             background: white;
             box-shadow: -4px 0 24px rgba(0,0,0,0.05);
@@ -80,42 +88,42 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 18px;
+            padding: 20px;
             border-bottom: 1px solid #edf2f7;
         }
-        .drawer-header .logo { font-size: 1.1rem; }
+        .drawer-header .logo { font-size: 1.2rem; }
         .close-drawer {
             background: #f1f5f9;
             border: none;
-            border-radius: 8px;
-            width: 32px;
-            height: 32px;
+            border-radius: 10px;
+            width: 34px;
+            height: 34px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 1rem;
         }
         .drawer-user {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 14px;
+            gap: 12px;
+            padding: 16px;
             background: #f8fafc;
-            margin: 14px;
-            border-radius: 14px;
+            margin: 16px;
+            border-radius: 16px;
         }
         .drawer-user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             background: linear-gradient(135deg, #00d1ff, #009ac7);
-            border-radius: 12px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 600;
         }
-        .drawer-user-info h4 { font-size: 0.85rem; font-weight: 600; }
-        .drawer-user-info p { font-size: 0.7rem; color: #5b6e8c; }
+        .drawer-user-info h4 { font-size: 0.95rem; font-weight: 600; }
+        .drawer-user-info p { font-size: 0.75rem; color: #5b6e8c; }
         .drawer-nav {
             flex: 1;
             display: flex;
@@ -127,11 +135,11 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 10px 12px;
-            border-radius: 12px;
+            padding: 12px 14px;
+            border-radius: 14px;
             text-decoration: none;
             color: #1e293b;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 500;
             background: none;
             border: none;
@@ -139,7 +147,7 @@
             width: 100%;
             text-align: left;
         }
-        .drawer-nav a i, .drawer-nav button i { width: 20px; font-size: 1rem; color: #5b6e8c; }
+        .drawer-nav a i, .drawer-nav button i { width: 22px; color: #5b6e8c; }
         .drawer-nav a:hover, .drawer-nav button:hover { background: #f1f5f9; }
         .drawer-nav a:hover i, .drawer-nav button:hover i { color: #00d1ff; }
         .drawer-overlay {
@@ -154,143 +162,179 @@
             display: none;
         }
         .drawer-overlay.active { display: block; }
+        
+        /* Main content */
         .main-content {
-            flex: 1;
-            padding: 80px 12px 40px;
-            max-width: 1200px;
+            padding: 90px 24px 50px;
+            max-width: 1280px;
             margin: 0 auto;
             width: 100%;
         }
+        
+        /* Header */
         .page-header {
-            text-align: center;
             margin-bottom: 32px;
         }
         .page-header h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #0f172a, #00d1ff);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
+            font-size: 2rem;
+            font-weight: 700;
             margin-bottom: 8px;
+        }
+        .page-header h1 i {
+            color: #00d1ff;
+            margin-right: 12px;
         }
         .page-header p {
             color: #475569;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
+        
+        /* Streaming grid */
         .streaming-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
         }
-        .stream-card {
+        .streaming-card {
             background: white;
             border-radius: 24px;
-            padding: 20px 12px;
+            border: 1px solid #eef2ff;
+            overflow: hidden;
+            transition: all 0.3s ease;
             text-decoration: none;
             color: inherit;
-            border: 1px solid #eef2ff;
-            transition: all 0.3s ease;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            display: block;
         }
-        .stream-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.08);
-            border-color: #cbd5e1;
+        .streaming-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.1);
+            border-color: #00d1ff40;
         }
-        .stream-logo {
-            width: 180px;
+        .streaming-image {
             height: 180px;
-            background: #f8fafc;
-            border-radius: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 16px;
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            padding: 30px;
         }
-        .stream-card:hover .stream-logo { transform: scale(1.02); }
-        .stream-logo img {
-            max-width: 140px;
-            max-height: 140px;
+        .streaming-image img {
+            max-height: 100%;
+            max-width: 100%;
             object-fit: contain;
+            transition: transform 0.3s;
         }
-        .stream-card h3 {
-            font-size: 1.1rem;
+        .streaming-card:hover .streaming-image img {
+            transform: scale(1.05);
+        }
+        .streaming-info {
+            padding: 20px;
+        }
+        .streaming-info h3 {
+            font-size: 1.2rem;
             font-weight: 700;
             margin-bottom: 6px;
         }
-        .stream-card p {
+        .streaming-info p {
+            font-size: 0.8rem;
+            color: #5b6e8c;
+            margin-bottom: 12px;
+        }
+        .streaming-price {
+            display: inline-block;
+            background: #00d1ff10;
+            color: #00d1ff;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid #00d1ff20;
+        }
+        .plan-badge {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 8px;
+        }
+        
+        /* Features section */
+        .features-streaming {
+            margin-top: 48px;
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            border: 1px solid #eef2ff;
+        }
+        .features-streaming h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .features-streaming h3 i {
+            color: #00d1ff;
+            margin-right: 8px;
+        }
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: #475569;
+        }
+        .feature-item i {
+            color: #00d1ff;
+            font-size: 1rem;
+        }
+        
+        /* WhatsApp float */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #25D366;
+            color: white;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 1000;
+            text-decoration: none;
+        }
+        .whatsapp-float:hover { transform: scale(1.05); background: #1da85c; }
+        
+        footer {
+            background: transparent;
+            border-top: 1px solid #e2e8f0;
+            padding: 20px;
+            text-align: center;
             font-size: 0.75rem;
             color: #5b6e8c;
-        }
-        footer {
-            background: #ffffff;
-            border-top: 1px solid #e2e8f0;
-            padding: 32px 16px 24px;
             margin-top: 40px;
         }
-        .footer-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
-        }
-        .footer-col h4 {
-            font-size: 0.9rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: #0f172a;
-        }
-        .footer-col ul {
-            list-style: none;
-        }
-        .footer-col ul li {
-            margin-bottom: 8px;
-        }
-        .footer-col ul li a {
-            color: #5b6e8c;
-            text-decoration: none;
-            font-size: 0.75rem;
-            transition: color 0.2s;
-        }
-        .footer-col ul li a:hover { color: #00d1ff; }
-        .footer-bottom {
-            text-align: center;
-            padding-top: 24px;
-            margin-top: 24px;
-            border-top: 1px solid #e2e8f0;
-            font-size: 0.7rem;
-            color: #5b6e8c;
-        }
-        @media (min-width: 768px) {
-            .navbar { padding: 14px 24px; }
-            .logo { font-size: 1.5rem; }
-            .logo i { font-size: 1.6rem; }
-            .burger-btn { width: 44px; height: 44px; font-size: 1.3rem; }
-            .main-content { padding: 100px 24px 60px; }
-            .page-header h1 { font-size: 2.5rem; }
-            .page-header p { font-size: 1.1rem; }
-            .streaming-grid { gap: 30px; }
-            .stream-card { padding: 28px 20px; border-radius: 28px; }
-            .stream-logo { width: 240px; height: 240px; border-radius: 40px; margin-bottom: 20px; }
-            .stream-logo img { max-width: 200px; max-height: 200px; }
-            .stream-card h3 { font-size: 1.3rem; }
-            .stream-card p { font-size: 0.85rem; }
-            .footer-container { grid-template-columns: repeat(4, 1fr); gap: 32px; }
-            .footer-col h4 { font-size: 1rem; }
-            .footer-col ul li a { font-size: 0.85rem; }
-        }
-        @media (min-width: 1024px) {
-            .streaming-grid { gap: 40px; }
+        
+        @media (max-width: 640px) {
+            .main-content { padding: 80px 16px 40px; }
+            .streaming-grid { grid-template-columns: 1fr; }
+            .drawer { width: 260px; right: -260px; }
+            .features-list { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="/home.html" class="logo"><i class="fas fa-fox"></i><span>FOX STORE</span></a>
@@ -298,6 +342,7 @@
         </div>
     </nav>
 
+    <!-- Drawer -->
     <div class="drawer-overlay" id="drawerOverlay"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-header">
@@ -308,26 +353,167 @@
         <div class="drawer-nav" id="drawerNav"></div>
     </div>
 
+    <!-- WhatsApp Float -->
+    <a href="https://wa.me/50937542954" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+
+    <!-- Main Content -->
     <div class="main-content">
         <div class="page-header">
-            <h1>Streaming 4K</h1>
-            <p>Netflix, Disney+, Prime Video, Crunchyroll – Comptes Premium</p>
+            <h1><i class="fas fa-film"></i> Streaming 4K Premium</h1>
+            <p>Netflix, Disney+, Prime Video, Crunchyroll. Comptes Premium avec garantie 30 jours.</p>
         </div>
-        <div class="streaming-grid">
-            <a href="/pages/products/netflix.html" class="stream-card">
-                <div class="stream-logo"><img src="/assets/logos/netflix-logo.png" alt="Netflix"></div>
-                <h3>Netflix</h3>
-                <p>Abonnement 4K</p>
-            </a>
-            <a href="/pages/products/disneyplus.html" class="stream-card">
-                <div class="stream-logo"><img src="/assets/logos/disneyplus-logo.png" alt="Disney+"></div>
-                <h3>Disney+</h3>
-                <p>Premium</p>
-            </a>
-            <a href="/pages/products/primevideo.html" class="stream-card">
-                <div class="stream-logo"><img src="/assets/logos/primevideo-logo.png" alt="Prime Video"></div>
-                <h3>Prime Video</h3>
-                <p>Amazon Prime</p>
-            </a>
-            <a href="/pages/products/crunchyroll.html" class="stream-card">
-                <div class="stream-logo"><img src="/assets/logos/crunchyroll-logo.png" alt
+
+        <!-- Streaming Grid -->
+        <div class="streaming-grid" id="streamingGrid">
+            <!-- Will be populated dynamically -->
+        </div>
+
+        <!-- Features -->
+        <div class="features-streaming">
+            <h3><i class="fas fa-star"></i> Pourquoi choisir Fox Store pour vos abonnements ?</h3>
+            <div class="features-list">
+                <div class="feature-item"><i class="fas fa-check-circle"></i> Comptes Premium 100% garantis</div>
+                <div class="feature-item"><i class="fas fa-tachometer-alt"></i> Activation en moins de 5 minutes</div>
+                <div class="feature-item"><i class="fas fa-headset"></i> Support technique 24/7</div>
+                <div class="feature-item"><i class="fas fa-sync-alt"></i> Renouvellement automatique disponible</div>
+                <div class="feature-item"><i class="fas fa-shield-alt"></i> Garantie 30 jours satisfait ou remboursé</div>
+                <div class="feature-item"><i class="fas fa-tv"></i> Compatible 4K - HDR - Dolby Atmos</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 Fox Store – L'élite du service digital. Tous droits réservés.</p>
+    </footer>
+
+    <script>
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyDSyFdTHBNULuUiacHM6nmEvPb7YpY24UE",
+            authDomain: "foxstoreht.firebaseapp.com",
+            projectId: "foxstoreht",
+            storageBucket: "foxstoreht.firebasestorage.app",
+            messagingSenderId: "72533137445",
+            appId: "1:72533137445:web:3ba7634bc34da6115b47cc",
+            measurementId: "G-X1Q7Q79BRD"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
+
+        // Streaming services data
+        const streamingServices = [
+            { 
+                id: "netflix", 
+                name: "Netflix", 
+                page: "/pages/products/netflix.html", 
+                price: "400 HTG/mois", 
+                icon: "/assets/logos/netflix-logo.png", 
+                desc: "Compte Premium 4K - 4 écrans simultanés",
+                plans: ["1 mois: 400 HTG", "2 mois: 850 HTG", "3 mois: 1300 HTG"]
+            },
+            { 
+                id: "disneyplus", 
+                name: "Disney+", 
+                page: "/pages/products/disneyplus.html", 
+                price: "625 HTG/mois", 
+                icon: "/assets/logos/disneyplus-logo.png", 
+                desc: "Star Wars, Marvel, Pixar, National Geographic",
+                plans: ["1 mois: 625 HTG", "2 mois: 1200 HTG", "3 mois: 1800 HTG"]
+            },
+            { 
+                id: "primevideo", 
+                name: "Prime Video", 
+                page: "/pages/products/primevideo.html", 
+                price: "425 HTG/mois", 
+                icon: "/assets/logos/primevideo-logo.png", 
+                desc: "Amazon Originals, livraison gratuite incluse",
+                plans: ["1 mois: 425 HTG", "2 mois: 825 HTG", "3 mois: 1240 HTG"]
+            },
+            { 
+                id: "crunchyroll", 
+                name: "Crunchyroll", 
+                page: "/pages/products/crunchyroll.html", 
+                price: "425 HTG/mois", 
+                icon: "/assets/logos/crunchyroll-logo.png", 
+                desc: "Anime, Drama, Manga - Fan Premium",
+                plans: ["1 mois: 425 HTG", "2 mois: 850 HTG", "3 mois: 1325 HTG"]
+            }
+        ];
+
+        // DOM Elements
+        const streamingGrid = document.getElementById('streamingGrid');
+
+        // Render streaming services
+        function renderStreaming() {
+            streamingGrid.innerHTML = streamingServices.map(service => `
+                <a href="${service.page}" class="streaming-card">
+                    <div class="streaming-image">
+                        <img src="${service.icon}" alt="${service.name}" onerror="this.src='https://placehold.co/200x150?text=${service.name}'">
+                    </div>
+                    <div class="streaming-info">
+                        <h3>${service.name}</h3>
+                        <p>${service.desc}</p>
+                        <span class="streaming-price">À partir de ${service.price}</span>
+                        <span class="plan-badge">${service.plans.length} formules</span>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        renderStreaming();
+
+        // Drawer Functions
+        const drawerNav = document.getElementById('drawerNav');
+        const drawerUserSection = document.getElementById('drawerUserSection');
+        const burgerBtn = document.getElementById('burgerBtn');
+        const drawer = document.getElementById('drawer');
+        const drawerOverlay = document.getElementById('drawerOverlay');
+        const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+
+        function closeDrawer() { drawer.classList.remove('open'); drawerOverlay.classList.remove('active'); }
+        function openDrawer() { drawer.classList.add('open'); drawerOverlay.classList.add('active'); }
+        if (burgerBtn) burgerBtn.addEventListener('click', openDrawer);
+        if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeDrawer);
+        if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+
+        function updateDrawer(user) {
+            if (!user) { window.location.href = '/login.html'; return; }
+            const name = user.displayName || user.email || 'Client';
+            const isAdmin = (user.email === ADMIN_EMAIL);
+            const initial = name.charAt(0).toUpperCase();
+            drawerUserSection.innerHTML = `
+                <div class="drawer-user">
+                    <div class="drawer-user-avatar">${initial}</div>
+                    <div class="drawer-user-info">
+                        <h4>${name}</h4>
+                        <p>${user.email}</p>
+                    </div>
+                </div>
+            `;
+            let menu = `
+                <a href="/home.html"><i class="fas fa-home"></i> Accueil</a>
+                <a href="/gaming.html"><i class="fas fa-gamepad"></i> Gaming</a>
+                <a href="/streaming.html"><i class="fas fa-film"></i> Streaming</a>
+                <a href="/finance.html"><i class="fas fa-coins"></i> Finance</a>
+                <a href="/orders.html"><i class="fas fa-shopping-cart"></i> Commandes</a>
+                <a href="/user/account.html"><i class="fas fa-user"></i> Mon compte</a>
+                <a href="/user/settings.html"><i class="fas fa-sliders-h"></i> Paramètres</a>
+                <a href="/user/supports.html"><i class="fas fa-headset"></i> Support</a>
+            `;
+            if (isAdmin) menu += `<a href="/admin.html"><i class="fas fa-shield-alt"></i> Administration</a>`;
+            menu += `<button id="drawerLogoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>`;
+            drawerNav.innerHTML = menu;
+            document.getElementById('drawerLogoutBtn')?.addEventListener('click', async () => {
+                await auth.signOut();
+                window.location.href = '/login.html';
+            });
+        }
+
+        auth.onAuthStateChanged(user => {
+            if (!user) window.location.href = '/login.html';
+            else updateDrawer(user);
+        });
+    </script>
+</body>
+</html>
