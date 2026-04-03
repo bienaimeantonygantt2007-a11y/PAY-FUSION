@@ -31,18 +31,20 @@
         .drawer-nav a, .drawer-nav button { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; text-decoration: none; color: #1e293b; font-size: 0.85rem; font-weight: 500; background: none; border: 1px solid transparent; cursor: pointer; width: 100%; text-align: left; transition: all 0.2s; }
         .drawer-nav a i, .drawer-nav button i { width: 20px; font-size: 0.9rem; color: #5b6e8c; }
         .drawer-nav a:hover, .drawer-nav button:hover { background: #f1f5f9; border-color: #e2e8f0; }
+        .drawer-nav a:hover i, .drawer-nav button:hover i { color: #00d1ff; }
         .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(2px); z-index: 1999; display: none; }
         .drawer-overlay.active { display: block; }
-        .main-content { padding: 90px 24px 50px; max-width: 800px; margin: 0 auto; }
-        .page-header { margin-bottom: 32px; }
+        .main-content { padding: 90px 24px 50px; max-width: 1000px; margin: 0 auto; }
+        .page-header { margin-bottom: 32px; text-align: center; }
         .page-header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
         .page-header h1 i { color: #00d1ff; margin-right: 12px; }
-        .methods-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-top: 20px; }
-        .method-card { background: white; border-radius: 24px; padding: 24px; text-align: center; border: 1px solid #eef2ff; cursor: pointer; transition: 0.2s; text-decoration: none; color: inherit; display: block; }
+        .page-header p { color: #475569; font-size: 0.95rem; }
+        .methods-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; margin-top: 20px; }
+        .method-card { background: white; border-radius: 24px; padding: 20px; text-align: center; border: 1px solid #eef2ff; cursor: pointer; transition: 0.2s; text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; }
         .method-card:hover { transform: translateY(-4px); border-color: #00d1ff; box-shadow: 0 12px 24px rgba(0,0,0,0.05); }
-        .method-card i { font-size: 2.5rem; color: #00d1ff; margin-bottom: 12px; }
-        .method-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
-        .method-card p { font-size: 0.75rem; color: #5b6e8c; }
+        .method-card img { height: 60px; width: auto; max-width: 120px; object-fit: contain; margin-bottom: 12px; }
+        .method-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+        .method-card p { font-size: 0.7rem; color: #5b6e8c; }
         .whatsapp-float { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; z-index: 1000; text-decoration: none; }
         footer { background: transparent; border-top: 1px solid #e2e8f0; padding: 20px; text-align: center; font-size: 0.75rem; color: #5b6e8c; margin-top: 40px; }
         @media (max-width: 640px) { .main-content { padding: 80px 16px 40px; } .drawer { width: 260px; right: -260px; } }
@@ -55,14 +57,7 @@
     <a href="https://wa.me/50937542954" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
     <div class="main-content">
         <div class="page-header"><h1><i class="fas fa-credit-card"></i> Choisissez votre mode de paiement</h1><p>Sélectionnez la méthode que vous souhaitez utiliser</p></div>
-        <div class="methods-grid">
-            <a href="#" class="method-card" data-method="moncash"><i class="fas fa-mobile-alt"></i><h3>Moncash</h3><p>Paiement mobile</p></a>
-            <a href="#" class="method-card" data-method="natcash"><i class="fas fa-mobile-alt"></i><h3>Natcash</h3><p>Paiement mobile</p></a>
-            <a href="#" class="method-card" data-method="wise"><i class="fas fa-globe"></i><h3>Wise</h3><p>Transfert international</p></a>
-            <a href="#" class="method-card" data-method="paypal"><i class="fab fa-paypal"></i><h3>PayPal</h3><p>Paiement en ligne</p></a>
-            <a href="#" class="method-card" data-method="usdt"><i class="fas fa-coins"></i><h3>USDT (TRC20)</h3><p>Crypto-monnaie</p></a>
-            <a href="#" class="method-card" data-method="tronx"><i class="fas fa-chart-line"></i><h3>TRONX</h3><p>Crypto-monnaie</p></a>
-        </div>
+        <div class="methods-grid" id="methodsGrid"></div>
     </div>
     <footer><p>© 2025 Fox Store – L'élite du service digital. Tous droits réservés.</p></footer>
     <script>
@@ -80,27 +75,40 @@
         closeDrawerBtn?.addEventListener('click', closeDrawer);
         drawerOverlay?.addEventListener('click', closeDrawer);
         function updateDrawer(user) { if(!user) return; const name = user.displayName || user.email || 'Client', isAdmin = (user.email === ADMIN_EMAIL), initial = name.charAt(0).toUpperCase(); drawerUserSection.innerHTML = `<div class="drawer-user"><div class="drawer-user-avatar">${initial}</div><div class="drawer-user-info"><h4>${name}</h4><p>${user.email}</p>${isAdmin ? '<p style="color:#00d1ff; font-size:0.7rem;">Administrateur</p>' : ''}</div></div>`; let menu = `<div class="drawer-section-title">PRINCIPALE</div><a href="/home.html"><i class="fas fa-home"></i> Accueil</a><a href="/user/notifications.html"><i class="fas fa-bullhorn"></i> Annonce</a><div class="drawer-section-title">PORTEFEUILLE</div><a href="/user/wallet.html"><i class="fas fa-wallet"></i> Wallet</a><div class="drawer-section-title">SERVICES</div><a href="/gaming.html"><i class="fas fa-gamepad"></i> Gaming</a><a href="/streaming.html"><i class="fas fa-film"></i> Streaming</a><a href="/finance.html"><i class="fas fa-coins"></i> Finance</a><div class="drawer-section-title">COMPTE</div><a href="/orders.html"><i class="fas fa-shopping-cart"></i> Commandes</a><a href="/user/account.html"><i class="fas fa-user"></i> Mon compte</a><a href="/user/settings.html"><i class="fas fa-sliders-h"></i> Paramètres</a><a href="/user/supports.html"><i class="fas fa-headset"></i> Support</a>`; if(isAdmin) menu += `<div class="drawer-section-title">ADMINISTRATION</div><a href="/admin.html"><i class="fas fa-shield-alt"></i> Administration</a>`; menu += `<div class="drawer-section-title">RESEAUX</div><a href="https://whatsapp.com/channel/0029Vb84FJYAojYxTIur7b2n" target="_blank"><i class="fab fa-whatsapp"></i> Chaine WhatsApp</a><button id="drawerLogoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>`; drawerNav.innerHTML = menu; document.getElementById('drawerLogoutBtn')?.addEventListener('click', async () => { await auth.signOut(); window.location.href = '/login.html'; }); }
-        
         auth.onAuthStateChanged(user => { if(!user) { window.location.href = '/login.html'; return; } updateDrawer(user); });
         
-        // Récupération du panier depuis sessionStorage
+        // Méthodes de paiement avec leurs logos
+        const methods = [
+            { id: 'moncash', name: 'Moncash', logo: '/assets/logos/moncash-logo.png', description: 'Paiement mobile' },
+            { id: 'natcash', name: 'Natcash', logo: '/assets/logos/natcash-logo.png', description: 'Paiement mobile' },
+            { id: 'wise', name: 'Wise', logo: '/assets/logos/wise-logo.png', description: 'Transfert international' },
+            { id: 'paypal', name: 'PayPal', logo: '/assets/logos/paypal-logo.png', description: 'Paiement en ligne' },
+            { id: 'usdt', name: 'USDT (TRC20)', logo: '/assets/logos/usdt-logo.png', description: 'Crypto-monnaie' },
+            { id: 'tronx', name: 'TRONX', logo: '/assets/logos/tronx-logo.png', description: 'Crypto-monnaie' }
+        ];
+        
+        const methodsGrid = document.getElementById('methodsGrid');
+        methodsGrid.innerHTML = methods.map(m => `
+            <div class="method-card" data-method="${m.id}">
+                <img src="${m.logo}" alt="${m.name}" onerror="this.src='https://placehold.co/120x60?text=${m.name}'">
+                <h3>${m.name}</h3>
+                <p>${m.description}</p>
+            </div>
+        `).join('');
+        
         const pendingCart = sessionStorage.getItem('pendingCart');
         if (!pendingCart) {
-            // Pas de panier en attente, rediriger vers le panier
             window.location.href = '/pages/checkout/cart.html';
         }
         
-        // Gestion du choix de méthode
         document.querySelectorAll('.method-card').forEach(card => {
             card.addEventListener('click', async (e) => {
-                e.preventDefault();
                 const method = card.dataset.method;
                 const cart = JSON.parse(pendingCart);
                 if (!cart || cart.length === 0) return;
                 const user = auth.currentUser;
                 if (!user) { window.location.href = '/login.html'; return; }
                 
-                // Enregistrer chaque article comme commande dans Firestore
                 const promises = cart.map(item => db.collection('orders').add({
                     ...item,
                     userId: user.uid,
@@ -111,11 +119,9 @@
                 }));
                 await Promise.all(promises);
                 
-                // Vider le panier localStorage et sessionStorage
                 localStorage.removeItem('foxstore_cart');
                 sessionStorage.removeItem('pendingCart');
                 
-                // Rediriger vers la page d'instructions correspondante
                 let redirectUrl = '';
                 switch(method) {
                     case 'moncash': redirectUrl = '/paiement/mobile/moncash.html'; break;
