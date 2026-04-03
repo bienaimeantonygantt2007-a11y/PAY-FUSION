@@ -18,20 +18,9 @@
     
     <style>
         /* ---------- RESET & BASE (Mobile First) ---------- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f5f7fc;
-            color: #1e293b;
-            line-height: 1.5;
-            min-height: 100vh;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f5f7fc; color: #1e293b; line-height: 1.5; min-height: 100vh; }
+        
         /* ---------- NAVBAR ---------- */
         .navbar {
             position: fixed;
@@ -55,15 +44,8 @@
             font-size: 1.3rem;
             color: #0f172a;
         }
-        .logo i {
-            font-size: 1.4rem;
-            color: #00d1ff;
-        }
-        .nav-right {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
+        .logo i { font-size: 1.4rem; color: #00d1ff; }
+        .nav-right { display: flex; gap: 12px; align-items: center; }
         .btn-icon {
             background: #f1f5f9;
             border: none;
@@ -75,14 +57,9 @@
             align-items: center;
             gap: 6px;
         }
-        .btn-icon i {
-            font-size: 0.9rem;
-        }
-        .btn-icon:hover {
-            background: #e2e8f0;
-        }
-
-        /* ---------- SIDEBAR (Drawer pour mobile, latéral pour desktop) ---------- */
+        .btn-icon:hover { background: #e2e8f0; }
+        
+        /* ---------- SIDEBAR (Drawer mobile, latéral desktop) ---------- */
         .sidebar {
             position: fixed;
             top: 60px;
@@ -96,9 +73,7 @@
             overflow-y: auto;
             padding: 16px 0;
         }
-        .sidebar.open {
-            left: 0;
-        }
+        .sidebar.open { left: 0; }
         .sidebar-overlay {
             position: fixed;
             top: 60px;
@@ -110,15 +85,9 @@
             z-index: 899;
             display: none;
         }
-        .sidebar-overlay.active {
-            display: block;
-        }
-        .sidebar-menu {
-            list-style: none;
-        }
-        .sidebar-menu li {
-            margin: 4px 12px;
-        }
+        .sidebar-overlay.active { display: block; }
+        .sidebar-menu { list-style: none; }
+        .sidebar-menu li { margin: 4px 12px; }
         .sidebar-menu a {
             display: flex;
             align-items: center;
@@ -130,48 +99,21 @@
             font-weight: 500;
             transition: 0.2s;
         }
-        .sidebar-menu a i {
-            width: 24px;
-            color: #5b6e8c;
-        }
-        .sidebar-menu a:hover, .sidebar-menu a.active {
-            background: #f1f5f9;
-            color: #00d1ff;
-        }
-        .sidebar-menu a:hover i, .sidebar-menu a.active i {
-            color: #00d1ff;
-        }
-
-        /* ---------- MAIN CONTENT (Mobile First) ---------- */
-        .main-content {
-            margin-top: 60px;
-            padding: 20px 16px 40px;
-            transition: margin-left 0.3s;
-        }
-        /* Desktop adaptation */
+        .sidebar-menu a i { width: 24px; color: #5b6e8c; }
+        .sidebar-menu a:hover, .sidebar-menu a.active { background: #f1f5f9; color: #00d1ff; }
+        .sidebar-menu a:hover i, .sidebar-menu a.active i { color: #00d1ff; }
+        
+        /* ---------- MAIN CONTENT ---------- */
+        .main-content { margin-top: 60px; padding: 20px 16px 40px; transition: margin-left 0.3s; }
         @media (min-width: 768px) {
-            .sidebar {
-                left: 0;
-            }
-            .sidebar-overlay {
-                display: none !important;
-            }
-            .main-content {
-                margin-left: 260px;
-            }
-            .burger-btn {
-                display: none;
-            }
+            .sidebar { left: 0; }
+            .sidebar-overlay { display: none !important; }
+            .main-content { margin-left: 260px; }
+            .burger-btn { display: none; }
         }
-        .burger-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #1e293b;
-        }
-
-        /* ---------- CARDS & SECTIONS ---------- */
+        .burger-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #1e293b; }
+        
+        /* ---------- CARDS & TABLES ---------- */
         .section-title {
             font-size: 1.3rem;
             font-weight: 700;
@@ -203,31 +145,12 @@
             text-align: center;
             border: 1px solid #eef2ff;
         }
-        .stat-card i {
-            font-size: 1.8rem;
-            color: #00d1ff;
-        }
-        .stat-number {
-            font-size: 1.5rem;
-            font-weight: 800;
-        }
-        .table-responsive {
-            overflow-x: auto;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.8rem;
-        }
-        th, td {
-            padding: 12px 8px;
-            text-align: left;
-            border-bottom: 1px solid #f1f5f9;
-        }
-        th {
-            font-weight: 600;
-            color: #5b6e8c;
-        }
+        .stat-card i { font-size: 1.8rem; color: #00d1ff; }
+        .stat-number { font-size: 1.5rem; font-weight: 800; }
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        th, td { padding: 12px 8px; text-align: left; border-bottom: 1px solid #f1f5f9; }
+        th { font-weight: 600; color: #5b6e8c; }
         .status-badge {
             display: inline-block;
             padding: 4px 8px;
@@ -281,9 +204,7 @@
             align-items: center;
             justify-content: center;
         }
-        .modal.active {
-            display: flex;
-        }
+        .modal.active { display: flex; }
         .modal-content {
             background: white;
             border-radius: 28px;
@@ -299,15 +220,8 @@
             align-items: center;
             margin-bottom: 16px;
         }
-        .form-group {
-            margin-bottom: 16px;
-        }
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 6px;
-            font-size: 0.85rem;
-        }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem; }
         .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 10px;
@@ -345,13 +259,8 @@
             margin-top: 20px;
         }
         @media (max-width: 640px) {
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            th, td {
-                font-size: 0.7rem;
-                padding: 8px 4px;
-            }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            th, td { font-size: 0.7rem; padding: 8px 4px; }
         }
     </style>
 </head>
@@ -359,10 +268,7 @@
 
     <!-- Navbar -->
     <nav class="navbar">
-        <div class="logo">
-            <i class="fas fa-fox"></i>
-            <span>FOX STORE ADMIN</span>
-        </div>
+        <div class="logo"><i class="fas fa-fox"></i><span>FOX STORE ADMIN</span></div>
         <div class="nav-right">
             <button class="burger-btn" id="burgerBtn"><i class="fas fa-bars"></i></button>
             <button class="btn-icon" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> <span>Quitter</span></button>
@@ -383,14 +289,12 @@
     </div>
 
     <!-- Main Content -->
-    <div class="main-content" id="mainContent">
-        <!-- Les différents onglets seront injectés dynamiquement -->
-    </div>
+    <div class="main-content" id="mainContent"></div>
 
     <a href="https://wa.me/50937542954" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
     <footer><p>© 2025 Fox Store – Administration sécurisée</p></footer>
 
-    <!-- Modale générique pour les actions -->
+    <!-- Modale générique -->
     <div class="modal" id="genericModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -428,34 +332,23 @@
         const modalBody = document.getElementById('modalBody');
         let currentUser = null;
 
-        // ---------- FONCTIONS UI ----------
-        function closeDrawer() {
-            sidebar.classList.remove('open');
-            sidebarOverlay.classList.remove('active');
-        }
-        function openDrawer() {
-            sidebar.classList.add('open');
-            sidebarOverlay.classList.add('active');
-        }
-        burgerBtn?.addEventListener('click', openDrawer);
-        sidebarOverlay?.addEventListener('click', closeDrawer);
+        // Fermeture modale
         document.querySelectorAll('.close-modal').forEach(btn => {
             btn.addEventListener('click', () => modal.classList.remove('active'));
         });
         modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.remove('active'); });
 
+        // Drawer
+        function closeDrawer() { sidebar.classList.remove('open'); sidebarOverlay.classList.remove('active'); }
+        function openDrawer() { sidebar.classList.add('open'); sidebarOverlay.classList.add('active'); }
+        burgerBtn?.addEventListener('click', openDrawer);
+        sidebarOverlay?.addEventListener('click', closeDrawer);
+
         // ---------- AUTHENTIFICATION ET REDIRECTION ----------
         auth.onAuthStateChanged(async (user) => {
-            if (!user) {
-                window.location.href = '/login.html';
-                return;
-            }
-            if (user.email !== ADMIN_EMAIL) {
-                window.location.href = '/home.html';
-                return;
-            }
+            if (!user) { window.location.href = '/login.html'; return; }
+            if (user.email !== ADMIN_EMAIL) { window.location.href = '/home.html'; return; }
             currentUser = user;
-            // Charger le premier onglet
             loadTab('dashboard');
         });
 
@@ -471,40 +364,26 @@
             });
         });
 
-        // ---------- CHARGEMENT DYNAMIQUE DES ONGLETS ----------
+        // ---------- CHARGEMENT DYNAMIQUE ----------
         async function loadTab(tabName) {
             mainContent.innerHTML = '<div class="card" style="text-align:center;">Chargement...</div>';
             switch(tabName) {
-                case 'dashboard':
-                    await renderDashboard();
-                    break;
-                case 'orders':
-                    await renderOrders();
-                    break;
-                case 'users':
-                    await renderUsers();
-                    break;
-                case 'products':
-                    await renderProducts();
-                    break;
-                case 'announcements':
-                    await renderAnnouncements();
-                    break;
-                case 'proofs':
-                    await renderProofs();
-                    break;
-                default:
-                    mainContent.innerHTML = '<div class="card">Section non trouvée</div>';
+                case 'dashboard': await renderDashboard(); break;
+                case 'orders': await renderOrders(); break;
+                case 'users': await renderUsers(); break;
+                case 'products': await renderProducts(); break;
+                case 'announcements': await renderAnnouncements(); break;
+                case 'proofs': await renderProofs(); break;
+                default: mainContent.innerHTML = '<div class="card">Section non trouvée</div>';
             }
         }
 
-        // ---------- DASHBOARD ----------
+        // ---------- TABLEAU DE BORD ----------
         async function renderDashboard() {
-            // Récupérer les stats
             const usersSnap = await db.collection('users').get();
             const ordersSnap = await db.collection('orders').get();
             const pendingOrders = ordersSnap.docs.filter(d => d.data().status === 'en-attente').length;
-            const totalRevenue = ordersSnap.docs.reduce((sum, doc) => sum + (doc.data().total || 0), 0);
+            const totalRevenue = ordersSnap.docs.reduce((sum, doc) => sum + (doc.data().total || doc.data().price || 0), 0);
             const html = `
                 <div class="section-title"><i class="fas fa-chart-line"></i> Tableau de bord</div>
                 <div class="stats-grid">
@@ -523,7 +402,7 @@
             const ordersSnapshot = await db.collection('orders').orderBy('createdAt', 'desc').get();
             let html = `<div class="section-title"><i class="fas fa-shopping-cart"></i> Gestion des commandes</div>
                         <div class="card"><div class="table-responsive"><table><thead><tr><th>ID</th><th>Utilisateur</th><th>Produit</th><th>Montant</th><th>Statut</th><th>Actions</th></tr></thead><tbody>`;
-            ordersSnapshot.forEach(doc => {
+            for (const doc of ordersSnapshot.docs) {
                 const order = doc.data();
                 const orderId = doc.id.slice(0,8);
                 html += `<tr>
@@ -532,7 +411,8 @@
                             <td>${order.productName || order.serviceName}</td>
                             <td>${order.total || order.price} HTG</td>
                             <td><span class="status-badge status-${order.status.replace('_','-')}">${order.status}</span></td>
-                            <td><button class="btn-sm" onclick="viewOrder('${doc.id}')">Détails</button>
+                            <td>
+                                <button class="btn-sm" onclick="viewOrder('${doc.id}')">Détails</button>
                                 <select class="btn-sm" onchange="updateOrderStatus('${doc.id}', this.value)">
                                     <option value="">Changer statut</option>
                                     <option value="en-attente">En attente</option>
@@ -541,9 +421,10 @@
                                     <option value="livre">Livré</option>
                                     <option value="rejete">Rejeté</option>
                                     <option value="annule">Annulé</option>
-                                </select></td>
+                                </select>
+                            </td>
                           </tr>`;
-            });
+            }
             html += `</tbody></table></div></div>`;
             mainContent.innerHTML = html;
         }
@@ -575,14 +456,14 @@
                 validatedBy: currentUser.email,
                 validatedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
-            renderOrders();
+            loadTab('orders');
         };
 
         window.saveOrderNote = async (orderId) => {
             const note = document.getElementById('adminNote').value;
             await db.collection('orders').doc(orderId).update({ adminNote: note });
             modal.classList.remove('active');
-            renderOrders();
+            loadTab('orders');
         };
 
         // ---------- UTILISATEURS ----------
@@ -593,15 +474,17 @@
             for (const doc of usersSnapshot.docs) {
                 const user = doc.data();
                 const userId = doc.id;
-                const balance = user.balance || 0;
+                const balance = user.balance !== undefined ? user.balance : 0;
                 const isBanned = user.banned || false;
                 html += `<tr>
                             <td>${user.email}</td>
                             <td>${user.displayName || '-'}</td>
                             <td>${balance} HTG</td>
                             <td>${isBanned ? 'Oui' : 'Non'}</td>
-                            <td><button class="btn-sm" onclick="manageBalance('${userId}', '${user.email}')">Créditer/Débiter</button>
-                                <button class="btn-sm" onclick="toggleBan('${userId}', ${!isBanned})">${isBanned ? 'Débannir' : 'Bannir'}</button></td>
+                            <td>
+                                <button class="btn-sm" onclick="manageBalance('${userId}', '${user.email}')">Créditer/Débiter</button>
+                                <button class="btn-sm" onclick="toggleBan('${userId}', ${!isBanned})">${isBanned ? 'Débannir' : 'Bannir'}</button>
+                            </td>
                           </tr>`;
             }
             html += `</tbody></table></div></div>`;
@@ -629,7 +512,7 @@
             let currentBalance = userDoc.data().balance || 0;
             let newBalance = type === 'credit' ? currentBalance + amount : currentBalance - amount;
             await userRef.update({ balance: newBalance });
-            // Enregistrer transaction
+            // Enregistrer la transaction
             await db.collection('transactions').add({
                 userId: userId,
                 amount: type === 'credit' ? amount : -amount,
@@ -640,12 +523,12 @@
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             });
             modal.classList.remove('active');
-            renderUsers();
+            loadTab('users');
         };
 
         window.toggleBan = async (userId, ban) => {
             await db.collection('users').doc(userId).update({ banned: ban });
-            renderUsers();
+            loadTab('users');
         };
 
         // ---------- PRODUITS / SERVICES ----------
@@ -669,7 +552,7 @@
 
         window.toggleProductActive = async (productId, newState) => {
             await db.collection('products').doc(productId).update({ active: newState });
-            renderProducts();
+            loadTab('products');
         };
 
         window.showAddProductForm = () => {
@@ -699,7 +582,7 @@
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
             modal.classList.remove('active');
-            renderProducts();
+            loadTab('products');
         };
 
         // ---------- ANNONCES ----------
@@ -709,8 +592,12 @@
                         <div class="card"><button class="btn-primary" onclick="showAddAnnouncementForm()">+ Nouvelle annonce</button></div>`;
             annonceSnap.forEach(doc => {
                 const a = doc.data();
-                html += `<div class="card"><h3>${a.title}</h3><p>${a.content}</p><small>${a.createdAt ? a.createdAt.toDate().toLocaleString() : ''}</small><br>
-                        <button class="btn-sm" onclick="deleteAnnouncement('${doc.id}')">Supprimer</button></div>`;
+                html += `<div class="card">
+                            <h3>${a.title}</h3>
+                            <p>${a.content}</p>
+                            <small>${a.createdAt ? a.createdAt.toDate().toLocaleString() : ''}</small><br>
+                            <button class="btn-sm" onclick="deleteAnnouncement('${doc.id}')">Supprimer</button>
+                         </div>`;
             });
             mainContent.innerHTML = html;
         }
@@ -736,12 +623,12 @@
                 adminEmail: currentUser.email
             });
             modal.classList.remove('active');
-            renderAnnouncements();
+            loadTab('announcements');
         };
 
         window.deleteAnnouncement = async (id) => {
             await db.collection('announcements').doc(id).delete();
-            renderAnnouncements();
+            loadTab('announcements');
         };
 
         // ---------- PREUVES À VALIDER ----------
@@ -749,14 +636,14 @@
             const ordersSnap = await db.collection('orders').where('payment.proofUrl', '!=', null).get();
             let html = `<div class="section-title"><i class="fas fa-receipt"></i> Preuves de paiement à valider</div>`;
             let hasProof = false;
-            ordersSnap.forEach(doc => {
+            for (const doc of ordersSnap.docs) {
                 const order = doc.data();
                 if (order.payment && order.payment.proofUrl) {
                     hasProof = true;
                     html += `<div class="card">
                                 <p><strong>Commande:</strong> ${doc.id.slice(0,8)}</p>
                                 <p><strong>Utilisateur:</strong> ${order.userEmail}</p>
-                                <p><strong>Montant:</strong> ${order.total} HTG</p>
+                                <p><strong>Montant:</strong> ${order.total || order.price} HTG</p>
                                 <p><strong>Méthode:</strong> ${order.payment.method}</p>
                                 <a href="${order.payment.proofUrl}" target="_blank"><img src="${order.payment.proofUrl}" class="proof-img" style="max-height:150px;"></a>
                                 <div style="margin-top:12px;">
@@ -765,7 +652,7 @@
                                 </div>
                             </div>`;
                 }
-            });
+            }
             if (!hasProof) html += `<div class="card">Aucune preuve en attente de validation.</div>`;
             mainContent.innerHTML = html;
         }
@@ -776,7 +663,7 @@
                 validatedBy: currentUser.email,
                 validatedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
-            renderProofs();
+            loadTab('proofs');
         };
 
         // ---------- DÉCONNEXION ----------
@@ -784,7 +671,6 @@
             await auth.signOut();
             window.location.href = '/login.html';
         });
-
     </script>
 </body>
 </html>
