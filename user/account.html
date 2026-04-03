@@ -6,12 +6,13 @@
     <title>Fox Store – Mon compte</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #f5f7fc; color: #1e293b; line-height: 1.5; min-height: 100vh; }
+        
+        /* Navbar & Drawer (identique aux autres pages) */
         .navbar { position: fixed; top: 0; width: 100%; z-index: 1000; padding: 14px 24px; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid #eef2ff; }
         .nav-container { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
         .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; font-size: 1.5rem; color: #0f172a; }
@@ -35,25 +36,43 @@
         .drawer-nav a:hover i, .drawer-nav button:hover i { color: #00d1ff; }
         .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(2px); z-index: 1999; display: none; }
         .drawer-overlay.active { display: block; }
+        
+        /* Main content */
         .main-content { padding: 90px 24px 50px; max-width: 800px; margin: 0 auto; }
         .page-header { margin-bottom: 32px; }
         .page-header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
         .page-header h1 i { color: #00d1ff; margin-right: 12px; }
         .page-header p { color: #475569; font-size: 0.95rem; }
-        .profile-card { background: white; border-radius: 28px; padding: 32px; border: 1px solid #eef2ff; margin-bottom: 24px; }
-        .profile-avatar { display: flex; align-items: center; gap: 20px; margin-bottom: 24px; flex-wrap: wrap; }
-        .avatar-large { width: 80px; height: 80px; background: linear-gradient(135deg, #00d1ff, #009ac7); border-radius: 40px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; font-weight: 700; }
-        .avatar-info h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 4px; }
+        
+        /* Profile card */
+        .profile-card { background: white; border-radius: 28px; padding: 32px; border: 1px solid #eef2ff; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .profile-avatar { display: flex; align-items: center; gap: 24px; margin-bottom: 32px; flex-wrap: wrap; }
+        .avatar-large { width: 88px; height: 88px; background: linear-gradient(135deg, #00d1ff, #009ac7); border-radius: 44px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2.2rem; font-weight: 700; box-shadow: 0 8px 20px rgba(0,209,255,0.2); }
+        .avatar-info h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 4px; }
         .avatar-info p { color: #5b6e8c; font-size: 0.85rem; }
-        .info-row { display: flex; padding: 16px 0; border-bottom: 1px solid #f1f5f9; }
-        .info-label { width: 140px; font-weight: 600; color: #475569; }
-        .info-value { flex: 1; color: #1e293b; }
-        .btn-edit { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 40px; padding: 8px 20px; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: 0.2s; }
+        
+        .info-grid { display: flex; flex-direction: column; gap: 0; }
+        .info-row { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; border-bottom: 1px solid #f1f5f9; flex-wrap: wrap; gap: 12px; }
+        .info-label { font-weight: 600; color: #475569; min-width: 120px; }
+        .info-value { color: #1e293b; flex: 1; word-break: break-word; }
+        .btn-edit { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 32px; padding: 6px 18px; font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: 0.2s; }
         .btn-edit:hover { background: #00d1ff; color: white; border-color: #00d1ff; }
+        
+        /* Modal stylée (sans alert) */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 3000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 32px; max-width: 400px; width: 90%; padding: 24px; }
+        .modal-content h3 { font-size: 1.2rem; margin-bottom: 16px; }
+        .modal-content input { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 16px; margin-bottom: 20px; font-size: 0.9rem; }
+        .modal-buttons { display: flex; gap: 12px; justify-content: flex-end; }
+        .modal-buttons button { padding: 8px 20px; border-radius: 40px; border: none; cursor: pointer; font-weight: 500; }
+        .modal-buttons .cancel { background: #f1f5f9; color: #1e293b; }
+        .modal-buttons .confirm { background: #00d1ff; color: #0a0c10; }
+        
         .whatsapp-float { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; text-decoration: none; }
         .whatsapp-float:hover { transform: scale(1.05); background: #1da85c; }
         footer { background: transparent; border-top: 1px solid #e2e8f0; padding: 20px; text-align: center; font-size: 0.75rem; color: #5b6e8c; margin-top: 40px; }
-        @media (max-width: 640px) { .main-content { padding: 80px 16px 40px; } .drawer { width: 260px; right: -260px; } .info-row { flex-direction: column; gap: 8px; } .info-label { width: auto; } }
+        @media (max-width: 640px) { .main-content { padding: 80px 16px 40px; } .drawer { width: 260px; right: -260px; } .info-row { flex-direction: column; align-items: flex-start; } .btn-edit { align-self: flex-end; } }
     </style>
 </head>
 <body>
@@ -61,32 +80,55 @@
     <div class="drawer-overlay" id="drawerOverlay"></div>
     <div class="drawer" id="drawer"><div class="drawer-header"><div class="logo"><i class="fas fa-fox"></i><span>Menu</span></div><button class="close-drawer" id="closeDrawerBtn"><i class="fas fa-times"></i></button></div><div id="drawerUserSection"></div><div class="drawer-nav" id="drawerNav"></div></div>
     <a href="https://wa.me/50937542954" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+    
     <div class="main-content">
         <div class="page-header"><h1><i class="fas fa-user-circle"></i> Mon compte</h1><p>Gérez vos informations personnelles</p></div>
         <div class="profile-card" id="profileCard">
             <div class="profile-avatar"><div class="avatar-large" id="avatarInitial">U</div><div class="avatar-info"><h3 id="displayName">Chargement...</h3><p id="userEmail">email@exemple.com</p></div></div>
-            <div class="info-row"><div class="info-label">Nom complet</div><div class="info-value" id="fullNameValue">-</div><button class="btn-edit" id="editNameBtn">Modifier</button></div>
-            <div class="info-row"><div class="info-label">Email</div><div class="info-value" id="emailValue">-</div></div>
-            <div class="info-row"><div class="info-label">Mot de passe</div><div class="info-value">********</div><button class="btn-edit" id="editPasswordBtn">Changer</button></div>
+            <div class="info-grid">
+                <div class="info-row"><span class="info-label">Nom complet</span><span class="info-value" id="fullNameValue">-</span><button class="btn-edit" id="editNameBtn">Modifier</button></div>
+                <div class="info-row"><span class="info-label">Email</span><span class="info-value" id="emailValue">-</span></div>
+                <div class="info-row"><span class="info-label">Mot de passe</span><span class="info-value">••••••••</span><button class="btn-edit" id="editPasswordBtn">Changer</button></div>
+            </div>
         </div>
     </div>
     <footer><p>© 2025 Fox Store – L'élite du service digital. Tous droits réservés.</p></footer>
+
+    <!-- Modal pour modification nom -->
+    <div class="modal" id="nameModal"><div class="modal-content"><h3>Modifier le nom</h3><input type="text" id="newNameInput" placeholder="Nouveau nom complet"><div class="modal-buttons"><button class="cancel" id="cancelNameBtn">Annuler</button><button class="confirm" id="confirmNameBtn">Enregistrer</button></div></div></div>
+    <!-- Modal pour changement mot de passe (envoi email) -->
+    <div class="modal" id="passwordModal"><div class="modal-content"><h3>Réinitialiser le mot de passe</h3><p>Un email de réinitialisation sera envoyé à votre adresse.</p><div class="modal-buttons"><button class="cancel" id="cancelPasswordBtn">Annuler</button><button class="confirm" id="confirmPasswordBtn">Envoyer</button></div></div></div>
+
     <script>
         const firebaseConfig = { apiKey: "AIzaSyDSyFdTHBNULuUiacHM6nmEvPb7YpY24UE", authDomain: "foxstoreht.firebaseapp.com", projectId: "foxstoreht", storageBucket: "foxstoreht.firebasestorage.app", messagingSenderId: "72533137445", appId: "1:72533137445:web:3ba7634bc34da6115b47cc", measurementId: "G-X1Q7Q79BRD" };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
-        // Drawer
+        
+        // Drawer (identique)
         const drawerNav = document.getElementById('drawerNav'), drawerUserSection = document.getElementById('drawerUserSection'), burgerBtn = document.getElementById('burgerBtn'), drawer = document.getElementById('drawer'), drawerOverlay = document.getElementById('drawerOverlay'), closeDrawerBtn = document.getElementById('closeDrawerBtn');
         function closeDrawer() { drawer.classList.remove('open'); drawerOverlay.classList.remove('active'); }
         function openDrawer() { drawer.classList.add('open'); drawerOverlay.classList.add('active'); }
-        if(burgerBtn) burgerBtn.addEventListener('click', openDrawer);
-        if(closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeDrawer);
-        if(drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+        burgerBtn?.addEventListener('click', openDrawer);
+        closeDrawerBtn?.addEventListener('click', closeDrawer);
+        drawerOverlay?.addEventListener('click', closeDrawer);
         function updateDrawer(user) { if(!user) return; const name = user.displayName || user.email || 'Client', isAdmin = (user.email === ADMIN_EMAIL), initial = name.charAt(0).toUpperCase(); drawerUserSection.innerHTML = `<div class="drawer-user"><div class="drawer-user-avatar">${initial}</div><div class="drawer-user-info"><h4>${name}</h4><p>${user.email}</p>${isAdmin ? '<p style="color:#00d1ff; font-size:0.7rem;">Administrateur</p>' : ''}</div></div>`; let menu = `<div class="drawer-section-title">PRINCIPALE</div><a href="/home.html"><i class="fas fa-home"></i> Accueil</a><a href="/user/notifications.html"><i class="fas fa-bullhorn"></i> Annonce</a><div class="drawer-section-title">PORTEFEUILLE</div><a href="/user/wallet.html"><i class="fas fa-wallet"></i> Wallet</a><div class="drawer-section-title">SERVICES</div><a href="/gaming.html"><i class="fas fa-gamepad"></i> Gaming</a><a href="/streaming.html"><i class="fas fa-film"></i> Streaming</a><a href="/finance.html"><i class="fas fa-coins"></i> Finance</a><div class="drawer-section-title">COMPTE</div><a href="/orders.html"><i class="fas fa-shopping-cart"></i> Commandes</a><a href="/user/account.html"><i class="fas fa-user"></i> Mon compte</a><a href="/user/settings.html"><i class="fas fa-sliders-h"></i> Paramètres</a><a href="/user/supports.html"><i class="fas fa-headset"></i> Support</a>`; if(isAdmin) menu += `<div class="drawer-section-title">ADMINISTRATION</div><a href="/admin.html"><i class="fas fa-shield-alt"></i> Administration</a>`; menu += `<div class="drawer-section-title">RESEAUX</div><a href="https://whatsapp.com/channel/0029Vb84FJYAojYxTIur7b2n" target="_blank"><i class="fab fa-whatsapp"></i> Chaine WhatsApp</a><button id="drawerLogoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>`; drawerNav.innerHTML = menu; document.getElementById('drawerLogoutBtn')?.addEventListener('click', async () => { await auth.signOut(); window.location.href = '/login.html'; }); }
+        
+        // Affichage utilisateur
         auth.onAuthStateChanged(user => { if(!user) { window.location.href = '/login.html'; return; } updateDrawer(user); document.getElementById('displayName').textContent = user.displayName || user.email.split('@')[0]; document.getElementById('userEmail').textContent = user.email; document.getElementById('fullNameValue').textContent = user.displayName || 'Non renseigné'; document.getElementById('emailValue').textContent = user.email; const initial = (user.displayName || user.email).charAt(0).toUpperCase(); document.getElementById('avatarInitial').textContent = initial; });
-        document.getElementById('editNameBtn')?.addEventListener('click', async () => { const newName = prompt('Nouveau nom complet :'); if(newName && newName.trim()) { try { await auth.currentUser.updateProfile({ displayName: newName.trim() }); location.reload(); } catch(e) { alert('Erreur : '+e.message); } } });
-        document.getElementById('editPasswordBtn')?.addEventListener('click', async () => { await auth.sendPasswordResetEmail(auth.currentUser.email); alert('Un email de réinitialisation a été envoyé à votre adresse.'); });
+        
+        // Modale nom
+        const nameModal = document.getElementById('nameModal');
+        const editNameBtn = document.getElementById('editNameBtn');
+        editNameBtn?.addEventListener('click', () => { nameModal.classList.add('active'); document.getElementById('newNameInput').value = auth.currentUser?.displayName || ''; });
+        document.getElementById('cancelNameBtn')?.addEventListener('click', () => nameModal.classList.remove('active'));
+        document.getElementById('confirmNameBtn')?.addEventListener('click', async () => { const newName = document.getElementById('newNameInput').value.trim(); if(newName && auth.currentUser) { await auth.currentUser.updateProfile({ displayName: newName }); location.reload(); } nameModal.classList.remove('active'); });
+        
+        // Modale mot de passe
+        const passwordModal = document.getElementById('passwordModal');
+        document.getElementById('editPasswordBtn')?.addEventListener('click', () => passwordModal.classList.add('active'));
+        document.getElementById('cancelPasswordBtn')?.addEventListener('click', () => passwordModal.classList.remove('active'));
+        document.getElementById('confirmPasswordBtn')?.addEventListener('click', async () => { if(auth.currentUser) { await auth.sendPasswordResetEmail(auth.currentUser.email); } passwordModal.classList.remove('active'); });
     </script>
 </body>
 </html>
