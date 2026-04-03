@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Fox Store – Administration</title>
     
-    <!-- Firebase SDK -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
@@ -13,402 +13,271 @@
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
+        /* ---------- RESET & BASE (Mobile First) ---------- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --bg-deep: #0b0e14;
-            --bg-card: #131722;
-            --bg-surface: #1a1f2c;
-            --accent: #00c8ff;
-            --accent-secondary: #8a4fff;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a8b8;
-            --text-tertiary: #6b7280;
-            --border-light: rgba(255, 255, 255, 0.06);
-            --border-accent: rgba(0, 200, 255, 0.3);
-            --success: #10b981;
-            --warning: #f59e0b;
-            --error: #ef4444;
-            --glass-bg: rgba(19, 23, 34, 0.8);
-            --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.2);
-            --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.4);
-            --blur: blur(12px);
-            --transition: all 0.2s ease;
-        }
-
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: var(--bg-deep);
-            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fc;
+            color: #1e293b;
             line-height: 1.5;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        /* Header */
-        .header {
+        /* ---------- NAVBAR ---------- */
+        .navbar {
             position: fixed;
             top: 0;
-            left: 0;
-            right: 0;
-            z-index: 50;
-            padding: 12px 20px;
-            background: var(--glass-bg);
-            backdrop-filter: var(--blur);
-            border-bottom: 1px solid var(--border-light);
+            width: 100%;
+            z-index: 1000;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #eef2ff;
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
         }
-
-        .logo-area {
+        .logo {
             display: flex;
             align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: #0f172a;
+        }
+        .logo i {
+            font-size: 1.4rem;
+            color: #00d1ff;
+        }
+        .nav-right {
+            display: flex;
             gap: 12px;
+            align-items: center;
         }
-
-        .menu-btn {
-            background: transparent;
-            border: 1px solid var(--border-light);
-            color: var(--text-primary);
-            font-size: 18px;
-            padding: 6px 12px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .menu-btn:hover {
-            border-color: var(--accent);
-        }
-        @media (min-width: 1024px) {
-            .menu-btn {
-                display: none;
-            }
-        }
-
-        .logo {
-            font-weight: 700;
-            font-size: 20px;
-            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .admin-tag {
-            background: rgba(0,200,255,0.1);
-            border: 1px solid var(--border-accent);
+        .btn-icon {
+            background: #f1f5f9;
+            border: none;
             border-radius: 40px;
-            padding: 4px 12px;
-            font-size: 12px;
-            color: var(--accent);
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-icon i {
+            font-size: 0.9rem;
+        }
+        .btn-icon:hover {
+            background: #e2e8f0;
         }
 
-        /* Sidebar */
+        /* ---------- SIDEBAR (Drawer pour mobile, latéral pour desktop) ---------- */
         .sidebar {
             position: fixed;
-            top: 70px;
+            top: 60px;
             left: -260px;
-            width: 240px;
-            bottom: 0;
-            background: var(--glass-bg);
-            backdrop-filter: var(--blur);
-            border-right: 1px solid var(--border-light);
-            padding: 20px 12px;
-            overflow-y: auto;
+            width: 260px;
+            height: calc(100% - 60px);
+            background: white;
+            border-right: 1px solid #eef2ff;
+            z-index: 900;
             transition: left 0.3s ease;
-            z-index: 40;
-            display: flex;
-            flex-direction: column;
+            overflow-y: auto;
+            padding: 16px 0;
         }
         .sidebar.open {
             left: 0;
         }
-        @media (min-width: 1024px) {
-            .sidebar {
-                left: 0;
-            }
-        }
-
         .sidebar-overlay {
             position: fixed;
-            top: 0;
+            top: 60px;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            z-index: 35;
+            width: 100%;
+            height: calc(100% - 60px);
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(2px);
+            z-index: 899;
             display: none;
         }
         .sidebar-overlay.active {
             display: block;
         }
-        @media (min-width: 1024px) {
-            .sidebar-overlay {
-                display: none !important;
-            }
+        .sidebar-menu {
+            list-style: none;
         }
-
-        .nav-item {
+        .sidebar-menu li {
+            margin: 4px 12px;
+        }
+        .sidebar-menu a {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 16px;
-            border-radius: 14px;
-            color: var(--text-secondary);
-            transition: var(--transition);
-            cursor: pointer;
-            font-size: 14px;
-            margin-bottom: 2px;
-        }
-        .nav-item i {
-            width: 20px;
-            color: var(--accent);
-        }
-        .nav-item:hover {
-            background: rgba(255,255,255,0.03);
-            color: var(--text-primary);
-            border: 1px solid var(--border-accent);
-        }
-        .nav-item.active {
-            background: rgba(0,200,255,0.08);
-            color: var(--accent);
-            border: 1px solid var(--border-accent);
-        }
-        .nav-item.logout {
-            margin-top: auto;
-            border-top: 1px solid var(--border-light);
-            padding-top: 16px;
-        }
-
-        /* Main content */
-        .main {
-            margin-top: 70px;
-            padding: 24px 20px;
-            transition: margin-left 0.3s ease;
-        }
-        @media (min-width: 1024px) {
-            .main {
-                margin-left: 240px;
-            }
-        }
-
-        /* KPI cards */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-        .kpi-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: 24px;
-            padding: 18px 16px;
-            backdrop-filter: var(--blur);
-            box-shadow: var(--shadow-sm);
-        }
-        .kpi-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        .kpi-title {
-            color: var(--text-secondary);
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .kpi-icon {
-            width: 36px;
-            height: 36px;
-            background: rgba(0,200,255,0.1);
+            padding: 10px 12px;
             border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--accent);
+            text-decoration: none;
+            color: #1e293b;
+            font-weight: 500;
+            transition: 0.2s;
         }
-        .kpi-value {
-            font-size: 26px;
-            font-weight: 700;
-            line-height: 1.2;
+        .sidebar-menu a i {
+            width: 24px;
+            color: #5b6e8c;
+        }
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: #f1f5f9;
+            color: #00d1ff;
+        }
+        .sidebar-menu a:hover i, .sidebar-menu a.active i {
+            color: #00d1ff;
         }
 
-        /* Charts row */
-        .charts-row {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            margin-bottom: 24px;
+        /* ---------- MAIN CONTENT (Mobile First) ---------- */
+        .main-content {
+            margin-top: 60px;
+            padding: 20px 16px 40px;
+            transition: margin-left 0.3s;
         }
+        /* Desktop adaptation */
         @media (min-width: 768px) {
-            .charts-row {
-                grid-template-columns: repeat(2, 1fr);
+            .sidebar {
+                left: 0;
+            }
+            .sidebar-overlay {
+                display: none !important;
+            }
+            .main-content {
+                margin-left: 260px;
+            }
+            .burger-btn {
+                display: none;
             }
         }
-        .chart-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: 24px;
-            padding: 18px;
-        }
-        .chart-header {
-            margin-bottom: 12px;
-        }
-        .chart-header h3 {
-            font-size: 16px;
-            font-weight: 500;
-        }
-        .chart-container {
-            position: relative;
-            height: 200px;
+        .burger-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #1e293b;
         }
 
-        /* Section cards */
-        .section-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-light);
-            border-radius: 24px;
-            padding: 18px;
-            margin-bottom: 24px;
-        }
-        .section-header {
+        /* ---------- CARDS & SECTIONS ---------- */
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
             display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
         }
-        .section-header h2 {
-            font-size: 18px;
-            font-weight: 600;
+        .card {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid #eef2ff;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
         }
-        .section-header a {
-            color: var(--accent);
-            text-decoration: none;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
         }
-
-        /* Tables */
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid #eef2ff;
+        }
+        .stat-card i {
+            font-size: 1.8rem;
+            color: #00d1ff;
+        }
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
         .table-responsive {
             overflow-x: auto;
-            border-radius: 16px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 0.8rem;
+        }
+        th, td {
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 1px solid #f1f5f9;
         }
         th {
-            text-align: left;
-            padding: 12px 8px;
-            color: var(--text-secondary);
-            font-weight: 500;
-            border-bottom: 1px solid var(--border-light);
-            white-space: nowrap;
-        }
-        td {
-            padding: 12px 8px;
-            border-bottom: 1px solid var(--border-light);
-            white-space: nowrap;
-        }
-        .badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 30px;
-            font-size: 11px;
-            font-weight: 500;
-        }
-        .badge.pending {
-            background: rgba(245,158,11,0.1);
-            color: var(--warning);
-            border: 1px solid rgba(245,158,11,0.2);
-        }
-        .badge.completed {
-            background: rgba(16,185,129,0.1);
-            color: var(--success);
-            border: 1px solid rgba(16,185,129,0.2);
-        }
-        .badge.processing {
-            background: rgba(0,200,255,0.1);
-            color: var(--accent);
-            border: 1px solid rgba(0,200,255,0.2);
-        }
-        .btn-small {
-            background: var(--accent);
-            border: none;
-            border-radius: 30px;
-            padding: 5px 14px;
-            color: #000;
-            font-size: 11px;
             font-weight: 600;
+            color: #5b6e8c;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .status-en-attente { background: #fef3c7; color: #d97706; }
+        .status-en-cours { background: #dbeafe; color: #2563eb; }
+        .status-valide { background: #d1fae5; color: #059669; }
+        .status-livre { background: #a7f3d0; color: #059669; }
+        .status-rejete { background: #fee2e2; color: #dc2626; }
+        .status-annule { background: #f1f5f9; color: #64748b; }
+        
+        .btn-sm {
+            background: #f1f5f9;
+            border: none;
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 0.7rem;
             cursor: pointer;
-            transition: var(--transition);
+            margin: 2px;
         }
-        .btn-small:hover {
-            background: #00a3cc;
-            transform: translateY(-2px);
-        }
-        .btn-outline-small {
-            background: transparent;
-            border: 1px solid var(--border-accent);
-            border-radius: 30px;
-            padding: 5px 14px;
-            color: var(--accent);
-            font-size: 11px;
+        .btn-primary {
+            background: #00d1ff;
+            border: none;
+            border-radius: 40px;
+            padding: 8px 16px;
+            font-weight: 600;
             cursor: pointer;
         }
         .btn-danger {
-            background: var(--error);
+            background: #fee2e2;
+            color: #dc2626;
             border: none;
-            border-radius: 30px;
-            padding: 5px 14px;
-            color: white;
-            font-size: 11px;
+            border-radius: 40px;
+            padding: 8px 16px;
             font-weight: 600;
             cursor: pointer;
         }
-
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
-            color: var(--text-secondary);
-            gap: 10px;
-        }
-        .error-box {
-            background: rgba(239,68,68,0.1);
-            border: 1px solid rgba(239,68,68,0.3);
-            border-radius: 20px;
-            padding: 20px;
-            color: var(--error);
-            text-align: center;
-        }
-
-        /* Modal for editing */
         .modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(8px);
-            z-index: 1000;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
             align-items: center;
             justify-content: center;
         }
@@ -416,721 +285,506 @@
             display: flex;
         }
         .modal-content {
-            background: var(--bg-card);
-            border: 1px solid var(--border-accent);
-            border-radius: 32px;
-            padding: 24px;
-            max-width: 400px;
+            background: white;
+            border-radius: 28px;
+            max-width: 500px;
             width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 20px;
         }
-        .modal-content h3 {
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 16px;
         }
-        .modal-content input, .modal-content select {
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+        }
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 10px;
-            margin-bottom: 12px;
-            background: var(--bg-surface);
-            border: 1px solid var(--border-light);
-            border-radius: 30px;
-            color: var(--text-main);
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 0.9rem;
         }
-        .modal-actions {
+        .proof-img {
+            max-width: 100%;
+            border-radius: 12px;
+            margin-top: 8px;
+        }
+        .whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #25D366;
+            color: white;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
             display: flex;
-            gap: 10px;
-            justify-content: flex-end;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            z-index: 1000;
+            text-decoration: none;
+        }
+        footer {
+            text-align: center;
+            padding: 16px;
+            font-size: 0.7rem;
+            color: #5b6e8c;
+            border-top: 1px solid #eef2ff;
+            margin-top: 20px;
+        }
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            th, td {
+                font-size: 0.7rem;
+                padding: 8px 4px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo-area">
-            <button class="menu-btn" id="menuToggle"><i class="fas fa-bars"></i></button>
-            <span class="logo">FOX STORE ADMIN</span>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-fox"></i>
+            <span>FOX STORE ADMIN</span>
         </div>
-        <span class="admin-tag" id="adminEmail">Admin</span>
-    </div>
+        <div class="nav-right">
+            <button class="burger-btn" id="burgerBtn"><i class="fas fa-bars"></i></button>
+            <button class="btn-icon" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> <span>Quitter</span></button>
+        </div>
+    </nav>
 
+    <!-- Sidebar -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
     <div class="sidebar" id="sidebar">
-        <div class="nav-item active" data-section="dashboard"><i class="fas fa-chart-pie"></i> Dashboard</div>
-        <div class="nav-item" data-section="users"><i class="fas fa-users"></i> Utilisateurs</div>
-        <div class="nav-item" data-section="orders"><i class="fas fa-shopping-cart"></i> Commandes</div>
-        <div class="nav-item" data-section="payments"><i class="fas fa-credit-card"></i> Paiements</div>
-        <div class="nav-item" data-section="wallet"><i class="fas fa-wallet"></i> Wallet</div>
-        <div class="nav-item" data-section="products"><i class="fas fa-boxes"></i> Produits</div>
-        <div class="nav-item" data-section="stats"><i class="fas fa-chart-line"></i> Statistiques</div>
-        <div class="nav-item" data-section="settings"><i class="fas fa-cog"></i> Paramètres</div>
-        <div class="nav-item logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</div>
+        <ul class="sidebar-menu">
+            <li><a href="#" data-tab="dashboard" class="active"><i class="fas fa-tachometer-alt"></i> Tableau de bord</a></li>
+            <li><a href="#" data-tab="orders"><i class="fas fa-shopping-cart"></i> Commandes</a></li>
+            <li><a href="#" data-tab="users"><i class="fas fa-users"></i> Utilisateurs</a></li>
+            <li><a href="#" data-tab="products"><i class="fas fa-box"></i> Produits / Services</a></li>
+            <li><a href="#" data-tab="announcements"><i class="fas fa-bullhorn"></i> Annonces</a></li>
+            <li><a href="#" data-tab="proofs"><i class="fas fa-receipt"></i> Preuves à valider</a></li>
+        </ul>
     </div>
 
-    <div class="main" id="main">
-        <div id="loadingSpinner" class="loading"><i class="fas fa-spinner fa-pulse"></i> Chargement...</div>
-        <div id="content" style="display: none;"></div>
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Les différents onglets seront injectés dynamiquement -->
     </div>
 
-    <!-- Modals for editing (used in products) -->
-    <div class="modal" id="productModal">
+    <a href="https://wa.me/50937542954" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+    <footer><p>© 2025 Fox Store – Administration sécurisée</p></footer>
+
+    <!-- Modale générique pour les actions -->
+    <div class="modal" id="genericModal">
         <div class="modal-content">
-            <h3>Modifier le produit</h3>
-            <input type="hidden" id="editProductId">
-            <input type="text" id="editProductName" placeholder="Nom du produit">
-            <input type="number" id="editProductPrice" placeholder="Prix (HTG)">
-            <select id="editProductCategory">
-                <option value="gaming">Gaming</option>
-                <option value="streaming">Streaming</option>
-                <option value="finance">Finance</option>
-            </select>
-            <div class="modal-actions">
-                <button class="btn-outline-small" id="cancelProductEdit">Annuler</button>
-                <button class="btn-small" id="saveProductEdit">Enregistrer</button>
+            <div class="modal-header">
+                <h3 id="modalTitle">Titre</h3>
+                <button class="close-modal" style="background:none; border:none; font-size:1.5rem;">&times;</button>
             </div>
+            <div id="modalBody"></div>
         </div>
     </div>
 
     <script>
-        // Firebase configuration
+        // ---------- CONFIGURATION FIREBASE ----------
         const firebaseConfig = {
-            apiKey: "AIzaSyA0n2m2R9q07HQ94V58CdbNTlxnKztdmQo",
-            authDomain: "fox-storeht.firebaseapp.com",
-            projectId: "fox-storeht",
-            storageBucket: "fox-storeht.firebasestorage.app",
-            messagingSenderId: "589792388283",
-            appId: "1:589792388283:web:c372bd886f0a98e82db59e",
-            measurementId: "G-WN9M206F4M"
+            apiKey: "AIzaSyDSyFdTHBNULuUiacHM6nmEvPb7YpY24UE",
+            authDomain: "foxstoreht.firebaseapp.com",
+            projectId: "foxstoreht",
+            storageBucket: "foxstoreht.firebasestorage.app",
+            messagingSenderId: "72533137445",
+            appId: "1:72533137445:web:3ba7634bc34da6115b47cc",
+            measurementId: "G-X1Q7Q79BRD"
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+        const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
 
-        // DOM elements
-        const loading = document.getElementById('loadingSpinner');
-        const contentDiv = document.getElementById('content');
-        const adminEmailSpan = document.getElementById('adminEmail');
-        const navItems = document.querySelectorAll('.nav-item');
-        const menuToggle = document.getElementById('menuToggle');
+        // ---------- ÉLÉMENTS DOM ----------
+        const mainContent = document.getElementById('mainContent');
+        const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
+        const burgerBtn = document.getElementById('burgerBtn');
         const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const productModal = document.getElementById('productModal');
-        const cancelProductEdit = document.getElementById('cancelProductEdit');
-        const saveProductEdit = document.getElementById('saveProductEdit');
-
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const modal = document.getElementById('genericModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
         let currentUser = null;
-        let charts = {};
 
-        // Sidebar controls
-        function closeSidebar() {
+        // ---------- FONCTIONS UI ----------
+        function closeDrawer() {
             sidebar.classList.remove('open');
-            overlay.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
         }
-        menuToggle.addEventListener('click', (e) => {
-            e.stopPropagation();
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('active');
+        function openDrawer() {
+            sidebar.classList.add('open');
+            sidebarOverlay.classList.add('active');
+        }
+        burgerBtn?.addEventListener('click', openDrawer);
+        sidebarOverlay?.addEventListener('click', closeDrawer);
+        document.querySelectorAll('.close-modal').forEach(btn => {
+            btn.addEventListener('click', () => modal.classList.remove('active'));
         });
-        overlay.addEventListener('click', closeSidebar);
+        modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.remove('active'); });
 
-        // Logout
-        logoutBtn.addEventListener('click', async () => {
-            await auth.signOut();
-            window.location.href = '/';
-        });
-
-        // Navigation
-        navItems.forEach(item => {
-            if (item.classList.contains('logout')) return;
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                const section = item.dataset.section;
-                navItems.forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
-                loadSection(section);
-                if (window.innerWidth <= 1024) closeSidebar();
-            });
-        });
-
-        // Auth guard
+        // ---------- AUTHENTIFICATION ET REDIRECTION ----------
         auth.onAuthStateChanged(async (user) => {
             if (!user) {
                 window.location.href = '/login.html';
                 return;
             }
-            if (user.email !== 'bmarcco4412@gmail.com') {
-                alert('Accès réservé à l\'administrateur.');
+            if (user.email !== ADMIN_EMAIL) {
                 window.location.href = '/home.html';
                 return;
             }
-            adminEmailSpan.textContent = user.email;
             currentUser = user;
-            loading.style.display = 'none';
-            contentDiv.style.display = 'block';
-            loadSection('dashboard');
+            // Charger le premier onglet
+            loadTab('dashboard');
         });
 
-        // Helper to fetch data with fallback
-        async function safeGet(collection, ...queries) {
-            try {
-                let ref = db.collection(collection);
-                for (let q of queries) {
-                    if (Array.isArray(q)) {
-                        ref = ref.where(...q);
-                    } else if (typeof q === 'function') {
-                        ref = q(ref);
-                    }
-                }
-                const snap = await ref.get();
-                return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            } catch (e) {
-                console.warn(`Error fetching ${collection}:`, e);
-                return [];
+        // Gestion des onglets
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const tab = link.dataset.tab;
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                loadTab(tab);
+                closeDrawer();
+            });
+        });
+
+        // ---------- CHARGEMENT DYNAMIQUE DES ONGLETS ----------
+        async function loadTab(tabName) {
+            mainContent.innerHTML = '<div class="card" style="text-align:center;">Chargement...</div>';
+            switch(tabName) {
+                case 'dashboard':
+                    await renderDashboard();
+                    break;
+                case 'orders':
+                    await renderOrders();
+                    break;
+                case 'users':
+                    await renderUsers();
+                    break;
+                case 'products':
+                    await renderProducts();
+                    break;
+                case 'announcements':
+                    await renderAnnouncements();
+                    break;
+                case 'proofs':
+                    await renderProofs();
+                    break;
+                default:
+                    mainContent.innerHTML = '<div class="card">Section non trouvée</div>';
             }
         }
 
-        // KPIs
-        async function getKPIs() {
-            try {
-                const users = await db.collection('users').get().then(s => s.size);
-                const pendingOrders = await db.collection('orders').where('status', '==', 'en-attente').get().then(s => s.size);
-                const today = new Date(); today.setHours(0,0,0,0);
-                const todayTimestamp = firebase.firestore.Timestamp.fromDate(today);
-                const ordersToday = await db.collection('orders').where('createdAt', '>=', todayTimestamp).get();
-                let todayRevenue = 0;
-                ordersToday.forEach(d => todayRevenue += d.data().service?.price || 0);
-                const wallets = await db.collection('wallets').get();
-                let totalBalance = 0;
-                wallets.forEach(d => totalBalance += d.data().balance || 0);
-                return { users, pendingOrders, todayRevenue, totalBalance };
-            } catch {
-                return { users: 0, pendingOrders: 0, todayRevenue: 0, totalBalance: 0 };
-            }
-        }
-
-        async function getRecentDeposits() {
-            return safeGet('deposit_requests', ['status', '==', 'pending'], (ref) => ref.orderBy('submittedAt', 'desc'));
-        }
-        async function getRecentWithdrawals() {
-            return safeGet('withdrawal_requests', ['status', '==', 'pending'], (ref) => ref.orderBy('submittedAt', 'desc'));
-        }
-        async function getRecentOrders() {
-            return safeGet('orders', (ref) => ref.orderBy('createdAt', 'desc'));
-        }
-        async function getAllUsers() {
-            return safeGet('users');
-        }
-        async function getAllProducts() {
-            return safeGet('products');
-        }
-        async function getSettings() {
-            try {
-                const doc = await db.collection('settings').doc('general').get();
-                return doc.exists ? doc.data() : {};
-            } catch {
-                return {};
-            }
-        }
-
-        // Render functions
+        // ---------- DASHBOARD ----------
         async function renderDashboard() {
-            const kpis = await getKPIs();
-            const deposits = (await getRecentDeposits()).slice(0,5);
-            const withdrawals = (await getRecentWithdrawals()).slice(0,5);
-            const orders = (await getRecentOrders()).slice(0,5);
-
-            return `
-                <div class="kpi-grid">
-                    <div class="kpi-card"><div class="kpi-header"><span class="kpi-title">Utilisateurs</span><div class="kpi-icon"><i class="fas fa-users"></i></div></div><div class="kpi-value">${kpis.users}</div></div>
-                    <div class="kpi-card"><div class="kpi-header"><span class="kpi-title">En attente</span><div class="kpi-icon"><i class="fas fa-clock"></i></div></div><div class="kpi-value">${kpis.pendingOrders}</div></div>
-                    <div class="kpi-card"><div class="kpi-header"><span class="kpi-title">Revenus jour</span><div class="kpi-icon"><i class="fas fa-coins"></i></div></div><div class="kpi-value">${kpis.todayRevenue} HTG</div></div>
-                    <div class="kpi-card"><div class="kpi-header"><span class="kpi-title">Solde wallets</span><div class="kpi-icon"><i class="fas fa-wallet"></i></div></div><div class="kpi-value">${kpis.totalBalance} HTG</div></div>
+            // Récupérer les stats
+            const usersSnap = await db.collection('users').get();
+            const ordersSnap = await db.collection('orders').get();
+            const pendingOrders = ordersSnap.docs.filter(d => d.data().status === 'en-attente').length;
+            const totalRevenue = ordersSnap.docs.reduce((sum, doc) => sum + (doc.data().total || 0), 0);
+            const html = `
+                <div class="section-title"><i class="fas fa-chart-line"></i> Tableau de bord</div>
+                <div class="stats-grid">
+                    <div class="stat-card"><i class="fas fa-users"></i><div class="stat-number">${usersSnap.size}</div><div>Utilisateurs</div></div>
+                    <div class="stat-card"><i class="fas fa-shopping-cart"></i><div class="stat-number">${ordersSnap.size}</div><div>Commandes totales</div></div>
+                    <div class="stat-card"><i class="fas fa-clock"></i><div class="stat-number">${pendingOrders}</div><div>En attente</div></div>
+                    <div class="stat-card"><i class="fas fa-coins"></i><div class="stat-number">${totalRevenue.toLocaleString()} HTG</div><div>CA total</div></div>
                 </div>
-
-                <div class="charts-row">
-                    <div class="chart-card"><div class="chart-header"><h3>Commandes (7 derniers jours)</h3></div><div class="chart-container"><canvas id="ordersChart"></canvas></div></div>
-                    <div class="chart-card"><div class="chart-header"><h3>Répartition par catégorie</h3></div><div class="chart-container"><canvas id="categoryChart"></canvas></div></div>
-                </div>
-
-                <div class="section-card">
-                    <div class="section-header"><h2>Dépôts en attente</h2><a href="#" onclick="loadSection('payments'); return false;">Voir tout <i class="fas fa-arrow-right"></i></a></div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead><tr><th>Utilisateur</th><th>Montant</th><th>Méthode</th><th>Date</th><th>Action</th></tr></thead>
-                            <tbody>
-                                ${deposits.map(d => {
-                                    const date = d.submittedAt ? new Date(d.submittedAt.toDate()).toLocaleDateString('fr-FR') : '';
-                                    return `<tr><td>${d.senderInfo?.name || 'N/A'}</td><td>${d.amount} HTG</td><td>${d.method}</td><td>${date}</td><td><button class="btn-small" onclick="validateDeposit('${d.id}')">Valider</button></td></tr>`;
-                                }).join('')}
-                                ${deposits.length === 0 ? '<tr><td colspan="5" style="text-align:center">Aucun dépôt en attente</td></tr>' : ''}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="section-card">
-                    <div class="section-header"><h2>Retraits en attente</h2><a href="#" onclick="loadSection('wallet'); return false;">Voir tout <i class="fas fa-arrow-right"></i></a></div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead><tr><th>Utilisateur</th><th>Montant</th><th>Méthode</th><th>Date</th><th>Action</th></tr></thead>
-                            <tbody>
-                                ${withdrawals.map(w => {
-                                    const date = w.submittedAt ? new Date(w.submittedAt.toDate()).toLocaleDateString('fr-FR') : '';
-                                    return `<tr><td>${w.destination?.name || 'N/A'}</td><td>${w.amount} HTG</td><td>${w.method}</td><td>${date}</td><td><button class="btn-small" onclick="approveWithdrawal('${w.id}')">Approuver</button></td></tr>`;
-                                }).join('')}
-                                ${withdrawals.length === 0 ? '<tr><td colspan="5" style="text-align:center">Aucun retrait en attente</td></tr>' : ''}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="section-card">
-                    <div class="section-header"><h2>Dernières commandes</h2><a href="#" onclick="loadSection('orders'); return false;">Voir tout <i class="fas fa-arrow-right"></i></a></div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead><tr><th>ID</th><th>Produit</th><th>Montant</th><th>Statut</th><th>Date</th></tr></thead>
-                            <tbody>
-                                ${orders.map(o => {
-                                    const date = o.createdAt ? new Date(o.createdAt.toDate()).toLocaleDateString('fr-FR') : '';
-                                    const status = o.status || 'en-attente';
-                                    const statusClass = status === 'livré' || status === 'valide' ? 'completed' : (status === 'en-attente' ? 'pending' : 'processing');
-                                    return `<tr><td>${o.id.slice(-6)}</td><td>${o.service?.product || ''}</td><td>${o.service?.price || 0} HTG</td><td><span class="badge ${statusClass}">${status}</span></td><td>${date}</td></tr>`;
-                                }).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                <div class="card"><h3>Bienvenue, Administrateur</h3><p>Utilisez le menu pour gérer les commandes, utilisateurs, produits et annonces.</p></div>
             `;
+            mainContent.innerHTML = html;
         }
 
-        async function renderUsers() {
-            const users = await getAllUsers();
-            let rows = '';
-            for (let u of users) {
-                const name = `${u.personalInfo?.firstName || ''} ${u.personalInfo?.lastName || ''}`.trim() || u.personalInfo?.email || 'N/A';
-                const email = u.personalInfo?.email || '';
-                const orders = u.stats?.ordersCount || 0;
-                let balance = '?';
-                try {
-                    const wallet = await db.collection('wallets').doc(u.id).get();
-                    balance = wallet.exists ? (wallet.data().balance || 0) + ' HTG' : '0 HTG';
-                } catch {}
-                rows += `<tr><td>${name}</td><td>${email}</td><td>${orders}</td><td>${balance}</td><td><button class="btn-outline-small" onclick="viewUser('${u.id}')">Détails</button></td></tr>`;
-            }
-            return `
-                <div class="section-card">
-                    <div class="section-header"><h2>Utilisateurs</h2></div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead><tr><th>Nom</th><th>Email</th><th>Commandes</th><th>Solde wallet</th><th>Action</th></tr></thead>
-                            <tbody>${rows}</tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-        }
-
+        // ---------- COMMANDES ----------
         async function renderOrders() {
-            const orders = await getRecentOrders();
-            return `
-                <div class="section-card">
-                    <div class="section-header"><h2>Toutes les commandes</h2></div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead><tr><th>ID</th><th>Utilisateur</th><th>Produit</th><th>Montant</th><th>Statut</th><th>Date</th><th>Action</th></tr></thead>
-                            <tbody>
-                                ${orders.map(o => {
-                                    const date = o.createdAt ? new Date(o.createdAt.toDate()).toLocaleDateString('fr-FR') : '';
-                                    const status = o.status || 'en-attente';
-                                    const statusClass = status === 'livré' ? 'completed' : (status === 'en-attente' ? 'pending' : 'processing');
-                                    return `<tr>
-                                        <td>${o.id.slice(-6)}</td>
-                                        <td>${o.userId?.slice(-6) || ''}</td>
-                                        <td>${o.service?.product || ''}</td>
-                                        <td>${o.service?.price || 0} HTG</td>
-                                        <td><span class="badge ${statusClass}">${status}</span></td>
-                                        <td>${date}</td>
-                                        <td><button class="btn-outline-small" onclick="updateOrderStatus('${o.id}')">Modifier</button></td>
-                                    </tr>`;
-                                }).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
+            const ordersSnapshot = await db.collection('orders').orderBy('createdAt', 'desc').get();
+            let html = `<div class="section-title"><i class="fas fa-shopping-cart"></i> Gestion des commandes</div>
+                        <div class="card"><div class="table-responsive"><table><thead><tr><th>ID</th><th>Utilisateur</th><th>Produit</th><th>Montant</th><th>Statut</th><th>Actions</th></tr></thead><tbody>`;
+            ordersSnapshot.forEach(doc => {
+                const order = doc.data();
+                const orderId = doc.id.slice(0,8);
+                html += `<tr>
+                            <td>${orderId}</td>
+                            <td>${order.userEmail || 'N/A'}</td>
+                            <td>${order.productName || order.serviceName}</td>
+                            <td>${order.total || order.price} HTG</td>
+                            <td><span class="status-badge status-${order.status.replace('_','-')}">${order.status}</span></td>
+                            <td><button class="btn-sm" onclick="viewOrder('${doc.id}')">Détails</button>
+                                <select class="btn-sm" onchange="updateOrderStatus('${doc.id}', this.value)">
+                                    <option value="">Changer statut</option>
+                                    <option value="en-attente">En attente</option>
+                                    <option value="en-cours">En cours</option>
+                                    <option value="valide">Validé</option>
+                                    <option value="livre">Livré</option>
+                                    <option value="rejete">Rejeté</option>
+                                    <option value="annule">Annulé</option>
+                                </select></td>
+                          </tr>`;
+            });
+            html += `</tbody></table></div></div>`;
+            mainContent.innerHTML = html;
         }
 
-        async function renderPayments() {
-            const deposits = await getRecentDeposits();
-            return `
-                <div class="section-card">
-                    <div class="section-header"><h2>Demandes de dépôt</h2></div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead><tr><th>Utilisateur</th><th>Montant</th><th>Méthode</th><th>Date</th><th>Preuve</th><th>Action</th></tr></thead>
-                            <tbody>
-                                ${deposits.map(d => {
-                                    const date = d.submittedAt ? new Date(d.submittedAt.toDate()).toLocaleDateString('fr-FR') : '';
-                                    return `<tr>
-                                        <td>${d.senderInfo?.name || ''}</td>
-                                        <td>${d.amount} HTG</td>
-                                        <td>${d.method}</td>
-                                        <td>${date}</td>
-                                        <td><a href="${d.proof}" target="_blank" style="color:var(--accent)">Voir</a></td>
-                                        <td><button class="btn-small" onclick="validateDeposit('${d.id}')">Valider</button></td>
-                                    </tr>`;
-                                }).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+        window.viewOrder = async (orderId) => {
+            const doc = await db.collection('orders').doc(orderId).get();
+            const order = doc.data();
+            const payment = order.payment || {};
+            modalTitle.innerText = `Commande ${orderId.slice(0,8)}`;
+            modalBody.innerHTML = `
+                <div><strong>Service:</strong> ${order.serviceName}</div>
+                <div><strong>Produit:</strong> ${order.productName}</div>
+                <div><strong>Montant:</strong> ${order.total || order.price} HTG</div>
+                <div><strong>Statut:</strong> ${order.status}</div>
+                <div><strong>Infos client:</strong> ${JSON.stringify(order.customerInfo)}</div>
+                <div><strong>Méthode de paiement:</strong> ${payment.method || 'Non renseigné'}</div>
+                ${payment.proofUrl ? `<div><strong>Preuve:</strong> <a href="${payment.proofUrl}" target="_blank">Voir l'image</a></div>` : ''}
+                <div class="form-group"><label>Commentaire interne</label><textarea id="adminNote" rows="2"></textarea></div>
+                <button class="btn-primary" onclick="saveOrderNote('${orderId}')">Enregistrer note</button>
             `;
+            modal.classList.add('active');
+        };
+
+        window.updateOrderStatus = async (orderId, newStatus) => {
+            if (!newStatus) return;
+            await db.collection('orders').doc(orderId).update({
+                status: newStatus,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                validatedBy: currentUser.email,
+                validatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            renderOrders();
+        };
+
+        window.saveOrderNote = async (orderId) => {
+            const note = document.getElementById('adminNote').value;
+            await db.collection('orders').doc(orderId).update({ adminNote: note });
+            modal.classList.remove('active');
+            renderOrders();
+        };
+
+        // ---------- UTILISATEURS ----------
+        async function renderUsers() {
+            const usersSnapshot = await db.collection('users').get();
+            let html = `<div class="section-title"><i class="fas fa-users"></i> Utilisateurs</div>
+                        <div class="card"><div class="table-responsive"><table><thead><tr><th>Email</th><th>Nom</th><th>Solde (HTG)</th><th>Banni</th><th>Actions</th></tr></thead><tbody>`;
+            for (const doc of usersSnapshot.docs) {
+                const user = doc.data();
+                const userId = doc.id;
+                const balance = user.balance || 0;
+                const isBanned = user.banned || false;
+                html += `<tr>
+                            <td>${user.email}</td>
+                            <td>${user.displayName || '-'}</td>
+                            <td>${balance} HTG</td>
+                            <td>${isBanned ? 'Oui' : 'Non'}</td>
+                            <td><button class="btn-sm" onclick="manageBalance('${userId}', '${user.email}')">Créditer/Débiter</button>
+                                <button class="btn-sm" onclick="toggleBan('${userId}', ${!isBanned})">${isBanned ? 'Débannir' : 'Bannir'}</button></td>
+                          </tr>`;
+            }
+            html += `</tbody></table></div></div>`;
+            mainContent.innerHTML = html;
         }
 
-        async function renderWallet() {
-            const withdrawals = await getRecentWithdrawals();
-            return `
-                <div class="section-card">
-                    <div class="section-header"><h2>Demandes de retrait</h2></div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead><tr><th>Utilisateur</th><th>Montant</th><th>Méthode</th><th>Date</th><th>Action</th></tr></thead>
-                            <tbody>
-                                ${withdrawals.map(w => {
-                                    const date = w.submittedAt ? new Date(w.submittedAt.toDate()).toLocaleDateString('fr-FR') : '';
-                                    return `<tr>
-                                        <td>${w.destination?.name || ''}</td>
-                                        <td>${w.amount} HTG</td>
-                                        <td>${w.method}</td>
-                                        <td>${date}</td>
-                                        <td><button class="btn-small" onclick="approveWithdrawal('${w.id}')">Approuver</button></td>
-                                    </tr>`;
-                                }).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+        window.manageBalance = (userId, userEmail) => {
+            modalTitle.innerText = `Gérer le solde de ${userEmail}`;
+            modalBody.innerHTML = `
+                <div class="form-group"><label>Montant (HTG)</label><input type="number" id="amount" step="1" placeholder="Ex: 500"></div>
+                <div class="form-group"><label>Type</label><select id="transType"><option value="credit">Créditer (+)</option><option value="debit">Débiter (-)</option></select></div>
+                <div class="form-group"><label>Motif</label><input type="text" id="reason" placeholder="Ex: Achat, Remboursement"></div>
+                <button class="btn-primary" onclick="processBalance('${userId}')">Appliquer</button>
             `;
-        }
+            modal.classList.add('active');
+        };
 
+        window.processBalance = async (userId) => {
+            const amount = parseInt(document.getElementById('amount').value);
+            const type = document.getElementById('transType').value;
+            const reason = document.getElementById('reason').value;
+            if (isNaN(amount)) return;
+            const userRef = db.collection('users').doc(userId);
+            const userDoc = await userRef.get();
+            let currentBalance = userDoc.data().balance || 0;
+            let newBalance = type === 'credit' ? currentBalance + amount : currentBalance - amount;
+            await userRef.update({ balance: newBalance });
+            // Enregistrer transaction
+            await db.collection('transactions').add({
+                userId: userId,
+                amount: type === 'credit' ? amount : -amount,
+                type: type,
+                reason: reason,
+                newBalance: newBalance,
+                adminEmail: currentUser.email,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            modal.classList.remove('active');
+            renderUsers();
+        };
+
+        window.toggleBan = async (userId, ban) => {
+            await db.collection('users').doc(userId).update({ banned: ban });
+            renderUsers();
+        };
+
+        // ---------- PRODUITS / SERVICES ----------
         async function renderProducts() {
-            const products = await getAllProducts();
-            let rows = '';
-            products.forEach(p => {
-                rows += `<tr>
-                    <td>${p.name || ''}</td>
-                    <td>${p.category || ''}</td>
-                    <td>${p.price || 0} HTG</td>
-                    <td><span class="badge ${p.active ? 'completed' : 'pending'}">${p.active ? 'Actif' : 'Inactif'}</span></td>
-                    <td>
-                        <button class="btn-outline-small" onclick="editProduct('${p.id}')">Modifier</button>
-                        <button class="btn-danger" onclick="toggleProduct('${p.id}', ${!p.active})">${p.active ? 'Désactiver' : 'Activer'}</button>
-                    </td>
-                </tr>`;
+            const productsSnap = await db.collection('products').get();
+            let html = `<div class="section-title"><i class="fas fa-box"></i> Produits et services</div>
+                        <div class="card"><div class="table-responsive"><table><thead><tr><th>Nom</th><th>Catégorie</th><th>Prix (HTG)</th><th>Actif</th><th>Action</th></tr></thead><tbody>`;
+            productsSnap.forEach(doc => {
+                const p = doc.data();
+                html += `<tr>
+                            <td>${p.name}</td>
+                            <td>${p.category}</td>
+                            <td>${p.price}</td>
+                            <td>${p.active ? 'Oui' : 'Non'}</td>
+                            <td><button class="btn-sm" onclick="toggleProductActive('${doc.id}', ${!p.active})">${p.active ? 'Désactiver' : 'Activer'}</button></td>
+                          </tr>`;
             });
-            return `
-                <div class="section-card">
-                    <div class="section-header"><h2>Gestion des produits</h2><button class="btn-small" onclick="addProduct()">+ Ajouter</button></div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead><tr><th>Nom</th><th>Catégorie</th><th>Prix</th><th>Statut</th><th>Actions</th></tr></thead>
-                            <tbody>${rows}</tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
+            html += `</tbody></table></div><button class="btn-primary" style="margin-top:16px;" onclick="showAddProductForm()">+ Ajouter un produit</button></div>`;
+            mainContent.innerHTML = html;
         }
 
-        async function renderStats() {
-            // Récupérer les données pour les graphiques réels
-            const orders = await safeGet('orders');
-            const payments = await safeGet('payments');
-            // Calculer les ventes mensuelles (simplifié)
-            const monthlyData = [0,0,0,0,0,0,0,0,0,0,0,0];
-            orders.forEach(o => {
-                if (o.createdAt) {
-                    const month = o.createdAt.toDate().getMonth();
-                    monthlyData[month] += o.service?.price || 0;
+        window.toggleProductActive = async (productId, newState) => {
+            await db.collection('products').doc(productId).update({ active: newState });
+            renderProducts();
+        };
+
+        window.showAddProductForm = () => {
+            modalTitle.innerText = "Ajouter un produit/service";
+            modalBody.innerHTML = `
+                <div class="form-group"><label>Nom</label><input id="prodName" placeholder="Ex: 100 Diamants"></div>
+                <div class="form-group"><label>Catégorie</label><select id="prodCat"><option value="gaming">Gaming</option><option value="streaming">Streaming</option><option value="finance">Finance</option></select></div>
+                <div class="form-group"><label>Prix (HTG)</label><input id="prodPrice" type="number" step="1"></div>
+                <div class="form-group"><label>Jeu/Service (optionnel)</label><input id="prodGame" placeholder="Free Fire, Netflix..."></div>
+                <button class="btn-primary" onclick="addProduct()">Ajouter</button>
+            `;
+            modal.classList.add('active');
+        };
+
+        window.addProduct = async () => {
+            const name = document.getElementById('prodName').value;
+            const category = document.getElementById('prodCat').value;
+            const price = parseInt(document.getElementById('prodPrice').value);
+            const game = document.getElementById('prodGame').value;
+            if (!name || isNaN(price)) return;
+            await db.collection('products').add({
+                name: name,
+                category: category,
+                price: price,
+                game: game,
+                active: true,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            modal.classList.remove('active');
+            renderProducts();
+        };
+
+        // ---------- ANNONCES ----------
+        async function renderAnnouncements() {
+            const annonceSnap = await db.collection('announcements').orderBy('createdAt', 'desc').get();
+            let html = `<div class="section-title"><i class="fas fa-bullhorn"></i> Annonces</div>
+                        <div class="card"><button class="btn-primary" onclick="showAddAnnouncementForm()">+ Nouvelle annonce</button></div>`;
+            annonceSnap.forEach(doc => {
+                const a = doc.data();
+                html += `<div class="card"><h3>${a.title}</h3><p>${a.content}</p><small>${a.createdAt ? a.createdAt.toDate().toLocaleString() : ''}</small><br>
+                        <button class="btn-sm" onclick="deleteAnnouncement('${doc.id}')">Supprimer</button></div>`;
+            });
+            mainContent.innerHTML = html;
+        }
+
+        window.showAddAnnouncementForm = () => {
+            modalTitle.innerText = "Nouvelle annonce";
+            modalBody.innerHTML = `
+                <div class="form-group"><label>Titre</label><input id="annTitle"></div>
+                <div class="form-group"><label>Contenu</label><textarea id="annContent" rows="4"></textarea></div>
+                <button class="btn-primary" onclick="publishAnnouncement()">Publier</button>
+            `;
+            modal.classList.add('active');
+        };
+
+        window.publishAnnouncement = async () => {
+            const title = document.getElementById('annTitle').value;
+            const content = document.getElementById('annContent').value;
+            if (!title || !content) return;
+            await db.collection('announcements').add({
+                title: title,
+                content: content,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                adminEmail: currentUser.email
+            });
+            modal.classList.remove('active');
+            renderAnnouncements();
+        };
+
+        window.deleteAnnouncement = async (id) => {
+            await db.collection('announcements').doc(id).delete();
+            renderAnnouncements();
+        };
+
+        // ---------- PREUVES À VALIDER ----------
+        async function renderProofs() {
+            const ordersSnap = await db.collection('orders').where('payment.proofUrl', '!=', null).get();
+            let html = `<div class="section-title"><i class="fas fa-receipt"></i> Preuves de paiement à valider</div>`;
+            let hasProof = false;
+            ordersSnap.forEach(doc => {
+                const order = doc.data();
+                if (order.payment && order.payment.proofUrl) {
+                    hasProof = true;
+                    html += `<div class="card">
+                                <p><strong>Commande:</strong> ${doc.id.slice(0,8)}</p>
+                                <p><strong>Utilisateur:</strong> ${order.userEmail}</p>
+                                <p><strong>Montant:</strong> ${order.total} HTG</p>
+                                <p><strong>Méthode:</strong> ${order.payment.method}</p>
+                                <a href="${order.payment.proofUrl}" target="_blank"><img src="${order.payment.proofUrl}" class="proof-img" style="max-height:150px;"></a>
+                                <div style="margin-top:12px;">
+                                    <button class="btn-primary" onclick="validateProof('${doc.id}', 'valide')">Valider</button>
+                                    <button class="btn-danger" onclick="validateProof('${doc.id}', 'rejete')">Rejeter</button>
+                                </div>
+                            </div>`;
                 }
             });
-            // Répartition des méthodes de paiement
-            const methodCount = {};
-            payments.forEach(p => {
-                const m = p.method || 'autre';
-                methodCount[m] = (methodCount[m] || 0) + 1;
+            if (!hasProof) html += `<div class="card">Aucune preuve en attente de validation.</div>`;
+            mainContent.innerHTML = html;
+        }
+
+        window.validateProof = async (orderId, newStatus) => {
+            await db.collection('orders').doc(orderId).update({
+                status: newStatus,
+                validatedBy: currentUser.email,
+                validatedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
-            const methodLabels = Object.keys(methodCount);
-            const methodData = Object.values(methodCount);
-
-            return `
-                <div class="charts-row">
-                    <div class="chart-card"><div class="chart-header"><h3>Ventes mensuelles (HTG)</h3></div><div class="chart-container"><canvas id="monthlyChart"></canvas></div></div>
-                    <div class="chart-card"><div class="chart-header"><h3>Méthodes de paiement</h3></div><div class="chart-container"><canvas id="paymentChart"></canvas></div></div>
-                </div>
-                <div class="section-card">
-                    <div class="section-header"><h2>Export de données</h2></div>
-                    <p style="color:var(--text-secondary);">Télécharger les rapports :</p>
-                    <button class="btn-small" onclick="exportCSV('users')">Utilisateurs CSV</button>
-                    <button class="btn-small" onclick="exportCSV('orders')">Commandes CSV</button>
-                </div>
-                <script>
-                    setTimeout(() => {
-                        const ctxMonthly = document.getElementById('monthlyChart')?.getContext('2d');
-                        if (ctxMonthly) {
-                            new Chart(ctxMonthly, {
-                                type: 'bar',
-                                data: {
-                                    labels: ['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Aoû','Sep','Oct','Nov','Déc'],
-                                    datasets: [{
-                                        label: 'Ventes (HTG)',
-                                        data: ${JSON.stringify(monthlyData)},
-                                        backgroundColor: '#00c8ff'
-                                    }]
-                                },
-                                options: { responsive: true, maintainAspectRatio: false }
-                            });
-                        }
-                        const ctxPayment = document.getElementById('paymentChart')?.getContext('2d');
-                        if (ctxPayment) {
-                            new Chart(ctxPayment, {
-                                type: 'pie',
-                                data: {
-                                    labels: ${JSON.stringify(methodLabels)},
-                                    datasets: [{
-                                        data: ${JSON.stringify(methodData)},
-                                        backgroundColor: ['#00c8ff','#8a4fff','#10b981','#f59e0b','#ef4444']
-                                    }]
-                                },
-                                options: { responsive: true, maintainAspectRatio: false }
-                            });
-                        }
-                    }, 50);
-                <\/script>
-            `;
-        }
-
-        async function renderSettings() {
-            const settings = await getSettings();
-            const paymentInfo = settings.paymentInfo || {
-                moncash: { name: 'Jinolyse Pierre Louis', phone: '+50936535649' },
-                natcash: { name: 'Jinolyse Pierre Louis', phone: '+50935669814' },
-                wise: { email: 'bmarcco4412@gmail.com', tag: '@bmarcco' },
-                paypal: { email: 'bmarcco4412@gmail.com' },
-                usdt: { address: 'TBcmhXsvnsyVCL3k5bmhxxwYWDYTTiLiwi' },
-                tronx: { address: 'TBcmhXsvnsyVCL3k5bmhxxwYWDYTTiLiwi' }
-            };
-            const rates = settings.rates || { usd: 150, trx: 0.30 };
-            return `
-                <div class="section-card">
-                    <div class="section-header"><h2>Informations de paiement</h2></div>
-                    <div style="display:grid; gap:16px;">
-                        <div><strong>Moncash:</strong> ${paymentInfo.moncash.name} - ${paymentInfo.moncash.phone}</div>
-                        <div><strong>Natcash:</strong> ${paymentInfo.natcash.name} - ${paymentInfo.natcash.phone}</div>
-                        <div><strong>Wise:</strong> ${paymentInfo.wise.email} (${paymentInfo.wise.tag})</div>
-                        <div><strong>PayPal:</strong> ${paymentInfo.paypal.email}</div>
-                        <div><strong>USDT/TRONX:</strong> ${paymentInfo.usdt.address}</div>
-                    </div>
-                    <div style="margin-top:20px;">
-                        <h3>Taux de change</h3>
-                        <p>1 USD = ${rates.usd} HTG</p>
-                        <p>1 TRX = ${rates.trx} USD</p>
-                    </div>
-                    <button class="btn-small" style="margin-top:16px;" onclick="editSettings()">Modifier</button>
-                </div>
-            `;
-        }
-
-        // Load section
-        window.loadSection = async function(section) {
-            contentDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-pulse"></i> Chargement...</div>';
-            try {
-                let html = '';
-                switch(section) {
-                    case 'dashboard': html = await renderDashboard(); break;
-                    case 'users': html = await renderUsers(); break;
-                    case 'orders': html = await renderOrders(); break;
-                    case 'payments': html = await renderPayments(); break;
-                    case 'wallet': html = await renderWallet(); break;
-                    case 'products': html = await renderProducts(); break;
-                    case 'stats': html = await renderStats(); break;
-                    case 'settings': html = await renderSettings(); break;
-                    default: html = await renderDashboard();
-                }
-                contentDiv.innerHTML = html;
-                if (section === 'dashboard') {
-                    setTimeout(() => initCharts(), 50);
-                }
-            } catch (error) {
-                console.error(error);
-                contentDiv.innerHTML = '<div class="error-box">Erreur lors du chargement</div>';
-            }
+            renderProofs();
         };
 
-        // Chart initialization for dashboard
-        function initCharts() {
-            const ctxOrders = document.getElementById('ordersChart')?.getContext('2d');
-            if (ctxOrders) {
-                if (charts.orders) charts.orders.destroy();
-                charts.orders = new Chart(ctxOrders, {
-                    type: 'line',
-                    data: {
-                        labels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
-                        datasets: [{
-                            label: 'Commandes',
-                            data: [5, 8, 6, 10, 12, 9, 14],
-                            borderColor: '#00c8ff',
-                            backgroundColor: 'rgba(0,200,255,0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-                });
-            }
-            const ctxCategory = document.getElementById('categoryChart')?.getContext('2d');
-            if (ctxCategory) {
-                if (charts.category) charts.category.destroy();
-                charts.category = new Chart(ctxCategory, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Gaming', 'Streaming', 'Finance'],
-                        datasets: [{
-                            data: [60, 25, 15],
-                            backgroundColor: ['#00c8ff', '#8a4fff', '#f59e0b']
-                        }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
-                });
-            }
-        }
+        // ---------- DÉCONNEXION ----------
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await auth.signOut();
+            window.location.href = '/login.html';
+        });
 
-        // Admin actions
-        window.validateDeposit = async (id) => {
-            if (!confirm('Valider ce dépôt ? Le solde utilisateur sera crédité.')) return;
-            try {
-                const depositRef = db.collection('deposit_requests').doc(id);
-                const deposit = (await depositRef.get()).data();
-                if (!deposit) throw new Error('Introuvable');
-                const { userId, amount, method, proof } = deposit;
-
-                await depositRef.update({ status: 'verified', verifiedAt: firebase.firestore.FieldValue.serverTimestamp(), verifiedBy: currentUser.uid });
-
-                const walletRef = db.collection('wallets').doc(userId);
-                await db.runTransaction(async (transaction) => {
-                    const walletDoc = await transaction.get(walletRef);
-                    if (!walletDoc.exists) {
-                        transaction.set(walletRef, {
-                            userId, balance: amount, currency: 'HTG', status: 'active',
-                            lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            stats: { totalDeposits: amount, totalWithdrawals: 0, totalTransfers: 0, totalPurchases: 0, transactionCount: 1 }
-                        });
-                    } else {
-                        const newBalance = (walletDoc.data().balance || 0) + amount;
-                        transaction.update(walletRef, { balance: newBalance, lastUpdated: firebase.firestore.FieldValue.serverTimestamp() });
-                    }
-                });
-
-                await db.collection('transactions').add({
-                    userId, type: 'deposit', amount, balanceAfter: amount, status: 'completed',
-                    reference: { type: 'deposit_request', id },
-                    details: { deposit: { method, proof } },
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                alert('Dépôt validé !');
-                loadSection('dashboard');
-            } catch (error) {
-                console.error(error);
-                alert('Erreur lors de la validation');
-            }
-        };
-
-        window.approveWithdrawal = async (id) => {
-            if (!confirm('Approuver ce retrait ? Le solde utilisateur sera débité.')) return;
-            try {
-                const withdrawalRef = db.collection('withdrawal_requests').doc(id);
-                const withdrawal = (await withdrawalRef.get()).data();
-                if (!withdrawal) throw new Error('Introuvable');
-                const { userId, amount, method, destination } = withdrawal;
-
-                const walletRef = db.collection('wallets').doc(userId);
-                const walletDoc = await walletRef.get();
-                const balance = walletDoc.exists ? walletDoc.data().balance : 0;
-                if (balance < amount) {
-                    alert('Solde insuffisant');
-                    return;
-                }
-
-                await withdrawalRef.update({ status: 'approved', processedAt: firebase.firestore.FieldValue.serverTimestamp(), processedBy: currentUser.uid });
-
-                await walletRef.update({ balance: balance - amount, lastUpdated: firebase.firestore.FieldValue.serverTimestamp() });
-
-                await db.collection('transactions').add({
-                    userId, type: 'withdraw', amount: -amount, balanceAfter: balance - amount, status: 'completed',
-                    reference: { type: 'withdrawal_request', id },
-                    details: { withdraw: { method, destination } },
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                alert('Retrait approuvé !');
-                loadSection('dashboard');
-            } catch (error) {
-                console.error(error);
-                alert('Erreur lors de l\'approbation');
-            }
-        };
-
-        // Product management
-        window.editProduct = (id) => {
-            // Implement edit modal
-            alert('Modification du produit à implémenter');
-        };
-        window.addProduct = () => {
-            alert('Ajout de produit à implémenter');
-        };
-        window.toggleProduct = async (id, newState) => {
-            if (!confirm('Confirmer la modification ?')) return;
-            await db.collection('products').doc(id).update({ active: newState });
-            loadSection('products');
-        };
-
-        // Order status update
-        window.updateOrderStatus = (id) => {
-            const newStatus = prompt('Nouveau statut (en-attente, en-cours, valide, livre, annule, rejete) :');
-            if (newStatus) {
-                db.collection('orders').doc(id).update({ status: newStatus });
-                loadSection('orders');
-            }
-        };
-
-        // User details
-        window.viewUser = (id) => {
-            alert('Voir détails utilisateur (à implémenter)');
-        };
-
-        // Settings edit
-        window.editSettings = () => {
-            alert('Modification des paramètres (à implémenter)');
-        };
-
-        // Export CSV
-        window.exportCSV = async (collection) => {
-            const data = await safeGet(collection);
-            let csv = '';
-            if (data.length > 0) {
-                const headers = Object.keys(data[0]).join(',');
-                const rows = data.map(row => Object.values(row).map(v => typeof v === 'string' ? `"${v}"` : v).join(',')).join('\n');
-                csv = headers + '\n' + rows;
-            }
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${collection}_export.csv`;
-            a.click();
-        };
     </script>
 </body>
 </html>
