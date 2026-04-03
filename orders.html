@@ -2,204 +2,889 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fox Store — Mes Achats</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Fox Store – Mes Commandes</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     
-    <!-- Font Awesome 6 Pro -->
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- Plus Jakarta Sans -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    
     <style>
-        :root {
-            --primary: #1e3a8a; --secondary: #0f172a; --white: #ffffff;
-            --bg: #ffffff; --card-bg: #f8fafc; --text-main: #1e293b;
-            --text-muted: #64748b; --border: #eef2f6; --success: #10b981;
-            --warning: #f59e0b; --error: #ef4444; --transition: all 0.3s ease;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fc;
+            color: #1e293b;
+            line-height: 1.5;
+            min-height: 100vh;
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text-main); line-height: 1.5; min-height: 100vh; }
-
-        header {
-            height: 65px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-            display: flex; align-items: center; padding: 0 5%; position: sticky; top: 0; z-index: 1000;
-            border-bottom: 1px solid var(--border);
-        }
-        .back-btn { color: var(--primary); font-size: 1.1rem; text-decoration: none; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border-radius: 12px; transition: var(--transition); background: var(--card-bg); }
-
-        .container { padding: 20px 5% 100px; max-width: 650px; margin: 0 auto; }
-
-        /* --- FILTERS --- */
-        .filter-wrapper { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 20px; scrollbar-width: none; }
-        .chip { padding: 8px 18px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 50px; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); white-space: nowrap; cursor: pointer; transition: 0.3s; }
-        .chip.active { background: var(--primary); color: white; border-color: var(--primary); }
-
-        /* --- ORDER CARDS --- */
-        .order-card {
-            background: var(--white); border-radius: 20px; padding: 18px;
-            border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 12px;
-            animation: slideUp 0.4s ease forwards;
-        }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .order-left { display: flex; align-items: center; gap: 15px; }
-        .order-icon { width: 48px; height: 48px; background: var(--card-bg); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.2rem; border: 1px solid var(--border); position: relative; }
-        .wallet-badge { position: absolute; bottom: -5px; right: -5px; width: 20px; height: 20px; background: var(--secondary); color: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; border: 2px solid white; }
-
-        .order-info h4 { font-size: 0.9rem; font-weight: 800; color: var(--secondary); margin-bottom: 2px; }
-        .order-info p { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; }
-        .order-date { font-size: 0.6rem; color: #cbd5e1; font-weight: 700; text-transform: uppercase; margin-top: 4px; display: block; }
-
-        .order-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-        .order-price { font-weight: 900; color: var(--primary); font-size: 0.95rem; }
         
-        .status-pill { padding: 4px 10px; border-radius: 6px; font-size: 0.55rem; font-weight: 800; text-transform: uppercase; }
-        .st-en-attente { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-        .st-validé { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-        .st-rejeté { background: rgba(239, 68, 68, 0.1); color: var(--error); }
-
-        /* --- MESSAGES D'ERREUR ET VIDE --- */
-        #loader { text-align: center; padding: 60px; color: var(--primary); }
-        #error-msg { display: none; text-align: center; padding: 40px 20px; background: #fff5f5; border-radius: 15px; border: 1px solid #fee2e2; color: var(--error); margin-bottom: 20px; }
-        #error-msg a { color: var(--primary); font-weight: 800; text-decoration: underline; display: block; margin-top: 10px; font-size: 0.7rem; }
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 14px 24px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #eef2ff;
+        }
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: #0f172a;
+        }
+        .logo i { font-size: 1.6rem; color: #00d1ff; }
+        .burger-btn {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.3rem;
+        }
+        .burger-btn:hover { background: white; border-color: #00d1ff40; color: #00d1ff; }
         
-        .empty-state { text-align: center; padding: 80px 20px; color: var(--text-muted); }
-        .empty-state i { font-size: 3rem; margin-bottom: 15px; opacity: 0.2; }
+        /* Drawer */
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 280px;
+            height: 100vh;
+            background: white;
+            box-shadow: -4px 0 24px rgba(0,0,0,0.05);
+            z-index: 2000;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid #eef2ff;
+        }
+        .drawer.open { right: 0; }
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #edf2f7;
+        }
+        .drawer-header .logo { font-size: 1.2rem; }
+        .close-drawer {
+            background: #f1f5f9;
+            border: none;
+            border-radius: 10px;
+            width: 34px;
+            height: 34px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .drawer-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: #f8fafc;
+            margin: 16px;
+            border-radius: 16px;
+        }
+        .drawer-user-avatar {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #00d1ff, #009ac7);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        .drawer-user-info h4 { font-size: 0.95rem; font-weight: 600; }
+        .drawer-user-info p { font-size: 0.75rem; color: #5b6e8c; }
+        .drawer-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 8px 12px;
+            gap: 4px;
+        }
+        .drawer-nav a, .drawer-nav button {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            text-decoration: none;
+            color: #1e293b;
+            font-size: 0.95rem;
+            font-weight: 500;
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+        }
+        .drawer-nav a i, .drawer-nav button i { width: 22px; color: #5b6e8c; }
+        .drawer-nav a:hover, .drawer-nav button:hover { background: #f1f5f9; }
+        .drawer-nav a:hover i, .drawer-nav button:hover i { color: #00d1ff; }
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(2px);
+            z-index: 1999;
+            display: none;
+        }
+        .drawer-overlay.active { display: block; }
+        
+        /* Main content */
+        .main-content {
+            padding: 90px 24px 50px;
+            max-width: 1280px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        /* Header */
+        .page-header {
+            margin-bottom: 32px;
+        }
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .page-header h1 i {
+            color: #00d1ff;
+            margin-right: 12px;
+        }
+        .page-header p {
+            color: #475569;
+            font-size: 0.95rem;
+        }
+        
+        /* Stats cards (admin only) */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid #eef2ff;
+            text-align: center;
+        }
+        .stat-card i {
+            font-size: 2rem;
+            color: #00d1ff;
+            margin-bottom: 10px;
+        }
+        .stat-card .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .stat-card .stat-label {
+            font-size: 0.75rem;
+            color: #5b6e8c;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Filters */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 24px;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .filter-btn {
+            background: #f1f5f9;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #475569;
+        }
+        .filter-btn.active {
+            background: #00d1ff;
+            color: white;
+        }
+        .filter-btn:hover:not(.active) {
+            background: #e2e8f0;
+        }
+        .search-box {
+            display: flex;
+            gap: 8px;
+        }
+        .search-box input {
+            padding: 8px 16px;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            font-size: 0.85rem;
+            width: 200px;
+        }
+        .search-box button {
+            background: #f1f5f9;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+        
+        /* Orders table */
+        .orders-container {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid #eef2ff;
+            overflow-x: auto;
+        }
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+        .orders-table th {
+            text-align: left;
+            padding: 16px 16px;
+            background: #f8fafc;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #5b6e8c;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .orders-table td {
+            padding: 16px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.85rem;
+        }
+        .orders-table tr:hover {
+            background: #f8fafc;
+        }
+        
+        /* Status badges */
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .status-en-attente { background: #fef3c7; color: #d97706; }
+        .status-en-cours { background: #dbeafe; color: #2563eb; }
+        .status-valide { background: #d1fae5; color: #059669; }
+        .status-livre { background: #a7f3d0; color: #059669; }
+        .status-rejete { background: #fee2e2; color: #dc2626; }
+        .status-annule { background: #f1f5f9; color: #64748b; }
+        .status-rembourse { background: #e0e7ff; color: #4f46e5; }
+        
+        /* Action buttons */
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .action-btn.view-btn { color: #00d1ff; }
+        .action-btn.view-btn:hover { background: #00d1ff10; }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white;
+            border-radius: 28px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eef2ff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h3 { font-size: 1.2rem; font-weight: 700; }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #94a3b8;
+        }
+        .modal-body { padding: 20px; }
+        .order-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .order-detail-label { font-weight: 600; color: #475569; }
+        .order-detail-value { color: #1e293b; }
+        .proof-image {
+            max-width: 100%;
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+        
+        /* WhatsApp float */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #25D366;
+            color: white;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 1000;
+            text-decoration: none;
+        }
+        .whatsapp-float:hover { transform: scale(1.05); background: #1da85c; }
+        
+        footer {
+            background: transparent;
+            border-top: 1px solid #e2e8f0;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #5b6e8c;
+            margin-top: 40px;
+        }
+        
+        @media (max-width: 640px) {
+            .main-content { padding: 80px 16px 40px; }
+            .drawer { width: 260px; right: -260px; }
+            .filters { flex-direction: column; align-items: stretch; }
+            .search-box input { width: 100%; }
+        }
     </style>
 </head>
 <body>
 
-    <header>
-        <a href="/home.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
-        <h1 style="font-size:0.9rem; font-weight:800; text-transform:uppercase; margin-left:15px;">Historique Fox</h1>
-    </header>
-
-    <div class="container">
-        <!-- Message d'erreur dynamique -->
-        <div id="error-msg">
-            <i class="fas fa-exclamation-triangle"></i> 
-            <span id="errText">Erreur de chargement Firebase.</span>
-            <a id="indexLink" href="#" target="_blank">Cliquez ici pour créer l'index requis</a>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/home.html" class="logo"><i class="fas fa-fox"></i><span>FOX STORE</span></a>
+            <button class="burger-btn" id="burgerBtn"><i class="fas fa-bars"></i></button>
         </div>
-        
-        <div class="filter-wrapper">
-            <div class="chip active" onclick="setFilter('all', this)">Toutes</div>
-            <div class="chip" onclick="setFilter('en-attente', this)">En attente</div>
-            <div class="chip" onclick="setFilter('Validé', this)">Validées</div>
+    </nav>
+
+    <!-- Drawer -->
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    <div class="drawer" id="drawer">
+        <div class="drawer-header">
+            <div class="logo"><i class="fas fa-fox"></i><span>Menu</span></div>
+            <button class="close-drawer" id="closeDrawerBtn"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="drawerUserSection"></div>
+        <div class="drawer-nav" id="drawerNav"></div>
+    </div>
+
+    <!-- WhatsApp Float -->
+    <a href="https://wa.me/50937542954" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <h1><i class="fas fa-shopping-cart"></i> Mes Commandes</h1>
+            <p>Suivez l'état de vos commandes en temps réel</p>
         </div>
 
-        <div id="loader"><i class="fas fa-circle-notch fa-spin fa-2x"></i></div>
-        <div class="order-list" id="orderList"></div>
+        <!-- Admin Stats (visible only for admin) -->
+        <div id="adminStats" style="display: none;">
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <i class="fas fa-clock"></i>
+                    <div class="stat-value" id="statPending">0</div>
+                    <div class="stat-label">En attente</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-spinner fa-pulse"></i>
+                    <div class="stat-value" id="statProcessing">0</div>
+                    <div class="stat-label">En cours</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-check-circle"></i>
+                    <div class="stat-value" id="statCompleted">0</div>
+                    <div class="stat-label">Validées/Livrées</div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-chart-line"></i>
+                    <div class="stat-value" id="statTotal">0</div>
+                    <div class="stat-label">Total commandes</div>
+                </div>
+            </div>
+        </div>
 
-        <div class="empty-state" id="emptyMsg" style="display: none;">
-            <i class="fas fa-receipt"></i>
-            <p style="font-weight:700;">Aucun achat pour le moment.</p>
+        <!-- Filters -->
+        <div class="filters">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-status="all">Toutes</button>
+                <button class="filter-btn" data-status="en-attente">En attente</button>
+                <button class="filter-btn" data-status="en-cours">En cours</button>
+                <button class="filter-btn" data-status="validé">Validé</button>
+                <button class="filter-btn" data-status="livré">Livré</button>
+                <button class="filter-btn" data-status="rejeté">Rejeté</button>
+                <button class="filter-btn" data-status="annulé">Annulé</button>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Rechercher...">
+                <button id="searchBtn"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="orders-container">
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>ID Commande</th>
+                        <th>Service</th>
+                        <th>Produit</th>
+                        <th>Montant</th>
+                        <th>Date</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>Chargement des commandes...</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
+    <!-- Order Detail Modal -->
+    <div class="modal" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Détails de la commande</h3>
+                <button class="modal-close" id="closeModalBtn">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 Fox Store – L'élite du service digital. Tous droits réservés.</p>
+    </footer>
+
     <script>
-        // CONFIGURATION MASTER
+        // Firebase Config
         const firebaseConfig = {
-            apiKey: "AIzaSyCUhf25OuIvuK-RGg02a1hF_ovN2TI7tDg",
-            authDomain: "pay-fusion-6dfaf.firebaseapp.com",
-            projectId: "pay-fusion-6dfaf",
-            storageBucket: "pay-fusion-6dfaf.firebasestorage.app",
-            messagingSenderId: "945593776812",
-            appId: "1:945593776812:web:4475e1085fdfa31690fd09",
-            measurementId: "G-8FEQG6B7ZY"
+            apiKey: "AIzaSyDSyFdTHBNULuUiacHM6nmEvPb7YpY24UE",
+            authDomain: "foxstoreht.firebaseapp.com",
+            projectId: "foxstoreht",
+            storageBucket: "foxstoreht.firebasestorage.app",
+            messagingSenderId: "72533137445",
+            appId: "1:72533137445:web:3ba7634bc34da6115b47cc",
+            measurementId: "G-X1Q7Q79BRD"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
+
+        // Global variables
+        let currentUser = null;
+        let isAdmin = false;
+        let allOrders = [];
+        let currentFilter = 'all';
+        let currentSearch = '';
+
+        // DOM Elements
+        const ordersTableBody = document.getElementById('ordersTableBody');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const adminStatsDiv = document.getElementById('adminStats');
+        const orderModal = document.getElementById('orderModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+
+        // Status badge class mapping
+        const statusClasses = {
+            'en-attente': 'status-en-attente',
+            'en-cours': 'status-en-cours',
+            'validé': 'status-valide',
+            'livré': 'status-livre',
+            'rejeté': 'status-rejete',
+            'annulé': 'status-annule',
+            'remboursé': 'status-rembourse'
+        };
+
+        const statusLabels = {
+            'en-attente': '⏳ En attente',
+            'en-cours': '🔄 En cours',
+            'validé': '✅ Validé',
+            'livré': '📦 Livré',
+            'rejeté': '❌ Rejeté',
+            'annulé': '🚫 Annulé',
+            'remboursé': '💰 Remboursé'
+        };
+
+        // Format date
+        function formatDate(timestamp) {
+            if (!timestamp) return 'N/A';
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Render orders table
+        function renderOrders() {
+            let filtered = [...allOrders];
+            
+            // Apply status filter
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(order => order.status === currentFilter);
+            }
+            
+            // Apply search filter
+            if (currentSearch) {
+                const searchLower = currentSearch.toLowerCase();
+                filtered = filtered.filter(order => 
+                    order.id.toLowerCase().includes(searchLower) ||
+                    (order.serviceName && order.serviceName.toLowerCase().includes(searchLower)) ||
+                    (order.productName && order.productName.toLowerCase().includes(searchLower))
+                );
+            }
+            
+            if (filtered.length === 0) {
+                ordersTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>Aucune commande trouvée</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            ordersTableBody.innerHTML = filtered.map(order => `
+                <tr>
+                    <td><code>#${order.id.slice(0, 8)}</code></td>
+                    <td>${order.serviceName || 'N/A'}</td>
+                    <td>${order.productName || 'N/A'}</td>
+                    <td><strong>${order.total || order.price || 0} HTG</strong></td>
+                    <td>${formatDate(order.createdAt)}</td>
+                    <td><span class="status ${statusClasses[order.status] || 'status-en-attente'}">${statusLabels[order.status] || order.status}</span></td>
+                    <td>
+                        <button class="action-btn view-btn" onclick="viewOrder('${order.id}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // View order details
+        window.viewOrder = async (orderId) => {
+            const order = allOrders.find(o => o.id === orderId);
+            if (!order) return;
+            
+            let customerInfoHtml = '';
+            if (order.customerInfo) {
+                customerInfoHtml = Object.entries(order.customerInfo)
+                    .map(([key, value]) => `
+                        <div class="order-detail-row">
+                            <span class="order-detail-label">${key}:</span>
+                            <span class="order-detail-value">${value}</span>
+                        </div>
+                    `).join('');
+            }
+            
+            const paymentHtml = order.payment ? `
+                <div class="order-detail-row">
+                    <span class="order-detail-label">Méthode:</span>
+                    <span class="order-detail-value">${order.payment.method || 'N/A'}</span>
+                </div>
+                <div class="order-detail-row">
+                    <span class="order-detail-label">Montant payé:</span>
+                    <span class="order-detail-value">${order.payment.amount || order.total || order.price} HTG</span>
+                </div>
+                ${order.payment.proofUrl ? `
+                    <div class="order-detail-row">
+                        <span class="order-detail-label">Preuve:</span>
+                        <span class="order-detail-value">
+                            <a href="${order.payment.proofUrl}" target="_blank">Voir la preuve</a>
+                        </span>
+                    </div>
+                ` : ''}
+            ` : '<div class="order-detail-row"><span class="order-detail-label">Paiement:</span><span class="order-detail-value">Non renseigné</span></div>';
+            
+            document.getElementById('modalBody').innerHTML = `
+                <div class="order-detail-row">
+                    <span class="order-detail-label">ID Commande:</span>
+                    <span class="order-detail-value"><code>${order.id}</code></span>
+                </div>
+                <div class="order-detail-row">
+                    <span class="order-detail-label">Service:</span>
+                    <span class="order-detail-value">${order.serviceName || 'N/A'}</span>
+                </div>
+                <div class="order-detail-row">
+                    <span class="order-detail-label">Produit:</span>
+                    <span class="order-detail-value">${order.productName || 'N/A'}</span>
+                </div>
+                <div class="order-detail-row">
+                    <span class="order-detail-label">Quantité:</span>
+                    <span class="order-detail-value">${order.quantity || 1}</span>
+                </div>
+                <div class="order-detail-row">
+                    <span class="order-detail-label">Total:</span>
+                    <span class="order-detail-value"><strong>${order.total || order.price || 0} HTG</strong></span>
+                </div>
+                <div class="order-detail-row">
+                    <span class="order-detail-label">Statut:</span>
+                    <span class="order-detail-value"><span class="status ${statusClasses[order.status] || 'status-en-attente'}">${statusLabels[order.status] || order.status}</span></span>
+                </div>
+                <div class="order-detail-row">
+                    <span class="order-detail-label">Date:</span>
+                    <span class="order-detail-value">${formatDate(order.createdAt)}</span>
+                </div>
+                ${customerInfoHtml}
+                ${paymentHtml}
+                ${order.validatedBy ? `
+                    <div class="order-detail-row">
+                        <span class="order-detail-label">Validé par:</span>
+                        <span class="order-detail-value">${order.validatedBy}</span>
+                    </div>
+                ` : ''}
+                ${order.validatedAt ? `
+                    <div class="order-detail-row">
+                        <span class="order-detail-label">Validé le:</span>
+                        <span class="order-detail-value">${formatDate(order.validatedAt)}</span>
+                    </div>
+                ` : ''}
+            `;
+            orderModal.classList.add('active');
         };
         
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const auth = firebase.auth();
+        // Close modal
+        if (closeModalBtn) {
+            closeModalBtn.onclick = () => orderModal.classList.remove('active');
+        }
+        orderModal.onclick = (e) => {
+            if (e.target === orderModal) orderModal.classList.remove('active');
+        };
 
-        let orders = [];
-        let filter = 'all';
+        // Update admin stats
+        function updateAdminStats() {
+            if (!isAdmin) return;
+            const pending = allOrders.filter(o => o.status === 'en-attente').length;
+            const processing = allOrders.filter(o => o.status === 'en-cours').length;
+            const completed = allOrders.filter(o => o.status === 'validé' || o.status === 'livré').length;
+            document.getElementById('statPending').textContent = pending;
+            document.getElementById('statProcessing').textContent = processing;
+            document.getElementById('statCompleted').textContent = completed;
+            document.getElementById('statTotal').textContent = allOrders.length;
+        }
 
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                // TENTATIVE DE RÉCUPÉRATION AVEC GESTION D'ERREUR
-                db.collection("orders")
-                  .where("userId", "==", user.uid)
-                  .orderBy("createdAt", "desc") // <--- Ceci demande un INDEX dans Firebase
-                  .onSnapshot(snap => {
-                      document.getElementById('loader').style.display = 'none';
-                      document.getElementById('error-msg').style.display = 'none';
-                      orders = [];
-                      snap.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
-                      render();
-                  }, err => {
-                      console.error("Erreur Firebase:", err);
-                      document.getElementById('loader').style.display = 'none';
-                      const errBox = document.getElementById('error-msg');
-                      errBox.style.display = 'block';
-
-                      // Si l'erreur est liée à l'index (très courant)
-                      if(err.message.includes("index")) {
-                          document.getElementById('errText').textContent = "L'index de tri est en cours de création ou manquant.";
-                          // Firebase fournit souvent un lien direct dans la console, mais ici on guide l'user
-                          document.getElementById('indexLink').style.display = 'block';
-                      }
-                  });
-            } else { window.location.href = "/login.html"; }
-        });
-
-        function render() {
-            const cont = document.getElementById('orderList');
-            const empty = document.getElementById('emptyMsg');
-            const filtered = filter === 'all' ? orders : orders.filter(o => o.status === filter);
-
-            cont.innerHTML = '';
-            if (filtered.length === 0) { empty.style.display = 'block'; return; }
-            empty.style.display = 'none';
-
-            filtered.forEach(o => {
-                const date = o.createdAt ? new Date(o.createdAt.seconds * 1000).toLocaleDateString('fr-FR', {day:'numeric', month:'short'}) : "...";
-                const stClass = `st-${o.status.toLowerCase().replace(' ', '-')}`;
-                
-                let icon = "fa-box";
-                if(o.service?.category === "gaming") icon = "fa-gamepad";
-                else if(o.service?.category === "streaming") icon = "fa-play-circle";
-                else if(o.service?.category === "financière" || o.service?.category === "crypto") icon = "fa-wallet";
-
-                const isWallet = o.payment?.method === "portefeuille" || o.payment?.proof === "PAID_BY_WALLET";
-
-                cont.innerHTML += `
-                    <div class="order-card">
-                        <div class="order-left">
-                            <div class="order-icon">
-                                <i class="fas ${icon}"></i>
-                                ${isWallet ? '<div class="wallet-badge"><i class="fas fa-bolt"></i></div>' : ''}
-                            </div>
-                            <div class="order-info">
-                                <h4>${o.service?.name || "Service"}</h4>
-                                <p>${o.service?.product || "Achat"}</p>
-                                <span class="order-date">${date}</span>
-                            </div>
-                        </div>
-                        <div class="order-right">
-                            <span class="order-price">${(o.service?.price || 0).toLocaleString()} HTG</span>
-                            <span class="status-pill ${stClass}">${o.status}</span>
-                        </div>
-                    </div>
+        // Load orders from Firestore
+        function loadOrders() {
+            let query = db.collection('orders');
+            
+            if (!isAdmin && currentUser) {
+                query = query.where('userId', '==', currentUser.uid);
+            }
+            
+            query.orderBy('createdAt', 'desc').onSnapshot((snapshot) => {
+                allOrders = [];
+                snapshot.forEach(doc => {
+                    allOrders.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                renderOrders();
+                if (isAdmin) updateAdminStats();
+            }, (error) => {
+                console.error('Error loading orders:', error);
+                ordersTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Erreur lors du chargement des commandes</p>
+                        </td>
+                    </tr>
                 `;
             });
         }
 
-        function setFilter(s, el) {
-            filter = s;
-            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
-            render();
+        // Filter handlers
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.status;
+                renderOrders();
+            });
+        });
+        
+        searchBtn.addEventListener('click', () => {
+            currentSearch = searchInput.value.trim();
+            renderOrders();
+        });
+        
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                currentSearch = searchInput.value.trim();
+                renderOrders();
+            }
+        });
+
+        // Drawer Functions
+        const drawerNav = document.getElementById('drawerNav');
+        const drawerUserSection = document.getElementById('drawerUserSection');
+        const burgerBtn = document.getElementById('burgerBtn');
+        const drawer = document.getElementById('drawer');
+        const drawerOverlay = document.getElementById('drawerOverlay');
+        const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+
+        function closeDrawer() { drawer.classList.remove('open'); drawerOverlay.classList.remove('active'); }
+        function openDrawer() { drawer.classList.add('open'); drawerOverlay.classList.add('active'); }
+        if (burgerBtn) burgerBtn.addEventListener('click', openDrawer);
+        if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeDrawer);
+        if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
+
+        function updateDrawer(user) {
+            if (!user) { window.location.href = '/login.html'; return; }
+            const name = user.displayName || user.email || 'Client';
+            const isUserAdmin = (user.email === ADMIN_EMAIL);
+            const initial = name.charAt(0).toUpperCase();
+            drawerUserSection.innerHTML = `
+                <div class="drawer-user">
+                    <div class="drawer-user-avatar">${initial}</div>
+                    <div class="drawer-user-info">
+                        <h4>${name}</h4>
+                        <p>${user.email}</p>
+                        ${isUserAdmin ? '<p style="color:#00d1ff; font-size:0.7rem;">🔐 Administrateur</p>' : ''}
+                    </div>
+                </div>
+            `;
+            let menu = `
+                <a href="/home.html"><i class="fas fa-home"></i> Accueil</a>
+                <a href="/gaming.html"><i class="fas fa-gamepad"></i> Gaming</a>
+                <a href="/streaming.html"><i class="fas fa-film"></i> Streaming</a>
+                <a href="/finance.html"><i class="fas fa-coins"></i> Finance</a>
+                <a href="/orders.html"><i class="fas fa-shopping-cart"></i> Commandes</a>
+                <a href="/user/account.html"><i class="fas fa-user"></i> Mon compte</a>
+                <a href="/user/settings.html"><i class="fas fa-sliders-h"></i> Paramètres</a>
+                <a href="/user/supports.html"><i class="fas fa-headset"></i> Support</a>
+            `;
+            if (isUserAdmin) menu += `<a href="/admin.html"><i class="fas fa-shield-alt"></i> Administration</a>`;
+            menu += `<button id="drawerLogoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>`;
+            drawerNav.innerHTML = menu;
+            document.getElementById('drawerLogoutBtn')?.addEventListener('click', async () => {
+                await auth.signOut();
+                window.location.href = '/login.html';
+            });
         }
+
+        // Auth state handler
+        auth.onAuthStateChanged(user => {
+            if (!user) {
+                window.location.href = '/login.html';
+                return;
+            }
+            currentUser = user;
+            isAdmin = (user.email === ADMIN_EMAIL);
+            
+            if (isAdmin) {
+                adminStatsDiv.style.display = 'block';
+            }
+            
+            updateDrawer(user);
+            loadOrders();
+        });
     </script>
 </body>
 </html>
