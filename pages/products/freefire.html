@@ -342,6 +342,44 @@
             cursor: not-allowed;
         }
         
+        /* Floating Cart Badge */
+        .cart-badge {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            background: #00d1ff;
+            color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,209,255,0.4);
+            cursor: pointer;
+            z-index: 1100;
+            transition: transform 0.2s;
+        }
+        .cart-badge:hover {
+            transform: scale(1.05);
+        }
+        .cart-badge .count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #dc2626;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
         /* Message toast */
         .toast {
             position: fixed;
@@ -419,6 +457,12 @@
         </div>
         <div id="drawerUserSection"></div>
         <div class="drawer-nav" id="drawerNav"></div>
+    </div>
+
+    <!-- Floating Cart Badge -->
+    <div id="cartBadge" class="cart-badge">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="count" id="cartCount">0</span>
     </div>
 
     <!-- WhatsApp Float -->
@@ -522,8 +566,51 @@
         const whatsappInput = document.getElementById('whatsapp');
         const submitBtn = document.getElementById('submitBtn');
         const toast = document.getElementById('toast');
+        const cartBadge = document.getElementById('cartBadge');
+        const cartCountSpan = document.getElementById('cartCount');
 
-        // Show toast message
+        // ---------- PANIER (localStorage) ----------
+        function getCart() {
+            const cart = localStorage.getItem('foxstore_cart');
+            return cart ? JSON.parse(cart) : [];
+        }
+
+        function saveCart(cart) {
+            localStorage.setItem('foxstore_cart', JSON.stringify(cart));
+            updateCartBadge();
+        }
+
+        function addToCartItem(item) {
+            const cart = getCart();
+            // Vérifier si le même produit avec mêmes infos client existe déjà ? Pour simplifier, on ajoute un nouvel article à chaque fois.
+            // On peut générer un ID unique
+            const newItem = {
+                id: Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+                ...item,
+                addedAt: new Date().toISOString()
+            };
+            cart.push(newItem);
+            saveCart(cart);
+            return cart.length;
+        }
+
+        function updateCartBadge() {
+            const cart = getCart();
+            const count = cart.length;
+            if (count > 0) {
+                cartBadge.style.display = 'flex';
+                cartCountSpan.textContent = count;
+            } else {
+                cartBadge.style.display = 'none';
+            }
+        }
+
+        // Redirection vers le panier au clic sur le badge
+        cartBadge.addEventListener('click', () => {
+            window.location.href = '/pages/checkout/cart.html';
+        });
+
+        // ---------- UI Helpers ----------
         function showToast(message, type = 'success') {
             toast.textContent = message;
             toast.className = `toast ${type}`;
@@ -542,7 +629,6 @@
                 </div>
             `).join('');
 
-            // Add click handlers
             document.querySelectorAll('.pack-card').forEach(card => {
                 card.addEventListener('click', () => {
                     document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
@@ -552,8 +638,18 @@
             });
         }
 
-        // Add to cart / Create order
-        async function addToCart(e) {
+        // Ajout au panier (création d'un objet article sans enregistrement Firestore immédiat)
+        // On enregistre localement puis on notifie
+        function addToCartLocal(item) {
+            addToCartItem(item);
+            showToast(`${item.productName} ajouté au panier !`, 'success');
+        }
+
+        // Gestion du formulaire : on ajoute au panier local (pas de Firestore ici, car le panier est temporaire)
+        // Mais selon votre logique précédente, vous vouliez créer une commande en base. On va plutôt créer un panier local,
+        // et lors du passage en caisse, on créera les commandes. C'est plus classique.
+        // Je modifie donc : on ajoute simplement dans localStorage.
+        function handleAddToCart(e) {
             e.preventDefault();
             
             if (!selectedPack) {
@@ -576,55 +672,35 @@
                 return;
             }
             
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Ajout en cours...';
+            // Création de l'article pour le panier local
+            const cartItem = {
+                userId: currentUser.uid,
+                userEmail: currentUser.email,
+                serviceCategory: "gaming",
+                serviceName: "Free Fire",
+                productName: selectedPack.name,
+                price: selectedPack.price,
+                quantity: 1,
+                total: selectedPack.price,
+                customerInfo: {
+                    gameId: gameId,
+                    gameName: gameName,
+                    whatsapp: whatsapp
+                },
+                status: "en-attente" // sera utilisé lors de la validation finale
+            };
             
-            try {
-                const orderData = {
-                    userId: currentUser.uid,
-                    userEmail: currentUser.email,
-                    serviceCategory: "gaming",
-                    serviceName: "Free Fire",
-                    productName: selectedPack.name,
-                    price: selectedPack.price,
-                    quantity: 1,
-                    total: selectedPack.price,
-                    customerInfo: {
-                        gameId: gameId,
-                        gameName: gameName,
-                        whatsapp: whatsapp
-                    },
-                    status: "en-attente",
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                };
-                
-                const docRef = await db.collection("orders").add(orderData);
-                
-                showToast('Commande ajoutée au panier avec succès !', 'success');
-                
-                // Reset form
-                gameIdInput.value = '';
-                gameNameInput.value = '';
-                whatsappInput.value = '';
-                document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
-                selectedPack = null;
-                
-                // Redirect to cart after 1.5 seconds
-                setTimeout(() => {
-                    window.location.href = '/pages/checkout/cart.html';
-                }, 1500);
-                
-            } catch (error) {
-                console.error('Error adding order:', error);
-                showToast('Erreur lors de l\'ajout au panier', 'error');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-cart-plus"></i> Ajouter au panier';
-            }
+            addToCartLocal(cartItem);
+            
+            // Reset form
+            gameIdInput.value = '';
+            gameNameInput.value = '';
+            whatsappInput.value = '';
+            document.querySelectorAll('.pack-card').forEach(c => c.classList.remove('selected'));
+            selectedPack = null;
         }
 
-        orderForm.addEventListener('submit', addToCart);
+        orderForm.addEventListener('submit', handleAddToCart);
 
         // Drawer Functions
         const drawerNav = document.getElementById('drawerNav');
@@ -651,6 +727,7 @@
                     <div class="drawer-user-info">
                         <h4>${name}</h4>
                         <p>${user.email}</p>
+                        ${isAdmin ? '<p style="color:#00d1ff; font-size:0.7rem;">🔐 Administrateur</p>' : ''}
                     </div>
                 </div>
             `;
@@ -685,6 +762,7 @@
 
         // Initialize
         renderPacks();
+        updateCartBadge(); // Affiche le badge si des articles existent déjà
     </script>
 </body>
 </html>
