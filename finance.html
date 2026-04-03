@@ -3,12 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Fox Store – Services financiers</title>
+    <title>Fox Store – Services Financiers</title>
     
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -18,9 +24,9 @@
             color: #1e293b;
             line-height: 1.5;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
+        
+        /* Navbar */
         .navbar {
             position: fixed;
             top: 0;
@@ -61,6 +67,8 @@
             font-size: 1.3rem;
         }
         .burger-btn:hover { background: white; border-color: #00d1ff40; color: #00d1ff; }
+        
+        /* Drawer */
         .drawer {
             position: fixed;
             top: 0;
@@ -154,53 +162,194 @@
             display: none;
         }
         .drawer-overlay.active { display: block; }
+        
+        /* Main content */
         .main-content {
-            flex: 1;
             padding: 90px 24px 50px;
             max-width: 1280px;
             margin: 0 auto;
             width: 100%;
         }
-        .page-header { margin-bottom: 32px; }
-        .page-header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
-        .page-header p { color: #475569; font-size: 1rem; }
-        .finance-grid {
+        
+        /* Header */
+        .page-header {
+            margin-bottom: 32px;
+        }
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .page-header h1 i {
+            color: #00d1ff;
+            margin-right: 12px;
+        }
+        .page-header p {
+            color: #475569;
+            font-size: 0.95rem;
+        }
+        
+        /* Categories tabs */
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 32px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 16px;
+        }
+        .category-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #5b6e8c;
+        }
+        .category-btn.active {
+            background: #00d1ff;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,209,255,0.3);
+        }
+        .category-btn:hover:not(.active) {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+        
+        /* Services grid */
+        .services-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 24px;
         }
-        .finance-card {
+        .service-card {
             background: white;
             border-radius: 24px;
-            padding: 20px;
+            border: 1px solid #eef2ff;
+            overflow: hidden;
+            transition: all 0.3s ease;
             text-decoration: none;
             color: inherit;
-            border: 1px solid #eef2ff;
-            transition: all 0.2s;
-            text-align: center;
+            display: block;
         }
-        .finance-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.04);
-            border-color: #e2e8f0;
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.1);
+            border-color: #00d1ff40;
         }
-        .finance-logo {
-            width: 90px;
-            height: 90px;
-            background: #f1f5f9;
-            border-radius: 20px;
+        .service-image {
+            height: 140px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 16px;
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            padding: 25px;
         }
-        .finance-logo img {
-            max-width: 70px;
-            max-height: 70px;
+        .service-image img {
+            max-height: 100%;
+            max-width: 100%;
             object-fit: contain;
+            transition: transform 0.3s;
         }
-        .finance-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
-        .finance-card p { font-size: 0.85rem; color: #5b6e8c; }
+        .service-card:hover .service-image img {
+            transform: scale(1.05);
+        }
+        .service-info {
+            padding: 20px;
+        }
+        .service-info h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .service-info p {
+            font-size: 0.8rem;
+            color: #5b6e8c;
+            margin-bottom: 12px;
+        }
+        .service-rate {
+            display: inline-block;
+            background: #00d1ff10;
+            color: #00d1ff;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid #00d1ff20;
+        }
+        .service-badge {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 8px;
+        }
+        
+        /* Info banner */
+        .info-banner {
+            margin-top: 40px;
+            background: linear-gradient(135deg, #00d1ff08, #00d1ff02);
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid #00d1ff20;
+        }
+        .info-banner h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .info-banner h3 i {
+            color: #00d1ff;
+            margin-right: 8px;
+        }
+        .info-banner p {
+            font-size: 0.85rem;
+            color: #475569;
+            line-height: 1.6;
+        }
+        .rate-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .rate-item {
+            background: white;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #00d1ff;
+            border: 1px solid #e2e8f0;
+        }
+        
+        /* WhatsApp float */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #25D366;
+            color: white;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 1000;
+            text-decoration: none;
+        }
+        .whatsapp-float:hover { transform: scale(1.05); background: #1da85c; }
+        
         footer {
             background: transparent;
             border-top: 1px solid #e2e8f0;
@@ -208,16 +357,19 @@
             text-align: center;
             font-size: 0.75rem;
             color: #5b6e8c;
+            margin-top: 40px;
         }
+        
         @media (max-width: 640px) {
             .main-content { padding: 80px 16px 40px; }
-            .finance-grid { grid-template-columns: 1fr; }
+            .services-grid { grid-template-columns: 1fr; }
             .drawer { width: 260px; right: -260px; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="/home.html" class="logo"><i class="fas fa-fox"></i><span>FOX STORE</span></a>
@@ -225,6 +377,7 @@
         </div>
     </nav>
 
+    <!-- Drawer -->
     <div class="drawer-overlay" id="drawerOverlay"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-header">
@@ -235,45 +388,47 @@
         <div class="drawer-nav" id="drawerNav"></div>
     </div>
 
+    <!-- WhatsApp Float -->
+    <a href="https://wa.me/50937542954" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+
+    <!-- Main Content -->
     <div class="main-content">
         <div class="page-header">
-            <h1>Finance Digitale</h1>
-            <p>Recharges instantanées – Wise, PayPal, USDT, TRONX, MERU</p>
+            <h1><i class="fas fa-coins"></i> Services Financiers</h1>
+            <p>Rechargez vos comptes Wise, PayPal, USDT, TRONX et MERU au meilleur taux.</p>
         </div>
-        <div class="finance-grid">
-            <a href="/pages/products/wise.html" class="finance-card">
-                <div class="finance-logo"><img src="/assets/logos/wise-logo.png" alt="Wise"></div>
-                <h3>Wise</h3>
-                <p>Transferts internationaux</p>
-            </a>
-            <a href="/pages/products/paypal.html" class="finance-card">
-                <div class="finance-logo"><img src="/assets/logos/paypal-logo.png" alt="PayPal"></div>
-                <h3>PayPal</h3>
-                <p>Recharge de compte</p>
-            </a>
-            <a href="/pages/products/usdt.html" class="finance-card">
-                <div class="finance-logo"><img src="/assets/logos/usdt-logo.png" alt="USDT"></div>
-                <h3>USDT (TRC20)</h3>
-                <p>Stablecoin</p>
-            </a>
-            <a href="/pages/products/tronx.html" class="finance-card">
-                <div class="finance-logo"><img src="/assets/logos/tronx-logo.png" alt="TRONX"></div>
-                <h3>TRONX</h3>
-                <p>Crypto-monnaie</p>
-            </a>
-            <a href="/pages/products/meru.html" class="finance-card">
-                <div class="finance-logo"><img src="/assets/logos/meru-logo.png" alt="MERU"></div>
-                <h3>MERU</h3>
-                <p>Portefeuille digital</p>
-            </a>
+
+        <!-- Categories -->
+        <div class="categories">
+            <button class="category-btn active" data-category="all">Tous</button>
+            <button class="category-btn" data-category="financiere">Financière</button>
+            <button class="category-btn" data-category="crypto">Crypto</button>
+        </div>
+
+        <!-- Services Grid -->
+        <div class="services-grid" id="servicesGrid">
+            <!-- Will be populated dynamically -->
+        </div>
+
+        <!-- Info Banner -->
+        <div class="info-banner">
+            <h3><i class="fas fa-info-circle"></i> Taux de change officiel</h3>
+            <p>Nous appliquons le taux de <strong>1 USD = 150 Gourdes (HTG)</strong> pour toutes les transactions financières. Ce taux est fixe et sans commission cachée.</p>
+            <div class="rate-info">
+                <span class="rate-item"><i class="fas fa-dollar-sign"></i> 1 USD = 150 HTG</span>
+                <span class="rate-item"><i class="fas fa-exchange-alt"></i> Transfert instantané</span>
+                <span class="rate-item"><i class="fas fa-shield-alt"></i> Sécurisé</span>
+                <span class="rate-item"><i class="fas fa-clock"></i> 24/7 disponible</span>
+            </div>
         </div>
     </div>
 
     <footer>
-        <p>© 2025 Fox Store – L'élite du service digital</p>
+        <p>© 2025 Fox Store – L'élite du service digital. Tous droits réservés.</p>
     </footer>
 
     <script>
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyDSyFdTHBNULuUiacHM6nmEvPb7YpY24UE",
             authDomain: "foxstoreht.firebaseapp.com",
@@ -285,22 +440,112 @@
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
 
+        // Financial services data
+        const services = [
+            { 
+                id: "wise", 
+                name: "Wise", 
+                category: "financiere",
+                page: "/pages/products/wise.html", 
+                rate: "1 USD = 150 HTG", 
+                icon: "/assets/logos/wise-logo.png", 
+                desc: "Transferts internationaux, compte multi-devises",
+                min: "Min 5 USD / Max 5000 USD"
+            },
+            { 
+                id: "paypal", 
+                name: "PayPal", 
+                category: "financiere",
+                page: "/pages/products/paypal.html", 
+                rate: "1 USD = 150 HTG", 
+                icon: "/assets/logos/paypal-logo.png", 
+                desc: "Paiements en ligne, virements internationaux",
+                min: "Min 5 USD / Max 5000 USD"
+            },
+            { 
+                id: "usdt", 
+                name: "USDT (TRC20)", 
+                category: "crypto",
+                page: "/pages/products/usdt.html", 
+                rate: "1 USD = 150 HTG", 
+                icon: "/assets/logos/usdt-logo.png", 
+                desc: "Stablecoin Tether sur réseau TRC20",
+                min: "Min 5 USD / Max 5000 USD"
+            },
+            { 
+                id: "tronx", 
+                name: "TRONX", 
+                category: "crypto",
+                page: "/pages/products/tronx.html", 
+                rate: "1 TRX = 0.30 USD", 
+                icon: "/assets/logos/tronx-logo.png", 
+                desc: "Crypto-monnaie TRONX, transferts rapides",
+                min: "Min 15 TRX / Max 50000 TRX"
+            },
+            { 
+                id: "meru", 
+                name: "MERU", 
+                category: "financiere",
+                page: "/pages/products/meru.html", 
+                rate: "1 USD = 150 HTG", 
+                icon: "/assets/logos/meru-logo.png", 
+                desc: "Portefeuille numérique, paiements mobiles",
+                min: "Min 5 USD / Max 5000 USD"
+            }
+        ];
+
+        // DOM Elements
+        const servicesGrid = document.getElementById('servicesGrid');
+        const categoryBtns = document.querySelectorAll('.category-btn');
+
+        // Render services
+        function renderServices(category = 'all') {
+            const filtered = category === 'all' ? services : services.filter(s => s.category === category);
+            servicesGrid.innerHTML = filtered.map(service => `
+                <a href="${service.page}" class="service-card">
+                    <div class="service-image">
+                        <img src="${service.icon}" alt="${service.name}" onerror="this.src='https://placehold.co/200x120?text=${service.name}'">
+                    </div>
+                    <div class="service-info">
+                        <h3>${service.name}</h3>
+                        <p>${service.desc}</p>
+                        <span class="service-rate">${service.rate}</span>
+                        <span class="service-badge">${service.min}</span>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        // Category click handler
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const category = btn.dataset.category;
+                renderServices(category);
+            });
+        });
+
+        // Initial render
+        renderServices('all');
+
+        // Drawer Functions
         const drawerNav = document.getElementById('drawerNav');
         const drawerUserSection = document.getElementById('drawerUserSection');
         const burgerBtn = document.getElementById('burgerBtn');
         const drawer = document.getElementById('drawer');
         const drawerOverlay = document.getElementById('drawerOverlay');
         const closeDrawerBtn = document.getElementById('closeDrawerBtn');
-        const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
 
         function closeDrawer() { drawer.classList.remove('open'); drawerOverlay.classList.remove('active'); }
         function openDrawer() { drawer.classList.add('open'); drawerOverlay.classList.add('active'); }
-        burgerBtn.addEventListener('click', openDrawer);
-        closeDrawerBtn.addEventListener('click', closeDrawer);
-        drawerOverlay.addEventListener('click', closeDrawer);
+        if (burgerBtn) burgerBtn.addEventListener('click', openDrawer);
+        if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeDrawer);
+        if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
 
-        function updateUI(user) {
+        function updateDrawer(user) {
             if (!user) { window.location.href = '/login.html'; return; }
             const name = user.displayName || user.email || 'Client';
             const isAdmin = (user.email === ADMIN_EMAIL);
@@ -332,7 +577,11 @@
                 window.location.href = '/login.html';
             });
         }
-        auth.onAuthStateChanged(updateUI);
+
+        auth.onAuthStateChanged(user => {
+            if (!user) window.location.href = '/login.html';
+            else updateDrawer(user);
+        });
     </script>
 </body>
 </html>
