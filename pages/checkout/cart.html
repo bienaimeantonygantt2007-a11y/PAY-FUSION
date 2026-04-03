@@ -87,32 +87,21 @@
         drawerOverlay?.addEventListener('click', closeDrawer);
         function updateDrawer(user) { if(!user) return; const name = user.displayName || user.email || 'Client', isAdmin = (user.email === ADMIN_EMAIL), initial = name.charAt(0).toUpperCase(); drawerUserSection.innerHTML = `<div class="drawer-user"><div class="drawer-user-avatar">${initial}</div><div class="drawer-user-info"><h4>${name}</h4><p>${user.email}</p>${isAdmin ? '<p style="color:#00d1ff; font-size:0.7rem;">Administrateur</p>' : ''}</div></div>`; let menu = `<div class="drawer-section-title">PRINCIPALE</div><a href="/home.html"><i class="fas fa-home"></i> Accueil</a><a href="/user/notifications.html"><i class="fas fa-bullhorn"></i> Annonce</a><div class="drawer-section-title">PORTEFEUILLE</div><a href="/user/wallet.html"><i class="fas fa-wallet"></i> Wallet</a><div class="drawer-section-title">SERVICES</div><a href="/gaming.html"><i class="fas fa-gamepad"></i> Gaming</a><a href="/streaming.html"><i class="fas fa-film"></i> Streaming</a><a href="/finance.html"><i class="fas fa-coins"></i> Finance</a><div class="drawer-section-title">COMPTE</div><a href="/orders.html"><i class="fas fa-shopping-cart"></i> Commandes</a><a href="/user/account.html"><i class="fas fa-user"></i> Mon compte</a><a href="/user/settings.html"><i class="fas fa-sliders-h"></i> Paramètres</a><a href="/user/supports.html"><i class="fas fa-headset"></i> Support</a>`; if(isAdmin) menu += `<div class="drawer-section-title">ADMINISTRATION</div><a href="/admin.html"><i class="fas fa-shield-alt"></i> Administration</a>`; menu += `<div class="drawer-section-title">RESEAUX</div><a href="https://whatsapp.com/channel/0029Vb84FJYAojYxTIur7b2n" target="_blank"><i class="fab fa-whatsapp"></i> Chaine WhatsApp</a><button id="drawerLogoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>`; drawerNav.innerHTML = menu; document.getElementById('drawerLogoutBtn')?.addEventListener('click', async () => { await auth.signOut(); window.location.href = '/login.html'; }); }
         
-        // Fonctions panier
+        // Panier
         function getCart() { const c = localStorage.getItem('foxstore_cart'); return c ? JSON.parse(c) : []; }
         function saveCart(cart) { localStorage.setItem('foxstore_cart', JSON.stringify(cart)); renderCart(); }
         function removeFromCart(id) { let cart = getCart(); cart = cart.filter(item => item.id != id); saveCart(cart); }
         function clearCart() { localStorage.removeItem('foxstore_cart'); renderCart(); }
         
-        async function checkout() {
+        // Redirection vers choix du mode de paiement (sans enregistrer les commandes tout de suite)
+        function proceedToPayment() {
             const cart = getCart();
             if (cart.length === 0) return;
             const user = auth.currentUser;
             if (!user) { window.location.href = '/login.html'; return; }
-            try {
-                const promises = cart.map(item => db.collection('orders').add({
-                    ...item,
-                    userId: user.uid,
-                    userEmail: user.email,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    status: 'en-attente'
-                }));
-                await Promise.all(promises);
-                clearCart();
-                window.location.href = '/paiement/mobile/moncash.html';
-            } catch (error) {
-                console.error('Erreur checkout:', error);
-                // Optionnel : message discret
-            }
+            // Sauvegarder le panier dans sessionStorage pour le récupérer sur la page de paiement
+            sessionStorage.setItem('pendingCart', JSON.stringify(cart));
+            window.location.href = '/pages/checkout/payment-method.html';
         }
         
         function renderCart() {
@@ -131,7 +120,7 @@
             container.innerHTML = itemsHtml + `<div class="cart-total"><h3>Total: ${total} HTG</h3></div><div class="cart-actions"><a href="/gaming.html" class="btn-secondary"><i class="fas fa-arrow-left"></i> Continuer les achats</a><button class="btn-primary" id="checkoutBtn">Procéder au paiement <i class="fas fa-arrow-right"></i></button><button class="btn-secondary" id="clearCartBtn">Vider le panier</button></div>`;
             document.querySelectorAll('.cart-item-remove').forEach(btn => btn.addEventListener('click', (e) => { const id = btn.dataset.id; removeFromCart(id); }));
             document.getElementById('clearCartBtn')?.addEventListener('click', () => clearCart());
-            document.getElementById('checkoutBtn')?.addEventListener('click', () => checkout());
+            document.getElementById('checkoutBtn')?.addEventListener('click', () => proceedToPayment());
         }
         
         auth.onAuthStateChanged(user => { if(!user) { window.location.href = '/login.html'; return; } updateDrawer(user); renderCart(); });
