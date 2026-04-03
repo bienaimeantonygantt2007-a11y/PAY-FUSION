@@ -4,584 +4,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Fox Store – Services Financiers</title>
-    
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    
-    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f5f7fc;
-            color: #1e293b;
-            line-height: 1.5;
-            min-height: 100vh;
-        }
-        
-        /* Navbar */
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-            padding: 14px 24px;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid #eef2ff;
-        }
-        .nav-container {
-            max-width: 1280px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            font-weight: 800;
-            font-size: 1.5rem;
-            color: #0f172a;
-        }
+        body { font-family: 'Inter', sans-serif; background: #f5f7fc; color: #1e293b; line-height: 1.5; min-height: 100vh; }
+        .navbar { position: fixed; top: 0; width: 100%; z-index: 1000; padding: 14px 24px; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid #eef2ff; }
+        .nav-container { max-width: 1280px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; font-size: 1.5rem; color: #0f172a; }
         .logo i { font-size: 1.6rem; color: #00d1ff; }
-        .burger-btn {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 1.3rem;
-        }
+        .burger-btn { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.3rem; }
         .burger-btn:hover { background: white; border-color: #00d1ff40; color: #00d1ff; }
-        
-        /* Drawer */
-        .drawer {
-            position: fixed;
-            top: 0;
-            right: -280px;
-            width: 280px;
-            height: 100vh;
-            background: white;
-            box-shadow: -4px 0 24px rgba(0,0,0,0.05);
-            z-index: 2000;
-            transition: right 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            border-left: 1px solid #eef2ff;
-        }
+        .drawer { position: fixed; top: 0; right: -260px; width: 260px; height: 100vh; background: white; box-shadow: -4px 0 24px rgba(0,0,0,0.05); z-index: 2000; transition: right 0.3s; display: flex; flex-direction: column; border-left: 1px solid #eef2ff; }
         .drawer.open { right: 0; }
-        .drawer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            border-bottom: 1px solid #edf2f7;
-        }
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #edf2f7; }
         .drawer-header .logo { font-size: 1.2rem; }
-        .close-drawer {
-            background: #f1f5f9;
-            border: none;
-            border-radius: 10px;
-            width: 34px;
-            height: 34px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        .drawer-user {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px;
-            background: #f8fafc;
-            margin: 16px;
-            border-radius: 16px;
-        }
-        .drawer-user-avatar {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, #00d1ff, #009ac7);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.3rem;
-            font-weight: 600;
-        }
-        .drawer-user-info h4 { font-size: 0.95rem; font-weight: 600; }
-        .drawer-user-info p { font-size: 0.75rem; color: #5b6e8c; }
-        .drawer-nav {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 8px 12px;
-            gap: 4px;
-        }
-        .drawer-nav a, .drawer-nav button {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 14px;
-            border-radius: 14px;
-            text-decoration: none;
-            color: #1e293b;
-            font-size: 0.95rem;
-            font-weight: 500;
-            background: none;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            text-align: left;
-        }
-        .drawer-nav a i, .drawer-nav button i { width: 22px; color: #5b6e8c; }
-        .drawer-nav a:hover, .drawer-nav button:hover { background: #f1f5f9; }
+        .close-drawer { background: #f1f5f9; border: none; border-radius: 10px; width: 34px; height: 34px; cursor: pointer; font-size: 1rem; }
+        .drawer-user { display: flex; align-items: center; gap: 12px; padding: 14px; background: #f8fafc; margin: 12px; border-radius: 14px; border: 1px solid #e2e8f0; }
+        .drawer-user-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, #00d1ff, #009ac7); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; font-weight: 600; }
+        .drawer-user-info h4 { font-size: 0.9rem; font-weight: 600; }
+        .drawer-user-info p { font-size: 0.7rem; color: #5b6e8c; }
+        .drawer-nav { flex: 1; display: flex; flex-direction: column; padding: 8px 10px; gap: 2px; overflow-y: auto; }
+        .drawer-section-title { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; padding: 8px 10px 4px 10px; }
+        .drawer-nav a, .drawer-nav button { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; text-decoration: none; color: #1e293b; font-size: 0.85rem; font-weight: 500; background: none; border: 1px solid transparent; cursor: pointer; width: 100%; text-align: left; transition: all 0.2s; }
+        .drawer-nav a i, .drawer-nav button i { width: 20px; font-size: 0.9rem; color: #5b6e8c; }
+        .drawer-nav a:hover, .drawer-nav button:hover { background: #f1f5f9; border-color: #e2e8f0; }
         .drawer-nav a:hover i, .drawer-nav button:hover i { color: #00d1ff; }
-        .drawer-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.3);
-            backdrop-filter: blur(2px);
-            z-index: 1999;
-            display: none;
-        }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(2px); z-index: 1999; display: none; }
         .drawer-overlay.active { display: block; }
-        
-        /* Main content */
-        .main-content {
-            padding: 90px 24px 50px;
-            max-width: 1280px;
-            margin: 0 auto;
-            width: 100%;
-        }
-        
-        /* Header */
-        .page-header {
-            margin-bottom: 32px;
-        }
-        .page-header h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        .page-header h1 i {
-            color: #00d1ff;
-            margin-right: 12px;
-        }
-        .page-header p {
-            color: #475569;
-            font-size: 0.95rem;
-        }
-        
-        /* Categories tabs */
-        .categories {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 32px;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 16px;
-        }
-        .category-btn {
-            background: transparent;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: #5b6e8c;
-        }
-        .category-btn.active {
-            background: #00d1ff;
-            color: white;
-            box-shadow: 0 4px 12px rgba(0,209,255,0.3);
-        }
-        .category-btn:hover:not(.active) {
-            background: #f1f5f9;
-            color: #1e293b;
-        }
-        
-        /* Services grid */
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 24px;
-        }
-        .service-card {
-            background: white;
-            border-radius: 24px;
-            border: 1px solid #eef2ff;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-        .service-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.1);
-            border-color: #00d1ff40;
-        }
-        .service-image {
-            height: 140px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-            padding: 25px;
-        }
-        .service-image img {
-            max-height: 100%;
-            max-width: 100%;
-            object-fit: contain;
-            transition: transform 0.3s;
-        }
-        .service-card:hover .service-image img {
-            transform: scale(1.05);
-        }
-        .service-info {
-            padding: 20px;
-        }
-        .service-info h3 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-        .service-info p {
-            font-size: 0.8rem;
-            color: #5b6e8c;
-            margin-bottom: 12px;
-        }
-        .service-rate {
-            display: inline-block;
-            background: #00d1ff10;
-            color: #00d1ff;
-            font-weight: 700;
-            font-size: 0.85rem;
-            padding: 4px 12px;
-            border-radius: 20px;
-            border: 1px solid #00d1ff20;
-        }
-        .service-badge {
-            display: inline-block;
-            background: #f1f5f9;
-            color: #475569;
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 12px;
-            margin-left: 8px;
-        }
-        
-        /* Info banner */
-        .info-banner {
-            margin-top: 40px;
-            background: linear-gradient(135deg, #00d1ff08, #00d1ff02);
-            border-radius: 24px;
-            padding: 24px;
-            border: 1px solid #00d1ff20;
-        }
-        .info-banner h3 {
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-        .info-banner h3 i {
-            color: #00d1ff;
-            margin-right: 8px;
-        }
-        .info-banner p {
-            font-size: 0.85rem;
-            color: #475569;
-            line-height: 1.6;
-        }
-        .rate-info {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid #e2e8f0;
-        }
-        .rate-item {
-            background: white;
-            padding: 8px 16px;
-            border-radius: 40px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: #00d1ff;
-            border: 1px solid #e2e8f0;
-        }
-        
-        /* WhatsApp float */
-        .whatsapp-float {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #25D366;
-            color: white;
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            z-index: 1000;
-            text-decoration: none;
-        }
+        .main-content { padding: 90px 24px 50px; max-width: 1280px; margin: 0 auto; }
+        .page-header { margin-bottom: 32px; }
+        .page-header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+        .page-header h1 i { color: #00d1ff; margin-right: 12px; }
+        .page-header p { color: #475569; font-size: 0.95rem; }
+        .categories { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; border-bottom: 1px solid #e2e8f0; padding-bottom: 16px; }
+        .category-btn { background: transparent; border: none; padding: 8px 20px; border-radius: 40px; font-weight: 600; font-size: 0.85rem; cursor: pointer; color: #5b6e8c; transition: all 0.2s; }
+        .category-btn.active { background: #00d1ff; color: white; box-shadow: 0 4px 12px rgba(0,209,255,0.3); }
+        .category-btn:hover:not(.active) { background: #f1f5f9; color: #1e293b; }
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+        .service-card { background: white; border-radius: 24px; border: 1px solid #eef2ff; overflow: hidden; transition: all 0.3s; text-decoration: none; color: inherit; display: block; }
+        .service-card:hover { transform: translateY(-5px); border-color: #00d1ff40; box-shadow: 0 20px 30px -12px rgba(0,0,0,0.1); }
+        .service-image { height: 140px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #f8fafc, #f1f5f9); padding: 25px; }
+        .service-image img { max-height: 100%; max-width: 100%; object-fit: contain; transition: transform 0.3s; }
+        .service-card:hover .service-image img { transform: scale(1.05); }
+        .service-info { padding: 20px; }
+        .service-info h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+        .service-info p { font-size: 0.8rem; color: #5b6e8c; margin-bottom: 12px; }
+        .service-rate { display: inline-block; background: #00d1ff10; color: #00d1ff; font-weight: 700; font-size: 0.85rem; padding: 4px 12px; border-radius: 20px; border: 1px solid #00d1ff20; }
+        .service-badge { display: inline-block; background: #f1f5f9; color: #475569; font-size: 0.7rem; padding: 2px 8px; border-radius: 12px; margin-left: 8px; }
+        .info-banner { margin-top: 40px; background: linear-gradient(135deg, #00d1ff08, #00d1ff02); border-radius: 24px; padding: 24px; border: 1px solid #00d1ff20; }
+        .info-banner h3 { font-size: 1rem; font-weight: 700; margin-bottom: 12px; }
+        .info-banner h3 i { color: #00d1ff; margin-right: 8px; }
+        .info-banner p { font-size: 0.85rem; color: #475569; line-height: 1.6; }
+        .rate-info { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e8f0; }
+        .rate-item { background: white; padding: 8px 16px; border-radius: 40px; font-size: 0.8rem; font-weight: 600; color: #00d1ff; border: 1px solid #e2e8f0; }
+        .whatsapp-float { position: fixed; bottom: 20px; right: 20px; background: #25D366; color: white; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000; text-decoration: none; }
         .whatsapp-float:hover { transform: scale(1.05); background: #1da85c; }
-        
-        footer {
-            background: transparent;
-            border-top: 1px solid #e2e8f0;
-            padding: 20px;
-            text-align: center;
-            font-size: 0.75rem;
-            color: #5b6e8c;
-            margin-top: 40px;
-        }
-        
-        @media (max-width: 640px) {
-            .main-content { padding: 80px 16px 40px; }
-            .services-grid { grid-template-columns: 1fr; }
-            .drawer { width: 260px; right: -260px; }
-        }
+        footer { background: transparent; border-top: 1px solid #e2e8f0; padding: 20px; text-align: center; font-size: 0.75rem; color: #5b6e8c; margin-top: 40px; }
+        @media (max-width: 640px) { .main-content { padding: 80px 16px 40px; } .services-grid { grid-template-columns: 1fr; } .drawer { width: 260px; right: -260px; } }
     </style>
 </head>
 <body>
-
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="/home.html" class="logo"><i class="fas fa-fox"></i><span>FOX STORE</span></a>
-            <button class="burger-btn" id="burgerBtn"><i class="fas fa-bars"></i></button>
-        </div>
-    </nav>
-
-    <!-- Drawer -->
+    <nav class="navbar"><div class="nav-container"><a href="/home.html" class="logo"><i class="fas fa-fox"></i><span>FOX STORE</span></a><button class="burger-btn" id="burgerBtn"><i class="fas fa-bars"></i></button></div></nav>
     <div class="drawer-overlay" id="drawerOverlay"></div>
-    <div class="drawer" id="drawer">
-        <div class="drawer-header">
-            <div class="logo"><i class="fas fa-fox"></i><span>Menu</span></div>
-            <button class="close-drawer" id="closeDrawerBtn"><i class="fas fa-times"></i></button>
-        </div>
-        <div id="drawerUserSection"></div>
-        <div class="drawer-nav" id="drawerNav"></div>
-    </div>
-
-    <!-- WhatsApp Float -->
+    <div class="drawer" id="drawer"><div class="drawer-header"><div class="logo"><i class="fas fa-fox"></i><span>Menu</span></div><button class="close-drawer" id="closeDrawerBtn"><i class="fas fa-times"></i></button></div><div id="drawerUserSection"></div><div class="drawer-nav" id="drawerNav"></div></div>
     <a href="https://wa.me/50937542954" class="whatsapp-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
-
-    <!-- Main Content -->
     <div class="main-content">
-        <div class="page-header">
-            <h1><i class="fas fa-coins"></i> Services Financiers</h1>
-            <p>Rechargez vos comptes Wise, PayPal, USDT, TRONX et MERU au meilleur taux.</p>
-        </div>
-
-        <!-- Categories -->
-        <div class="categories">
-            <button class="category-btn active" data-category="all">Tous</button>
-            <button class="category-btn" data-category="financiere">Financière</button>
-            <button class="category-btn" data-category="crypto">Crypto</button>
-        </div>
-
-        <!-- Services Grid -->
-        <div class="services-grid" id="servicesGrid">
-            <!-- Will be populated dynamically -->
-        </div>
-
-        <!-- Info Banner -->
-        <div class="info-banner">
-            <h3><i class="fas fa-info-circle"></i> Taux de change officiel</h3>
-            <p>Nous appliquons le taux de <strong>1 USD = 150 Gourdes (HTG)</strong> pour toutes les transactions financières. Ce taux est fixe et sans commission cachée.</p>
-            <div class="rate-info">
-                <span class="rate-item"><i class="fas fa-dollar-sign"></i> 1 USD = 150 HTG</span>
-                <span class="rate-item"><i class="fas fa-exchange-alt"></i> Transfert instantané</span>
-                <span class="rate-item"><i class="fas fa-shield-alt"></i> Sécurisé</span>
-                <span class="rate-item"><i class="fas fa-clock"></i> 24/7 disponible</span>
-            </div>
-        </div>
+        <div class="page-header"><h1><i class="fas fa-coins"></i> Services Financiers</h1><p>Rechargez vos comptes Wise, PayPal, USDT, TRONX et MERU au meilleur taux.</p></div>
+        <div class="categories"><button class="category-btn active" data-category="all">Tous</button><button class="category-btn" data-category="financiere">Financière</button><button class="category-btn" data-category="crypto">Crypto</button></div>
+        <div class="services-grid" id="servicesGrid"></div>
+        <div class="info-banner"><h3><i class="fas fa-info-circle"></i> Taux de change officiel</h3><p>Nous appliquons le taux de <strong>1 USD = 150 Gourdes (HTG)</strong> pour toutes les transactions financières. Ce taux est fixe et sans commission cachée.</p><div class="rate-info"><span class="rate-item"><i class="fas fa-dollar-sign"></i> 1 USD = 150 HTG</span><span class="rate-item"><i class="fas fa-exchange-alt"></i> Transfert instantané</span><span class="rate-item"><i class="fas fa-shield-alt"></i> Sécurisé</span><span class="rate-item"><i class="fas fa-clock"></i> 24/7 disponible</span></div></div>
     </div>
-
-    <footer>
-        <p>© 2025 Fox Store – L'élite du service digital. Tous droits réservés.</p>
-    </footer>
-
+    <footer><p>© 2025 Fox Store – L'élite du service digital. Tous droits réservés.</p></footer>
     <script>
-        // Firebase Config
-        const firebaseConfig = {
-            apiKey: "AIzaSyDSyFdTHBNULuUiacHM6nmEvPb7YpY24UE",
-            authDomain: "foxstoreht.firebaseapp.com",
-            projectId: "foxstoreht",
-            storageBucket: "foxstoreht.firebasestorage.app",
-            messagingSenderId: "72533137445",
-            appId: "1:72533137445:web:3ba7634bc34da6115b47cc",
-            measurementId: "G-X1Q7Q79BRD"
-        };
+        const firebaseConfig = { apiKey: "AIzaSyDSyFdTHBNULuUiacHM6nmEvPb7YpY24UE", authDomain: "foxstoreht.firebaseapp.com", projectId: "foxstoreht", storageBucket: "foxstoreht.firebasestorage.app", messagingSenderId: "72533137445", appId: "1:72533137445:web:3ba7634bc34da6115b47cc", measurementId: "G-X1Q7Q79BRD" };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
-
-        // Financial services data
         const services = [
-            { 
-                id: "wise", 
-                name: "Wise", 
-                category: "financiere",
-                page: "/pages/products/wise.html", 
-                rate: "1 USD = 150 HTG", 
-                icon: "/assets/logos/wise-logo.png", 
-                desc: "Transferts internationaux, compte multi-devises",
-                min: "Min 5 USD / Max 5000 USD"
-            },
-            { 
-                id: "paypal", 
-                name: "PayPal", 
-                category: "financiere",
-                page: "/pages/products/paypal.html", 
-                rate: "1 USD = 150 HTG", 
-                icon: "/assets/logos/paypal-logo.png", 
-                desc: "Paiements en ligne, virements internationaux",
-                min: "Min 5 USD / Max 5000 USD"
-            },
-            { 
-                id: "usdt", 
-                name: "USDT (TRC20)", 
-                category: "crypto",
-                page: "/pages/products/usdt.html", 
-                rate: "1 USD = 150 HTG", 
-                icon: "/assets/logos/usdt-logo.png", 
-                desc: "Stablecoin Tether sur réseau TRC20",
-                min: "Min 5 USD / Max 5000 USD"
-            },
-            { 
-                id: "tronx", 
-                name: "TRONX", 
-                category: "crypto",
-                page: "/pages/products/tronx.html", 
-                rate: "1 TRX = 0.30 USD", 
-                icon: "/assets/logos/tronx-logo.png", 
-                desc: "Crypto-monnaie TRONX, transferts rapides",
-                min: "Min 15 TRX / Max 50000 TRX"
-            },
-            { 
-                id: "meru", 
-                name: "MERU", 
-                category: "financiere",
-                page: "/pages/products/meru.html", 
-                rate: "1 USD = 150 HTG", 
-                icon: "/assets/logos/meru-logo.png", 
-                desc: "Portefeuille numérique, paiements mobiles",
-                min: "Min 5 USD / Max 5000 USD"
-            }
+            { id: "wise", name: "Wise", category: "financiere", page: "/pages/products/wise.html", rate: "1 USD = 150 HTG", icon: "/assets/logos/wise-logo.png", desc: "Transferts internationaux, compte multi-devises", min: "Min 5 USD / Max 5000 USD" },
+            { id: "paypal", name: "PayPal", category: "financiere", page: "/pages/products/paypal.html", rate: "1 USD = 150 HTG", icon: "/assets/logos/paypal-logo.png", desc: "Paiements en ligne, virements internationaux", min: "Min 5 USD / Max 5000 USD" },
+            { id: "usdt", name: "USDT (TRC20)", category: "crypto", page: "/pages/products/usdt.html", rate: "1 USD = 150 HTG", icon: "/assets/logos/usdt-logo.png", desc: "Stablecoin Tether sur réseau TRC20", min: "Min 5 USD / Max 5000 USD" },
+            { id: "tronx", name: "TRONX", category: "crypto", page: "/pages/products/tronx.html", rate: "1 TRX = 0.30 USD", icon: "/assets/logos/tronx-logo.png", desc: "Crypto-monnaie TRONX, transferts rapides", min: "Min 15 TRX / Max 50000 TRX" },
+            { id: "meru", name: "MERU", category: "financiere", page: "/pages/products/meru.html", rate: "1 USD = 150 HTG", icon: "/assets/logos/meru-logo.png", desc: "Portefeuille numérique, paiements mobiles", min: "Min 5 USD / Max 5000 USD" }
         ];
-
-        // DOM Elements
         const servicesGrid = document.getElementById('servicesGrid');
         const categoryBtns = document.querySelectorAll('.category-btn');
-
-        // Render services
         function renderServices(category = 'all') {
             const filtered = category === 'all' ? services : services.filter(s => s.category === category);
-            servicesGrid.innerHTML = filtered.map(service => `
-                <a href="${service.page}" class="service-card">
-                    <div class="service-image">
-                        <img src="${service.icon}" alt="${service.name}" onerror="this.src='https://placehold.co/200x120?text=${service.name}'">
-                    </div>
-                    <div class="service-info">
-                        <h3>${service.name}</h3>
-                        <p>${service.desc}</p>
-                        <span class="service-rate">${service.rate}</span>
-                        <span class="service-badge">${service.min}</span>
-                    </div>
-                </a>
-            `).join('');
+            servicesGrid.innerHTML = filtered.map(s => `<a href="${s.page}" class="service-card"><div class="service-image"><img src="${s.icon}" alt="${s.name}" onerror="this.src='https://placehold.co/200x120?text=${s.name}'"></div><div class="service-info"><h3>${s.name}</h3><p>${s.desc}</p><span class="service-rate">${s.rate}</span><span class="service-badge">${s.min}</span></div></a>`).join('');
         }
-
-        // Category click handler
-        categoryBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                categoryBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const category = btn.dataset.category;
-                renderServices(category);
-            });
-        });
-
-        // Initial render
+        categoryBtns.forEach(btn => btn.addEventListener('click', () => { categoryBtns.forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderServices(btn.dataset.category); }));
         renderServices('all');
-
-        // Drawer Functions
-        const drawerNav = document.getElementById('drawerNav');
-        const drawerUserSection = document.getElementById('drawerUserSection');
-        const burgerBtn = document.getElementById('burgerBtn');
-        const drawer = document.getElementById('drawer');
-        const drawerOverlay = document.getElementById('drawerOverlay');
-        const closeDrawerBtn = document.getElementById('closeDrawerBtn');
-
+        // Drawer
+        const drawerNav = document.getElementById('drawerNav'), drawerUserSection = document.getElementById('drawerUserSection'), burgerBtn = document.getElementById('burgerBtn'), drawer = document.getElementById('drawer'), drawerOverlay = document.getElementById('drawerOverlay'), closeDrawerBtn = document.getElementById('closeDrawerBtn');
         function closeDrawer() { drawer.classList.remove('open'); drawerOverlay.classList.remove('active'); }
         function openDrawer() { drawer.classList.add('open'); drawerOverlay.classList.add('active'); }
         if (burgerBtn) burgerBtn.addEventListener('click', openDrawer);
         if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeDrawer);
         if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
-
         function updateDrawer(user) {
-            if (!user) { window.location.href = '/login.html'; return; }
-            const name = user.displayName || user.email || 'Client';
-            const isAdmin = (user.email === ADMIN_EMAIL);
-            const initial = name.charAt(0).toUpperCase();
-            drawerUserSection.innerHTML = `
-                <div class="drawer-user">
-                    <div class="drawer-user-avatar">${initial}</div>
-                    <div class="drawer-user-info">
-                        <h4>${name}</h4>
-                        <p>${user.email}</p>
-                    </div>
-                </div>
-            `;
-            let menu = `
-                <a href="/home.html"><i class="fas fa-home"></i> Accueil</a>
-                <a href="/gaming.html"><i class="fas fa-gamepad"></i> Gaming</a>
-                <a href="/streaming.html"><i class="fas fa-film"></i> Streaming</a>
-                <a href="/finance.html"><i class="fas fa-coins"></i> Finance</a>
-                <a href="/orders.html"><i class="fas fa-shopping-cart"></i> Commandes</a>
-                <a href="/user/account.html"><i class="fas fa-user"></i> Mon compte</a>
-                <a href="/user/settings.html"><i class="fas fa-sliders-h"></i> Paramètres</a>
-                <a href="/user/supports.html"><i class="fas fa-headset"></i> Support</a>
-            `;
-            if (isAdmin) menu += `<a href="/admin.html"><i class="fas fa-shield-alt"></i> Administration</a>`;
-            menu += `<button id="drawerLogoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>`;
+            if (!user) return;
+            const name = user.displayName || user.email || 'Client', isAdmin = (user.email === ADMIN_EMAIL), initial = name.charAt(0).toUpperCase();
+            drawerUserSection.innerHTML = `<div class="drawer-user"><div class="drawer-user-avatar">${initial}</div><div class="drawer-user-info"><h4>${name}</h4><p>${user.email}</p>${isAdmin ? '<p style="color:#00d1ff; font-size:0.7rem;">Administrateur</p>' : ''}</div></div>`;
+            let menu = `<div class="drawer-section-title">PRINCIPALE</div><a href="/home.html"><i class="fas fa-home"></i> Accueil</a><a href="/user/notifications.html"><i class="fas fa-bullhorn"></i> Annonce</a><div class="drawer-section-title">PORTEFEUILLE</div><a href="/user/wallet.html"><i class="fas fa-wallet"></i> Wallet</a><div class="drawer-section-title">SERVICES</div><a href="/gaming.html"><i class="fas fa-gamepad"></i> Gaming</a><a href="/streaming.html"><i class="fas fa-film"></i> Streaming</a><a href="/finance.html"><i class="fas fa-coins"></i> Finance</a><div class="drawer-section-title">COMPTE</div><a href="/orders.html"><i class="fas fa-shopping-cart"></i> Commandes</a><a href="/user/account.html"><i class="fas fa-user"></i> Mon compte</a><a href="/user/settings.html"><i class="fas fa-sliders-h"></i> Paramètres</a><a href="/user/supports.html"><i class="fas fa-headset"></i> Support</a>`;
+            if (isAdmin) menu += `<div class="drawer-section-title">ADMINISTRATION</div><a href="/admin.html"><i class="fas fa-shield-alt"></i> Administration</a>`;
+            menu += `<div class="drawer-section-title">RESEAUX</div><a href="https://whatsapp.com/channel/0029Vb84FJYAojYxTIur7b2n" target="_blank"><i class="fab fa-whatsapp"></i> Chaine WhatsApp</a><button id="drawerLogoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>`;
             drawerNav.innerHTML = menu;
-            document.getElementById('drawerLogoutBtn')?.addEventListener('click', async () => {
-                await auth.signOut();
-                window.location.href = '/login.html';
-            });
+            document.getElementById('drawerLogoutBtn')?.addEventListener('click', async () => { await auth.signOut(); window.location.href = '/login.html'; });
         }
-
-        auth.onAuthStateChanged(user => {
-            if (!user) window.location.href = '/login.html';
-            else updateDrawer(user);
-        });
+        auth.onAuthStateChanged(user => { if (!user) { window.location.href = '/login.html'; return; } updateDrawer(user); });
     </script>
 </body>
 </html>
