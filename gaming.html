@@ -68,12 +68,12 @@
         }
         .burger-btn:hover { background: white; border-color: #00d1ff40; color: #00d1ff; }
         
-        /* Drawer */
+        /* Drawer amélioré */
         .drawer {
             position: fixed;
             top: 0;
-            right: -280px;
-            width: 280px;
+            right: -260px;
+            width: 260px;
             height: 100vh;
             background: white;
             box-shadow: -4px 0 24px rgba(0,0,0,0.05);
@@ -88,7 +88,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px;
+            padding: 16px 20px;
             border-bottom: 1px solid #edf2f7;
         }
         .drawer-header .logo { font-size: 1.2rem; }
@@ -105,50 +105,64 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 16px;
+            padding: 14px;
             background: #f8fafc;
-            margin: 16px;
-            border-radius: 16px;
+            margin: 12px;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
         }
         .drawer-user-avatar {
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             background: linear-gradient(135deg, #00d1ff, #009ac7);
-            border-radius: 14px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 600;
         }
-        .drawer-user-info h4 { font-size: 0.95rem; font-weight: 600; }
-        .drawer-user-info p { font-size: 0.75rem; color: #5b6e8c; }
+        .drawer-user-info h4 { font-size: 0.9rem; font-weight: 600; }
+        .drawer-user-info p { font-size: 0.7rem; color: #5b6e8c; }
         .drawer-nav {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 8px 12px;
-            gap: 4px;
+            padding: 8px 10px;
+            gap: 2px;
+            overflow-y: auto;
+        }
+        .drawer-section-title {
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #94a3b8;
+            padding: 8px 10px 4px 10px;
         }
         .drawer-nav a, .drawer-nav button {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px 14px;
-            border-radius: 14px;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 10px;
             text-decoration: none;
             color: #1e293b;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             font-weight: 500;
             background: none;
-            border: none;
+            border: 1px solid transparent;
             cursor: pointer;
             width: 100%;
             text-align: left;
+            transition: all 0.2s;
         }
-        .drawer-nav a i, .drawer-nav button i { width: 22px; color: #5b6e8c; }
-        .drawer-nav a:hover, .drawer-nav button:hover { background: #f1f5f9; }
+        .drawer-nav a i, .drawer-nav button i { width: 20px; font-size: 0.9rem; color: #5b6e8c; }
+        .drawer-nav a:hover, .drawer-nav button:hover {
+            background: #f1f5f9;
+            border-color: #e2e8f0;
+        }
         .drawer-nav a:hover i, .drawer-nav button:hover i { color: #00d1ff; }
         .drawer-overlay {
             position: fixed;
@@ -374,7 +388,6 @@
     </footer>
 
     <script>
-        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyDSyFdTHBNULuUiacHM6nmEvPb7YpY24UE",
             authDomain: "foxstoreht.firebaseapp.com",
@@ -388,7 +401,6 @@
         const auth = firebase.auth();
         const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
 
-        // Games data
         const games = [
             { id: "freefire", name: "Free Fire", category: "freefire", page: "/pages/products/freefire.html", price: "157 HTG", icon: "/assets/logos/freefire-logo.png", desc: "Diamants, Pass, Abonnements" },
             { id: "pubg", name: "PUBG Mobile", category: "pubg", page: "/pages/products/pubgmobile.html", price: "180 HTG", icon: "/assets/logos/pubgmobile-logo.png", desc: "UC et passes" },
@@ -401,11 +413,9 @@
             { id: "flexcity", name: "Flex City", category: "flexcity", page: "/pages/products/flexcity.html", price: "215 HTG", icon: "/assets/logos/flexcity-logo.png", desc: "Diamants & Gold" }
         ];
 
-        // DOM Elements
         const gamesGrid = document.getElementById('gamesGrid');
         const categoryBtns = document.querySelectorAll('.category-btn');
 
-        // Render games
         function renderGames(category = 'all') {
             const filtered = category === 'all' ? games : games.filter(g => g.category === category);
             gamesGrid.innerHTML = filtered.map(game => `
@@ -422,20 +432,16 @@
             `).join('');
         }
 
-        // Category click handler
         categoryBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 categoryBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                const category = btn.dataset.category;
-                renderGames(category);
+                renderGames(btn.dataset.category);
             });
         });
-
-        // Initial render
         renderGames('all');
 
-        // Drawer Functions
+        // Drawer
         const drawerNav = document.getElementById('drawerNav');
         const drawerUserSection = document.getElementById('drawerUserSection');
         const burgerBtn = document.getElementById('burgerBtn');
@@ -450,7 +456,7 @@
         if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
 
         function updateDrawer(user) {
-            if (!user) { window.location.href = '/login.html'; return; }
+            if (!user) return;
             const name = user.displayName || user.email || 'Client';
             const isAdmin = (user.email === ADMIN_EMAIL);
             const initial = name.charAt(0).toUpperCase();
@@ -460,21 +466,38 @@
                     <div class="drawer-user-info">
                         <h4>${name}</h4>
                         <p>${user.email}</p>
+                        ${isAdmin ? '<p style="color:#00d1ff; font-size:0.7rem;">Administrateur</p>' : ''}
                     </div>
                 </div>
             `;
             let menu = `
+                <div class="drawer-section-title">PRINCIPALE</div>
                 <a href="/home.html"><i class="fas fa-home"></i> Accueil</a>
+                <a href="/user/notifications.html"><i class="fas fa-bullhorn"></i> Annonce</a>
+                
+                <div class="drawer-section-title">PORTEFEUILLE</div>
+                <a href="/user/wallet.html"><i class="fas fa-wallet"></i> Wallet</a>
+                
+                <div class="drawer-section-title">SERVICES</div>
                 <a href="/gaming.html"><i class="fas fa-gamepad"></i> Gaming</a>
                 <a href="/streaming.html"><i class="fas fa-film"></i> Streaming</a>
                 <a href="/finance.html"><i class="fas fa-coins"></i> Finance</a>
+                
+                <div class="drawer-section-title">COMPTE</div>
                 <a href="/orders.html"><i class="fas fa-shopping-cart"></i> Commandes</a>
                 <a href="/user/account.html"><i class="fas fa-user"></i> Mon compte</a>
                 <a href="/user/settings.html"><i class="fas fa-sliders-h"></i> Paramètres</a>
                 <a href="/user/supports.html"><i class="fas fa-headset"></i> Support</a>
             `;
-            if (isAdmin) menu += `<a href="/admin.html"><i class="fas fa-shield-alt"></i> Administration</a>`;
-            menu += `<button id="drawerLogoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>`;
+            if (isAdmin) {
+                menu += `<div class="drawer-section-title">ADMINISTRATION</div>
+                         <a href="/admin.html"><i class="fas fa-shield-alt"></i> Administration</a>`;
+            }
+            menu += `
+                <div class="drawer-section-title">RESEAUX</div>
+                <a href="https://whatsapp.com/channel/0029Vb84FJYAojYxTIur7b2n" target="_blank"><i class="fab fa-whatsapp"></i> Chaine WhatsApp</a>
+                <button id="drawerLogoutBtn"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
+            `;
             drawerNav.innerHTML = menu;
             document.getElementById('drawerLogoutBtn')?.addEventListener('click', async () => {
                 await auth.signOut();
@@ -483,8 +506,8 @@
         }
 
         auth.onAuthStateChanged(user => {
-            if (!user) window.location.href = '/login.html';
-            else updateDrawer(user);
+            if (!user) { window.location.href = '/login.html'; return; }
+            updateDrawer(user);
         });
     </script>
 </body>
