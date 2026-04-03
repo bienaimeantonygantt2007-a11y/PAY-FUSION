@@ -73,12 +73,12 @@
         }
         .burger-btn:hover { background: white; border-color: #00d1ff40; color: #00d1ff; }
         
-        /* Drawer */
+        /* DRAWER AMÉLIORÉ - plus compact avec bordures */
         .drawer {
             position: fixed;
             top: 0;
             right: -280px;
-            width: 280px;
+            width: 260px; /* légèrement moins large */
             height: 100vh;
             background: white;
             box-shadow: -4px 0 24px rgba(0,0,0,0.05);
@@ -93,7 +93,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px;
+            padding: 16px 20px;
             border-bottom: 1px solid #edf2f7;
         }
         .drawer-header .logo { font-size: 1.2rem; }
@@ -110,59 +110,64 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 16px;
+            padding: 14px;
             background: #f8fafc;
-            margin: 16px;
-            border-radius: 16px;
+            margin: 12px;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
         }
         .drawer-user-avatar {
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             background: linear-gradient(135deg, #00d1ff, #009ac7);
-            border-radius: 14px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 600;
         }
-        .drawer-user-info h4 { font-size: 0.95rem; font-weight: 600; }
-        .drawer-user-info p { font-size: 0.75rem; color: #5b6e8c; }
+        .drawer-user-info h4 { font-size: 0.9rem; font-weight: 600; }
+        .drawer-user-info p { font-size: 0.7rem; color: #5b6e8c; }
         .drawer-nav {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 8px 12px;
-            gap: 4px;
+            padding: 8px 10px;
+            gap: 2px;
             overflow-y: auto;
         }
         .drawer-section-title {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: #94a3b8;
-            padding: 12px 12px 4px 12px;
+            padding: 8px 10px 4px 10px;
         }
         .drawer-nav a, .drawer-nav button {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
-            border-radius: 12px;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 10px;
             text-decoration: none;
             color: #1e293b;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 500;
             background: none;
-            border: none;
+            border: 1px solid transparent;
             cursor: pointer;
             width: 100%;
             text-align: left;
+            transition: all 0.2s;
         }
-        .drawer-nav a i, .drawer-nav button i { width: 22px; color: #5b6e8c; }
-        .drawer-nav a:hover, .drawer-nav button:hover { background: #f1f5f9; }
+        .drawer-nav a i, .drawer-nav button i { width: 20px; font-size: 0.9rem; color: #5b6e8c; }
+        .drawer-nav a:hover, .drawer-nav button:hover {
+            background: #f1f5f9;
+            border-color: #e2e8f0;
+        }
         .drawer-nav a:hover i, .drawer-nav button:hover i { color: #00d1ff; }
         .drawer-overlay {
             position: fixed;
@@ -177,7 +182,7 @@
         }
         .drawer-overlay.active { display: block; }
         
-        /* Main content */
+        /* Main content - sans les stats */
         .main-content {
             max-width: 1280px;
             margin: 0 auto;
@@ -214,26 +219,6 @@
             margin-left: 10px;
             border: 1px solid #00d1ff20;
         }
-        
-        /* Statistiques */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 48px;
-        }
-        .stat-card {
-            background: white;
-            border-radius: 24px;
-            padding: 20px;
-            text-align: center;
-            border: 1px solid #eef2ff;
-            transition: transform 0.2s;
-        }
-        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.05); }
-        .stat-card i { font-size: 2rem; color: #00d1ff; margin-bottom: 12px; }
-        .stat-number { font-size: 1.8rem; font-weight: 800; color: #0f172a; }
-        .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: #5b6e8c; }
         
         /* Services */
         .section-title {
@@ -366,6 +351,7 @@
             .services-grid { grid-template-columns: 1fr; }
             .quick-actions { grid-template-columns: repeat(2, 1fr); }
             .social-links { gap: 20px; }
+            .drawer { width: 260px; right: -260px; }
         }
     </style>
 </head>
@@ -398,14 +384,6 @@
         <div class="hero-dashboard">
             <h1>Bonjour, <span id="userName">Client</span><span id="adminBadge" class="admin-badge" style="display: none;">Administrateur</span></h1>
             <p>Bienvenue sur votre espace personnel. Accédez à tous nos services premium en un clic.</p>
-        </div>
-
-        <!-- Statistiques -->
-        <div class="stats-row">
-            <div class="stat-card"><i class="fas fa-shopping-cart"></i><div class="stat-number" id="statOrders">0</div><div class="stat-label">Commandes</div></div>
-            <div class="stat-card"><i class="fas fa-clock"></i><div class="stat-number" id="statPending">0</div><div class="stat-label">En attente</div></div>
-            <div class="stat-card"><i class="fas fa-check-circle"></i><div class="stat-number" id="statCompleted">0</div><div class="stat-label">Livrées</div></div>
-            <div class="stat-card"><i class="fas fa-coins"></i><div class="stat-number" id="statSpent">0</div><div class="stat-label">Total dépensé (HTG)</div></div>
         </div>
 
         <!-- Services -->
@@ -465,15 +443,10 @@
         };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const db = firebase.firestore();
         const ADMIN_EMAIL = "foxstorehaiti@gmail.com";
 
         const userNameSpan = document.getElementById('userName');
         const adminBadgeSpan = document.getElementById('adminBadge');
-        const statOrders = document.getElementById('statOrders');
-        const statPending = document.getElementById('statPending');
-        const statCompleted = document.getElementById('statCompleted');
-        const statSpent = document.getElementById('statSpent');
 
         const drawerNav = document.getElementById('drawerNav');
         const drawerUserSection = document.getElementById('drawerUserSection');
@@ -487,24 +460,6 @@
         if (burgerBtn) burgerBtn.addEventListener('click', openDrawer);
         if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeDrawer);
         if (drawerOverlay) drawerOverlay.addEventListener('click', closeDrawer);
-
-        async function loadUserStats(userId) {
-            try {
-                const ordersSnap = await db.collection('orders').where('userId', '==', userId).get();
-                let totalOrders = 0, pending = 0, completed = 0, totalSpent = 0;
-                ordersSnap.forEach(doc => {
-                    const order = doc.data();
-                    totalOrders++;
-                    if (order.status === 'en-attente') pending++;
-                    if (order.status === 'livré' || order.status === 'validé') completed++;
-                    totalSpent += (order.total || order.price || 0);
-                });
-                statOrders.textContent = totalOrders;
-                statPending.textContent = pending;
-                statCompleted.textContent = completed;
-                statSpent.textContent = totalSpent.toLocaleString();
-            } catch (error) { console.error("Erreur stats:", error); }
-        }
 
         function updateDrawer(user) {
             if (!user) return;
@@ -522,7 +477,6 @@
                 </div>
             `;
 
-            // Menu catégorisé (sans émojis)
             let menu = `
                 <div class="drawer-section-title">PRINCIPALE</div>
                 <a href="/home.html"><i class="fas fa-home"></i> Accueil</a>
@@ -558,12 +512,11 @@
             });
         }
 
-        auth.onAuthStateChanged(async (user) => {
+        auth.onAuthStateChanged((user) => {
             if (!user) { window.location.href = '/login.html'; return; }
             userNameSpan.textContent = user.displayName || user.email || 'Client';
             if (user.email === ADMIN_EMAIL) adminBadgeSpan.style.display = 'inline-block';
             updateDrawer(user);
-            await loadUserStats(user.uid);
         });
     </script>
 </body>
